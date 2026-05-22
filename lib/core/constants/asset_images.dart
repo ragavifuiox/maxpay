@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class AssetImages {
   // Splash & Auth
   static const splashLogo = "assets/images/splash_logo.svg";
@@ -35,6 +37,7 @@ class AssetImages {
   static const mobilePostpaid = "assets/images/mobile_post.svg";
   static const fastag = "assets/images/fastag.svg";
   static const water = "assets/images/water.svg";
+  static const paymentStatus = "assets/images/payment_status.svg";
 
   // Others
   static const favorite = "assets/images/favorite.svg";
@@ -54,4 +57,38 @@ class AssetImages {
   static const grade = "assets/images/grade.svg";
   static const updatePin = "assets/images/update_pin.svg";
   static const support = "assets/images/support.svg";
+  static const  websuccess= "assets/images/success_image.png";
+  static const  banner1= "assets/images/banner1.png";
+  static const  banner2= "assets/images/banner2.png";
+  static const  addwallet= "assets/images/add_wallet1.png";
+  static const  qr_code= "assets/images/qr_code.png";
+  static const  profileImage= "assets/images/profile.jpg";
+  static const  qrcode= "assets/images/qrcode 1.png";
+  static const stafflist= "assets/images/directory_regular.svg";
+  static const search= "assets/images/search.svg";
+
 }
+SizedBox adjustWidth(double width) {
+  return SizedBox(width: width);
+}
+
+SizedBox adjustHieght(double height) {
+  return SizedBox(height: height);
+}
+
+//  privacy_policy and terms_condition links
+const privacyPolicy = 'https://kathalan.in/privacy_policy';
+const termsCondition = 'https://kathalan.in/terms_condition';
+
+Duration animationDuration = const Duration(milliseconds: 300);
+
+/// 🔲 Border Radius Constants
+BorderRadius kBorderRadius6 = BorderRadius.circular(6);
+BorderRadius kBorderRadius5 = BorderRadius.circular(5);
+BorderRadius kBorderRadius8 = BorderRadius.circular(8);
+BorderRadius kBorderRadius12 = BorderRadius.circular(12);
+BorderRadius kBorderRadius16 = BorderRadius.circular(16);
+BorderRadius kBorderRadius20 = BorderRadius.circular(20);
+BorderRadius kBorderRadius24 = BorderRadius.circular(24);
+BorderRadius kBorderRadius50 = BorderRadius.circular(50);
+BorderRadius kBorderRadius10 = BorderRadius.circular(10);

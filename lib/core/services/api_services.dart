@@ -1,0 +1,167 @@
+import 'dart:developer';
+import 'package:dio/dio.dart';
+import 'package:get/get.dart' as g;
+
+import 'package:maxpay/core/constants/api_routes.dart';
+import 'package:maxpay/core/constants/routes_path.dart';
+import 'package:maxpay/core/services/local_storage_service.dart';
+
+
+
+class ApiService {
+  final Dio _dio;
+  final _storage = LocalStorageService();
+bool _isUnauthorizedHandled = false;
+  ApiService()
+    : _dio = Dio(
+        BaseOptions(
+          baseUrl: ApiRoutes.baseURL,
+          // connectTimeout: const Duration(seconds: 10),
+          // receiveTimeout: const Duration(seconds: 10),
+          contentType: 'application/json',
+          headers: {
+            "Accept": "application/json",
+            "x-api-key": "mnbvcxzasdfghjklpoiuytrewqzxcvbnm",
+          
+          },
+        ),
+      ) {
+    _dio.interceptors.add(
+      InterceptorsWrapper(
+        onRequest: (options, handler) {
+          final token = _storage.getString("auth_token");
+          if (token != null) {
+            options.headers["Authorization"] = "Bearer $token";
+          }
+          return handler.next(options);
+        },
+        // onError: (DioException e, handler) {
+        //   log("API Error: ${e.message}");
+        //   final statusCode = e.response?.statusCode;
+          
+
+        //   if (statusCode == 401) {
+        //     _handleUnauthorized();
+        //   } else {
+        //     print( "asdfasdfasdf"+e.response?.data?['message'] ?? "Something went wrong");
+        //     g.Get.snackbar(
+        //       "Error",
+        //       e.response?.data?['message'] ?? "Something went wrong",
+        //     );
+        //   }
+
+        //   return handler.next(e);
+        // },
+        onError: (DioException e, handler) {
+  log("API Error: ${e.message}");
+
+  // ✅ If NO INTERNET → go to network screen ONLY
+  
+
+  // ✅ Only handle 401 if internet is available
+  if (e.response?.statusCode == 401) {
+    _handleUnauthorized();
+  } else {
+    g.Get.snackbar(
+      "Error",
+      e.response?.data?['message'] ?? "Something went wrong",
+    );
+  }
+
+  return handler.next(e);
+}
+      ),
+    );
+  }
+
+  Future<Map<String, dynamic>> post(String endpoint, {dynamic data}) async {
+    return _handleResponse(
+      () => _dio.post(
+        endpoint,
+        data: data,
+        options: Options(
+          contentType:
+              data is FormData ? 'multipart/form-data' : 'application/json',
+        ),
+      ),
+    );
+  }
+
+  Future<Map<String, dynamic>> get(
+    String endpoint, {
+    Map<String, dynamic>? params,
+  }) async {
+    print(endpoint);
+    return _handleResponse(() => _dio.get(endpoint, queryParameters: params));
+  }
+
+  Future<Map<String, dynamic>> put(
+    String endpoint, {
+    dynamic data,
+    bool useFormData = false,
+  }) async {
+    return _handleResponse(
+      () => _dio.put(
+        endpoint,
+        data:
+            useFormData && data is Map
+                ? FormData.fromMap(Map<String, dynamic>.from(data))
+                : data,
+        options: Options(
+          contentType: useFormData ? 'multipart/form-data' : 'application/json',
+        ),
+      ),
+    );
+  }
+
+  Future<Map<String, dynamic>> delete(
+    String endpoint, {
+    Map<String, dynamic>? data,
+  }) async {
+    return _handleResponse(() => _dio.delete(endpoint, data: data));
+  }
+
+  Future<Map<String, dynamic>> _handleResponse(
+    Future<Response> Function() request,
+  ) async {
+    try {
+      final response = await request();
+
+      // ✅ Safely convert to Map<String, dynamic>
+      if (response.data is Map) {
+        return Map<String, dynamic>.from(
+          response.data as Map<dynamic, dynamic>,
+        );
+      }
+
+      // If response is not a map (e.g., List or String)
+      return {"data": response.data};
+    } on DioException catch (e) {
+      log("DioException: ${e.message}");
+      rethrow;
+    } catch (e) {
+      log("Unknown error: $e");
+      throw Exception("Unexpected error occurred");
+    }
+  }
+
+  // void _handleUnauthorized() {
+  //   _storage.remove("auth_token");
+  //   g.Get.offAllNamed(AppRoutes.login);
+
+
+    
+  //   g.Get.snackbar("Session Expired", "Please login again.");
+  // }
+
+  void _handleUnauthorized() {
+  if (_isUnauthorizedHandled) return;
+  _isUnauthorizedHandled = true;
+
+  _storage.remove("auth_token");
+
+  g.Get.offAllNamed(AppRoutes.welcome);
+
+  g.Get.snackbar("Session Expired", "Please login again.");
+}
+}

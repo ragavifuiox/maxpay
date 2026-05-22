@@ -1,12 +1,25 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:maxpay/core/utils/colors.dart';
+import 'package:get/get.dart';
+import 'package:maxpay/controllers/auth_controller.dart';
+import 'package:maxpay/core/constants/colors.dart';
+import 'package:maxpay/core/constants/routes_path.dart';
+import 'package:maxpay/core/utils/responsive.dart';
+import 'package:maxpay/view/login/widgets/cutom_elevated_button.dart';
+import 'package:pinput/pinput.dart';
+
+/// ================= CUSTOM KEYBOARD =================
 
 class CustomNumericKeyboard extends StatelessWidget {
   final Function(String) onKeyPressed;
 
-  const CustomNumericKeyboard({super.key, required this.onKeyPressed});
+  const CustomNumericKeyboard({
+    super.key,
+    required this.onKeyPressed,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -15,16 +28,20 @@ class CustomNumericKeyboard extends StatelessWidget {
     return Center(
       child: ConstrainedBox(
         constraints: BoxConstraints(
-          maxWidth: isTablet ? 400 : double.infinity, // 🔥 KEY FIX
+          maxWidth: isTablet ? 400 : double.infinity,
         ),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             _buildKeyboardRow(['1', '2', '3'], context),
             SizedBox(height: 16.h),
+
             _buildKeyboardRow(['4', '5', '6'], context),
             SizedBox(height: 16.h),
+
             _buildKeyboardRow(['7', '8', '9'], context),
             SizedBox(height: 16.h),
+
             _buildKeyboardRow(['backspace', '0', 'submit'], context),
           ],
         ),
@@ -36,7 +53,9 @@ class CustomNumericKeyboard extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: keys.map((key) {
-        return Expanded(child: _buildKeyboardButton(key, context));
+        return Expanded(
+          child: _buildKeyboardButton(key, context),
+        );
       }).toList(),
     );
   }
@@ -45,13 +64,15 @@ class CustomNumericKeyboard extends StatelessWidget {
     final isTablet = MediaQuery.of(context).size.width > 600;
 
     return SizedBox(
-      height: isTablet ? 80 : 60, // 🔥 SAME HEIGHT FOR ALL
+      height: isTablet ? 80 : 60,
       child: TextButton(
         onPressed: () {
           HapticFeedback.lightImpact();
           onKeyPressed(key);
         },
-        style: TextButton.styleFrom(shape: const CircleBorder()),
+        style: TextButton.styleFrom(
+          shape: const CircleBorder(),
+        ),
         child: key == 'backspace'
             ? const Icon(
                 Icons.backspace_outlined,
@@ -59,17 +80,18 @@ class CustomNumericKeyboard extends StatelessWidget {
                 size: 22,
               )
             : key == 'submit'
-            ? const Icon(
-                Icons.arrow_forward,
-                color: AppColors.clrPrimary,
-                size: 22,
-              )
-            : Text(
-                key,
-                style: TextStyle(
-                  fontSize: isTablet ? 28 : 23, // 🔥 FIXED
-                ),
-              ),
+                ? const Icon(
+                    Icons.arrow_forward,
+                    color: AppColors.clrPrimary,
+                    size: 22,
+                  )
+                : Text(
+                    key,
+                    style: TextStyle(
+                      fontSize: isTablet ? 28 : 23,
+                      color: Colors.black,
+                    ),
+                  ),
       ),
     );
   }

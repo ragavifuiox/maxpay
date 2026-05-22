@@ -1,54 +1,67 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:maxpay/core/constants/initial_bindings.dart';
+import 'package:maxpay/core/constants/routes_path.dart';
+import 'package:maxpay/core/di/service_locator.dart';
 import 'package:maxpay/core/router/app_router.dart';
 import 'package:maxpay/core/utils/theme.dart';
+import 'package:maxpay/view/nav_page/navbar_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize SharedPreferences
-  final sharedPreferences = await SharedPreferences.getInstance();
-  WidgetsFlutterBinding.ensureInitialized();
+  /// IMPORTANT
+  await initDependencies();
 
-  // Restrict to portrait
+  // SharedPreferences
+  final sharedPreferences = await SharedPreferences.getInstance();
+
+  // GetX Controllers
+  Get.put(ThemeController(sharedPreferences));
+  Get.put(NavbarController());
+
+  // Portrait mode
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
 
-  runApp(
-    ProviderScope(
-      overrides: [
-        // Provide the initialized SharedPreferences instance
-        sharedPreferencesProvider.overrideWithValue(sharedPreferences),
-      ],
-      child: const MyApp(),
-    ),
-  );
+  runApp(const MyApp());
 }
 
-class MyApp extends ConsumerWidget {
+class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final themeMode = ref.watch(themeProvider);
+  Widget build(BuildContext context) {
+
+    final themeController = Get.find<ThemeController>();
 
     return ScreenUtilInit(
       designSize: const Size(375, 812),
       minTextAdapt: true,
       splitScreenMode: true,
+
       builder: (_, child) {
-        return MaterialApp.router(
+
+        return GetMaterialApp(
+
           title: 'MaxPay',
           debugShowCheckedModeBanner: false,
+
           theme: AppTheme.lightTheme,
           darkTheme: AppTheme.darkTheme,
-          themeMode: themeMode,
-          routerConfig: AppRouter.router,
+
+          themeMode: themeController.themeMode,
+
+          initialBinding: InitialBinding(),
+
+          initialRoute: AppRoutes.splash,
+
+          getPages: AppPages.pages,
         );
       },
     );

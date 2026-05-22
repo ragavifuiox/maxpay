@@ -1,320 +1,512 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:maxpay/core/utils/asset_images.dart';
-import 'package:maxpay/core/utils/colors.dart';
+import 'package:get/get.dart';
+import 'package:maxpay/controllers/menu_controlller.dart';
+import 'package:maxpay/core/constants/asset_images.dart';
+import 'package:maxpay/core/constants/colors.dart';
+import 'package:maxpay/core/constants/routes_path.dart';
+import 'package:maxpay/view/home/widgets/home_header.dart';
 import 'package:maxpay/view/mobile_recharge/mobile_recharge_page.dart';
-import 'package:maxpay/view/dth_recharge/dth_recharge_page.dart';
-import 'package:maxpay/view/fastag_recharge/fastag_recharge_page.dart';
-import 'package:maxpay/view/electricity_bill/electricity_bill_page.dart';
-import 'package:maxpay/view/gas_bill/gas_bill_page.dart';
 
-class ServicesSection extends StatelessWidget {
-  const ServicesSection({super.key});
+import '../../../core/data/model/product_type.dart';
+
+class MenuScreen extends GetView<ServiceController> {
+  const MenuScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        /// WALLET BALANCE CONTAINER
-        Container(
-          width: double.infinity,
-          padding: EdgeInsets.all(12.r),
-
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10.r),
-            color: AppColors.clrPrimary,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
-                blurRadius: 20.r,
-                offset: Offset(0, 4.r),
-              ),
-            ],
-          ),
-          child: Column(
-            children: [
-              Text(
-                "Wallet Balance",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w700,
-                  fontFamily: 'Poppins',
-                ),
-              ),
-
-              Text(
-                '₹ 245005.23',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24.sp,
-                  fontWeight: FontWeight.w700,
-                  fontFamily: 'Lufga',
-                ),
-              ),
-            ],
-          ),
-        ),
-
-        SizedBox(height: 20.h),
-
-        /// 🔹 MOSQUE BANNER
-        ClipRRect(
-          borderRadius: BorderRadius.circular(12.r),
-          child: CachedNetworkImage(
-            imageUrl:
-                "https://5.imimg.com/data5/SELLER/Default/2023/11/363705672/UZ/QW/KG/54384979/online-electricity-bill-payment-services.jpg",
-            width: double.infinity,
-            height: 160.h,
-            fit: BoxFit.cover,
-          ),
-        ),
-        SizedBox(height: 20.h),
-
-        /// 🔹 SERVICES HEADER
-        Container(
-          width: double.infinity,
-          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-          decoration: BoxDecoration(
-            color: AppColors.clrPrimary,
-            borderRadius: BorderRadius.circular(8.r),
-          ),
-          child: Text(
-            'Services',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 16.sp,
-              fontWeight: FontWeight.w700,
-              fontFamily: 'Poppins',
-            ),
-          ),
-        ),
-        SizedBox(height: 20.h),
-
-        /// 🔹 SERVICES GRID - ROW 1
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            _ServiceItem(
-              title: 'Prepaid',
-              icon: AssetImages.prepaid,
-              bgColor: const Color(0xFFE8FAF0),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const MobileRechargePage(),
-                  ),
-                );
-              },
-            ),
-            _ServiceItem(
-              title: 'DTH',
-              icon: AssetImages.dth,
-              bgColor: const Color(0xFFFFEBEB),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const DTHRechargePage(),
-                  ),
-                );
-              },
-            ),
-            _ServiceItem(
-              title: 'FASTag',
-              icon: AssetImages.fastag,
-              bgColor: const Color(0xFFE8FAF0),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const FastagRechargePage(),
-                  ),
-                );
-              },
-            ),
-            _ServiceItem(
-              title: 'Gas',
-              icon: AssetImages.gas,
-              bgColor: const Color(0xFFFFF4E6),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const GasBillPage()),
-                );
-              },
-            ),
-          ],
-        ),
-        SizedBox(height: 20.h),
-
-        /// 🔹 SERVICES GRID - ROW 2 (Postpaid + Banner)
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Column(
-              children: [
-                const _ServiceItem(
-                  title: 'Postpaid',
-                  icon: AssetImages.mobilePostpaid,
-                  bgColor: Color(0xFFE6F0FF),
-                ),
-                SizedBox(height: 20.h),
-                _ServiceItem(
-                  title: 'Electricity',
-                  icon: AssetImages.promoFrame, // elec.svg
-                  bgColor: const Color(0xFFFFF4E6),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const ElectricityBillPage(),
-                      ),
-                    );
-                  },
-                ),
-              ],
-            ),
-            SizedBox(width: 12.w),
-            Expanded(
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(12.r),
-                child: CachedNetworkImage(
-                  imageUrl:
-                      "https://img.freepik.com/free-vector/5g-instagram-horizontal-banner-template_23-2148949265.jpg",
-                  height: 165.h,
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
-          ],
-        ),
-        SizedBox(height: 20.h),
-
-        /// 🔹 SERVICES GRID - ROW 3 (Water, Landline, Broadband, Statement)
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const _ServiceItem(
-              title: 'Water',
-              icon: AssetImages.water,
-              bgColor: Color(0xFFFFEBEB),
-            ),
-            const _ServiceItem(
-              title: 'Landline',
-              icon: AssetImages.landline,
-              bgColor: Color(0xFFE8FAF0),
-            ),
-            const _ServiceItem(
-              title: 'Broadband',
-              icon: AssetImages.broadband,
-              bgColor: Color(0xFFE6F0FF),
-            ),
-            const _ServiceItem(
-              title: 'Statement',
-              icon: AssetImages.statement,
-              bgColor: Color(0xFFFFF4E6),
-            ),
-          ],
-        ),
-        SizedBox(height: 20.h),
-
-        /// 🔹 SERVICES GRID - ROW 4 (Promo Banner + Others)
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: Container(
-                height: 140.h,
-                decoration: BoxDecoration(
-                  color: AppColors.clrPrimary,
-                  borderRadius: BorderRadius.circular(12.r),
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12.r),
-                  child: CachedNetworkImage(
-                    imageUrl:
-                        "https://5.imimg.com/data5/SELLER/Default/2024/5/422226820/OB/XS/YX/221288867/electricity-bill-payment-service.jpeg",
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(width: 12.w),
-            Column(
-              children: [
-                const _ServiceItem(
-                  title: 'Favorite',
-                  icon: AssetImages.favorite,
-                  bgColor: Color(0xFFE6F0FF),
-                ),
-                SizedBox(height: 20.h),
-                const _ServiceItem(
-                  title: 'DTH Refresh',
-                  icon: AssetImages.dthRefresh,
-                  bgColor: Color(0xFFFFEBEB),
-                ),
-              ],
-            ),
-          ],
-        ),
-        SizedBox(height: 30.h),
-      ],
-    );
-  }
-}
-
-class _ServiceItem extends ConsumerWidget {
-  final String title;
-  final String icon;
-  final Color bgColor;
-  final VoidCallback? onTap;
-
-  const _ServiceItem({
-    required this.title,
-    required this.icon,
-    required this.bgColor,
-    this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    return GestureDetector(
-      onTap: onTap,
-      child: SizedBox(
-        width: 75.w,
-        child: Column(
-          children: [
-            Container(
-              width: 60.w,
-              height: 60.w,
-              padding: EdgeInsets.all(12.r),
-              decoration: BoxDecoration(
-                color: bgColor,
-                borderRadius: BorderRadius.circular(12.r),
+
+    return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
+
+      body: SafeArea(
+        child: Obx(
+          () {
+            if (controller.isLoading.value) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+
+            final productList =
+                controller.productTypeData.value?.data ?? [];
+
+            return SingleChildScrollView(
+              child: Column(
+                children: [
+
+                  /// HEADER
+                  const HomeHeaderSection(),
+
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 12.h,
+                    ),
+                    child: Column(
+                      crossAxisAlignment:
+                          CrossAxisAlignment.start,
+                      children: [
+
+                        /// WALLET CARD
+                        Container(
+                          width: double.infinity,
+                          padding: EdgeInsets.symmetric(
+                            vertical: 18.h,
+                          ),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF11B4B6),
+                            borderRadius:
+                                BorderRadius.circular(14.r),
+                          ),
+                          child: Column(
+                            children: [
+
+                              Text(
+                                "Wallet Balance",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 14.sp,
+                                  fontWeight:
+                                      FontWeight.w600,
+                                ),
+                              ),
+
+                              SizedBox(height: 6.h),
+
+                              Text(
+                                "₹ 245005.23",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 24.sp,
+                                  fontWeight:
+                                      FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        SizedBox(height: 16.h),
+
+                        /// TOP BANNER
+                        ClipRRect(
+                          borderRadius:
+                              BorderRadius.circular(16.r),
+                          child: Image.network(
+                            "https://images.unsplash.com/photo-1548013146-72479768bada?q=80&w=1000",
+                            height: 150.h,
+                            width: double.infinity,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+
+                        SizedBox(height: 18.h),
+
+                        /// SERVICES TITLE
+                        Container(
+                          width: double.infinity,
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 14.w,
+                            vertical: 12.h,
+                          ),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF11B4B6),
+                            borderRadius:
+                                BorderRadius.circular(10.r),
+                          ),
+                          child: Text(
+                            "Services",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 15.sp,
+                              fontWeight:
+                                  FontWeight.bold,
+                            ),
+                          ),
+                        ),
+
+                        SizedBox(height: 20.h),
+
+                        /// FIRST ROW
+                        Row(
+                          mainAxisAlignment:
+                              MainAxisAlignment
+                                  .spaceBetween,
+                          children: [
+                            if (productList.length > 0)
+                              _dynamicServiceItem(
+                                context,
+                                productList[0],
+                              ),
+
+                            if (productList.length > 1)
+                              _dynamicServiceItem(
+                                context,
+                                productList[1],
+                              ),
+
+                            if (productList.length > 2)
+                              _dynamicServiceItem(
+                                context,
+                                productList[2],
+                              ),
+
+                            if (productList.length > 3)
+                              _dynamicServiceItem(
+                                context,
+                                productList[3],
+                              ),
+                          ],
+                        ),
+
+                        SizedBox(height: 20.h),
+
+                        /// SECOND ROW
+                        Row(
+                          crossAxisAlignment:
+                              CrossAxisAlignment.start,
+                          children: [
+
+                            /// LEFT SIDE
+                            Column(
+                              children: [
+
+                                if (productList.length > 4)
+                                  _dynamicServiceItem(
+                                    context,
+                                    productList[4],
+                                  ),
+
+                                SizedBox(height: 18.h),
+
+                                if (productList.length > 5)
+                                  _dynamicServiceItem(
+                                    context,
+                                    productList[5],
+                                  ),
+                              ],
+                            ),
+
+                            SizedBox(width: 12.w),
+
+                            /// CENTER BANNER
+                            Expanded(
+                              child: SizedBox(
+                                height: 170.h,
+                                child: ClipRRect(
+                                  borderRadius:
+                                      BorderRadius
+                                          .circular(
+                                    16.r,
+                                  ),
+                                  child: Image.asset(
+                                    AssetImages
+                                        .banner1,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        SizedBox(height: 20.h),
+
+                        /// THIRD ROW
+                        Row(
+                          mainAxisAlignment:
+                              MainAxisAlignment
+                                  .spaceBetween,
+                          children: [
+
+                            if (productList.length > 6)
+                              _dynamicServiceItem(
+                                context,
+                                productList[6],
+                              ),
+
+                            if (productList.length > 7)
+                              _dynamicServiceItem(
+                                context,
+                                productList[7],
+                              ),
+
+                            if (productList.length > 8)
+                              _dynamicServiceItem(
+                                context,
+                                productList[8],
+                              ),
+
+                            if (productList.length > 9)
+                              _dynamicServiceItem(
+                                context,
+                                productList[9],
+                              ),
+                          ],
+                        ),
+
+                        SizedBox(height: 20.h),
+
+                        /// BOTTOM SECTION
+                        Row(
+                          crossAxisAlignment:
+                              CrossAxisAlignment.start,
+                          children: [
+
+                            /// LEFT BANNER
+                            Expanded(
+                              child: ClipRRect(
+                                borderRadius:
+                                    BorderRadius
+                                        .circular(
+                                  16.r,
+                                ),
+                                child: Image.asset(
+                                  AssetImages
+                                      .banner2,
+                                  height: 150.h,
+                                  width:
+                                      double.infinity,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+
+                            SizedBox(width: 12.w),
+
+                           
+                            // Column(
+                            //   children: [
+
+                            //     _serviceItem(
+                            //       context,
+                            //       "Payment\nStatus",
+                            //       AssetImages
+                            //           .paymentStatus,
+                            //       AppColors.box2,
+                            //     ),
+
+                            //     SizedBox(
+                            //       height: 18.h,
+                            //     ),
+
+                            //     _serviceItem(
+                            //       context,
+                            //       "DTH\nRefresh",
+                            //       AssetImages
+                            //           .dthRefresh,
+                            //       AppColors.box1,
+                            //     ),
+                            //   ],
+                            // ),
+                          ],
+                        ),
+
+                        SizedBox(height: 20.h),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-              child: SvgPicture.asset(icon, fit: BoxFit.contain),
-            ),
-            SizedBox(height: 8.h),
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 12.sp,
-                fontWeight: FontWeight.w500,
-                fontFamily: 'Poppins',
-                color: theme.textTheme.bodyMedium?.color,
-              ),
-            ),
-          ],
+            );
+          },
         ),
       ),
     );
   }
+
+  /// DYNAMIC ITEM
+_dynamicServiceItem(
+  BuildContext context,
+  Data item,
+) {
+  return _serviceItem(
+    context,
+    item.name ?? "",
+    _getImage(item.name ?? ""),
+    _getBgColor(item.name ?? ""),
+    onTap: () {
+      _handleNavigation(item);
+    },
+  );
+}
+
+  /// COMMON SERVICE ITEM
+  Widget _serviceItem(
+    BuildContext context,
+    String title,
+    String image,
+    Color bgColor, {
+    VoidCallback? onTap,
+  }) {
+    final theme = Theme.of(context);
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius:
+            BorderRadius.circular(14.r),
+        onTap: onTap,
+        child: Padding(
+          padding: EdgeInsets.all(4.w),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+
+              Container(
+                width: 62.w,
+                height: 62.w,
+                padding: EdgeInsets.all(16.w),
+                decoration: BoxDecoration(
+                  color: bgColor,
+                  borderRadius:
+                      BorderRadius.circular(
+                    14.r,
+                  ),
+                ),
+                child: SvgPicture.asset(
+                  image,
+                  fit: BoxFit.contain,
+                ),
+              ),
+
+              SizedBox(height: 8.h),
+
+              Text(
+                title,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 11.sp,
+                  fontWeight:
+                      FontWeight.w500,
+                  color: theme
+                      .colorScheme.onSurface,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// IMAGE MAP
+  String _getImage(String name) {
+    switch (name.toLowerCase()) {
+      case 'prepaid':
+        return AssetImages.prepaid;
+
+      case 'postpaid':
+        return AssetImages.prepaid;
+
+      case 'dth':
+        return AssetImages.dth;
+
+      case 'fastag':
+        return AssetImages.fastag;
+
+      case 'gas':
+        return AssetImages.gas;
+
+      case 'electricity':
+        return AssetImages.promoFrame;
+
+      case 'water':
+        return AssetImages.water;
+
+      case 'landline':
+        return AssetImages.landline;
+
+      case 'broadband':
+        return AssetImages.broadband;
+
+      case 'cable tv':
+        return AssetImages.statement;
+
+      default:
+        return AssetImages.prepaid;
+    }
+  }
+
+  /// COLOR MAP
+  Color _getBgColor(String name) {
+    switch (name.toLowerCase()) {
+      case 'prepaid':
+        return AppColors.box1;
+
+      case 'postpaid':
+        return AppColors.box1;
+
+      case 'dth':
+        return AppColors.box2;
+
+      case 'fastag':
+        return AppColors.box3;
+
+      case 'gas':
+        return AppColors.box4;
+
+      case 'electricity':
+        return AppColors.box3;
+
+      case 'water':
+        return AppColors.box4;
+
+      case 'landline':
+        return AppColors.box3;
+
+      case 'broadband':
+        return AppColors.box2;
+
+      case 'cable tv':
+        return AppColors.box1;
+
+      default:
+        return AppColors.box1;
+    }
+  }
+
+  /// NAVIGATION
+  /// NAVIGATION
+void _handleNavigation(Data item) {
+
+  switch (item.name?.toLowerCase()) {
+
+    case 'prepaid':
+
+      Get.toNamed(
+        AppRoutes.prepaid,
+
+        arguments: {
+          "productId": item.id.toString(),
+          "productName": item.name ?? "",
+        },
+      );
+
+      break;
+
+    case 'postpaid':
+
+      Get.to(
+        () => MobileRechargePage(
+          productId: item.id.toString(),
+          productName: item.name ?? "",
+        ),
+      );
+
+      break;
+
+    case 'dth':
+
+      Get.toNamed(AppRoutes.dth);
+
+      break;
+
+    default:
+      break;
+  }
+}
 }

@@ -1,13 +1,10 @@
-import 'package:flutter_riverpod/legacy.dart';
+import 'package:get/get.dart';
 
-class NavbarNotifier extends StateNotifier<int> {
-  NavbarNotifier() : super(0);
+class NavbarController extends GetxController {
+  final RxInt _selectedIndex = 0.obs;
+  int get selectedIndex => _selectedIndex.value;
 
   void setIndex(int index) {
-    state = index;
+    _selectedIndex.value = index;
   }
 }
-
-final navbarProvider = StateNotifierProvider<NavbarNotifier, int>((ref) {
-  return NavbarNotifier();
-});

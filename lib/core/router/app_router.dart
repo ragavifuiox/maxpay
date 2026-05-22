@@ -1,70 +1,223 @@
-import 'package:go_router/go_router.dart';
-import 'package:maxpay/core/utils/routes_path.dart';
+import 'package:get/get.dart';
+import 'package:maxpay/controllers/auth_controller.dart';
+import 'package:maxpay/controllers/homepage_controller.dart';
+import 'package:maxpay/controllers/menu_controlller.dart';
+import 'package:maxpay/controllers/prepaid_controller.dart';
+
+import 'package:maxpay/controllers/profile_controller.dart';
+import 'package:maxpay/core/constants/routes_path.dart';
+import 'package:maxpay/core/di/service_locator.dart';
+import 'package:maxpay/view/add_wallet/add_wallet_screen.dart';
+import 'package:maxpay/view/cashback/cash_back_screen.dart';
+import 'package:maxpay/view/dispute/dispute_screen.dart';
+import 'package:maxpay/view/dth_recharge/dth_recharge_page.dart';
+import 'package:maxpay/view/grade/grade_screen.dart';
 import 'package:maxpay/view/home/pages/home_page.dart';
+import 'package:maxpay/view/home/widgets/services_section.dart';
+import 'package:maxpay/view/kyc/kyc_screen.dart';
 import 'package:maxpay/view/login/biometrics/biometrics_intro.dart';
 import 'package:maxpay/view/login/biometrics/biometrics_scanning.dart';
 import 'package:maxpay/view/login/biometrics/pin_code_creation.dart';
 import 'package:maxpay/view/login/biometrics/success_screen.dart';
 import 'package:maxpay/view/login/otp_verification_screen.dart';
 import 'package:maxpay/view/login/login_phone_name.dart';
-import 'package:maxpay/view/login/select_sim.dart';
+
 import 'package:maxpay/view/login/welcome_page.dart';
+import 'package:maxpay/view/login_history/login_history_screen.dart';
+import 'package:maxpay/view/mobile_recharge/mobile_recharge_page.dart';
+import 'package:maxpay/view/my_earning/my_earning_screen.dart';
 import 'package:maxpay/view/nav_page/nav_page.dart';
+import 'package:maxpay/view/profile/profile_screen.dart';
+import 'package:maxpay/view/refund/refund_screen.dart';
+import 'package:maxpay/view/settings/settings_page.dart';
 import 'package:maxpay/view/splash/intro_page.dart';
 import 'package:maxpay/view/splash/main_splash.dart';
+import 'package:maxpay/view/staff/staff_list_screen.dart';
+import 'package:maxpay/view/support/supoort_screen.dart';
+import 'package:maxpay/view/transaction_screens/transaction_success_screen.dart';
+import 'package:maxpay/view/update_pin/verify_pin_screen.dart';
+import 'package:maxpay/view/wallet-credit/wallet_credit_screen.dart';
+import 'package:maxpay/view/web_sign_up/web_signup_otp_screen.dart';
+import 'package:maxpay/view/web_sign_up/web_signup_screen.dart';
+import 'package:maxpay/view/web_sign_up/web_signup_success_screen.dart';
+import 'package:maxpay/view/weblogin/web_login_screen.dart';
 
-class AppRouter {
-  static final GoRouter router = GoRouter(
-    initialLocation: AppRoutes.main,
-    routes: [
-      GoRoute(
-        path: AppRoutes.splash,
-        builder: (context, state) => const MainSplashScreen(),
+class AppPages {
+  
+  static final pages = [
+    GetPage(name: AppRoutes.splash, page: () => const MainSplashScreen()),
+    GetPage(name: AppRoutes.intro, page: () => const IntroPage()),
+    GetPage(name: AppRoutes.welcome, page: () => const WelcomePage()),
+  
+    GetPage(
+  transition: Transition.fade,
+
+  name: AppRoutes.loginPhoneName,
+
+  page: () => const LoginPhoneNamePage(),
+
+  binding: BindingsBuilder(() {
+
+    Get.lazyPut<AuthController>(
+      () => AuthController(
+      
+     loginUseCase: sl(),
+        otpUsecase: sl(),
+        createPinUsecase: sl(),
+        fingerPrintUsecase: sl(),
       ),
-      GoRoute(
-        path: AppRoutes.intro,
-        builder: (context, state) => const IntroPage(),
+
+      fenix: true,
+    );
+  }),
+),
+GetPage(
+  transition: Transition.fade,
+
+  name: AppRoutes.pinCodeCreation,
+
+  page: () => PinCodeCreationPage(),
+
+  binding: BindingsBuilder(() {
+
+    Get.lazyPut<AuthController>(
+      () => AuthController(
+        loginUseCase: sl(),
+        otpUsecase: sl(),
+        createPinUsecase: sl(),
+        fingerPrintUsecase: sl(),
       ),
-      GoRoute(
-        path: AppRoutes.welcome,
-        builder: (context, state) => const WelcomePage(),
+
+      fenix: true,
+    );
+  }),
+),
+    GetPage(name: AppRoutes.otpVerification, page: () => const ScreenOtpVerification()),
+    GetPage(name: AppRoutes.biometricsIntro, page: () => const BiometricsIntroPage()),
+    GetPage(name: AppRoutes.biometricsScanning, page: () => const BiometricsScanningPage()),
+ 
+    GetPage(name: AppRoutes.successScreen, page: () => const SuccessScreen()),
+
+
+     GetPage(
+  transition: Transition.fade,
+
+  name: AppRoutes.main,
+
+  page: () => const NavPageScreen(),
+
+  binding: BindingsBuilder(() {
+
+    Get.lazyPut<HomePageController>(
+      () => HomePageController(
+        getNewsUseCase: sl(),
+        getWalletBalanceUseCase: sl(),
+        transSucFailUsecase: sl(),
       ),
-      GoRoute(
-        path: AppRoutes.selectSim,
-        builder: (context, state) => const SelectSimPage(),
+
+      fenix: true,
+    );
+  }),
+),
+    GetPage(name: AppRoutes.home, page: () => const HomePageScreen()),
+    // GetPage(name: AppRoutes.main, page: () => const NavPageScreen()),
+    GetPage(name: AppRoutes.myearning, page: () => const MyEarningsScreen()),
+    GetPage(name: AppRoutes.withdrawrequest, page: () => const WalletCreditScreen()),
+    GetPage(name: AppRoutes.refund, page: () => const RefundScreen()),
+    GetPage(name:AppRoutes.cashback, page: () => const CashbackScreen()),
+    
+
+    
+     GetPage(
+  transition: Transition.fade,
+
+  name: AppRoutes.profile,
+
+  page: () => ProfileScreen(),
+
+  binding: BindingsBuilder(() {
+
+    Get.lazyPut<ProfileController>(
+      () => ProfileController(
+        getProfileUseCase: sl(),
       ),
-      GoRoute(
-        path: AppRoutes.loginPhoneName,
-        builder: (context, state) => const LoginPhoneNamePage(),
+
+      fenix: true,
+    );
+  }),
+),
+    GetPage(name:AppRoutes.support, page:()=>const SupportScreen()),
+    GetPage(name:AppRoutes.kyc, page:()=>const KycScreen()),
+    GetPage(name:AppRoutes.loginhistory, page:()=>const LoginHistoryScreen()),
+    GetPage(name:AppRoutes.weblogin, page:()=>const WebSignupScreen()),
+    GetPage(name:AppRoutes.webotp, page:()=>const WebOtpScreen()),
+     GetPage(name:AppRoutes.websuccess, page:()=>const WebSignupSuccessScreen()),
+     GetPage(name:AppRoutes.setting, page:()=>const SettingsPage()),
+     GetPage(name:AppRoutes.grade, page:()=>const GradeScreen()),
+    GetPage(
+  transition: Transition.fade,
+
+  name: AppRoutes.prepaid,
+
+  page: () {
+    final args = Get.arguments ?? {};
+
+    return MobileRechargePage(
+      productId: args['productId'] ?? '',
+      productName: args['productName'] ?? '',
+    );
+  },
+
+  binding: BindingsBuilder(() {
+
+    Get.lazyPut<PrePaidController>(
+      () => PrePaidController(
+        planUseCase: sl(),
       ),
-      GoRoute(
-        path: AppRoutes.otpVerification,
-        builder: (context, state) => const ScreenOtpVerification(),
+
+      fenix: true,
+    );
+  }),
+),
+ 
+
+
+     GetPage(
+  transition: Transition.fade,
+
+  name: AppRoutes.menu,
+
+  page: () => MenuScreen(),
+
+  binding: BindingsBuilder(() {
+
+    Get.lazyPut<ServiceController>(
+      () => ServiceController(
+        productTypeUseCase: sl(),
       ),
-      GoRoute(
-        path: AppRoutes.biometricsIntro,
-        builder: (context, state) => const BiometricsIntroPage(),
-      ),
-      GoRoute(
-        path: AppRoutes.biometricsScanning,
-        builder: (context, state) => const BiometricsScanningPage(),
-      ),
-      GoRoute(
-        path: AppRoutes.pinCodeCreation,
-        builder: (context, state) => const PinCodeCreationPage(),
-      ),
-      GoRoute(
-        path: AppRoutes.successScreen,
-        builder: (context, state) => const SuccessScreen(),
-      ),
-      GoRoute(
-        path: AppRoutes.home,
-        builder: (context, state) => const HomePageScreen(),
-      ),
-      GoRoute(
-        path: AppRoutes.main,
-        builder: (context, state) => const NavPageScreen(),
-      ),
-    ],
-  );
+
+      fenix: true,
+    );
+  }),
+),
+     GetPage(name:AppRoutes.dth, page:()=>const DTHRechargePage()),
+     GetPage(name:AppRoutes.addwallet, page:()=>const AddWalletScreen()),
+          GetPage(name:AppRoutes.veirfypin, page:()=>const VerifyPinPage()),
+          GetPage(name:AppRoutes.stafflist, page:()=>const StaffListPage()),
+          GetPage(name:AppRoutes.webloginqr, page:()=>const WebLoginScreen()),
+          GetPage(name:AppRoutes.dispute, page:()=>const DisputeReportScreen()),
+          GetPage(name:AppRoutes.customertrans, page:()=>const DisputeReportScreen()),
+
+    GetPage(
+  name: AppRoutes.transaction,
+  page: () {
+    final status =
+        Get.arguments as TransactionStatus?;
+
+    return TransactionScreen(
+      status: status ?? TransactionStatus.success,
+    );
+  },
+),
+  ];
 }

@@ -1,0 +1,37 @@
+class AppRoutes {
+  static const String splash = '/';
+  static const String intro = '/intro';
+  static const String welcome = '/welcome';
+  static const String selectSim = '/selectSim';
+  static const String loginPhoneName = '/loginPhoneName';
+  static const String otpVerification = '/otpVerification';
+  static const String biometricsIntro = '/biometricsIntro';
+  static const String biometricsScanning = '/biometricsScanning';
+  static const String pinCodeCreation = '/pinCodeCreation';
+  static const String successScreen = '/successScreen';
+  static const String home = '/home';
+  static const String main = '/main';
+  static const String myearning = '/myearning';
+  static const String withdrawrequest = '/withdrawrequest';
+  static const String refund = '/refund';
+  static const String cashback='/cashback';
+  static const String profile='/profile';
+  static const String support='/support';
+  static const String kyc='/kyc';
+  static const String loginhistory='/loginhistory';
+  static const String weblogin='/weblogin';
+  static const String webotp='/webotp';
+  static const String websuccess='/websuccess';
+  static const String setting='/setting';
+  static const String grade='/grade';
+  static const String prepaid='/prepaid';
+  static const String menu='/menu';
+  static const String dth='/dth';
+  static const String addwallet='/addwallet';
+  static const String transaction='/transaction';
+  static const String veirfypin='/veirfypin';
+  static const String stafflist='/stafflist';
+  static const String webloginqr='/webloginqr';
+  static const String dispute='/dispute';
+  static const String customertrans='/customertrans';
+}

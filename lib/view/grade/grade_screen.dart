@@ -1,0 +1,312 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:maxpay/core/constants/colors.dart';
+import 'package:maxpay/global_widget/custom_app.dart';
+
+class GradeScreen extends StatelessWidget {
+  const GradeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
+
+      /// Custom AppBar
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(60.h),
+        child: const CommonAppBar(
+          title: "Grade",
+        ),
+      ),
+
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding:
+                EdgeInsets.symmetric(horizontal: 20.w),
+
+            child: Column(
+              crossAxisAlignment:
+                  CrossAxisAlignment.start,
+
+              children: [
+                SizedBox(height: 30.h),
+
+                /// Congratulations Section
+                Center(
+                  child: Column(
+                    children: [
+                      Text(
+                        "Congratulations!",
+
+                        style: TextStyle(
+                          fontSize: 18.sp,
+                          fontWeight: FontWeight.w600,
+                          color: theme
+                              .colorScheme.onSurface,
+                        ),
+                      ),
+
+                      SizedBox(height: 10.h),
+
+                      Text(
+                        "This month grade is",
+
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          color: theme.colorScheme
+                              .onSurfaceVariant,
+                        ),
+                      ),
+
+                      SizedBox(height: 25.h),
+
+                      /// Grade
+                      Text(
+                        "A",
+
+                        style: TextStyle(
+                          fontSize: 110.sp,
+                          fontWeight: FontWeight.bold,
+                          color:
+                              AppColors.clrPrimary,
+                          height: 1,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                SizedBox(height: 45.h),
+
+                /// Details
+                Text(
+                  "Details",
+
+                  style: TextStyle(
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w600,
+                    color:
+                        theme.colorScheme.onSurface,
+                  ),
+                ),
+
+                SizedBox(height: 15.h),
+
+                /// Table
+                Container(
+                  width: double.infinity,
+                  clipBehavior: Clip.antiAlias,
+
+                  decoration: BoxDecoration(
+                    color: theme.brightness ==
+                            Brightness.light
+                        ? Colors.white
+                        : theme.colorScheme
+                            .surfaceContainer,
+
+                    border: Border.all(
+                      color:
+                          theme.colorScheme.outline,
+                    ),
+
+                    borderRadius:
+                        BorderRadius.circular(10.r),
+                  ),
+
+                  child: Column(
+                    children: [
+                      /// Header Row
+                      ClipRRect(
+  borderRadius: BorderRadius.only(
+    topLeft: Radius.circular(10.r),
+    topRight: Radius.circular(10.r),
+  ),
+  child: Row(
+    children: [
+      _headerCell(
+        context,
+        title: "Grade",
+        color: const Color(0xFFFFE1B4),
+      ),
+
+      _headerCell(
+        context,
+        title: "Daily Average\nBalance",
+        color: AppColors.box1,
+      ),
+
+      _headerCell(
+        context,
+        title: "Monthly\nCashback",
+        color: const Color(0xFFC6E5FF),
+        isLast: true,
+      ),
+    ],
+  ),
+),
+
+                      /// Body Rows
+                      _tableRow(
+                        context,
+                        "A",
+                        "5000",
+                        "250",
+                      ),
+
+                      _tableRow(
+                        context,
+                        "B",
+                        "3000",
+                        "150",
+                      ),
+
+                      _tableRow(
+                        context,
+                        "C",
+                        "2000",
+                        "100",
+                      ),
+
+                      _tableRow(
+                        context,
+                        "D",
+                        "1000",
+                        "50",
+                      ),
+
+                      _tableRow(
+                        context,
+                        "E",
+                        "500",
+                        "25",
+                      ),
+                    ],
+                  ),
+                ),
+
+                SizedBox(height: 30.h),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Header Cell
+  Widget _headerCell(
+    BuildContext context, {
+    required String title,
+    required Color color,
+    bool isLast = false,
+  }) {
+    final theme = Theme.of(context);
+
+    return Expanded(
+      child: Container(
+        height: 72.h,
+
+        alignment: Alignment.center,
+
+        decoration: BoxDecoration(
+          color: color,
+
+          border: Border(
+            right: isLast
+                ? BorderSide.none
+                : BorderSide(
+                    color:
+                        theme.colorScheme.outline,
+                  ),
+          ),
+        ),
+
+        child: Text(
+          title,
+
+          textAlign: TextAlign.center,
+
+          style: TextStyle(
+            fontSize: 13.sp,
+            fontWeight: FontWeight.w500,
+            color: Colors.black,
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// Table Row
+  Widget _tableRow(
+    BuildContext context,
+    String grade,
+    String balance,
+    String cashback,
+  ) {
+    return Row(
+      children: [
+        _bodyCell(
+          context,
+          grade,
+        ),
+
+        _bodyCell(
+          context,
+          balance,
+        ),
+
+        _bodyCell(
+          context,
+          cashback,
+          isLast: true,
+        ),
+      ],
+    );
+  }
+
+  /// Body Cell
+  Widget _bodyCell(
+    BuildContext context,
+    String text, {
+    bool isLast = false,
+  }) {
+    final theme = Theme.of(context);
+
+    return Expanded(
+      child: Container(
+        height: 50.h,
+
+        alignment: Alignment.center,
+
+        decoration: BoxDecoration(
+          border: Border(
+            top: BorderSide(
+              color:
+                  theme.colorScheme.outline,
+            ),
+
+            right: isLast
+                ? BorderSide.none
+                : BorderSide(
+                    color:
+                        theme.colorScheme.outline,
+                  ),
+          ),
+        ),
+
+        child: Text(
+          text,
+
+          style: TextStyle(
+            fontSize: 14.sp,
+            color:
+                theme.colorScheme.onSurface,
+          ),
+        ),
+      ),
+    );
+  }
+}

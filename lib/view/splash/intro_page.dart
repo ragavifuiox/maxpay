@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
-import 'package:maxpay/core/utils/asset_images.dart';
-import 'package:maxpay/core/utils/colors.dart';
-import 'package:maxpay/core/utils/routes_path.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_navigation/src/extension_navigation.dart';
+import 'package:maxpay/core/constants/asset_images.dart';
+import 'package:maxpay/core/constants/colors.dart';
+import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/view/login/widgets/cutom_elevated_button.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
@@ -30,7 +31,7 @@ class _IntroPageState extends State<IntroPage> {
           Padding(
             padding: EdgeInsets.only(right: 8.w),
             child: TextButton.icon(
-              onPressed: () => context.go(AppRoutes.welcome),
+              onPressed: () => Get.toNamed(AppRoutes.welcome),
               iconAlignment: IconAlignment.end,
               icon: Icon(
                 Icons.skip_next,
@@ -139,33 +140,38 @@ class _IntroPageState extends State<IntroPage> {
                           );
                         }
                       : null,
-                  child: Text(
-                    'Back',
-                    style: TextStyle(
-                      fontFamily: 'Poppins',
-                      fontWeight: FontWeight.w600,
-
-                      fontSize: 16.sp,
-                      color: _currentPage > 0
-                          ? Colors.black
-                          : Colors.transparent,
+                  child: SafeArea(
+                    child: Text(
+                      'Back',
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontWeight: FontWeight.w600,
+                    
+                        fontSize: 16.sp,
+                        color: _currentPage > 0
+                            ? Colors.black
+                            : Colors.transparent,
+                      ),
                     ),
                   ),
                 ),
-                CustomElevatedButton(
-                  text: 'Next',
-                  width: 160.w,
-                  height: 54.h,
-                  onPressed: () {
-                    if (_currentPage < introData.length - 1) {
-                      _pageController.nextPage(
-                        duration: const Duration(milliseconds: 300),
-                        curve: Curves.easeInOut,
-                      );
-                    } else {
-                      context.go(AppRoutes.welcome);
-                    }
-                  },
+                SafeArea(
+                  child: CustomElevatedButton(
+                    text: 'Next',
+                    width: 160.w,
+                    height: 54.h,
+                    onPressed: () {
+                      if (_currentPage < introData.length - 1) {
+                        _pageController.nextPage(
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeInOut,
+                        );
+                      } else {
+                        Get.toNamed(AppRoutes.welcome);
+                        // context.go(AppRoutes.welcome);
+                      }
+                    },
+                  ),
                 ),
               ],
             ),

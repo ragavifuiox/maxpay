@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:maxpay/core/utils/colors.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_navigation/src/extension_navigation.dart';
+import 'package:maxpay/core/constants/colors.dart';
+import 'package:maxpay/core/constants/routes_path.dart';
 
 class SuccessRechargePage extends StatelessWidget {
   final String productName;
@@ -125,14 +128,16 @@ class SuccessRechargePage extends StatelessWidget {
                     ),
                     _buildSummaryRow('Date & Time', dateTime, context: context),
                     SizedBox(height: 10.h),
-                    Text(
-                      'View Detail',
-                      style: TextStyle(
-                        color: Colors.green,
-                        fontSize: 13.sp,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
+                   Text(
+  'View Detail',
+  style: TextStyle(
+    color: Colors.green,
+    fontSize: 13.sp,
+    fontWeight: FontWeight.w600,
+    decoration: TextDecoration.underline,
+    decorationColor: Colors.green,
+  ),
+),
                   ],
                 ),
               ),
@@ -160,7 +165,7 @@ class SuccessRechargePage extends StatelessWidget {
                 height: 50.h,
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.of(context).popUntil((route) => route.isFirst);
+                   Get.toNamed(AppRoutes.main);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.clrPrimary,

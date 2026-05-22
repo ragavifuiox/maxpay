@@ -1,7 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:maxpay/core/utils/colors.dart';
+import 'package:maxpay/core/constants/colors.dart';
 
 class EarningsChart extends StatelessWidget {
   const EarningsChart({super.key});
@@ -13,7 +13,7 @@ class EarningsChart extends StatelessWidget {
     final isDark = theme.brightness == Brightness.dark;
 
     return Container(
-      height: 200.h,
+      height: 150.h,
       width: MediaQuery.of(context).size.width.w,
 
       decoration: BoxDecoration(
