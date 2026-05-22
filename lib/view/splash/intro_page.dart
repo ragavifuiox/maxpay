@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
-import 'package:maxpay/core/utils/asset_images.dart';
-import 'package:maxpay/core/utils/colors.dart';
-import 'package:maxpay/core/utils/routes_path.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_navigation/src/extension_navigation.dart';
+import 'package:maxpay/core/constants/asset_images.dart';
+import 'package:maxpay/core/constants/colors.dart';
+import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/view/login/widgets/cutom_elevated_button.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
@@ -20,21 +21,22 @@ class _IntroPageState extends State<IntroPage> {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context);
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     return Scaffold(
-      backgroundColor: colorScheme.scaffoldBackgroundColor,
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: colorScheme.scaffoldBackgroundColor,
+        backgroundColor: theme.scaffoldBackgroundColor,
         elevation: 0,
         actions: [
           Padding(
             padding: EdgeInsets.only(right: 8.w),
             child: TextButton.icon(
-              onPressed: () => context.go(AppRoutes.welcome),
+              onPressed: () => Get.toNamed(AppRoutes.welcome),
               iconAlignment: IconAlignment.end,
               icon: Icon(
                 Icons.skip_next,
-                color: AppColors.clrSecondary,
+                color: isDark ? AppColors.fav4 : AppColors.clrSecondary,
                 size: 24.sp,
               ),
               label: Text(
@@ -43,7 +45,7 @@ class _IntroPageState extends State<IntroPage> {
                   fontFamily: 'Poppins',
                   fontWeight: FontWeight.w500,
                   fontSize: 14.sp,
-                  color: AppColors.clrSecondary,
+                  color: isDark ? AppColors.fav4 : AppColors.clrSecondary,
                   letterSpacing: -0.41,
                 ),
               ),
@@ -102,7 +104,7 @@ class _IntroPageState extends State<IntroPage> {
                             fontFamily: 'Poppins',
                             fontWeight: FontWeight.w700,
                             fontSize: 22.sp,
-                            color: colorScheme.textTheme.bodyLarge!.color,
+                            color: theme.textTheme.bodyLarge!.color,
                             letterSpacing: .01,
                           ),
                         ),
@@ -147,7 +149,7 @@ class _IntroPageState extends State<IntroPage> {
 
                       fontSize: 16.sp,
                       color: _currentPage > 0
-                          ? Colors.black
+                          ? theme.colorScheme.onSurface
                           : Colors.transparent,
                     ),
                   ),
@@ -163,7 +165,8 @@ class _IntroPageState extends State<IntroPage> {
                         curve: Curves.easeInOut,
                       );
                     } else {
-                      context.go(AppRoutes.welcome);
+                      Get.toNamed(AppRoutes.welcome);
+                      // context.go(AppRoutes.welcome);
                     }
                   },
                 ),

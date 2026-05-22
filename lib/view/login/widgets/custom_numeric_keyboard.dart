@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:maxpay/core/utils/colors.dart';
+import 'package:maxpay/core/constants/colors.dart';
 
 class CustomNumericKeyboard extends StatelessWidget {
   final Function(String) onKeyPressed;

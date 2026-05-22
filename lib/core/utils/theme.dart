@@ -1,46 +1,41 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/legacy.dart';
-import 'package:maxpay/core/utils/colors.dart';
+import 'package:get/get.dart';
+import 'package:maxpay/core/constants/colors.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-// Provider for SharedPreferences instance
-final sharedPreferencesProvider = Provider<SharedPreferences>((ref) {
-  throw UnimplementedError('Initialize in main.dart');
-});
-
-// Theme Notifier to handle persistence
-class ThemeNotifier extends StateNotifier<ThemeMode> {
+// Theme Controller to handle persistence
+class ThemeController extends GetxController {
   final SharedPreferences _prefs;
   static const _themeKey = 'app_theme_mode';
 
-  ThemeNotifier(this._prefs) : super(ThemeMode.light) {
+  final Rx<ThemeMode> _themeMode = ThemeMode.light.obs;
+  ThemeMode get themeMode => _themeMode.value;
+  bool get isDarkMode => _themeMode.value == ThemeMode.dark;
+
+  ThemeController(this._prefs) {
     _loadTheme();
   }
 
   void _loadTheme() {
     final themeIndex = _prefs.getInt(_themeKey);
     if (themeIndex != null) {
-      state = ThemeMode.values[themeIndex];
+      _themeMode.value = ThemeMode.values[themeIndex];
+      Get.changeThemeMode(_themeMode.value);
     }
   }
 
   void toggleTheme() {
-    state = state == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark;
-    _prefs.setInt(_themeKey, state.index);
+    _themeMode.value = isDarkMode ? ThemeMode.light : ThemeMode.dark;
+    _prefs.setInt(_themeKey, _themeMode.value.index);
+    Get.changeThemeMode(_themeMode.value);
   }
 
   void setTheme(ThemeMode mode) {
-    state = mode;
+    _themeMode.value = mode;
     _prefs.setInt(_themeKey, mode.index);
+    Get.changeThemeMode(mode);
   }
 }
-
-// Global Theme Provider
-final themeProvider = StateNotifierProvider<ThemeNotifier, ThemeMode>((ref) {
-  final prefs = ref.watch(sharedPreferencesProvider);
-  return ThemeNotifier(prefs);
-});
 
 class AppTheme {
   // Light Theme
@@ -58,6 +53,7 @@ class AppTheme {
       surfaceContainer: AppColors.darkbgBlack,
       outline: AppColors.clrTextgrey,
       surfaceBright: AppColors.clrplceholder,
+      onTertiaryFixedVariant: AppColors.darktextclr
     ),
     appBarTheme: const AppBarTheme(
       backgroundColor: AppColors.clrBg,
@@ -68,6 +64,7 @@ class AppTheme {
       displayLarge: TextStyle(color: AppColors.clrTextblack),
       bodyLarge: TextStyle(color: AppColors.clrTextblack),
       bodyMedium: TextStyle(color: AppColors.clrTextblack),
+      
     ),
   );
 
@@ -84,7 +81,7 @@ class AppTheme {
       surfaceContainer: AppColors.darkbgBlack,
       onSurface: AppColors.clrBg,
       onSurfaceVariant: AppColors.clrTextgrey,
-
+onTertiaryFixedVariant: AppColors.textclr,
       outline: AppColors.clrplceholder,
       surfaceBright: AppColors.darkplceholder,
     ),

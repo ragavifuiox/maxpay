@@ -24,7 +24,7 @@ class LoginTextField extends StatelessWidget {
         keyboardType: keyboardType,
         style: TextStyle(
           fontFamily: 'Lufga',
-          color: theme.colorScheme.onSurface,
+          color: theme.colorScheme.onTertiaryFixedVariant,
           fontSize: 16.sp,
           fontWeight: FontWeight.w400,
         ),
@@ -32,7 +32,7 @@ class LoginTextField extends StatelessWidget {
           hintText: hintText,
           hintStyle: TextStyle(
             fontFamily: 'Lufga',
-            color: theme.colorScheme.outline,
+            color: theme.colorScheme.onTertiaryFixedVariant,
             fontSize: 16.sp,
             fontWeight: FontWeight.w400,
           ),

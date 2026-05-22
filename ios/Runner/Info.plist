@@ -18,6 +18,10 @@
 	<string>maxpay</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
+	<key>NSCameraUsageDescription</key>
+	<string>This app needs camera access to update your profile photo.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app needs photo library access to choose your profile photo.</string>
 	<key>CFBundleShortVersionString</key>
 	<string>$(FLUTTER_BUILD_NAME)</string>
 	<key>CFBundleSignature</key>

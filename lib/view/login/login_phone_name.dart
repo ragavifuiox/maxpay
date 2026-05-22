@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
-import 'package:maxpay/core/utils/colors.dart';
+import 'package:country_code_picker/country_code_picker.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_navigation/src/extension_navigation.dart';
+import 'package:maxpay/core/constants/colors.dart';
+import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/core/utils/responsive.dart';
-import 'package:maxpay/core/utils/routes_path.dart';
-import 'package:maxpay/view/login/widgets/cutom_elevated_button.dart';
+import 'package:maxpay/global_widget/commom_button.dart';
+import 'package:maxpay/global_widget/custom_app.dart';
 import 'package:maxpay/view/login/widgets/login_textfield.dart';
 
 class LoginPhoneNamePage extends StatefulWidget {
@@ -15,7 +18,7 @@ class LoginPhoneNamePage extends StatefulWidget {
 }
 
 class _LoginPhoneNamePageState extends State<LoginPhoneNamePage> {
-  bool _isAccepted = true;
+  bool _isAccepted = false;
 
   @override
   Widget build(BuildContext context) {
@@ -25,38 +28,19 @@ class _LoginPhoneNamePageState extends State<LoginPhoneNamePage> {
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
-      appBar: AppBar(
-        backgroundColor: theme.appBarTheme.backgroundColor,
-        elevation: 0,
-        leading: IconButton(
-          onPressed: () => context.pop(),
-          icon: Icon(
-            Icons.arrow_back_ios_new,
-            color: colorScheme.onSurface,
-            size: 20.sp,
-          ),
-        ),
-        title: Text(
-          'Login',
-          style: TextStyle(
-            fontFamily: 'Poppins',
-            fontWeight: FontWeight.w600,
-            fontSize: isTablet ? 24.sp : 18.sp,
-            color: colorScheme.onSurface,
-          ),
-        ),
-        centerTitle: true,
-      ),
+      appBar: const CommonAppBar(title: "Login"),
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: isTablet ? 500 : double.infinity),
+            constraints: BoxConstraints(
+              maxWidth: isTablet ? 500 : double.infinity,
+            ),
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 24.w),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: isTablet ? 60.h : 40.h),
+                  SizedBox(height: isTablet ? 30.h : 20.h),
 
                   // Phone Number Field
                   const PhoneNUmberField(),
@@ -90,13 +74,18 @@ class _LoginPhoneNamePageState extends State<LoginPhoneNamePage> {
                               _isAccepted = value ?? false;
                             });
                           },
-                          activeColor: Colors.black,
-                          checkColor: colorScheme.onSurface,
-                          side: BorderSide(
-                            color: colorScheme.onSurface,
-                          ),
+                          fillColor: WidgetStateProperty.all(
+                            Colors.white,
+                          ), // white background
+                          checkColor: Colors.black, // black tick
+                          side: WidgetStateBorderSide.resolveWith((states) {
+                            return const BorderSide(
+                              color: Colors.black, // ALWAYS black border
+                              width: 1.5,
+                            );
+                          }),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(4.r),
+                            borderRadius: BorderRadius.circular(4),
                           ),
                         ),
                       ),
@@ -139,15 +128,24 @@ class _LoginPhoneNamePageState extends State<LoginPhoneNamePage> {
                   const Spacer(),
 
                   // Login Button
+                  // Center(
+                  //   child: CustomElevatedButton(
+                  //     text: 'Login',
+                  //     width: isTablet ? 300.w : 222.w,
+                  //     height: isTablet ? 70.h : 60.h,
+                  //     backgroundColor: AppColors.clrPrimary,
+                  //     borderRadius: 12.r,
+                  //     onPressed: () {
+                  //       Get.toNamed(AppRoutes.otpVerification);
+
+                  //     },
+                  //   ),
+                  // ),
                   Center(
-                    child: CustomElevatedButton(
-                      text: 'Login',
-                      width: isTablet ? 300.w : 222.w,
-                      height: isTablet ? 70.h : 60.h,
-                      backgroundColor: AppColors.clrPrimary,
-                      borderRadius: 12.r,
-                      onPressed: () {
-                        context.push(AppRoutes.otpVerification);
+                    child: CommonButton(
+                      title: "Login",
+                      onTap: () {
+                        Get.toNamed(AppRoutes.otpVerification);
                       },
                     ),
                   ),
@@ -163,37 +161,80 @@ class _LoginPhoneNamePageState extends State<LoginPhoneNamePage> {
   }
 }
 
-class PhoneNUmberField extends StatelessWidget {
+class PhoneNUmberField extends StatefulWidget {
   const PhoneNUmberField({super.key});
 
+  @override
+  State<PhoneNUmberField> createState() => _PhoneNUmberFieldState();
+}
+
+class _PhoneNUmberFieldState extends State<PhoneNUmberField> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isTablet = Responsive.isTablet(context);
-    
+
     return Container(
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceBright,
         borderRadius: BorderRadius.circular(8.r),
       ),
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: isTablet ? 12.h : 4.h),
+      padding: EdgeInsets.symmetric(
+        horizontal: 16.w,
+        vertical: isTablet ? 12.h : 4.h,
+      ),
       child: Row(
         children: [
-          Image.network(
-            'https://flagcdn.com/w40/in.png',
-            width: isTablet ? 32.w : 24.w,
-            errorBuilder: (context, error, stackTrace) =>
-                Icon(Icons.flag, size: isTablet ? 32.w : 24.w),
-          ),
-          SizedBox(width: 8.w),
-          Text(
-            '+91 |',
-            style: TextStyle(
+          CountryCodePicker(
+            initialSelection: 'IN',
+            favorite: const ['IN', '+91'],
+            showFlag: true,
+            showFlagDialog: true,
+            padding: EdgeInsets.zero,
+            dialogTextStyle: TextStyle(
               fontFamily: 'Lufga',
-              fontWeight: FontWeight.w500,
-              fontSize: isTablet ? 20.sp : 16.sp,
+              fontSize: isTablet ? 18.sp : 14.sp,
               color: theme.colorScheme.onSurface,
             ),
+            searchDecoration: const InputDecoration(hintText: 'Search country'),
+            builder: (countryCode) {
+              return Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(2.r),
+                    child: Image.asset(
+                      countryCode?.flagUri ?? 'flags/in.png',
+                      package: 'country_code_picker',
+                      width: isTablet ? 32.w : 24.w,
+                      height: isTablet ? 22.h : 16.h,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => Icon(
+                        Icons.flag,
+                        size: isTablet ? 32.w : 24.w,
+                        color: theme.colorScheme.onSurface,
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 8.w),
+                  Text(
+                    '${countryCode?.dialCode ?? "+91"} |',
+                    style: TextStyle(
+                      fontFamily: 'Lufga',
+                      fontWeight: FontWeight.w500,
+                      fontSize: isTablet ? 20.sp : 16.sp,
+                      color: theme.colorScheme.onSurface,
+                    ),
+                  ),
+                  SizedBox(width: 4.w),
+                  Icon(
+                    Icons.keyboard_arrow_down,
+                    color: theme.colorScheme.onSurface,
+                    size: isTablet ? 24.w : 20.w,
+                  ),
+                ],
+              );
+            },
           ),
           SizedBox(width: 8.w),
           Expanded(

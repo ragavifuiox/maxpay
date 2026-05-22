@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
-import 'package:maxpay/core/utils/asset_images.dart';
-import 'package:maxpay/core/utils/colors.dart';
+import 'package:get/route_manager.dart';
+import 'package:maxpay/core/constants/asset_images.dart';
+import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/core/utils/responsive.dart';
-import 'package:maxpay/core/utils/routes_path.dart';
+import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/view/login/widgets/cutom_elevated_button.dart';
 
 class SuccessScreen extends StatelessWidget {
@@ -22,7 +22,7 @@ class SuccessScreen extends StatelessWidget {
         backgroundColor: theme.scaffoldBackgroundColor,
         elevation: 0,
         leading: IconButton(
-          onPressed: () => context.pop(),
+          onPressed: () => navigator?.pop(),
           icon: Icon(
             Icons.arrow_back_ios_new,
             color: colorScheme.onSurface,
@@ -74,7 +74,7 @@ class SuccessScreen extends StatelessWidget {
                   text: 'Go to Home',
                   height: isTablet ? 70.h : 56.h,
                   onPressed: () {
-                    context.go(AppRoutes.main);
+                    Get.toNamed(AppRoutes.main);
                   },
                 ),
                 SizedBox(height: 40.h),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:maxpay/core/utils/colors.dart';
+import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/view/recharge/confirm_transaction_page.dart';
 
 class DTHRechargePage extends StatefulWidget {
@@ -17,6 +17,7 @@ class _DTHRechargePageState extends State<DTHRechargePage>
   String _selectedOperator = 'Airtel TV';
   Color _selectedOperatorColor = Colors.red;
   bool _showCustomerInfo = false;
+  bool _isPaymentReceived = false;
 
   final List<Map<String, dynamic>> _operators = [
     {'name': 'Airtel TV', 'color': Colors.red},
@@ -138,7 +139,6 @@ class _DTHRechargePageState extends State<DTHRechargePage>
             fontFamily: 'Poppins',
           ),
         ),
-        centerTitle: true,
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -317,6 +317,36 @@ class _DTHRechargePageState extends State<DTHRechargePage>
               ),
               SizedBox(height: 20.h),
 
+              /// 🔹 PAYMENT RECEIVED CHECKBOX
+              Row(
+                children: [
+                  SizedBox(
+                    width: 20.w,
+                    height: 20.w,
+                    child: Checkbox(
+                      value: _isPaymentReceived,
+                      onChanged: (v) {
+                        setState(() {
+                          _isPaymentReceived = v ?? false;
+                        });
+                      },
+                      activeColor: AppColors.clrPrimary,
+                      side: BorderSide(color: Colors.grey, width: 1.5.w),
+                    ),
+                  ),
+                  SizedBox(width: 8.w),
+                  Text(
+                    'Payment Received',
+                    style: TextStyle(
+                      fontSize: 13.sp,
+                      fontWeight: FontWeight.w500,
+                      color: isDark ? Colors.white70 : Colors.black87,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 5.h),
+
               if (!_showCustomerInfo) ...[
                 /// 🔹 TABS FOR PLANS
                 TabBar(
@@ -376,7 +406,7 @@ class _DTHRechargePageState extends State<DTHRechargePage>
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
         decoration: BoxDecoration(
-          color: isActive ? AppColors.clrPrimary : Colors.transparent,
+          color: isActive ? AppColors.fav5 : Colors.transparent,
           borderRadius: BorderRadius.circular(4.r),
           border: isActive
               ? null
@@ -395,15 +425,32 @@ class _DTHRechargePageState extends State<DTHRechargePage>
   }
 
   Widget _buildPlanCard(bool isDark) {
+    const price = "365";
+    final cardColor = isDark ? AppColors.darkplceholder : AppColors.lightbg2;
+    final primaryText = isDark ? Colors.white : Colors.black;
+    final dividerColor = isDark
+        ? Colors.white.withValues(alpha: 0.08)
+        : Colors.black.withValues(alpha: 0.06);
+
     return Container(
-      margin: EdgeInsets.only(bottom: 15.h),
-      padding: EdgeInsets.all(16.r),
+      margin: EdgeInsets.only(bottom: 14.h),
+      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 14.h),
       decoration: BoxDecoration(
-        color: Theme.of(context).brightness == Brightness.dark
-            ? AppColors.darkplceholder.withValues(alpha: 0.5)
-            : Colors.white,
-        borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: Colors.grey.withValues(alpha: 0.1)),
+        color: cardColor,
+        borderRadius: BorderRadius.circular(10.r),
+        border: Border.all(
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.06)
+              : Colors.black.withValues(alpha: 0.05),
+        ),
+        boxShadow: [
+          if (!isDark)
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.03),
+              blurRadius: 8,
+              offset: const Offset(0, 3),
+            ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -411,35 +458,16 @@ class _DTHRechargePageState extends State<DTHRechargePage>
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              RichText(
-                text: TextSpan(
-                  children: [
-                    TextSpan(
-                      text: '₹ ',
-                      style: TextStyle(
-                        fontSize: 18.sp,
-                        fontFamily: 'Poppins',
-                        fontWeight: FontWeight.w300,
-                        color: Theme.of(context).brightness == Brightness.dark
-                            ? Colors.white
-                            : Colors.black,
-                      ),
-                    ),
-                    TextSpan(
-                      text: "365",
-                      style: TextStyle(
-                        fontSize: 18.sp,
-                        fontFamily: 'Poppins',
-                        fontWeight: FontWeight.w600,
-                        color: Theme.of(context).brightness == Brightness.dark
-                            ? Colors.white
-                            : Colors.black,
-                      ),
-                    ),
-                  ],
+              Text(
+                "\u{20B9}$price",
+                style: TextStyle(
+                  fontSize: 15.sp,
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.w600,
+                  color: primaryText,
                 ),
               ),
-              Row(children: [_buildPlanStat("28", ' days', 'validity')]),
+              _buildPlanStat("28", ' days', 'validity'),
               GestureDetector(
                 onTap: () {
                   Navigator.push(
@@ -449,9 +477,7 @@ class _DTHRechargePageState extends State<DTHRechargePage>
                         productName: _selectedOperator,
                         operatorInitial: _selectedOperator[0],
                         operatorColor: _selectedOperatorColor,
-
-                        amount: "365",
-                        
+                        amount: "\u{20B9}$price.00",
                       ),
                     ),
                   );
@@ -463,7 +489,7 @@ class _DTHRechargePageState extends State<DTHRechargePage>
                   ),
                   decoration: BoxDecoration(
                     color: AppColors.clrPrimary,
-                    borderRadius: BorderRadius.circular(6.r),
+                    borderRadius: BorderRadius.circular(8.r),
                   ),
                   child: Text(
                     'buy',
@@ -477,12 +503,38 @@ class _DTHRechargePageState extends State<DTHRechargePage>
               ),
             ],
           ),
-          SizedBox(height: 15.h),
-          Text(
-            '• 12am-12pm Unlimited Data\n• Unlimited Calls\n• Weekend Data Rollover',
-            style: TextStyle(fontSize: 11.sp, color: Colors.grey, height: 1.5),
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 12.h),
+            child: Divider(height: 1, thickness: 1, color: dividerColor),
+          ),
+          Padding(
+            padding: EdgeInsets.only(left: 100.w),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _buildPlanBullet('12am-12pm Unlimited Data'),
+                _buildPlanBullet('Unlimited Calls'),
+                _buildPlanBullet('Weekend Data Rollover'),
+              ],
+            ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildPlanBullet(String text) {
+    return Text(
+      "\u{2022} $text",
+      style: TextStyle(
+        fontSize: 10.sp,
+        height: 1.45,
+        color: Theme.of(context).brightness == Brightness.dark
+            ? AppColors.textclr
+            : AppColors.clrTextgrey,
+        fontFamily: 'Poppins',
+        fontWeight: FontWeight.w400,
       ),
     );
   }
@@ -529,27 +581,62 @@ class _DTHRechargePageState extends State<DTHRechargePage>
   }
 
   Widget _buildCustomerInfoSection(bool isDark) {
+    if (isDark) {
+      return _buildDarkCustomerInfoSection();
+    }
+
+    final labelBgColor = isDark
+        ? AppColors.darkplceholder
+        : const Color(0xFFF8F9FF);
+    final valueBgColor = isDark
+        ? AppColors.darkplceholder.withValues(alpha: 0.85)
+        : const Color(0xFFFFDEE5);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildInputLabel('Customer Info'),
+        _buildInputLabel(''),
         Container(
           width: double.infinity,
-          padding: EdgeInsets.all(15.r),
-          decoration: BoxDecoration(
-            color: isDark ? AppColors.darkplceholder : const Color(0xFFFFEBEB),
-            borderRadius: BorderRadius.circular(12.r),
-          ),
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(12.r)),
+          clipBehavior: Clip.antiAlias,
           child: Column(
             children: [
-              _buildInfoRow('Customer Name', 'Alagan', isDark),
-              _buildInfoRow('Current Balance', '1.98', isDark),
-              _buildInfoRow('Monthly Transaction', '641', isDark),
-              _buildInfoRow('Next Transaction', '25-Jul-2025', isDark),
+              _buildInfoRow(
+                'Customer Name',
+                'Alagan',
+                isDark,
+                labelBgColor,
+                valueBgColor,
+                isMultiLine: false,
+              ),
+              _buildInfoRow(
+                'Current Balance',
+                '1.98',
+                isDark,
+                labelBgColor,
+                valueBgColor,
+              ),
+              _buildInfoRow(
+                'Monthly Transaction',
+                '641',
+                isDark,
+                labelBgColor,
+                valueBgColor,
+              ),
+              _buildInfoRow(
+                'Next Transaction',
+                '25-Jul-2025',
+                isDark,
+                labelBgColor,
+                valueBgColor,
+              ),
               _buildInfoRow(
                 'Plan Name',
                 'Tamil Basic Package Subscription 3 Months Renewal',
                 isDark,
+                labelBgColor,
+                valueBgColor,
                 isMultiLine: true,
               ),
             ],
@@ -559,45 +646,181 @@ class _DTHRechargePageState extends State<DTHRechargePage>
     );
   }
 
+  Widget _buildDarkCustomerInfoSection() {
+    const details = [
+      ('Customer Name', 'Alagan'),
+      ('Current Balance', '1.98'),
+      ('Monthly Transaction', '641'),
+      ('Next Transaction', '25-Jul-2025'),
+      ('Plan Name', 'Tamil Basic Package\nSubscription 3 Months\nRenewal'),
+    ];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: EdgeInsets.only(left: 2.w),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Customer Info',
+                style: TextStyle(
+                  fontFamily: 'Poppins',
+                  fontSize: 13.sp,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.orange,
+                ),
+              ),
+              SizedBox(height: 5.h),
+              Container(width: 105.w, height: 2, color: Colors.orange),
+            ],
+          ),
+        ),
+        SizedBox(height: 18.h),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(7.r),
+          child: Container(
+            width: double.infinity,
+            color: AppColors.darkplceholder,
+            child: IntrinsicHeight(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Expanded(
+                    flex: 43,
+                    child: Padding(
+                      padding: EdgeInsets.fromLTRB(8.w, 10.h, 6.w, 10.h),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          for (final item in details)
+                            _buildDarkInfoText(
+                              item.$1,
+                              bottomPadding: item == details.last ? 0 : 14.h,
+                            ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 10.h),
+                    child: Column(
+                      children: [
+                        for (final item in details)
+                          _buildDarkInfoText(
+                            ':',
+                            bottomPadding: item == details.last ? 0 : 14.h,
+                          ),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    flex: 51,
+                    child: Container(
+                      color: const Color(0xFF42465B),
+                      padding: EdgeInsets.fromLTRB(24.w, 10.h, 10.w, 10.h),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          for (final item in details)
+                            _buildDarkInfoText(
+                              item.$2,
+                              bottomPadding: item == details.last ? 0 : 14.h,
+                              fontWeight: FontWeight.w600,
+                            ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDarkInfoText(
+    String text, {
+    required double bottomPadding,
+    FontWeight fontWeight = FontWeight.w500,
+  }) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: bottomPadding),
+      child: Text(
+        text,
+        style: TextStyle(
+          fontFamily: 'Poppins',
+          fontSize: 12.sp,
+          height: 1.35,
+          fontWeight: fontWeight,
+          color: AppColors.textclr,
+        ),
+      ),
+    );
+  }
+
   Widget _buildInfoRow(
     String label,
     String value,
-    bool isDark, {
+    bool isDark,
+    Color labelBgColor,
+    Color valueBgColor, {
     bool isMultiLine = false,
   }) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: 12.h),
+    return IntrinsicHeight(
       child: Row(
-        crossAxisAlignment: isMultiLine
-            ? CrossAxisAlignment.start
-            : CrossAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          SizedBox(
-            width: 120.w,
+          Container(
+            width: 155.w,
+            color: labelBgColor,
+            padding: EdgeInsets.fromLTRB(10.w, 8.h, 6.w, 8.h),
+            alignment: isMultiLine ? Alignment.topLeft : Alignment.centerLeft,
             child: Text(
               label,
               style: TextStyle(
-                fontSize: 13.sp,
-                fontWeight: FontWeight.w600,
+                fontSize: 12.sp,
+                fontWeight: FontWeight.w400,
                 color: isDark ? Colors.white70 : Colors.black87,
               ),
             ),
           ),
-          Text(
-            ' : ',
-            style: TextStyle(
-              fontSize: 13.sp,
-              fontWeight: FontWeight.bold,
-              color: isDark ? Colors.white70 : Colors.black87,
-            ),
-          ),
           Expanded(
-            child: Text(
-              value,
-              style: TextStyle(
-                fontSize: 13.sp,
-                fontWeight: FontWeight.w500,
-                color: isDark ? Colors.white : Colors.black,
+            child: Container(
+              color: valueBgColor,
+              padding: EdgeInsets.fromLTRB(6.w, 8.h, 10.w, 8.h),
+              child: IntrinsicHeight(
+                child: Row(
+                  crossAxisAlignment: isMultiLine
+                      ? CrossAxisAlignment.start
+                      : CrossAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(right: 10.w),
+                      child: Text(
+                        ':',
+                        style: TextStyle(
+                          fontSize: 13.sp,
+                          fontWeight: FontWeight.bold,
+                          color: isDark ? Colors.white70 : Colors.black87,
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Text(
+                        value,
+                        style: TextStyle(
+                          fontSize: 12.sp,
+                          fontWeight: FontWeight.w500,
+                          color: isDark ? Colors.white : Colors.black,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

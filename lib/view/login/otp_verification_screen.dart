@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
-import 'package:maxpay/core/utils/colors.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_navigation/src/extension_navigation.dart';
+import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/core/utils/responsive.dart';
-import 'package:maxpay/core/utils/routes_path.dart';
+import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/view/login/widgets/custom_numeric_keyboard.dart';
 import 'package:maxpay/view/login/widgets/cutom_elevated_button.dart';
 import 'package:pinput/pinput.dart';
@@ -66,7 +67,7 @@ class _ScreenOtpVerificationState extends State<ScreenOtpVerification> {
                   child: Align(
                     alignment: Alignment.centerLeft,
                     child: GestureDetector(
-                      onTap: () => context.pop(),
+                      onTap: () => navigator?.pop(),
                       child: Container(
                         width: 45.w,
                         height: 45.w,
@@ -181,7 +182,7 @@ class _ScreenOtpVerificationState extends State<ScreenOtpVerification> {
                             fontFamily: 'Poppins',
                             fontWeight: FontWeight.w500,
                             fontSize: isTablet ? 16.sp : 14.sp,
-                            color: AppColors.clrPrimary,
+                            color: AppColors.fav2,
                           ),
                         ),
                       ],
@@ -198,7 +199,7 @@ class _ScreenOtpVerificationState extends State<ScreenOtpVerification> {
                           child: CustomElevatedButton(
                             text: 'Verify OTP',
                             onPressed: () {
-                              context.push(AppRoutes.biometricsIntro);
+                              Get.toNamed(AppRoutes.biometricsIntro);
                             },
                           ),
                         )

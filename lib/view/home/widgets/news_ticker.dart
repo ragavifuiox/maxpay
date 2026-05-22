@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:maxpay/core/utils/colors.dart';
+import 'package:maxpay/core/constants/colors.dart';
 
 class NewsTicker extends StatefulWidget {
   const NewsTicker({super.key});
@@ -75,7 +75,9 @@ class _NewsTickerState extends State<NewsTicker> {
       decoration: BoxDecoration(
         color: isDark ? colorScheme.surface : Colors.white,
         border: Border.all(
-          color: AppColors.blueColor.withValues(alpha: 0.5),
+          color: theme.brightness == Brightness.light
+                    ? colorScheme.primary
+                    : AppColors.sim2,
           width: 1.5,
         ),
         borderRadius: BorderRadius.circular(4.r),
@@ -89,7 +91,9 @@ class _NewsTickerState extends State<NewsTicker> {
               clipper: NewsClipper(),
               child: Container(
                 width: 100.w,
-                color: const Color(0xFF2EFEA8), // Vibrant Neon Green
+                color: theme.brightness == Brightness.light
+                    ? colorScheme.primary
+                    : AppColors.sim2,
                 alignment: Alignment.center,
                 padding: EdgeInsets.only(right: 15.w),
                 child: Text(

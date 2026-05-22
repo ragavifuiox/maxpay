@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/route_manager.dart';
 import 'package:go_router/go_router.dart';
-import 'package:maxpay/core/utils/colors.dart';
+import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/core/utils/responsive.dart';
-import 'package:maxpay/core/utils/routes_path.dart';
+import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/view/login/widgets/custom_numeric_keyboard.dart';
 import 'package:maxpay/view/login/widgets/cutom_elevated_button.dart';
 import 'package:pinput/pinput.dart';
@@ -23,8 +24,10 @@ class _PinCodeCreationPageState extends State<PinCodeCreationPage> {
     setState(() {
       if (key == 'backspace') {
         if (_pinController.text.isNotEmpty) {
-          _pinController.text =
-              _pinController.text.substring(0, _pinController.text.length - 1);
+          _pinController.text = _pinController.text.substring(
+            0,
+            _pinController.text.length - 1,
+          );
         }
       } else if (key == 'submit') {
         if (_pinController.text.length == 4) {
@@ -51,13 +54,19 @@ class _PinCodeCreationPageState extends State<PinCodeCreationPage> {
         backgroundColor: theme.scaffoldBackgroundColor,
         elevation: 0,
         leading: IconButton(
-          onPressed: () => context.pop(),
-          icon: Icon(Icons.arrow_back_ios_new, color: colorScheme.onSurface, size: 20.sp),
+          onPressed: () => navigator?.pop(),
+          icon: Icon(
+            Icons.arrow_back_ios_new,
+            color: colorScheme.onSurface,
+            size: 20.sp,
+          ),
         ),
       ),
       body: Center(
         child: ConstrainedBox(
-          constraints: BoxConstraints(maxWidth: isTablet ? 500 : double.infinity),
+          constraints: BoxConstraints(
+            maxWidth: isTablet ? 500 : double.infinity,
+          ),
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 24.w),
             child: Column(
@@ -74,7 +83,7 @@ class _PinCodeCreationPageState extends State<PinCodeCreationPage> {
                   ),
                 ),
                 SizedBox(height: 40.h),
-                
+
                 /// 🔹 PIN INPUT (Pinput)
                 Center(
                   child: Pinput(
@@ -108,7 +117,10 @@ class _PinCodeCreationPageState extends State<PinCodeCreationPage> {
                       decoration: BoxDecoration(
                         color: AppColors.clrPrimary,
                         borderRadius: BorderRadius.circular(10.r),
-                        border: Border.all(color: colorScheme.onSurface, width: 2),
+                        border: Border.all(
+                          color: colorScheme.onSurface,
+                          width: 2,
+                        ),
                       ),
                     ),
                   ),
@@ -125,7 +137,7 @@ class _PinCodeCreationPageState extends State<PinCodeCreationPage> {
                           children: [
                             Expanded(
                               child: TextButton(
-                                onPressed: () => context.pop(),
+                                onPressed: () => navigator?.pop(),
                                 child: Text(
                                   'Cancel',
                                   style: TextStyle(
@@ -142,7 +154,9 @@ class _PinCodeCreationPageState extends State<PinCodeCreationPage> {
                               child: CustomElevatedButton(
                                 text: 'Add',
                                 height: isTablet ? 70.h : 50.h,
-                                onPressed: () => context.push(AppRoutes.successScreen),
+                                onPressed: () {
+                                  Get.toNamed(AppRoutes.successScreen);
+                                },
                               ),
                             ),
                           ],

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:go_router/go_router.dart';
-import 'package:maxpay/core/utils/colors.dart';
-import 'package:maxpay/core/utils/routes_path.dart';
+import 'package:get/route_manager.dart';
+import 'package:maxpay/core/constants/colors.dart';
+import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/view/login/widgets/cutom_elevated_button.dart';
 
 class BiometricsScanningPage extends StatelessWidget {
@@ -16,7 +16,7 @@ class BiometricsScanningPage extends StatelessWidget {
         backgroundColor: AppColors.clrBg,
         elevation: 0,
         leading: IconButton(
-          onPressed: () => context.pop(),
+          onPressed: () => navigator?.pop(),
           icon: Icon(
             Icons.arrow_back_ios_new,
             color: Colors.black,
@@ -62,7 +62,7 @@ class BiometricsScanningPage extends StatelessWidget {
               children: [
                 Expanded(
                   child: TextButton(
-                    onPressed: () => context.pop(),
+                    onPressed: () => Get.back(),
                     child: Text(
                       'Cancel',
                       style: TextStyle(
@@ -79,7 +79,7 @@ class BiometricsScanningPage extends StatelessWidget {
                   child: CustomElevatedButton(
                     text: 'Add',
                     height: 50.h,
-                    onPressed: () => context.push(AppRoutes.successScreen),
+                    onPressed: () => Get.toNamed(AppRoutes.successScreen),
                   ),
                 ),
               ],

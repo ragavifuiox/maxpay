@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:maxpay/core/utils/colors.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_navigation/src/extension_navigation.dart';
+import 'package:maxpay/core/constants/colors.dart';
+import 'package:maxpay/core/constants/routes_path.dart';
+import 'package:maxpay/global_widget/commom_button.dart';
 
 class SuccessRechargePage extends StatelessWidget {
   final String productName;
@@ -125,12 +129,15 @@ class SuccessRechargePage extends StatelessWidget {
                     ),
                     _buildSummaryRow('Date & Time', dateTime, context: context),
                     SizedBox(height: 10.h),
-                    Text(
-                      'View Detail',
-                      style: TextStyle(
-                        color: Colors.green,
-                        fontSize: 13.sp,
-                        fontWeight: FontWeight.w600,
+                    GestureDetector(
+                      onTap: () => Get.toNamed(AppRoutes.view),
+                      child: Text(
+                        'View Detail',
+                        style: TextStyle(
+                          color: Colors.green,
+                          fontSize: 13.sp,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                   ],
@@ -155,28 +162,10 @@ class SuccessRechargePage extends StatelessWidget {
               const Spacer(),
 
               /// 🔹 DONE BUTTON
-              SizedBox(
-                width: double.infinity,
-                height: 50.h,
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).popUntil((route) => route.isFirst);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.clrPrimary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.r),
-                    ),
-                  ),
-                  child: Text(
-                    'Done',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16.sp,
-                      fontFamily: 'Lufga',
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
+              Center(
+                child: CommonButton(
+                  title: 'Done',
+                  onTap: () => Get.offAllNamed(AppRoutes.main),
                 ),
               ),
               SizedBox(height: 40.h),

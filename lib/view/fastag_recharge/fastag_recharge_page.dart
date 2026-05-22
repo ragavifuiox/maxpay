@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:maxpay/core/utils/colors.dart';
+import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/view/recharge/confirm_transaction_page.dart';
 
 class FastagRechargePage extends StatefulWidget {
@@ -91,7 +91,9 @@ class _FastagRechargePageState extends State<FastagRechargePage> {
                     /// 🔹 VEHICLE NUMBER INPUT
                     Container(
                       decoration: BoxDecoration(
-                        color: isDark ? AppColors.darkplceholder : AppColors.clrplceholder,
+                        color: isDark
+                            ? AppColors.darkplceholder
+                            : AppColors.clrplceholder,
                         borderRadius: BorderRadius.circular(10.r),
                       ),
                       child: TextField(
@@ -103,7 +105,10 @@ class _FastagRechargePageState extends State<FastagRechargePage> {
                         ),
                         decoration: InputDecoration(
                           hintText: 'KL 01 VB 6574',
-                          hintStyle: TextStyle(color: Colors.grey, fontSize: 14.sp),
+                          hintStyle: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 14.sp,
+                          ),
                           border: InputBorder.none,
                           contentPadding: EdgeInsets.symmetric(
                             horizontal: 16.w,
@@ -125,20 +130,27 @@ class _FastagRechargePageState extends State<FastagRechargePage> {
                     /// 🔹 AMOUNT INPUT
                     Container(
                       decoration: BoxDecoration(
-                        color: isDark ? AppColors.darkplceholder : AppColors.clrplceholder,
+                        color: isDark
+                            ? AppColors.darkplceholder
+                            : AppColors.clrplceholder,
                         borderRadius: BorderRadius.circular(10.r),
                       ),
                       child: TextField(
                         controller: _amountController,
                         keyboardType: TextInputType.number,
-                        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                        ],
                         style: TextStyle(
                           fontSize: 14.sp,
                           color: isDark ? Colors.white : Colors.black,
                         ),
                         decoration: InputDecoration(
                           hintText: '₹ 1000.00',
-                          hintStyle: TextStyle(color: Colors.grey, fontSize: 14.sp),
+                          hintStyle: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 14.sp,
+                          ),
                           border: InputBorder.none,
                           contentPadding: EdgeInsets.symmetric(
                             horizontal: 16.w,
@@ -167,8 +179,10 @@ class _FastagRechargePageState extends State<FastagRechargePage> {
                           productName: 'FASTag',
                           operatorInitial: 'F',
                           operatorColor: Colors.blue,
-                          transactionNo: 'TXN${DateTime.now().millisecondsSinceEpoch}',
-                          amount: '₹${_amountController.text.isEmpty ? "1000.00" : _amountController.text}',
+                          transactionNo:
+                              'TXN${DateTime.now().millisecondsSinceEpoch}',
+                          amount:
+                              '₹${_amountController.text.isEmpty ? "1000.00" : _amountController.text}',
                         ),
                       ),
                     );

@@ -1,26 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:go_router/go_router.dart';
-import 'package:maxpay/core/utils/asset_images.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_navigation/src/extension_navigation.dart' show GetNavigation;
+import 'package:maxpay/core/constants/asset_images.dart';
+import 'package:maxpay/core/constants/routes_path.dart';
 
-import 'package:maxpay/core/utils/routes_path.dart';
-
-class MainSplashScreen extends ConsumerStatefulWidget {
+class MainSplashScreen extends StatefulWidget {
   const MainSplashScreen({super.key});
 
   @override
-  ConsumerState<MainSplashScreen> createState() => _MainSplashScreenState();
+  State<MainSplashScreen> createState() => _MainSplashScreenState();
 }
 
-class _MainSplashScreenState extends ConsumerState<MainSplashScreen> {
+class _MainSplashScreenState extends State<MainSplashScreen> {
   @override
   void initState() {
     super.initState();
     Future.delayed(const Duration(seconds: 2), () {
       if (mounted) {
-        context.go(AppRoutes.intro);
+       Get.offAllNamed(AppRoutes.intro);
       }
     });
   }

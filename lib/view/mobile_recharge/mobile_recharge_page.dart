@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:maxpay/core/utils/colors.dart';
+import 'package:maxpay/core/constants/colors.dart';
+import 'package:maxpay/global_widget/custom_app.dart';
 import 'package:maxpay/view/recharge/confirm_transaction_page.dart';
 
 class MobileRechargePage extends StatefulWidget {
@@ -16,6 +17,8 @@ class _MobileRechargePageState extends State<MobileRechargePage>
   late TabController _tabController;
   String _selectedOperator = 'Jio';
   Color _selectedOperatorColor = Colors.red;
+  bool _isPlanSelected = true;
+  bool _isPaymentReceived = false;
 
   final List<Map<String, dynamic>> _operators = [
     {'name': 'Jio', 'color': Colors.red},
@@ -116,29 +119,7 @@ class _MobileRechargePageState extends State<MobileRechargePage>
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        surfaceTintColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios,
-            color: isDark ? Colors.white : Colors.black,
-            size: 18.sp,
-          ),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: Text(
-          'Mobile Recharge',
-          style: TextStyle(
-            color: isDark ? Colors.white : Colors.black,
-            fontSize: 16.sp,
-            fontWeight: FontWeight.w700,
-            fontFamily: 'Poppins',
-          ),
-        ),
-        centerTitle: true,
-      ),
+      appBar: const CommonAppBar(title: "Mobile Recharge"),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -337,12 +318,19 @@ class _MobileRechargePageState extends State<MobileRechargePage>
               ),
               SizedBox(height: 15.h),
               Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: .end,
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  _buildSmallButton('Plan'),
+                  _buildSmallButton(
+                    'Plan',
+                    isSelected: _isPlanSelected,
+                    onTap: () => setState(() => _isPlanSelected = true),
+                  ),
                   SizedBox(width: 5.w),
-                  _buildSmallButton('Offer', isOutline: true),
+                  _buildSmallButton(
+                    'Offer',
+                    isSelected: !_isPlanSelected,
+                    onTap: () => setState(() => _isPlanSelected = false),
+                  ),
                 ],
               ),
               SizedBox(height: 15.h),
@@ -354,8 +342,12 @@ class _MobileRechargePageState extends State<MobileRechargePage>
                     width: 20.w,
                     height: 20.w,
                     child: Checkbox(
-                      value: true,
-                      onChanged: (v) {},
+                      value: _isPaymentReceived,
+                      onChanged: (v) {
+                        setState(() {
+                          _isPaymentReceived = v ?? false;
+                        });
+                      },
                       activeColor: AppColors.clrPrimary,
                       side: BorderSide(color: Colors.grey, width: 1.5.w),
                     ),
@@ -380,13 +372,13 @@ class _MobileRechargePageState extends State<MobileRechargePage>
                 indicatorColor: Colors.orange,
                 labelColor: Colors.orange,
                 unselectedLabelColor: Colors.grey,
-
+                tabAlignment: TabAlignment.start,
                 labelStyle: TextStyle(
                   fontSize: 13.sp,
                   fontWeight: FontWeight.w600,
                 ),
                 dividerColor: Colors.transparent,
-                tabAlignment: .start,
+                // tabAlignment: .start,
                 tabs: const [
                   Tab(text: 'Entertainment Plan'),
                   Tab(text: 'Unlimited'),
@@ -427,24 +419,29 @@ class _MobileRechargePageState extends State<MobileRechargePage>
     );
   }
 
-  Widget _buildSmallButton(String label, {bool isOutline = false}) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
-      decoration: BoxDecoration(
-        color: isOutline
-            ? Colors.transparent
-            : Colors.blue.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(6.r),
-        border: isOutline
-            ? Border.all(color: Colors.blue.withValues(alpha: 0.5))
-            : null,
-      ),
-      child: Text(
-        label,
-        style: TextStyle(
-          color: Colors.blue,
-          fontSize: 12.sp,
-          fontWeight: FontWeight.w600,
+  Widget _buildSmallButton(
+    String label, {
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+        decoration: BoxDecoration(
+          color: isSelected ? AppColors.fav5 : Colors.transparent,
+          borderRadius: BorderRadius.circular(6.r),
+          border: !isSelected
+              ? Border.all(color: Colors.grey.withValues(alpha: 0.5))
+              : null,
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            color: isSelected ? Colors.white : Colors.grey,
+            fontSize: 12.sp,
+            fontWeight: FontWeight.w600,
+          ),
         ),
       ),
     );
@@ -461,7 +458,7 @@ class _MobileRechargePageState extends State<MobileRechargePage>
       decoration: BoxDecoration(
         color: Theme.of(context).brightness == Brightness.dark
             ? AppColors.darkplceholder.withValues(alpha: 0.5)
-            : Colors.white,
+            : AppColors.lightbg2,
         borderRadius: BorderRadius.circular(12.r),
         border: Border.all(color: Colors.grey.withValues(alpha: 0.1)),
       ),
@@ -541,12 +538,27 @@ class _MobileRechargePageState extends State<MobileRechargePage>
             ],
           ),
           SizedBox(height: 15.h),
-          Text(
-            '• 12am-12pm Unlimited Data\n• Unlimited Calls\n• Weekend Data Rollover',
-            style: TextStyle(fontSize: 11.sp, color: Colors.grey, height: 1.5),
+          Padding(
+            padding: EdgeInsets.only(left: 100.w),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _buildPlanBullet('12am-12pm Unlimited Data'),
+                _buildPlanBullet('Unlimited Calls'),
+                _buildPlanBullet('Weekend Data Rollover'),
+              ],
+            ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildPlanBullet(String text) {
+    return Text(
+      "• $text",
+      style: TextStyle(fontSize: 11.sp, color: Colors.grey, height: 1.5),
     );
   }
 
