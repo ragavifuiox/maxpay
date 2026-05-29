@@ -26,20 +26,32 @@ class WalletBalance {
 }
 
 class Data {
-  String? userId;
-  int? balance;
 
-  Data({this.userId, this.balance});
+  String? userId;
+  double? balance;
+
+  Data({
+    this.userId,
+    this.balance,
+  });
 
   Data.fromJson(Map<String, dynamic> json) {
+
     userId = json['user_id'];
-    balance = json['balance'];
+
+    balance = double.tryParse(
+      json['balance'].toString(),
+    );
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['user_id'] = this.userId;
-    data['balance'] = this.balance;
+
+    final Map<String, dynamic> data = {};
+
+    data['user_id'] = userId;
+
+    data['balance'] = balance;
+
     return data;
   }
 }

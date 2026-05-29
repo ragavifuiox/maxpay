@@ -1,35 +1,55 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:maxpay/controllers/support_controller.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
 
 class SupportScreen extends StatelessWidget {
-  const SupportScreen({super.key});
+  SupportScreen({super.key});
+
+  final SupportController controller =
+      Get.find<SupportController>();
 
   @override
   Widget build(BuildContext context) {
-    final List<Map<String, String>> supportList = [
-      {
-        "name": "Admin",
-        "phone": "+91 0005451152",
-      },
-      {
-        "name": "Sub Admin",
-        "phone": "+91 0005451153",
-      },
-    ];
-
     return Scaffold(
       backgroundColor: Colors.white,
 
-      // Your global appbar already created
-      // Example:
-      appBar: const CommonAppBar(title: "Support"),
+      appBar: const CommonAppBar(
+        title: "Support",
+      ),
 
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: ListView.separated(
+      body: Obx(() {
+
+        /// Loading
+        if (controller.isLoading.value) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+
+        /// API DATA
+        final supportList =
+            controller.supportData.value?.data ?? [];
+
+        /// Empty
+        if (supportList.isEmpty) {
+          return const Center(
+            child: Text(
+              "No Support Data Found",
+            ),
+          );
+        }
+
+        return ListView.separated(
+          padding: const EdgeInsets.all(16),
+
           itemCount: supportList.length,
-          separatorBuilder: (_, __) => const SizedBox(height: 16),
+
+          separatorBuilder: (_, __) =>
+              const SizedBox(height: 16),
+
           itemBuilder: (context, index) {
+
             final item = supportList[index];
 
             return Container(
@@ -37,12 +57,17 @@ class SupportScreen extends StatelessWidget {
                 horizontal: 14,
                 vertical: 14,
               ),
+
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(14),
+
+                borderRadius:
+                    BorderRadius.circular(14),
+
                 border: Border.all(
                   color: Colors.grey.shade200,
                 ),
+
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withOpacity(0.03),
@@ -51,11 +76,16 @@ class SupportScreen extends StatelessWidget {
                   ),
                 ],
               ),
+
               child: Row(
                 children: [
+
+                  /// Profile Icon
                   CircleAvatar(
                     radius: 24,
-                    backgroundColor: Colors.grey.shade200,
+                    backgroundColor:
+                        Colors.grey.shade200,
+
                     child: Icon(
                       Icons.person,
                       color: Colors.grey.shade600,
@@ -64,59 +94,81 @@ class SupportScreen extends StatelessWidget {
 
                   const SizedBox(width: 14),
 
+                  /// Name + Phone
                   Expanded(
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment:
+                          CrossAxisAlignment.start,
+
                       children: [
+
                         Text(
-                          item["name"] ?? "",
+                          item.name ?? "",
                           style: const TextStyle(
                             fontSize: 16,
-                            fontWeight: FontWeight.w600,
+                            fontWeight:
+                                FontWeight.w600,
                             color: Colors.black87,
                           ),
                         ),
 
                         const SizedBox(height: 4),
-
+                        
                         Text(
-                          item["phone"] ?? "",
+                          item.phoneNumber?? "",
                           style: TextStyle(
                             fontSize: 14,
-                            color: Colors.grey.shade600,
+                            color:
+                                Colors.grey.shade600,
                           ),
                         ),
                       ],
                     ),
                   ),
 
+                  /// Call Button
                   SizedBox(
                     height: 36,
+
                     child: ElevatedButton.icon(
+
                       onPressed: () {
-                        // Call functionality
+
+                        /// CALL FUNCTION
                       },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xff0EA5C6),
+
+                      style:
+                          ElevatedButton.styleFrom(
+                        backgroundColor:
+                            const Color(0xff0EA5C6),
+
                         elevation: 0,
-                        padding: const EdgeInsets.symmetric(
+
+                        padding:
+                            const EdgeInsets.symmetric(
                           horizontal: 14,
                         ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
+
+                        shape:
+                            RoundedRectangleBorder(
+                          borderRadius:
+                              BorderRadius.circular(8),
                         ),
                       ),
+
                       icon: const Icon(
                         Icons.call,
                         size: 16,
                         color: Colors.white,
                       ),
+
                       label: const Text(
-                        "call",
+                        "Call",
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 13,
-                          fontWeight: FontWeight.w500,
+                          fontWeight:
+                              FontWeight.w500,
                         ),
                       ),
                     ),
@@ -125,8 +177,8 @@ class SupportScreen extends StatelessWidget {
               ),
             );
           },
-        ),
-      ),
+        );
+      }),
     );
   }
 }

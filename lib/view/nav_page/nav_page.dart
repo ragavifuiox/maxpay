@@ -7,6 +7,7 @@ import 'package:maxpay/view/nav_page/navbar.dart';
 import 'package:maxpay/view/nav_page/navbar_provider.dart';
 import 'package:maxpay/view/report/report_page.dart';
 import 'package:maxpay/view/settings/settings_page.dart';
+import 'package:maxpay/view/wallet_request/wallet_request_screen.dart';
 
 class NavPageScreen extends StatefulWidget {
   const NavPageScreen({super.key});
@@ -39,18 +40,9 @@ final List<Widget> screens = [
   const HomePageScreen(),
   const ReportPage(),
 
-  const Scaffold(
-    body: Center(
-      child: Text("Request Screen"),
-    ),
-  ),
-
-  const Scaffold(
-    body: Center(
-      child: Text("My QR Screen"),
-    ),
-  ),
-
+ WalletRequestScreen(),
+ 
+const ReportPage(),
   const SettingsPage(),
 ];
 

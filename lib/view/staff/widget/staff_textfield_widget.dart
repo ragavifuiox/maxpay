@@ -4,10 +4,14 @@ import 'package:maxpay/core/constants/colors.dart';
 
 class StaffTextFieldWidget extends StatelessWidget {
   final String hintText;
+  final TextEditingController? controller;
+  final TextInputType? keyboardType;
 
   const StaffTextFieldWidget({
     super.key,
     required this.hintText,
+    this.controller,
+    this.keyboardType,
   });
 
   @override
@@ -15,22 +19,28 @@ class StaffTextFieldWidget extends StatelessWidget {
     final theme = Theme.of(context);
 
     return TextFormField(
+      controller: controller,
+      keyboardType: keyboardType,
+
       style: TextStyle(
         color: theme.colorScheme.onSurface,
         fontSize: 14.sp,
       ),
+
       decoration: InputDecoration(
         hintText: hintText,
+
         hintStyle: TextStyle(
           color: theme.colorScheme.outline,
           fontSize: 14.sp,
         ),
 
         filled: true,
-       
-fillColor: theme.brightness == Brightness.dark
-    ? AppColors.darkplceholder
-    : AppColors.background,
+
+        fillColor: theme.brightness == Brightness.dark
+            ? AppColors.darkplceholder
+            : AppColors.background,
+
         contentPadding: EdgeInsets.symmetric(
           horizontal: 14.w,
           vertical: 14.h,

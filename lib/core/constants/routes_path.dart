@@ -13,6 +13,7 @@ class AppRoutes {
   static const String main = '/main';
   static const String myearning = '/myearning';
   static const String withdrawrequest = '/withdrawrequest';
+  static const String walletcredit = '/walletcredit';
   static const String refund = '/refund';
   static const String cashback='/cashback';
   static const String profile='/profile';
@@ -34,4 +35,6 @@ class AppRoutes {
   static const String webloginqr='/webloginqr';
   static const String dispute='/dispute';
   static const String customertrans='/customertrans';
+  static const String walletrequest='/walletrequest';
+  static const String addstaff='/addstaff';
 }

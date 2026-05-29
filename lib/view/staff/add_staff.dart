@@ -1,15 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:maxpay/core/constants/routes_path.dart';
+import 'package:maxpay/controllers/add_staff_controller.dart';
+import 'package:maxpay/core/constants/snackbar.dart';
 import 'package:maxpay/core/utils/texthelper.dart';
 import 'package:maxpay/global_widget/commom_button.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
+
 import 'package:maxpay/view/staff/widget/staff_textfield_widget.dart';
 
+class AddStaffPage extends GetView<AddStaffController> {
+  AddStaffPage({super.key});
 
-class AddStaffPage extends StatelessWidget {
-  const AddStaffPage({super.key});
+  final TextEditingController mobileController =
+      TextEditingController();
+
+  final TextEditingController nameController =
+      TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -22,61 +29,81 @@ class AddStaffPage extends StatelessWidget {
 
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 24.w),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: 30.h),
+        child: GetBuilder<AddStaffController>(
+          builder: (_) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 30.h),
 
-            Text(
-              "RegMob No",
-              style:TextHelper.max17(context)
-            ),
+                Text(
+                  "RegMob No",
+                  style: TextHelper.max17(context),
+                ),
 
-            SizedBox(height: 10.h),
+                SizedBox(height: 10.h),
 
-            const StaffTextFieldWidget(
-              hintText: "Enter Mobile No",
-            ),
+                StaffTextFieldWidget(
+                  hintText: "Enter Mobile No",
+                  controller: mobileController,
+                  keyboardType: TextInputType.phone,
+                ),
 
-            SizedBox(height: 22.h),
+                SizedBox(height: 22.h),
 
-            Text(
-              "Name",
-              style: TextHelper.max17(context),
-            ),
+                Text(
+                  "Name",
+                  style: TextHelper.max17(context),
+                ),
 
-            SizedBox(height: 10.h),
+                SizedBox(height: 10.h),
 
-            const StaffTextFieldWidget(
-              hintText: "William Shakespeare",
-            ),
+                StaffTextFieldWidget(
+                  hintText: "Enter Name",
+                  controller: nameController,
+                ),
 
-            SizedBox(height: 22.h),
+             
 
-            Text(
-              "User ID",
-              style: TextHelper.max17(context),
-            ),
+               
 
-            SizedBox(height: 10.h),
+                const Spacer(),
 
-            const StaffTextFieldWidget(
-              hintText: "PL0011AD",
-            ),
+                Center(
+                  child: CommonButton(
+                    title: controller.isLoading
+                        ? "Loading..."
+                        : "Submit",
+                    onTap: () {
 
-            const Spacer(),
+                      if (mobileController.text.trim().isEmpty) {
+                        CustomToast.error(
+                          "Enter Mobile Number",
+                        );
+                        return;
+                      }
 
-            Center(
-              child: CommonButton(
-                title: "Submit",
-                onTap: () {
-                 Get.to(AppRoutes.setting);
-                },
-              ),
-            ),
+                      if (nameController.text.trim().isEmpty) {
 
-            SizedBox(height: 30.h),
-          ],
+                       CustomToast.error(
+                          "Enter Name",
+                        );
+                       
+                        return;
+                      }
+
+                      controller.addstaff(
+                        nameController.text.trim(),
+                        mobileController.text.trim(),
+                      );
+                    },
+                  ),
+                ),
+
+                SizedBox(height: 30.h),
+              ],
+            );
+          },
         ),
       ),
     );

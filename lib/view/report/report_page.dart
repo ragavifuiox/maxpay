@@ -63,7 +63,7 @@ class ReportPage extends StatelessWidget {
                     'Wallet Credit',
                     () {
                      Get.toNamed(AppRoutes.
-                     withdrawrequest);
+                     walletcredit);
                     },
                     SvgPicture.asset(AssetImages.wallet, width: 24.w),
                   ),

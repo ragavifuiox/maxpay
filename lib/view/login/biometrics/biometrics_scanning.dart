@@ -244,44 +244,46 @@ class _BiometricsScanningPageState
             const Spacer(),
 
             /// BUTTONS
-            Row(
-              children: [
-                Expanded(
-                  child: TextButton(
-                    onPressed: () {
-                      cancelAuthentication();
-                      Get.back();
-                    },
-
-                    child: Text(
-                      'Cancel',
-
-                      style: TextStyle(
-                        fontFamily:
-                            'Poppins',
-                        fontWeight:
-                            FontWeight.w700,
-                        fontSize: 16.sp,
-                        color: theme
-                            .colorScheme
-                            .onSurface,
+            SafeArea(
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextButton(
+                      onPressed: () {
+                        cancelAuthentication();
+                        Get.back();
+                      },
+              
+                      child: Text(
+                        'Cancel',
+              
+                        style: TextStyle(
+                          fontFamily:
+                              'Poppins',
+                          fontWeight:
+                              FontWeight.w700,
+                          fontSize: 16.sp,
+                          color: theme
+                              .colorScheme
+                              .onSurface,
+                        ),
                       ),
                     ),
                   ),
-                ),
-
-                SizedBox(width: 20.w),
-
-                Expanded(
-                  child: CommonButton(
-                    title: 'Scan Again',
-
-                    onTap: () {
-                      authenticate();
-                    },
+              
+                  SizedBox(width: 20.w),
+              
+                  Expanded(
+                    child: CommonButton(
+                      title: 'Scan Again',
+              
+                      onTap: () {
+                        authenticate();
+                      },
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
 
             SizedBox(height: 40.h),

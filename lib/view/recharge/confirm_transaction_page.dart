@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/global_widget/commom_button.dart';
+import 'package:maxpay/global_widget/custom_app.dart';
 import 'package:maxpay/view/recharge/customer_trnas_confirmation.dart';
 import 'package:maxpay/view/recharge/success_recharge_page.dart';
 
@@ -35,32 +36,7 @@ class ConfirmTransactionPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
 
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        surfaceTintColor: Colors.transparent,
-        elevation: 0,
-
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios,
-            color: isDark ? Colors.white : Colors.black,
-            size: 18.sp,
-          ),
-          onPressed: () => Navigator.pop(context),
-        ),
-
-        title: Text(
-          'Confirm Transaction',
-          style: TextStyle(
-            color: isDark ? Colors.white : Colors.black,
-            fontSize: 16.sp,
-            fontWeight: FontWeight.w700,
-            fontFamily: 'Poppins',
-          ),
-        ),
-
-        centerTitle: true,
-      ),
+      appBar: CommonAppBar(title: "Confirm Transaction"),
 
       body: SafeArea(
         child: SingleChildScrollView(
@@ -97,36 +73,50 @@ class ConfirmTransactionPage extends StatelessWidget {
               SizedBox(height: 15.h),
 
               /// AMOUNT BOXES
-              _buildAmountBox(
-                'Available Balance',
-                '₹76954.70',
-                Colors.blue,
-              ),
+_buildAmountBox(
+  context,
+  'Available Balance',
+  '₹76954.70',
+  Colors.blue,
+  const Color(0xffE8EEFF), // light bg
+  const Color(0xffE0E4FF), // dark bg
+),
 
-              _buildAmountBox(
-                'Transaction Amount',
-                amount,
-                Colors.red,
-              ),
+_buildAmountBox(
+  context,
+  'Transaction Amount',
+  amount,
+  Colors.red,
+  const Color(0xffFFE5E5),
+  const Color(0xffFFE4E8),
+),
 
-              _buildAmountBox(
-                'Commission',
-                commission,
-                Colors.green,
-              ),
+_buildAmountBox(
+  context,
+  'Commission',
+  commission,
+  Colors.green,
+  const Color(0xffE4FFF1),
+  const Color(0xffE6FFF3),
+),
 
-              _buildAmountBox(
-                'Surcharge',
-                surcharge,
-                Colors.pink,
-              ),
+_buildAmountBox(
+  context,
+  'Surcharge',
+  surcharge,
+  Colors.orange,
+  const Color(0xffFFF1DD),
+  const Color(0xffFFE4E8),
+),
 
-              _buildAmountBox(
-                'Remaining Balance',
-                '₹76954.70',
-                Colors.blue,
-              ),
-
+_buildAmountBox(
+  context,
+  'Remaining Balance',
+  '₹76954.70',
+  Colors.blue,
+  const Color(0xffE8EEFF), // light bg
+  const Color(0xffE0E4FF), // dark bg
+),
               SizedBox(height: 30.h),
 
               /// WHATSAPP LABEL
@@ -199,24 +189,39 @@ class ConfirmTransactionPage extends StatelessWidget {
               SizedBox(height: 30.h),
 
               /// PAY NOW BUTTON
-              Center(
-                child: CommonButton(
-                  title: "Pay Now",
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => SuccessRechargePage(
-                          productName: productName,
-                          operatorInitial: operatorInitial,
-                          operatorColor: operatorColor,
-                          rechargeAmount: amount,
-                        ),
-                      ),
-                    );
-                  },
-                ),
+              SizedBox(height: 20.h),
+
+/// PAY NOW BUTTON
+SafeArea(
+  top: false,
+  child: Padding(
+    padding: EdgeInsets.only(
+      bottom: 20.h,
+    ),
+
+    child: SizedBox(
+      width: double.infinity,
+      height: 50.h,
+
+      child: CommonButton(
+        title: "Pay Now",
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => SuccessRechargePage(
+                productName: productName,
+                operatorInitial: operatorInitial,
+                operatorColor: operatorColor,
+                rechargeAmount: amount,
               ),
+            ),
+          );
+        },
+      ),
+    ),
+  ),
+),
 
               SizedBox(height: 30.h),
             ],
@@ -290,56 +295,64 @@ class ConfirmTransactionPage extends StatelessWidget {
   }
 
   /// AMOUNT BOX
-  Widget _buildAmountBox(
-    String label,
-    String amount,
-    Color color,
-  ) {
-    return Container(
-      margin: EdgeInsets.only(bottom: 8.h),
+  /// AMOUNT BOX
+Widget _buildAmountBox(
+  BuildContext context,
+  String label,
+  String amount,
+  Color textColor,
+  Color lightBg,
+  Color darkBg,
+) {
+  final isDark =
+      Theme.of(context).brightness == Brightness.dark;
 
-      padding: EdgeInsets.symmetric(
-        horizontal: 12.w,
-        vertical: 10.h,
+  return Container(
+    margin: EdgeInsets.only(bottom: 8.h),
+
+    padding: EdgeInsets.symmetric(
+      horizontal: 12.w,
+      vertical: 10.h,
+    ),
+
+    decoration: BoxDecoration(
+      color: isDark ? darkBg : lightBg,
+
+      borderRadius: BorderRadius.circular(6.r),
+
+      border: Border.all(
+        color: isDark
+            ? darkBg.withOpacity(0.8)
+            : lightBg,
       ),
+    ),
 
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
+    child: Row(
+      mainAxisAlignment:
+          MainAxisAlignment.spaceBetween,
 
-        borderRadius: BorderRadius.circular(6.r),
-
-        border: Border.all(
-          color: color.withValues(alpha: 0.3),
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            color: textColor,
+            fontSize: 13.sp,
+            fontWeight: FontWeight.w600,
+          ),
         ),
-      ),
 
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
-        children: [
-          Text(
-            label,
-            style: TextStyle(
-              color: color,
-              fontSize: 13.sp,
-              fontWeight: FontWeight.w600,
-            ),
+        Text(
+          amount,
+          style: TextStyle(
+            color: textColor,
+            fontSize: 13.sp,
+            fontWeight: FontWeight.w700,
           ),
-
-          Text(
-            amount,
-            style: TextStyle(
-              color: color,
-              fontSize: 13.sp,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  /// INPUT LABEL
+        ),
+      ],
+    ),
+  );
+}  /// INPUT LABEL
   Widget _buildInputLabel(String label) {
     return Padding(
       padding: EdgeInsets.only(bottom: 8.h),
@@ -405,3 +418,6 @@ class ConfirmTransactionPage extends StatelessWidget {
     );
   }
 }
+
+
+

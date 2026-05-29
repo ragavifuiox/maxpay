@@ -22,10 +22,15 @@ class HomePageScreen extends GetView<HomePageController> {
   const HomePageScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+Widget build(BuildContext context) {
 
-    return Scaffold(
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    controller.fetchpopupmessage("Home");
+  });
+
+  final theme = Theme.of(context);
+
+  return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: SingleChildScrollView(
@@ -68,13 +73,19 @@ class HomePageScreen extends GetView<HomePageController> {
                             height: 32.h,
                           ),
                         ),
-                       Obx(() {
-  final balance = controller.walletBalance.value?.data?.balance ?? 0;
+                     Obx(() {
+
+  final balance =
+      controller.walletBalance.value?.data?.balance ?? 0.0;
 
   return StatCard(
     title: 'Wallet Balance',
-    value: '₹$balance',
-    imageWidget: SvgPicture.asset(AssetImages.walletBalance),
+
+    value: '₹${balance.toStringAsFixed(2)}',
+
+    imageWidget: SvgPicture.asset(
+      AssetImages.walletBalance,
+    ),
   );
 }),
                       BlinkingZoomCard(
@@ -110,16 +121,39 @@ class HomePageScreen extends GetView<HomePageController> {
                             height: 32.h,
                           ),
                         ),
-                        StatCard(
-                          title: 'Complaints',
-                          textColor: const Color(0xff636363),
-                          bgColor: AppColors.darkBlue.withValues(alpha: 0.04),
-                          value: '300',
-                          imageWidget: SvgPicture.asset(
-                            AssetImages.complaints,
-                            height: 32.h,
-                          ),
-                        ),
+
+
+
+                         Obx(() {
+
+  final complaintCount =
+      controller.complaints.value?.data?.complaintCount ?? 0;
+
+  return StatCard(
+
+    title: 'Complaints',
+
+    value: complaintCount.toString(),
+
+    imageWidget: SvgPicture.asset(
+      AssetImages.complaints,
+    ),
+
+    bgColor: AppColors.darkBlue.withValues(
+      alpha: 0.04,
+    ),
+  );
+}),
+                        // StatCard(
+                        //   title: 'Complaints',
+                        //   textColor: const Color(0xff636363),
+                        //   bgColor: AppColors.darkBlue.withValues(alpha: 0.04),
+                        //   value: '300',
+                        //   imageWidget: SvgPicture.asset(
+                        //     AssetImages.complaints,
+                        //     height: 32.h,
+                        //   ),
+                        // ),
 
                       
                        Obx(() {

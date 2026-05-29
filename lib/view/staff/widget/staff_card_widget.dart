@@ -1,12 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:maxpay/core/utils/texthelper.dart';
-
+import 'package:maxpay/core/data/model/staff_lsit_model.dart';
 class StaffCardWidget extends StatelessWidget {
-  const StaffCardWidget({super.key});
+
+  final Data data;
+
+  const StaffCardWidget({
+    super.key,
+    required this.data,
+  });
 
   @override
   Widget build(BuildContext context) {
+
     final theme = Theme.of(context);
 
     return Container(
@@ -21,22 +28,50 @@ class StaffCardWidget extends StatelessWidget {
       ),
       child: Column(
         children: [
-          _rowWidget(context, "Staff Name", "William"),
+
+          _rowWidget(
+            context,
+            "Staff Name",
+            data.name ?? "",
+          ),
+
+          SizedBox(height: 10.h),
+          _rowWidget(
+            context,
+            "UserId",
+            data.userId ?? "",
+          ),
+  SizedBox(height: 10.h),
+
+          _rowWidget(
+            context,
+            "Reg.Mob No",
+            data.mobile ?? "",
+          ),
+
           SizedBox(height: 10.h),
 
-          _rowWidget(context, "Reg.Mob No", "9856389363"),
+          _rowWidget(
+            context,
+            "Package Name",
+            data.packageName ?? "",
+          ),
+
           SizedBox(height: 10.h),
 
-          _rowWidget(context, "Package Name", "Name"),
-          SizedBox(height: 10.h),
-
-          _rowWidget(context, "Wallet Balance", "₹36005.00"),
+          _rowWidget(
+            context,
+            "Wallet Balance",
+            "₹${data.walletBalance ?? "0"}",
+          ),
 
           SizedBox(height: 14.h),
 
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment:
+                MainAxisAlignment.spaceBetween,
             children: [
+
               _buttonWidget(
                 title: "Transaction Report",
                 color: Colors.blue,
@@ -63,11 +98,14 @@ class StaffCardWidget extends StatelessWidget {
     String title,
     String value,
   ) {
+
     final theme = Theme.of(context);
 
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisAlignment:
+          MainAxisAlignment.spaceBetween,
       children: [
+
         Text(
           title,
           style: TextHelper.max16(context),
@@ -91,6 +129,7 @@ class StaffCardWidget extends StatelessWidget {
     required String title,
     required Color color,
   }) {
+
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: 8.w,

@@ -64,7 +64,7 @@ class AssetImages {
   static const  qr_code= "assets/images/qr_code.png";
   static const  profileImage= "assets/images/profile.jpg";
   static const  qrcode= "assets/images/qrcode 1.png";
-  static const stafflist= "assets/images/directory_regular.svg";
+  static const stafflist= "assets/images/stafflist.png";
   static const search= "assets/images/search.svg";
 
 }
