@@ -62,7 +62,12 @@ class TransactionCard extends StatelessWidget {
           ),
 
           const SizedBox(height: 12),
-
+           Divider(
+  color: Theme.of(context).brightness == Brightness.light
+      ? Colors.black12
+      : Colors.white24,
+),
+              const SizedBox(height: 12),
           Row(
             children: [
               Container(
@@ -76,7 +81,13 @@ class TransactionCard extends StatelessWidget {
                 child: Text(
                   "Jio",
                   style: TextStyle(
-                   color: Theme.of(context).colorScheme.onSurface,
+                   color:
+            Theme.of(context).brightness ==
+                    Brightness.dark
+                ? Colors.black
+                : Colors.black,
+                    
+                
                     fontWeight: FontWeight.bold,
                     fontSize: 11,
                   ),
@@ -94,7 +105,11 @@ class TransactionCard extends StatelessWidget {
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
                         fontSize: 14,
-                        color: theme.colorScheme.onSurface,
+                        color:
+            Theme.of(context).brightness ==
+                    Brightness.dark
+                ? Colors.black
+                : Colors.black,
                       ),
                     ),
                     const SizedBox(height: 3),
@@ -102,7 +117,11 @@ class TransactionCard extends StatelessWidget {
                       "Number: 9865647823",
                       style: TextStyle(
                         fontSize: 11,
-                        color: theme.colorScheme.onSurfaceVariant,
+                        color:
+            Theme.of(context).brightness ==
+                    Brightness.dark
+                ? Colors.black
+                : Colors.black,
                       ),
                     ),
                   ],
@@ -119,15 +138,19 @@ class TransactionCard extends StatelessWidget {
                     "₹ 365.00",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: 18,
-                      color: theme.colorScheme.onSurface,
+                      fontSize: 16,
+                      color:
+            Theme.of(context).brightness ==
+                    Brightness.dark
+                ? Colors.black
+                : Colors.black,
                     ),
                   ),
                   const SizedBox(height: 4),
 
                   Container(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
+                      horizontal: 4,
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
@@ -146,7 +169,7 @@ class TransactionCard extends StatelessWidget {
                               : "Failed",
                       style: const TextStyle(
                         color: Colors.white,
-                        fontSize: 10,
+                        fontSize: 8,
                         fontWeight: FontWeight.w600,
                       ),
                     ),

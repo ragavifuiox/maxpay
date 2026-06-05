@@ -13,11 +13,10 @@ class EarningsCard1 extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(14),
-
       decoration: BoxDecoration(
         color: theme.brightness == Brightness.light
             ? AppColors.background
-            : theme.colorScheme.surfaceContainer,
+            : const Color(0xFF2F3349),
 
         borderRadius: BorderRadius.circular(12),
 
@@ -66,8 +65,11 @@ class EarningsCard1 extends StatelessWidget {
 
           /// 🔹 Divider
           Divider(
-            color:AppColors.darktextclr.withValues(alpha: 0.5) ,
-          ),
+  color: Theme.of(context).brightness == Brightness.light
+      ? Colors.black12
+      : Colors.white24,
+),
+
 
           const SizedBox(height: 8),
 

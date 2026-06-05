@@ -185,17 +185,17 @@ class _GasBillPageState extends State<GasBillPage> {
                         _isBillFetched = true;
                       });
                     } else {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ConfirmTransactionPage(
-                            productName: 'Gas Bill',
-                            operatorInitial: 'G',
-                            operatorColor: Colors.orange,
-                            amount: '₹365.00',
-                          ),
-                        ),
-                      );
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     builder: (context) => ConfirmTransactionPage(
+                      //       productName: 'Gas Bill',
+                      //       operatorInitial: 'G',
+                      //       operatorColor: Colors.orange,
+                      //       amount: '₹365.00',
+                      //     ),
+                      //   ),
+                      // );
                     }
                   },
                   style: ElevatedButton.styleFrom(

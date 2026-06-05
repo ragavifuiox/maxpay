@@ -7,6 +7,6 @@ import 'package:maxpay/core/error/failure.dart';
 
 abstract class PlanRepository {
   Future<Either<Failure, Plan >> getplan({
-    required String planid,
+    required String productid,
   });
 }

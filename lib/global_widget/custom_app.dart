@@ -31,7 +31,7 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
 
         style: TextStyle(
           fontFamily: 'Poppins',
-          fontSize: 20,
+          fontSize: 18,
           fontWeight: FontWeight.w600,
           color: theme.colorScheme.onSurface,
         ),
@@ -41,7 +41,7 @@ class CommonAppBar extends StatelessWidget implements PreferredSizeWidget {
           ? Padding(
               padding: const EdgeInsets.only(left: 18.0),
               child: IconButton(
-                icon: const Icon(Icons.arrow_back_ios, size: 26),
+                icon: const Icon(Icons.arrow_back_ios, size: 23),
 
                 onPressed: () {
                   Navigator.pop(context);

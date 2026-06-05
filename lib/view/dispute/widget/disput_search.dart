@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:maxpay/core/constants/asset_images.dart';
 import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/core/utils/texthelper.dart';
 
@@ -8,155 +10,153 @@ class Disputefilter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: theme.brightness == Brightness.light
-    ? AppColors.border
-    : AppColors.darkbgBlack,
-        borderRadius: BorderRadius.circular(12),
+        color: isDark ? AppColors.darkplceholder : AppColors.background,
+
+        borderRadius: BorderRadius.circular(10),
+
         border: Border.all(
-         color: theme.brightness == Brightness.light
-    ? AppColors.totalborder
-    : AppColors.border,
+          color: isDark
+              ? AppColors.darkFilterBorder
+              : AppColors.totalborde2.withValues(alpha: 0.1),
         ),
       ),
+
       child: Column(
         children: [
+          /// SELECT CREDIT TYPE
+          
+
+          const SizedBox(height: 8),
+
+          /// DATE FIELD
           Row(
             children: [
-              DateField(
-                hint: "DD.MM.YYYY",
-                style: TextHelper.max1.copyWith(
-                  color: theme.colorScheme.onSurface,
-                ),
-              ),
+              _DateField(hint: "DD.MM.YYYY", style: TextHelper.max1),
 
               const SizedBox(width: 8),
 
               Icon(
                 Icons.arrow_forward,
-                size: 18,
+                size: 16,
                 color: theme.colorScheme.primary,
               ),
 
               const SizedBox(width: 8),
 
-              DateField(
-                hint: "DD.MM.YYYY",
-                style: TextHelper.max1.copyWith(
-                  color: theme.colorScheme.onSurface,
-                ),
-              ),
+              _DateField(hint: "DD.MM.YYYY", style: TextHelper.max1),
             ],
           ),
 
-          const SizedBox(height: 10),
+          const SizedBox(height: 8),
 
-          const SearchBox(),
+          /// SEARCH FIELD
+          TextField(
+            style: TextStyle(color: theme.colorScheme.onSurface),
+
+            decoration: InputDecoration(
+              prefixIcon: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: SvgPicture.asset(
+                  AssetImages.search,
+                  colorFilter: ColorFilter.mode(
+                    isDark
+                        ? AppColors.textclr
+                        : theme.colorScheme.onSurfaceVariant,
+                    BlendMode.srcIn,
+                  ),
+                ),
+              ),
+
+              hintText: "Search",
+
+              hintStyle: TextHelper.max1.copyWith(
+                color: isDark ? AppColors.textclr : AppColors.clrTextgrey,
+              ),
+              filled: true,
+
+              fillColor: isDark ? AppColors.darkplceholder : Colors.white,
+
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(7),
+
+                borderSide: BorderSide(
+                  color: isDark
+                      ? AppColors.darkFilterBorder
+                      : AppColors.totalborde2,
+                ),
+              ),
+
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(7),
+
+                borderSide: BorderSide(
+                  color: isDark
+                      ? AppColors.darkFilterBorder
+                      : AppColors.totalborde2,
+                ),
+              ),
+
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(7),
+
+                borderSide: BorderSide(color: theme.colorScheme.primary),
+              ),
+
+              contentPadding: const EdgeInsets.symmetric(vertical: 0),
+            ),
+          ),
         ],
       ),
     );
   }
 }
 
-class DateField extends StatelessWidget {
+/// DATE FIELD
+class _DateField extends StatelessWidget {
   final String hint;
   final TextStyle? style;
 
-  const DateField({
-    super.key,
-    required this.hint,
-    required this.style,
-  });
+  const _DateField({required this.hint, this.style});
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
     return Expanded(
       child: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 12,
-          vertical: 14,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+
         decoration: BoxDecoration(
-          color: theme.colorScheme.surface,
-          borderRadius: BorderRadius.circular(8),
+          color: isDark ? AppColors.darkplceholder : Colors.white,
+
+          borderRadius: BorderRadius.circular(7),
+
           border: Border.all(
-               color: theme.brightness == Brightness.light
-    ? AppColors.totalborde2
-    : AppColors.totalborde2,
+            color: isDark ? AppColors.darkFilterBorder : AppColors.totalborde2,
           ),
         ),
+
         child: Text(
           hint,
+
           style:
-              style ??
+              style?.copyWith(
+                color: isDark
+                    ? AppColors.textclr
+                    : theme.colorScheme.onSurfaceVariant,
+              ) ??
               TextStyle(
-                color: theme.colorScheme.onSurfaceVariant,
-                fontSize: 13,
+                fontSize: 12,
+                color: isDark
+                    ? AppColors.textclr
+                    : theme.colorScheme.onSurfaceVariant,
               ),
-        ),
-      ),
-    );
-  }
-}
-
-class SearchBox extends StatelessWidget {
-  const SearchBox({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return TextField(
-      style: TextStyle(
-       color: theme.colorScheme.onSurface,
-      ),
-      decoration: InputDecoration(
-        prefixIcon: Icon(
-          Icons.search,
-          color: theme.colorScheme.onSurface,
-        ),
-
-        hintText: "Search",
-
-        hintStyle: TextStyle(
-          color: theme.colorScheme.onSurface,
-        ),
-
-        filled: true,
-        fillColor: theme.colorScheme.surface,
-
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(
-             color: theme.brightness == Brightness.light
-    ? AppColors.totalborde2
-    : AppColors.totalborde2,
-          ),
-        ),
-
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(
-           color: theme.brightness == Brightness.light
-    ? AppColors.totalborde2
-    : AppColors.totalborde2,
-          ),
-        ),
-
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(
-            color: theme.colorScheme.primary,
-          ),
-        ),
-
-        contentPadding: const EdgeInsets.symmetric(
-          vertical: 0,
         ),
       ),
     );

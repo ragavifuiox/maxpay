@@ -11,10 +11,13 @@ class AddStaffUsecase {
   Future<Either<Failure, AddStaff>> call(
     String name,
     String phone,
+    String package
   ) {
     return repository.addStaff(
       name: name,
       phone: phone,
+      package: package
+
     );
   }
 }

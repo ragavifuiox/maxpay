@@ -60,39 +60,60 @@ class CustomNumericKeyboard extends StatelessWidget {
     );
   }
 
-  Widget _buildKeyboardButton(String key, BuildContext context) {
-    final isTablet = MediaQuery.of(context).size.width > 600;
+  Widget _buildKeyboardButton(
+  String key,
+  BuildContext context,
+) {
+  final isTablet =
+      MediaQuery.of(context).size.width > 600;
 
-    return SizedBox(
-      height: isTablet ? 80 : 60,
-      child: TextButton(
-        onPressed: () {
-          HapticFeedback.lightImpact();
-          onKeyPressed(key);
-        },
-        style: TextButton.styleFrom(
-          shape: const CircleBorder(),
-        ),
-        child: key == 'backspace'
-            ? const Icon(
-                Icons.backspace_outlined,
-                color: AppColors.clrTextblack,
-                size: 22,
-              )
-            : key == 'submit'
-                ? const Icon(
-                    Icons.arrow_forward,
-                    color: AppColors.clrPrimary,
-                    size: 22,
-                  )
-                : Text(
-                    key,
-                    style: TextStyle(
-                      fontSize: isTablet ? 28 : 23,
-                      color: Colors.black,
-                    ),
-                  ),
+  final isDark = Get.isDarkMode;
+
+  return SizedBox(
+    height: isTablet ? 80 : 60,
+
+    child: TextButton(
+      onPressed: () {
+        HapticFeedback.lightImpact();
+        onKeyPressed(key);
+      },
+
+      style: TextButton.styleFrom(
+        shape: const CircleBorder(),
       ),
-    );
-  }
+
+     child: key == 'backspace'
+    ? Icon(
+        Icons.backspace_outlined,
+        color: isDark
+            ? Colors.white
+            : Colors.black,
+        size: 22,
+      )
+    : key == 'submit'
+        ? Container(
+            width: 50.w,
+            height: 50.w,
+            decoration: const BoxDecoration(
+              color: AppColors.clrPrimary,
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(
+              Icons.arrow_forward,
+              color: Colors.white,
+              size: 22,
+            ),
+          )
+        : Text(
+            key,
+            style: TextStyle(
+              fontSize: isTablet ? 28 : 23,
+              color: isDark
+                  ? Colors.white
+                  : Colors.black,
+            ),
+          ),
+    ),
+  );
+}
 }

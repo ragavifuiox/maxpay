@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_navigation/src/extension_navigation.dart';
+import 'package:get/get.dart';
 import 'package:maxpay/core/constants/asset_images.dart';
 import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
@@ -21,12 +20,15 @@ class _IntroPageState extends State<IntroPage> {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context);
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: colorScheme.scaffoldBackgroundColor,
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: colorScheme.scaffoldBackgroundColor,
+        backgroundColor: theme.scaffoldBackgroundColor,
         elevation: 0,
+        scrolledUnderElevation: 0,
         actions: [
           Padding(
             padding: EdgeInsets.only(right: 8.w),
@@ -35,7 +37,9 @@ class _IntroPageState extends State<IntroPage> {
               iconAlignment: IconAlignment.end,
               icon: Icon(
                 Icons.skip_next,
-                color: AppColors.clrSecondary,
+                color: isDark
+                    ? Colors.white
+                    : AppColors.clrSecondary,
                 size: 24.sp,
               ),
               label: Text(
@@ -44,7 +48,9 @@ class _IntroPageState extends State<IntroPage> {
                   fontFamily: 'Poppins',
                   fontWeight: FontWeight.w500,
                   fontSize: 14.sp,
-                  color: AppColors.clrSecondary,
+                  color: isDark
+                      ? Colors.white
+                      : AppColors.clrSecondary,
                   letterSpacing: -0.41,
                 ),
               ),
@@ -57,38 +63,41 @@ class _IntroPageState extends State<IntroPage> {
           Expanded(
             child: PageView.builder(
               controller: _pageController,
+              itemCount: introData.length,
               onPageChanged: (index) {
                 setState(() {
                   _currentPage = index;
                 });
               },
-              itemCount: introData.length,
               itemBuilder: (context, index) {
                 final data = introData[index];
+
                 return SingleChildScrollView(
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 24.w),
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         SizedBox(height: 40.h),
+
                         Center(
                           child: Image.asset(
-                            data['image'],
+                            data["image"],
                             height: 280.h,
                             width: 300.w,
                             fit: BoxFit.contain,
                           ),
                         ),
+
                         SizedBox(height: 40.h),
+
                         Center(
                           child: SmoothPageIndicator(
                             controller: _pageController,
                             count: introData.length,
                             effect: ExpandingDotsEffect(
                               activeDotColor: AppColors.clrPrimary,
-                              dotColor: Colors.grey.withValues(alpha: 0.3),
+                              dotColor: Colors.grey.withOpacity(0.3),
                               dotHeight: 6.h,
                               dotWidth: 8.w,
                               expansionFactor: 4,
@@ -96,20 +105,23 @@ class _IntroPageState extends State<IntroPage> {
                             ),
                           ),
                         ),
+
                         SizedBox(height: 60.h),
+
                         Text(
-                          data['title'],
+                          data["title"],
                           style: TextStyle(
                             fontFamily: 'Poppins',
                             fontWeight: FontWeight.w700,
-                            fontSize: 22.sp,
-                            color: colorScheme.textTheme.bodyLarge!.color,
-                            letterSpacing: .01,
+                            fontSize: 20.sp,
+                            color: theme.textTheme.bodyLarge?.color,
                           ),
                         ),
+
                         SizedBox(height: 16.h),
+
                         Text(
-                          data['description'],
+                          data["description"],
                           style: TextStyle(
                             fontFamily: 'Poppins',
                             fontWeight: FontWeight.w400,
@@ -118,6 +130,7 @@ class _IntroPageState extends State<IntroPage> {
                             height: 1.5,
                           ),
                         ),
+
                         SizedBox(height: 40.h),
                       ],
                     ),
@@ -126,40 +139,42 @@ class _IntroPageState extends State<IntroPage> {
               },
             ),
           ),
-          Padding(
-            padding: EdgeInsets.fromLTRB(24.w, 0, 24.w, 40.h),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                TextButton(
-                  onPressed: _currentPage > 0
-                      ? () {
-                          _pageController.previousPage(
-                            duration: const Duration(milliseconds: 300),
-                            curve: Curves.easeInOut,
-                          );
-                        }
-                      : null,
-                  child: SafeArea(
+
+          SafeArea(
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(24.w, 0, 24.w, 40.h),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  TextButton(
+                    onPressed: _currentPage > 0
+                        ? () {
+                            _pageController.previousPage(
+                              duration: const Duration(milliseconds: 300),
+                              curve: Curves.easeInOut,
+                            );
+                          }
+                        : null,
                     child: Text(
                       'Back',
                       style: TextStyle(
                         fontFamily: 'Poppins',
                         fontWeight: FontWeight.w600,
-                    
                         fontSize: 16.sp,
                         color: _currentPage > 0
-                            ? Colors.black
+                            ? (isDark
+                                ? Colors.white
+                                : Colors.black)
                             : Colors.transparent,
                       ),
                     ),
                   ),
-                ),
-                SafeArea(
-                  child: CustomElevatedButton(
-                    text: 'Next',
-                    width: 160.w,
-                    height: 54.h,
+            
+                  CustomElevatedButton(
+                    text:
+                        _currentPage == introData.length - 1 ? 'Get Started' : 'Next',
+                    width: 120.w,
+                    height: 44.h,
                     onPressed: () {
                       if (_currentPage < introData.length - 1) {
                         _pageController.nextPage(
@@ -167,13 +182,12 @@ class _IntroPageState extends State<IntroPage> {
                           curve: Curves.easeInOut,
                         );
                       } else {
-                        Get.toNamed(AppRoutes.welcome);
-                        // context.go(AppRoutes.welcome);
+                        Get.offAllNamed(AppRoutes.welcome);
                       }
                     },
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ],

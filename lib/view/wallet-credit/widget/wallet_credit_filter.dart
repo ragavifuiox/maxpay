@@ -51,7 +51,7 @@ class WalletCreditFilterWidget extends StatelessWidget {
 
               children: [
                 Text(
-                  "Select Credit Type",
+                  "Select",
 
                   style: TextHelper.max1.copyWith(
                     color: isDark ? AppColors.textclr : AppColors.clrTextgrey,

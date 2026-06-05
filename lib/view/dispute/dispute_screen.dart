@@ -25,14 +25,15 @@ class DisputeReportScreen extends StatelessWidget {
             Disputefilter(),
               SizedBox(height: 18.h),
             Divider(
-  color: Colors.grey,
-  thickness: 1.2,
+  color: Theme.of(context).brightness == Brightness.light
+      ? Colors.black12
+      : Colors.white24,
 ),
 
             SizedBox(height: 18.h),
 
             /// FAILED CARD
-            const DisputeCardWidget(
+           const DisputeCardWidget(
               status: "Failed",
               statusColor: Colors.red,
               message:
@@ -158,7 +159,12 @@ class DisputeCardWidget extends StatelessWidget {
           ),
 
           SizedBox(height: 14.h),
-
+ Divider(
+  color: Theme.of(context).brightness == Brightness.light
+      ? Colors.black12
+      : Colors.white24,
+),
+ SizedBox(height: 10.h),
           /// SUBJECT
           RichText(
             text: TextSpan(
@@ -167,6 +173,8 @@ class DisputeCardWidget extends StatelessWidget {
                   text: "Subject: ",
                   style: TextHelper.max19(context)
                 ),
+
+
                 TextSpan(
                   text: "Pre Paid Recharge",
                   style: TextHelper.max19(context),

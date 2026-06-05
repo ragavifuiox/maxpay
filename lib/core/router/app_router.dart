@@ -34,15 +34,19 @@ import 'package:maxpay/view/mobile_recharge/mobile_recharge_page.dart';
 import 'package:maxpay/view/my_earning/my_earning_screen.dart';
 import 'package:maxpay/view/nav_page/nav_page.dart';
 import 'package:maxpay/view/profile/profile_screen.dart';
+import 'package:maxpay/view/recharge/confirm_transaction_page.dart';
+import 'package:maxpay/view/recharge/customer_trnas_confirmation.dart';
 import 'package:maxpay/view/refund/refund_screen.dart';
 import 'package:maxpay/view/settings/settings_page.dart';
 import 'package:maxpay/view/splash/intro_page.dart';
 import 'package:maxpay/view/splash/main_splash.dart';
 import 'package:maxpay/view/staff/add_staff.dart';
 import 'package:maxpay/view/staff/staff_list_screen.dart';
+import 'package:maxpay/view/statement/state_readmore.dart';
 import 'package:maxpay/view/support/supoort_screen.dart';
 import 'package:maxpay/view/transaction_screens/transaction_success_screen.dart';
 import 'package:maxpay/view/update_pin/verify_pin_screen.dart';
+import 'package:maxpay/view/wallet%20balance/wallet_balance.dart';
 import 'package:maxpay/view/wallet-credit/wallet_credit_screen.dart';
 import 'package:maxpay/view/wallet_request/wallet_request_screen.dart';
 import 'package:maxpay/view/web_sign_up/web_signup_otp_screen.dart';
@@ -73,6 +77,32 @@ class AppPages {
         otpUsecase: sl(),
         createPinUsecase: sl(),
         fingerPrintUsecase: sl(),
+      ),
+
+      fenix: true,
+    );
+  }),
+),
+
+
+GetPage(
+  transition: Transition.fade,
+
+  name: AppRoutes.customertrans,
+
+  page: () =>  CustomerTransConfirmationScreen (),
+
+  binding: BindingsBuilder(() {
+
+    Get.lazyPut<PrePaidController>(
+      () => PrePaidController(planUseCase: sl(),
+       searchPlanUsecase: sl(),
+        planDetailUseCase: sl(),
+         transConfirmUseCase: sl(), mobileRechargeUseCase: sl(),
+         plantabusecase: sl(),
+         tabdetailusecase: sl()
+      
+     
       ),
 
       fenix: true,
@@ -236,6 +266,33 @@ GetPage(
     );
   }),
 ),
+
+
+
+  GetPage(
+  transition: Transition.fade,
+
+  name: AppRoutes.transconfirm,
+
+  page: () => ConfirmTransactionPage(),
+
+  binding: BindingsBuilder(() {
+
+    Get.lazyPut<PrePaidController>(
+      () => PrePaidController(
+        transConfirmUseCase: sl(),
+         planUseCase: sl(),
+          searchPlanUsecase: sl(),
+           planDetailUseCase: sl(),
+           mobileRechargeUseCase: sl(),
+           plantabusecase: sl(),
+           tabdetailusecase: sl(),
+      ),
+
+      fenix: true,
+    );
+  }),
+),
      GetPage(name:AppRoutes.kyc, page:()=>const KycScreen()),
      GetPage(name:AppRoutes.loginhistory, page:()=>const LoginHistoryScreen()),
      GetPage(name:AppRoutes.weblogin, page:()=>const WebSignupScreen()),
@@ -261,7 +318,13 @@ GetPage(
 
     Get.lazyPut<PrePaidController>(
       () => PrePaidController(
+        planDetailUseCase: sl(),
         planUseCase: sl(),
+        searchPlanUsecase: sl(),
+        transConfirmUseCase: sl(),
+        mobileRechargeUseCase:sl(),
+        plantabusecase: sl(),
+        tabdetailusecase: sl(),
       ),
 
       fenix: true,
@@ -303,18 +366,18 @@ GetPage(
       () => AddStaffController(
          addStaffUsecase: sl(), 
          staffListUseCase: sl(),
-         
-       
+         searchStaffUsecase: sl(),
       ),
 
       fenix: true,
     );
   }),
 ),
-     GetPage(name:AppRoutes.dth, page:()=>const DTHRechargePage()),
-     GetPage(name:AppRoutes.addwallet, page:()=>const AddWalletScreen()),
+          GetPage(name:AppRoutes.walletbal, page:()=>const WalletBalanceScreen()),
+          GetPage(name:AppRoutes.dth, page:()=>const DTHRechargePage()),
+          GetPage(name:AppRoutes.addwallet, page:()=>const AddWalletScreen()),
           GetPage(name:AppRoutes.veirfypin, page:()=>const VerifyPinPage()),
-          // GetPage(name:AppRoutes.stafflist, page:()=>const StaffListPage()),
+          GetPage(name:AppRoutes.statementReadMore, page:()=>const StatementReadMoreScreen()),
           GetPage(name:AppRoutes.webloginqr, page:()=>const WebLoginScreen()),
           GetPage(name:AppRoutes.dispute, page:()=>const DisputeReportScreen()),
           GetPage(name:AppRoutes.customertrans, page:()=>const DisputeReportScreen()),
@@ -330,6 +393,7 @@ GetPage(
       () => AddStaffController(
         staffListUseCase: sl(), 
         addStaffUsecase: sl(),
+        searchStaffUsecase: sl(),
       ),
 
       fenix: true,

@@ -29,7 +29,7 @@ class AuthController extends GetxController {
   RxString countryCode = "91".obs;
   // Loading
   RxBool isLoading = false.obs;
-  RxBool isAccepted = true.obs;
+  RxBool isAccepted = false.obs;
 RxString otp = ''.obs;
 RxString phoneNumber = ''.obs;
   final LocalStorageService storage =

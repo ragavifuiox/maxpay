@@ -1,12 +1,20 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:maxpay/controllers/homepage_controller.dart';
 import 'package:maxpay/controllers/prepaid_controller.dart';
 import 'package:maxpay/core/constants/colors.dart';
+import 'package:maxpay/core/constants/routes_path.dart';
+import 'package:maxpay/core/constants/snackbar.dart';
 import 'package:maxpay/core/data/model/plan_model.dart';
+import 'package:maxpay/core/data/model/search_plan_model.dart';
+import 'package:maxpay/view/mobile_recharge/contact_list_page.dart';
 import 'package:maxpay/view/recharge/confirm_transaction_page.dart';
-
+import 'package:permission_handler/permission_handler.dart' as ph;
 class MobileRechargePage extends StatefulWidget {
   final String productId;
   final String productName;
@@ -26,11 +34,13 @@ class _MobileRechargePageState
     extends State<MobileRechargePage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-
+String selectedProductId = '';
+String selectedOperator = '';
+String selectedTabId = "";
+Data? selectedOperatorObj;
   final PrePaidController controller =
       Get.find<PrePaidController>();
 
-  String selectedOperator = '';
 
   Color selectedOperatorColor =
       Colors.orange;
@@ -45,32 +55,90 @@ class _MobileRechargePageState
 
   final TextEditingController searchController =
       TextEditingController();
+      Timer? _debounce;
+      bool isPlanLoaded = false;
 
-  @override
-  void initState() {
-    super.initState();
+ @override
+void initState() {
+  super.initState();
 
-    _tabController =
-        TabController(length: 4, vsync: this);
+ 
 
-    selectedOperator =
-        widget.productName;
+  selectedOperator = widget.productName;
+  selectedProductId = widget.productId;
 
-    controller.getPlans(
-      planId: widget.productId,
+
+  loadTabs();
+  controller.getPlans(productid: widget.productId);
+  controller.getPlanTabs();
+
+  searchController.addListener(() {
+    if (_debounce?.isActive ?? false) {
+      _debounce!.cancel();
+    }
+
+    _debounce = Timer(
+      const Duration(milliseconds: 500),
+      () {
+        final text = searchController.text.trim();
+
+        if (selectedProductId.isNotEmpty &&
+            text.isNotEmpty) {
+          controller.searchPlans(
+            selectedProductId,
+            text,
+          );
+        }
+      },
     );
-  }
+  });
 
-  @override
-  void dispose() {
-    _tabController.dispose();
+  
+}
 
-    mobileController.dispose();
-    amountController.dispose();
-    searchController.dispose();
+Future<void> loadTabs() async {
+  await controller.getPlanTabs();
 
-    super.dispose();
-  }
+  if (controller.planTabs.isEmpty) return;
+
+  _tabController = TabController(
+    length: controller.planTabs.length,
+    vsync: this,
+  );
+
+  selectedTabId =
+      controller.planTabs.first.id.toString();
+
+  await controller.getTabDetail(
+    tabid: selectedTabId,
+  );
+
+  _tabController!.addListener(() {
+    if (_tabController!.indexIsChanging) return;
+
+    final tab =
+        controller.planTabs[_tabController!.index];
+
+    selectedTabId = tab.id.toString();
+
+    controller.getTabDetail(
+      tabid: selectedTabId,
+    );
+  });
+
+  setState(() {});
+}
+@override
+void dispose() {
+  _debounce?.cancel();
+
+_tabController?.dispose();
+  mobileController.dispose();
+  amountController.dispose();
+  searchController.dispose();
+
+  super.dispose();
+}
 
   @override
   Widget build(BuildContext context) {
@@ -161,16 +229,18 @@ class _MobileRechargePageState
 
                     SizedBox(height: 5.h),
 
-                    Text(
-                      '₹ 245005.23',
+                   Obx(() {
+                     final balance = Get.find<HomePageController>().walletBalance.value;
 
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 22.sp,
-                        fontWeight:
-                            FontWeight.w700,
-                      ),
-                    ),
+                     return Text(
+                     "₹ ${balance?.data?.balance ?? "0.00"}",
+                    style: TextStyle(
+      color: Colors.white,
+      fontSize: 24.sp,
+      fontWeight: FontWeight.bold,
+    ),
+  );
+}),
                   ],
                 ),
               ),
@@ -182,57 +252,69 @@ class _MobileRechargePageState
                 'Mobile Number',
               ),
 
-              Container(
+             Container(
                 decoration: BoxDecoration(
-                  color:
-                      isDark
-                          ? AppColors
-                              .darkplceholder
-                          : AppColors
-                              .clrplceholder,
-
-                  borderRadius:
-                      BorderRadius.circular(
-                        10.r,
-                      ),
+                  color: isDark
+                      ? AppColors.darkplceholder
+                      : AppColors.clrplceholder,
+                  borderRadius: BorderRadius.circular(10.r),
                 ),
-
                 child: TextField(
-                  controller:
-                      mobileController,
-
-                  keyboardType:
-                      TextInputType.phone,
-
-                  inputFormatters: [
-                    FilteringTextInputFormatter
-                        .digitsOnly,
-                  ],
-
+                  controller: mobileController,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                   style: TextStyle(
                     fontSize: 14.sp,
-
-                    color:
-                        isDark
-                            ? Colors.white
-                            : Colors.black,
+                    color: isDark ? Colors.white : Colors.black,
                   ),
-
                   decoration: InputDecoration(
-                    hintText: '9876543210',
-
-                    hintStyle: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 14.sp,
-                    ),
-
+                    hintText: 'Enter Customer ID',
+                    hintStyle: TextStyle(color: Colors.grey, fontSize: 12.sp),
                     border: InputBorder.none,
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 12.h,
+                    ),
+                   suffixIcon: ValueListenableBuilder<TextEditingValue>(
+  valueListenable: mobileController,
+  builder: (context, value, child) {
+    final hasText = value.text.isNotEmpty;
 
-                    contentPadding:
-                        EdgeInsets.symmetric(
-                          horizontal: 16.w,
-                          vertical: 12.h,
-                        ),
+    return SizedBox(
+      width: 80,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (hasText)
+            InkWell(
+              onTap: () {
+                mobileController.clear(); // number remove
+                setState(() {});
+              },
+              child: Icon(
+                Icons.cancel,
+                color: Colors.red,
+              ),
+            ),
+
+          SizedBox(width: 8),
+
+          InkWell(
+            onTap: pickContact,
+            child: SvgPicture.asset(
+              'assets/images/contact.svg',
+              width: 20,
+              height: 20,
+            ),
+          ),
+
+          SizedBox(width: 8),
+        ],
+      ),
+    );
+  },
+),
                   ),
                 ),
               ),
@@ -273,236 +355,147 @@ class _MobileRechargePageState
 
                   child:
                       DropdownButtonHideUnderline(
-                        child:
-                            DropdownButton<Data>(
-                              isExpanded: true,
+  child: DropdownButton<Data>(
+    isExpanded: true,
 
-                              dropdownColor:
-                                  isDark
-                                      ? AppColors
-                                          .darkbgBlack
-                                      : Colors
-                                          .white,
+    value: controller.plans.any(
+      (e) => e.name == selectedOperator,
+    )
+        ? controller.plans.firstWhere(
+            (e) => e.name == selectedOperator,
+          )
+        : null,
 
-                              value:
-                                  controller
-                                          .plans
-                                          .any(
-                                            (e) =>
-                                                e.name ==
-                                                selectedOperator,
-                                          )
-                                      ? controller
-                                          .plans
-                                          .firstWhere(
-                                            (e) =>
-                                                e.name ==
-                                                selectedOperator,
-                                          )
-                                      : null,
-
-                              hint: Text(
-                                "Select Operator",
-
-                                style:
-                                    TextStyle(
-                                      color:
-                                          Colors
-                                              .grey,
-
-                                      fontSize:
-                                          14.sp,
-                                    ),
-                              ),
-
-                              icon: Icon(
-                                Icons
-                                    .arrow_drop_down,
-
-                                color:
-                                    isDark
-                                        ? Colors
-                                            .white
-                                        : Colors
-                                            .black,
-                              ),
-
-                              items:
-                                  controller
-                                      .plans
-                                      .map(
-                                        (
-                                          Data operator,
-                                        ) {
-                                          return DropdownMenuItem<
-                                            Data
-                                          >(
-                                            value:
-                                                operator,
-
-                                            child: Row(
-                                              children: [
-                                    Container(
-  width: 28.w,
-  height: 28.w,
-
-  decoration: BoxDecoration(
-    shape: BoxShape.circle,
-    color: Colors.white,
-    border: Border.all(
-      color: Colors.grey.shade300,
-    ),
-  ),
-
-  child: ClipOval(
-    child: Image.network(
-      operator.logo ?? "",
-
-      fit: BoxFit.cover,
-
-      errorBuilder:
-          (context, error, stackTrace) {
-        return Center(
-          child: Text(
-            (operator.name ?? "O")[0]
-                .toUpperCase(),
-
-            style: TextStyle(
-              fontSize: 12.sp,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        );
-      },
-
-      loadingBuilder:
-          (
-            context,
-            child,
-            loadingProgress,
-          ) {
-        if (loadingProgress == null) {
-          return child;
-        }
-
-        return const Center(
-          child: SizedBox(
-            width: 12,
-            height: 12,
-            child:
-                CircularProgressIndicator(
-                  strokeWidth: 2,
-                ),
-          ),
-        );
-      },
-    ),
+   hint: Text(
+  "Select",
+  style: TextStyle(
+    color: Colors.grey,
+    fontSize: 14.sp,
   ),
 ),
 
-                                                SizedBox(
-                                                  width:
-                                                      10.w,
-                                                ),
+    icon: const Icon(Icons.arrow_drop_down),
 
-                                                Text(
-                                                  operator.name ??
-                                                      "",
+    selectedItemBuilder: (context) {
+      return controller.plans.map((operator) {
+        return Row(
+          children: [
+            Expanded(
+              child: Text(
+                operator.name ?? "",
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  color: isDark
+                      ? Colors.white
+                      : Colors.black,
+                ),
+              ),
+            ),
 
-                                                  style:
-                                                      TextStyle(
-                                                        fontSize:
-                                                            14.sp,
+            Container(
+              width: 30.w,
+              height: 30.w,
+              clipBehavior: Clip.antiAlias,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(1.r),
+              ),
+              child: Image.network(
+                operator.logo ?? "",
+                fit: BoxFit.cover,
+                errorBuilder:
+                    (context, error, stackTrace) {
+                  return Container(
+                    color: Colors.grey.shade200,
+                    alignment: Alignment.center,
+                    child: Text(
+                      (operator.name ?? "O")[0]
+                          .toUpperCase(),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        );
+      }).toList();
+    },
 
-                                                        color:
-                                                            isDark
-                                                                ? Colors.white
-                                                                : Colors.black,
-                                                      ),
-                                                ),
-                                              ],
-                                            ),
-                                          );
-                                        },
-                                      )
-                                      .toList(),
+    items: controller.plans.map(
+      (Data operator) {
+        return DropdownMenuItem<Data>(
+          value: operator,
 
-                              onChanged: (
-                                Data? value,
-                              ) {
-                                setState(() {
-                                  selectedOperator =
-                                      value?.name ??
-                                      "";
-                                });
-                              },
-                            ),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  operator.name ?? "",
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    color: isDark
+                        ? Colors.white
+                        : Colors.black,
+                  ),
+                ),
+              ),
+
+              Container(
+                width: 30.w,
+                height: 30.w,
+                clipBehavior: Clip.antiAlias,
+                decoration: BoxDecoration(
+                  borderRadius:
+                      BorderRadius.circular(1.r),
+                ),
+                child: Image.network(
+                  operator.logo ?? "",
+                  fit: BoxFit.cover,
+                  errorBuilder:
+                      (context, error, stackTrace) {
+                    return Container(
+                      color: Colors.grey.shade200,
+                      alignment: Alignment.center,
+                      child: Text(
+                        (operator.name ?? "O")[0]
+                            .toUpperCase(),
                       ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    ).toList(),
+
+ onChanged: (Data? value) async {
+  if (value == null) return;
+
+  setState(() {
+    selectedOperator = value.name ?? "";
+    selectedProductId = value.id?.toString() ?? "";
+    isPlanLoaded = true;
+  });
+
+  searchController.clear();
+  controller.searchPlansList.clear();
+
+  await controller.getPlanDetail(
+    planId: selectedProductId,
+  );
+}
+  ),
+)
                 );
               }),
 
               SizedBox(height: 15.h),
 
-              /// AMOUNT
-              _buildInputLabel(
-                'Amount',
-              ),
+             
 
-              Container(
-                decoration: BoxDecoration(
-                  color:
-                      isDark
-                          ? AppColors
-                              .darkplceholder
-                          : AppColors
-                              .clrplceholder,
-
-                  borderRadius:
-                      BorderRadius.circular(
-                        10.r,
-                      ),
-                ),
-
-                child: TextField(
-                  controller:
-                      amountController,
-
-                  keyboardType:
-                      TextInputType.number,
-
-                  inputFormatters: [
-                    FilteringTextInputFormatter
-                        .digitsOnly,
-                  ],
-
-                  style: TextStyle(
-                    fontSize: 14.sp,
-
-                    color:
-                        isDark
-                            ? Colors.white
-                            : Colors.black,
-                  ),
-
-                  decoration: InputDecoration(
-                    hintText:
-                        'Enter Amount',
-
-                    hintStyle: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 14.sp,
-                    ),
-
-                    border: InputBorder.none,
-
-                    contentPadding:
-                        EdgeInsets.symmetric(
-                          horizontal: 16.w,
-                          vertical: 12.h,
-                        ),
-                  ),
-                ),
-              ),
+              
 
               SizedBox(height: 20.h),
 
@@ -512,53 +505,52 @@ class _MobileRechargePageState
                 ),
               ),
 
-              SizedBox(height: 20.h),
+              SizedBox(height: 4.h),
 
               /// SEARCH
               Container(
-                decoration: BoxDecoration(
-                  color:
-                      isDark
-                          ? AppColors
-                              .darkplceholder
-                          : AppColors
-                              .clrplceholder,
+  decoration: BoxDecoration(
+    color: isDark
+        ? AppColors.darkplceholder
+        : Colors.white,
+    borderRadius: BorderRadius.circular(10.r),
+    border: Border.all(
+      color: Colors.grey.shade300,
+      width: 1,
+    ),
+  ),
+  child: TextField(
+    controller: searchController,
+    style: TextStyle(
+      color: isDark
+          ? Colors.white
+          : Colors.black,
+    ),
+    decoration:InputDecoration(
+  hintText: 'Search for plans',
 
-                  borderRadius:
-                      BorderRadius.circular(
-                        10.r,
-                      ),
-                ),
+  hintStyle: TextStyle(
+    color: Colors.grey,
+    fontSize: 14.sp,
+  ),
 
-                child: TextField(
-                  controller:
-                      searchController,
+  border: InputBorder.none,
 
-                  decoration: InputDecoration(
-                    hintText:
-                        'Search for plans',
+  contentPadding: EdgeInsets.only(
+    left: 20.w,   // increase this
+    right: 16.w,
+    top: 12.h,
+    bottom: 12.h,
+  ),
 
-                    hintStyle: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 14.sp,
-                    ),
-
-                    border: InputBorder.none,
-
-                    contentPadding:
-                        EdgeInsets.symmetric(
-                          horizontal: 16.w,
-                          vertical: 12.h,
-                        ),
-
-                    suffixIcon: Icon(
-                      Icons.search,
-                      color: Colors.orange,
-                      size: 22.sp,
-                    ),
-                  ),
-                ),
-              ),
+  suffixIcon: Icon(
+    Icons.search,
+    color: Colors.orange,
+    size: 22.sp,
+  ),
+),
+  ),
+),
 
               SizedBox(height: 15.h),
 
@@ -639,75 +631,425 @@ class _MobileRechargePageState
               SizedBox(height: 20.h),
 
               /// TABBAR
-              TabBar(
-                controller: _tabController,
+              Obx(() {
+  if (_tabController == null ||
+    controller.planTabs.isEmpty ||
+    _tabController!.length != controller.planTabs.length) {
+  return const SizedBox();
+}
 
-                isScrollable: true,
-
-                indicatorColor:
-                    Colors.orange,
-
-                labelColor:
-                    Colors.orange,
-
-                unselectedLabelColor:
-                    Colors.grey,
-
-                tabAlignment:
-                    TabAlignment.start,
-
-                dividerColor:
-                    Colors.transparent,
-
-                tabs: const [
-                  Tab(
-                    text:
-                        'Entertainment Plan',
-                  ),
-
-                  Tab(
-                    text: 'Unlimited',
-                  ),
-
-                  Tab(
-                    text: 'Combo',
-                  ),
-
-                  Tab(
-                    text: 'Data',
-                  ),
-                ],
-              ),
+  return TabBar(
+    controller: _tabController,
+    isScrollable: true,
+    indicatorColor: Colors.orange,
+    labelColor: Colors.orange,
+    unselectedLabelColor: Colors.grey,
+    dividerColor: Colors.transparent,
+    tabAlignment: TabAlignment.start,
+    tabs: controller.planTabs.map((tab) {
+      return Tab(
+        text: tab.planType ?? "",
+      );
+    }).toList(),
+  );
+}),
 
               SizedBox(height: 15.h),
 
               /// PLAN LIST
-              ListView.builder(
-                shrinkWrap: true,
+           Obx(() {
+  final isSearching =
+      searchController.text.trim().isNotEmpty;
+      
 
-                physics:
-                    const NeverScrollableScrollPhysics(),
+  if (controller.isLoading.value) {
+    return const Center(
+      child: CircularProgressIndicator(),
+    );
+  }
 
-                itemCount: 3,
+  // SEARCH RESULT
+  if (isSearching) {
+    final list = controller.searchPlansList;
+final detailList = controller.planDetailList;
 
-                itemBuilder: (
-                  context,
-                  index,
-                ) {
-                  return _buildPlanCard(
-                    index,
-                  );
-                },
-              ),
+    if (list.isEmpty) {
+      return const Center(
+        child: Text("No Search Plans Found"),
+      );
+    }
 
+   return ListView.builder(
+  shrinkWrap: true,
+  physics: const NeverScrollableScrollPhysics(),
+  itemCount: detailList.length,
+  itemBuilder: (context, index) {
+    final plan = detailList[index];
+
+    return _buildPlanCardCommon(
+      amount: plan.amount?.toString() ?? "",
+      validity: plan.validity?.toString() ?? "",
+      details: plan.planDetails ?? "",
+      onBuy: () async {
+
+        String mobile =
+            mobileController.text.trim();
+
+        mobile = mobile.replaceAll(
+          RegExp(r'[^0-9]'),
+          '',
+        );
+
+        if (mobile.startsWith('91') &&
+            mobile.length == 12) {
+          mobile = mobile.substring(2);
+        }
+
+        if (mobile.length != 10) {
+          CustomToast.error(
+            "Please enter valid 10 digit phone number",
+          );
+          return;
+        }
+
+        await controller.confirmtrans(
+          plan.productId.toString(),
+        );
+
+        Get.toNamed(
+          AppRoutes.transconfirm,
+          arguments: {
+            "mobileNumber": mobile,
+            "productdetid":
+                plan.productId.toString(),
+          },
+        );
+      },
+    );
+  },
+);
+  }
+
+  // PLAN DETAIL RESULT
+  final detailList = controller.planDetailList;
+
+if (!isPlanLoaded) {
+  return Container(
+    margin: EdgeInsets.symmetric(
+      horizontal: 8.w,
+      vertical: 6.h,
+    ),
+    padding: EdgeInsets.all(20.r),
+    // decoration: BoxDecoration(
+    //   borderRadius: BorderRadius.circular(18.r),
+    //   border: Border.all(color: Colors.grey.shade300),
+    // ),
+    child: Center(
+      child: Text(
+        "Please Select Plan",
+        style: TextStyle(
+          fontSize: 14.sp,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    ),
+  );
+}
+
+if (detailList.isEmpty) {
+  return Container(
+    margin: EdgeInsets.symmetric(
+      horizontal: 8.w,
+      vertical: 6.h,
+    ),
+    padding: EdgeInsets.all(20.r),
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(18.r),
+      border: Border.all(color: Colors.grey.shade300),
+    ),
+    child: Center(
+      child: Text(
+        "No Plans Found",
+        style: TextStyle(
+          fontSize: 14.sp,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    ),
+  );
+}
+
+  return ListView.builder(
+    shrinkWrap: true,
+    physics: const NeverScrollableScrollPhysics(),
+    itemCount: detailList.length,
+    itemBuilder: (context, index) {
+      final plan = detailList[index];
+
+      return _buildPlanCardCommon(
+  amount: plan.amount?.toString() ?? "",
+  validity: plan.validity?.toString() ?? "",
+  // talkTime: plan.talkTime?.toString() ?? "",
+  details: plan.planDetails ?? "",
+  
+onBuy: () async {
+  String mobile = mobileController.text.trim();
+    print("👉 PLAN ID RAW: ${plan.productId}");
+  print("👉 PLAN ID STRING: ${plan.productId?.toString()}");
+
+  // Remove spaces, +, -, etc.
+  mobile = mobile.replaceAll(RegExp(r'[^0-9]'), '');
+
+  // Remove India country code if present
+  if (mobile.startsWith('91') && mobile.length == 12) {
+    mobile = mobile.substring(2);
+  }
+
+  if (mobile.isEmpty) {
+    CustomToast.error("Please enter phone number");
+    return;
+  }
+
+  if (mobile.length != 10) {
+    CustomToast.error(
+      "Please enter valid 10 digit phone number",
+    );
+    return;
+  }
+
+  print("Validated Mobile: $mobile");
+
+  await controller.confirmtrans(
+    plan.productId.toString(),
+  );
+
+Get.toNamed(
+  AppRoutes.transconfirm,
+  arguments: {
+    "mobileNumber": mobile,
+    "productdetid": plan.productId.toString(), // ✅ FIXED // ✅ ADD THIS
+  },
+);
+},
+    // Recharge API call / Navigate
+  
+);
+    },
+  );
+}),
               SizedBox(height: 30.h),
             ],
           ),
         ),
       ),
     );
-  }
 
+
+    
+  }
+Widget _buildPlanCardCommon({
+  required String amount,
+  required String validity,
+  required String details,
+  required VoidCallback onBuy,
+}) {
+  return Container(
+    margin: EdgeInsets.symmetric(
+      horizontal: 8.w,
+      vertical: 6.h,
+    ),
+    padding: EdgeInsets.all(14.r),
+    decoration: BoxDecoration(
+       color: Theme.of(context).brightness == Brightness.dark
+
+            ? AppColors.darkplceholder.withValues(alpha: 0.5)
+
+            : AppColors.background,
+      borderRadius: BorderRadius.circular(18.r),
+      border: Border.all(
+        color: Colors.grey.shade300,
+      ),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        /// TOP SECTION
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            /// Amount
+            Expanded(
+              flex: 2,
+              child: Text(
+                "₹$amount",
+                 style: TextStyle(
+                        fontSize: 18.sp,
+                        fontFamily: 'Poppins',
+                        fontWeight: FontWeight.w600,
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+              ),
+            ),
+
+            /// Validity
+            Expanded(
+              flex: 3,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  RichText(
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: validity,
+                          style: TextStyle(
+                  fontSize: 12.sp,
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.w500,
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.white
+                      : Colors.black,
+                ),
+                        ),
+                        TextSpan(
+                          text:
+                              validity == "1" ? " day" : " days",
+                          style: TextStyle(
+                  fontSize: 12.sp,
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.w500,
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.white
+                      : Colors.black,
+                ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 2.h),
+                  Text(
+                    "validity",
+                    style: TextStyle(
+                      fontSize: 13.sp,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            /// Buy Button
+            SizedBox(
+              height: 28.h,
+              child: ElevatedButton(
+                onPressed: onBuy,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF1DA1B8),
+                  elevation: 0,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 20.w,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius:
+                        BorderRadius.circular(10.r),
+                  ),
+                ),
+                child: Text(
+                  "Buy",
+                  style: TextStyle(
+                    fontSize: 10.sp,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+
+        SizedBox(height: 14.h),
+
+        Divider(
+          color: Colors.grey.shade300,
+          thickness: 1,
+        ),
+
+        SizedBox(height: 10.h),
+
+        /// DETAILS
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 4.w),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: details
+                .split('\n')
+                .where((e) => e.trim().isNotEmpty)
+                .map(
+                  (item) => Padding(
+                    padding:
+                        EdgeInsets.only(bottom: 4.h),
+                    child: Row(
+                      crossAxisAlignment:
+                          CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "• ",
+                           style: TextStyle(
+                  fontSize: 12.sp,
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.w500,
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.white
+                      : Colors.black,
+                ),
+                        ),
+                        Expanded(
+                          child: Text(
+                            item.trim(),
+                             style: TextStyle(
+                  fontSize: 12.sp,
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.w500,
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.white
+                      : Colors.black,
+                ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+                .toList(),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+Future<void> pickContact() async {
+  final status = await ph.Permission.contacts.request();
+
+  if (!status.isGranted) return;
+
+  final contacts = await FlutterContacts.getAll(
+    properties: {ContactProperty.phone},
+  );
+
+  if (!mounted) return;
+
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (_) => ContactListPage(
+        mobileController: mobileController,
+        contacts: contacts,
+      ),
+    ),
+  );
+}
   Widget _buildInputLabel(
     String label,
   ) {
@@ -769,208 +1111,90 @@ class _MobileRechargePageState
     );
   }
 
-  Widget _buildPlanCard(
-    int index,
-  ) {
-    final amounts = [
-      '365',
-      '459',
-      '760',
-    ];
+//   Widget _buildPlanCard(PlanData plan) {
+//   return Container(
+//     margin: EdgeInsets.only(bottom: 15.h),
+//     padding: EdgeInsets.all(16.r),
+//     decoration: BoxDecoration(
+//       color: Theme.of(context).brightness == Brightness.dark
+//           ? AppColors.darkplceholder.withValues(alpha: 0.5)
+//           : AppColors.border,
+//       borderRadius: BorderRadius.circular(12.r),
+//     ),
+//     child: Column(
+//       crossAxisAlignment: CrossAxisAlignment.start,
+//       children: [
+//         Row(
+//           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//           children: [
+//             Text(
+//               "₹ ${plan.amount ?? ''}",
+//               style: TextStyle(
+//                 fontSize: 16.sp,
+//                 fontWeight: FontWeight.w600,
+//               ),
+//             ),
 
-    final data = [
-      '2',
-      '2.5',
-      '2',
-    ];
+//             Row(
+//               children: [
+//                 _buildPlanStat(
+//                   plan.talkTime?.toString() ?? "0",
+//                   " GB/day",
+//                   "data",
+//                 ),
+//                 SizedBox(width: 15.w),
+//                 _buildPlanStat(
+//                   plan.validity?.toString() ?? "0",
+//                   " days",
+//                   "validity",
+//                 ),
+//               ],
+//             ),
 
-    final validity = [
-      '28',
-      '28',
-      '56',
-    ];
+//             GestureDetector(
+//               onTap: () {
+//                 Navigator.push(
+//                   context,
+//                   MaterialPageRoute(
+//                     builder: (_) => ConfirmTransactionPage(
+//                       productName: selectedOperator,
+//                       operatorInitial:
+//                           selectedOperator.isNotEmpty
+//                               ? selectedOperator[0]
+//                               : "J",
+//                       operatorColor: selectedOperatorColor,
+//                     ),
+//                   ),
+//                 );
+//               },
+//               child: Container(
+//                 padding: EdgeInsets.symmetric(
+//                   horizontal: 16.w,
+//                   vertical: 6.h,
+//                 ),
+//                 decoration: BoxDecoration(
+//                   color: AppColors.clrPrimary,
+//                   borderRadius: BorderRadius.circular(6.r),
+//                 ),
+//                 child: const Text(
+//                   "buy",
+//                   style: TextStyle(color: Colors.white),
+//                 ),
+//               ),
+//             ),
+//           ],
+//         ),
 
-    return Container(
-      margin: EdgeInsets.only(
-        bottom: 15.h,
-      ),
+//         SizedBox(height: 15.h),
 
-      padding: EdgeInsets.all(16.r),
-
-      decoration: BoxDecoration(
-        color:
-            Theme.of(context).brightness ==
-                    Brightness.dark
-                ? AppColors.darkplceholder
-                    .withValues(alpha: 0.5)
-                : AppColors.border,
-
-        borderRadius:
-            BorderRadius.circular(12.r),
-      ),
-
-      child: Column(
-        crossAxisAlignment:
-            CrossAxisAlignment.start,
-
-        children: [
-          Row(
-            mainAxisAlignment:
-                MainAxisAlignment
-                    .spaceBetween,
-
-            children: [
-
-              /// PRICE
-              RichText(
-                text: TextSpan(
-                  children: [
-                    TextSpan(
-                      text: '₹ ',
-
-                      style: TextStyle(
-                        fontSize: 18.sp,
-
-                        fontWeight:
-                            FontWeight.w300,
-
-                        color:
-                            Theme.of(context)
-                                        .brightness ==
-                                    Brightness.dark
-                                ? Colors.white
-                                : Colors.black,
-                      ),
-                    ),
-
-                    TextSpan(
-                      text: amounts[index],
-
-                      style: TextStyle(
-                        fontSize: 18.sp,
-
-                        fontWeight:
-                            FontWeight.w600,
-
-                        color:
-                            Theme.of(context)
-                                        .brightness ==
-                                    Brightness.dark
-                                ? Colors.white
-                                : Colors.black,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              /// DATA & VALIDITY
-              Row(
-                children: [
-                  _buildPlanStat(
-                    data[index],
-                    ' GB/day',
-                    'data',
-                  ),
-
-                  SizedBox(width: 15.w),
-
-                  _buildPlanStat(
-                    validity[index],
-                    ' days',
-                    'validity',
-                  ),
-                ],
-              ),
-
-              /// BUY BUTTON
-              GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-
-                    MaterialPageRoute(
-                      builder:
-                          (context) =>
-                              ConfirmTransactionPage(
-                                productName:
-                                    selectedOperator,
-
-                                operatorInitial:
-                                    selectedOperator
-                                        .isNotEmpty
-                                    ? selectedOperator[0]
-                                    : "J",
-
-                                operatorColor:
-                                    selectedOperatorColor,
-                              ),
-                    ),
-                  );
-                },
-
-                child: Container(
-                  padding:
-                      EdgeInsets.symmetric(
-                        horizontal: 16.w,
-                        vertical: 6.h,
-                      ),
-
-                  decoration: BoxDecoration(
-                    color:
-                        AppColors.clrPrimary,
-
-                    borderRadius:
-                        BorderRadius.circular(
-                          6.r,
-                        ),
-                  ),
-
-                  child: Text(
-                    'buy',
-
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 12.sp,
-                      fontWeight:
-                          FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-
-          SizedBox(height: 15.h),
-
-          Padding(
-            padding: EdgeInsets.only(
-              left: 100.w,
-            ),
-
-            child: Column(
-              crossAxisAlignment:
-                  CrossAxisAlignment.start,
-
-              children: [
-                _buildPlanBullet(
-                  '12am-12pm Unlimited Data',
-                ),
-
-                _buildPlanBullet(
-                  'Unlimited Calls',
-                ),
-
-                _buildPlanBullet(
-                  'Weekend Data Rollover',
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+//         Text(
+//           plan.planDetails ?? "",
+//           style: TextStyle(fontSize: 11.sp, color: Colors.grey),
+//         ),
+//       ],
+//     ),
+//   );
+// }
 
   Widget _buildPlanBullet(
     String text,
@@ -982,6 +1206,7 @@ class _MobileRechargePageState
         fontSize: 11.sp,
         color: Colors.grey,
         height: 1.5,
+        fontFamily: 'Poppins',
       ),
     );
   }
@@ -1022,7 +1247,7 @@ class _MobileRechargePageState
 
                 style: TextStyle(
                   fontSize: 8.sp,
-
+ fontFamily: 'Poppins',
                   color:
                       Theme.of(context)
                                   .brightness ==
@@ -1041,6 +1266,7 @@ class _MobileRechargePageState
 
           style: TextStyle(
             fontSize: 8.sp,
+             fontFamily: 'Poppins',
             color: Colors.grey,
           ),
         ),

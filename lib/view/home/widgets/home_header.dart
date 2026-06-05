@@ -168,91 +168,86 @@ class HomeHeaderSection extends StatelessWidget {
                     SizedBox(width: 12.w),
 
                     /// THEME SWITCH
-                    GestureDetector(
-                      onTap: () {
-                        themeController.toggleTheme();
-                      },
-                      child: Container(
-                        width: isTablet ? 86.w : 68.w,
-                        height: isTablet ? 42.h : 34.h,
-                        decoration: BoxDecoration(
-                          color: isDark
-                              ? const Color(0xFF1E1E2D)
-                              : const Color(0xFFF0F0F0),
-                          borderRadius: BorderRadius.circular(24.r),
-                          boxShadow: [
-                            if (!isDark)
-                              BoxShadow(
-                                color: Colors.black.withValues(alpha: 0.05),
-                                blurRadius: 4,
-                                offset: const Offset(0, 2),
-                              ),
-                          ],
-                        ),
-                        child: Stack(
-                          children: [
-                            /// ANIMATED BUTTON
-                            AnimatedAlign(
-                              duration: const Duration(milliseconds: 300),
-                              curve: Curves.easeInOut,
-                              alignment: isDark
-                                  ? Alignment.centerLeft
-                                  : Alignment.centerRight,
-                              child: Padding(
-                                padding: EdgeInsets.all(3.r),
-                                child: Container(
-                                  width: isTablet ? 34.w : 28.w,
-                                  height: isTablet ? 34.w : 28.w,
-                                  decoration: BoxDecoration(
-                                    color: isDark
-                                        ? const Color(0xFF0F0F1A)
-                                        : Colors.white,
-                                    shape: BoxShape.circle,
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withValues(
-                                          alpha: 0.15,
-                                        ),
-                                        blurRadius: 5,
-                                        offset: const Offset(0, 2),
-                                      ),
-                                    ],
-                                  ),
-                                  child: Icon(
-                                    isDark
-                                        ? Icons.nightlight_round
-                                        : Icons.wb_sunny_rounded,
-                                    size: 14.sp,
-                                    color: isDark
-                                        ? Colors.white
-                                        : Colors.orange,
-                                  ),
-                                ),
-                              ),
-                            ),
+                   GestureDetector(
+  onTap: () {
+    themeController.toggleTheme();
+  },
+  child: Container(
+    width: isTablet ? 76.w : 68.w,
+    height: isTablet ? 32.h : 34.h,
+    decoration: BoxDecoration(
+      color: isDark
+          ? Colors.white
+          : const Color(0xFF1E1E2D),
+      borderRadius: BorderRadius.circular(24.r),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withValues(alpha: 0.10),
+          blurRadius: 4,
+          offset: const Offset(0, 2),
+        ),
+      ],
+    ),
+    child: Stack(
+      children: [
+        AnimatedAlign(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+          alignment: isDark
+              ? Alignment.centerLeft
+              : Alignment.centerRight,
+          child: Padding(
+            padding: EdgeInsets.all(3.r),
+            child: Container(
+              width: isTablet ? 34.w : 28.w,
+              height: isTablet ? 34.w : 28.w,
+              decoration: BoxDecoration(
+                color: isDark
+                    ? const Color(0xFF1E1E2D)
+                    : Colors.white,
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.15),
+                    blurRadius: 5,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Icon(
+                isDark
+                    ? Icons.nightlight_round
+                    : Icons.wb_sunny_rounded,
+                size: 14.sp,
+                color: isDark
+                    ? Colors.white
+                    : Colors.orange,
+              ),
+            ),
+          ),
+        ),
 
-                            /// BACK ICON
-                            Align(
-                              alignment: isDark
-                                  ? Alignment.centerRight
-                                  : Alignment.centerLeft,
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 8.w),
-                                child: Icon(
-                                  isDark
-                                      ? Icons.wb_sunny_rounded
-                                      : Icons.nightlight_round,
-                                  size: 13.sp,
-                                  color: colorScheme.onSurface.withValues(
-                                    alpha: 0.25,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+        Align(
+          alignment: isDark
+              ? Alignment.centerRight
+              : Alignment.centerLeft,
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 8.w),
+            child: Icon(
+              isDark
+                  ? Icons.wb_sunny_rounded
+                  : Icons.nightlight_round,
+              size: 13.sp,
+              color: isDark
+                  ? Colors.black.withValues(alpha: 0.4)
+                  : Colors.white.withValues(alpha: 0.4),
+            ),
+          ),
+        ),
+      ],
+    ),
+  ),
+),
                   ],
                 ),
               ],

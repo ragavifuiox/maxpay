@@ -20,6 +20,7 @@ class AddStaffRepoImpl implements AddStaffRepository {
   Future<Either<Failure, AddStaff>> addStaff({
     required String name,
     required String phone,
+    required String package,
   }) async {
     try {
     final response = await apiService.post(
@@ -27,6 +28,7 @@ class AddStaffRepoImpl implements AddStaffRepository {
   data: {
     "name": name,
     "mobile": phone,
+    "commission_package": package,
   },
 );
 

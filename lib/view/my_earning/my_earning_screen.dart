@@ -12,8 +12,11 @@ class MyEarningsScreen extends GetView<EarningController> {
 
   @override
   Widget build(BuildContext context) {
+     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      
 
       appBar: const CommonAppBar(
         title: "My Earnings",
@@ -38,47 +41,49 @@ class MyEarningsScreen extends GetView<EarningController> {
                 const CommonFilterBox(),
 
                 const SizedBox(height: 16),
+               Divider(
+  color: Theme.of(context).brightness == Brightness.light
+      ? Colors.black12
+      : Colors.white24,
+),
 
+                const SizedBox(height: 12),
                 // Total Earnings Container
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 16,
-                  ),
-
-                  decoration: BoxDecoration(
-                    color: AppColors.clrPrimary,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-
-                  child: Column(
-                    children: [
-
-                      const Text(
-                        "Total Earnings",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontFamily: 'poppins',
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-
-                      const SizedBox(height: 4),
-
-                    
-                       Text(
-  "₹ ${controller.earningsData.value?.data?.totalEarnings ?? 0}",
-
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+               Container(
+  width: double.infinity,
+  padding: const EdgeInsets.all(12),
+  decoration: BoxDecoration(
+    color: AppColors.clrPrimary,
+    borderRadius: BorderRadius.circular(10),
+    border: Border.all(
+      color: isDark
+          ? AppColors.darkFilterBorder
+          : AppColors.totalborde2.withValues(alpha: 0.1),
+    ),
+  ),
+  child: Column(
+    children: [
+      const Text(
+        "Total Earnings",
+        style: TextStyle(
+          color: Colors.white,
+          fontFamily: 'poppins',
+          fontSize: 14,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      const SizedBox(height: 4),
+      Text(
+        "₹ ${controller.earningsData.value?.data?.totalEarnings ?? 0}",
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 18,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    ],
+  ),
+),
 
                 const SizedBox(height: 16),
 

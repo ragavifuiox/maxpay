@@ -32,8 +32,11 @@ class RefundScreen extends StatelessWidget {
      
 
             Divider(
-              color: Theme.of(context).colorScheme.outline.withValues(alpha: 0.5),
-            ),
+  color: Theme.of(context).brightness == Brightness.light
+      ? Colors.black12
+      : Colors.white24,
+),
+
 
             const SizedBox(height: 16),
 

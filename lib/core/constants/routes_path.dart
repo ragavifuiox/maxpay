@@ -37,4 +37,8 @@ class AppRoutes {
   static const String customertrans='/customertrans';
   static const String walletrequest='/walletrequest';
   static const String addstaff='/addstaff';
+  static const String walletbal='/walletbal';
+  static const String transconfirm='/transconfirm';
+  static const String pdf='/pdf';
+  static const String statementReadMore='/statementReadMore';
 }

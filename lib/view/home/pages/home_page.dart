@@ -24,9 +24,9 @@ class HomePageScreen extends GetView<HomePageController> {
   @override
 Widget build(BuildContext context) {
 
-  WidgetsBinding.instance.addPostFrameCallback((_) {
-    controller.fetchpopupmessage("Home");
-  });
+  // WidgetsBinding.instance.addPostFrameCallback((_) {
+  //   controller.fetchpopupmessage("Home");
+  // });
 
   final theme = Theme.of(context);
 
@@ -80,15 +80,20 @@ Widget build(BuildContext context) {
 
   return StatCard(
     title: 'Wallet Balance',
-
+ onTap: () {
+    Get.toNamed(AppRoutes.walletbal);
+    },
     value: '₹${balance.toStringAsFixed(2)}',
-
+  textColor: Theme.of(context).brightness == Brightness.dark
+    ? Color.fromARGB(255, 171, 171, 171)
+    : AppColors.darktextclr,
     imageWidget: SvgPicture.asset(
       AssetImages.walletBalance,
     ),
   );
 }),
-                      BlinkingZoomCard(
+          
+BlinkingZoomCard(
   child: StatCard(
     onTap: () {
     Get.toNamed(AppRoutes.menu);
@@ -104,7 +109,10 @@ Widget build(BuildContext context) {
                         StatCard(
                           title: 'Todays Credit',
                           value: '₹2500.00',
-                          textColor: const Color(0xff636363),
+                         textColor: Theme.of(context).brightness == Brightness.dark
+    ? Color.fromARGB(255, 171, 171, 171)
+    : AppColors.darktextclr,
+    
                           bgColor: AppColors.darkBlue.withValues(alpha: 0.04),
                           imageWidget: SvgPicture.asset(
                             AssetImages.todaysCredit,
@@ -114,7 +122,9 @@ Widget build(BuildContext context) {
                         StatCard(
                           title: 'Refunded',
                           value: '₹2500.00',
-                          textColor: const Color(0xff636363),
+                            textColor: Theme.of(context).brightness == Brightness.dark
+    ?  Color.fromARGB(255, 171, 171, 171)
+    : AppColors.darktextclr,
                           bgColor: AppColors.darkBlue.withValues(alpha: 0.04),
                           imageWidget: SvgPicture.asset(
                             AssetImages.refunded,
@@ -138,7 +148,9 @@ Widget build(BuildContext context) {
     imageWidget: SvgPicture.asset(
       AssetImages.complaints,
     ),
-
+  textColor: Theme.of(context).brightness == Brightness.dark
+    ? Color.fromARGB(255, 171, 171, 171)
+    : AppColors.darktextclr,
     bgColor: AppColors.darkBlue.withValues(
       alpha: 0.04,
     ),
@@ -177,7 +189,9 @@ Widget build(BuildContext context) {
       AssetImages.success,
       height: 45.h,
     ),
-
+valueColor: Theme.of(context).brightness == Brightness.dark
+    ? Colors.black
+    : Colors.black,
     textColor: Colors.green,
   );
 }),
@@ -202,7 +216,9 @@ Widget build(BuildContext context) {
       AssetImages.processing,
       height: 45.h,
     ),
-
+valueColor: Theme.of(context).brightness == Brightness.dark
+    ? Colors.black
+    : Colors.black,
     textColor: Colors.orange,
   );
 }),
@@ -227,7 +243,9 @@ Widget build(BuildContext context) {
       AssetImages.failedAll,
       height: 45.h,
     ),
-
+valueColor: Theme.of(context).brightness == Brightness.dark
+    ? Colors.black
+    : Colors.black,
     textColor: Colors.red,
   );
 }),
@@ -242,7 +260,7 @@ Widget build(BuildContext context) {
 
                  
 
-                    SizedBox(height: 100.h), // Space for Nav Bar
+                    SizedBox(height: 9.h), // Space for Nav Bar
                   ],
                 ),
               ),

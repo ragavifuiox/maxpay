@@ -1,23 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:maxpay/core/constants/asset_images.dart';
-import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/global_widget/commom_button.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
 
-class WebSignupSuccessScreen extends StatelessWidget {
-  const WebSignupSuccessScreen({super.key});
+class WebSignupSuccessScreen
+    extends StatelessWidget {
+
+  const WebSignupSuccessScreen({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
+
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: CommonAppBar(title: ""),
+
+      /// ✅ Dark Theme Support
+      backgroundColor:
+          theme.scaffoldBackgroundColor,
+
+      appBar: const CommonAppBar(
+        title: "",
+      ),
 
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
+          padding:
+              const EdgeInsets.symmetric(
+            horizontal: 24,
+          ),
 
           child: Column(
             children: [
@@ -27,14 +42,22 @@ class WebSignupSuccessScreen extends StatelessWidget {
               /// SUCCESS TITLE
               Center(
                 child: Row(
-                  mainAxisSize: MainAxisSize.min,
+                  mainAxisSize:
+                      MainAxisSize.min,
+
                   children: [
 
-                    const Text(
+                    Text(
                       "Success",
+
                       style: TextStyle(
                         fontSize: 24,
-                        fontWeight: FontWeight.bold,
+                        fontWeight:
+                            FontWeight.bold,
+
+                        color: theme
+                            .colorScheme
+                            .onSurface,
                       ),
                     ),
 
@@ -60,11 +83,18 @@ class WebSignupSuccessScreen extends StatelessWidget {
               const SizedBox(height: 30),
 
               /// MESSAGE
-              const Text(
+              Text(
                 "Your web link has been sent to your\nmail id please check your inbox.",
+
                 textAlign: TextAlign.center,
+
                 style: TextStyle(
-                  color: Colors.green,
+                  color: theme
+                              .brightness ==
+                          Brightness.dark
+                      ? Colors.greenAccent
+                      : Colors.green,
+
                   fontSize: 14,
                 ),
               ),
@@ -75,9 +105,11 @@ class WebSignupSuccessScreen extends StatelessWidget {
               Center(
                 child: CommonButton(
                   title: "Submit",
-                 
+
                   onTap: () {
-                    Get.toNamed(AppRoutes.setting);
+                    Get.offAllNamed(
+                      AppRoutes.setting,
+                    );
                   },
                 ),
               ),

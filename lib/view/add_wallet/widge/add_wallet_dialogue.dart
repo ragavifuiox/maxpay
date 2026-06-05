@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:maxpay/core/constants/asset_images.dart';
 import 'package:maxpay/core/utils/texthelper.dart';
 
@@ -39,25 +40,22 @@ Row(
 
         /// SHARE ICON
         IconButton(
-          onPressed: () {
-            // share function
-          },
-          icon: const Icon(
-            Icons.share,
-            color: Colors.green,
-          ),
-        ),
+  onPressed: () {
+    // share function
+  },
+  icon: SvgPicture.asset(
+    AssetImages.shareSvg,
+    width: 22,
+    height: 22,
+    colorFilter: const ColorFilter.mode(
+      Colors.green,
+      BlendMode.srcIn,
+    ),
+  ),
+),
 
-        /// CLOSE ICON
-        IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          icon: const Icon(
-            Icons.close,
-            color: Colors.green,
-          ),
-        ),
+        
+       
       ],
     ),
   ],

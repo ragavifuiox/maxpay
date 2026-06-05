@@ -303,17 +303,17 @@ class _ElectricityBillPageState extends State<ElectricityBillPage> {
                         _isBillFetched = true;
                       });
                     } else {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ConfirmTransactionPage(
-                            productName: 'Electricity Bill',
-                            operatorInitial: 'E',
-                            operatorColor: Colors.orange,
-                            amount: '₹365.00',
-                          ),
-                        ),
-                      );
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     builder: (context) => ConfirmTransactionPage(
+                      //       productName: 'Electricity Bill',
+                      //       operatorInitial: 'E',
+                      //       operatorColor: Colors.orange,
+                      //       amount: '₹365.00',
+                      //     ),
+                      //   ),
+                      // );
                     }
                   },
                   style: ElevatedButton.styleFrom(

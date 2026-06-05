@@ -40,7 +40,7 @@ class CustomElevatedButton extends StatelessWidget {
             style: TextStyle(
               fontFamily: 'Poppins',
               fontWeight: FontWeight.w600,
-              fontSize: 16.sp,
+              fontSize: 14.sp,
               color: textColor ?? Colors.white,
             ),
           ),

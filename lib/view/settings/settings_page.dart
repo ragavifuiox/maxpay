@@ -96,6 +96,15 @@ class SettingsPage extends StatelessWidget {
                     SvgPicture.asset(AssetImages.updatePin, width: 24.w),
                   ),
 
+ _buildMenuTile(
+                    context,
+                    'Cashback',
+                    () {
+                       Get.toNamed(AppRoutes.cashback);
+                    },
+                    SvgPicture.asset(AssetImages.cashback, width: 24.w),
+                  ),
+
                   _buildMenuTile(
                     context,
                     'Privacy Policy',

@@ -64,8 +64,10 @@ class AssetImages {
   static const  qr_code= "assets/images/qr_code.png";
   static const  profileImage= "assets/images/profile.jpg";
   static const  qrcode= "assets/images/qrcode 1.png";
-  static const stafflist= "assets/images/stafflist.png";
+  static const stafflist= "assets/images/stafflist_page.svg";
   static const search= "assets/images/search.svg";
+  static const shareSvg= "assets/images/share_icon.svg";
+  static const dispute= "assets/images/dispute.svg";
 
 }
 SizedBox adjustWidth(double width) {

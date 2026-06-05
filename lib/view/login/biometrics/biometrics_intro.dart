@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/core/utils/theme.dart';
-import 'package:maxpay/view/login/widgets/cutom_elevated_button.dart';
+import 'package:maxpay/global_widget/commom_button.dart';
 
 class BiometricsIntroPage extends StatelessWidget {
   const BiometricsIntroPage({super.key});
@@ -24,7 +24,7 @@ class BiometricsIntroPage extends StatelessWidget {
           backgroundColor: theme.scaffoldBackgroundColor,
           elevation: 0,
           leading: IconButton(
-             onPressed: () => navigator?.pop(),
+            onPressed: () => Get.back(),
             icon: Icon(
               Icons.arrow_back_ios_new,
               color: isDark ? Colors.white : Colors.black,
@@ -37,6 +37,7 @@ class BiometricsIntroPage extends StatelessWidget {
           child: Column(
             children: [
               SizedBox(height: 40.h),
+
               Center(
                 child: Icon(
                   Icons.fingerprint,
@@ -44,19 +45,23 @@ class BiometricsIntroPage extends StatelessWidget {
                   color: AppColors.clrPrimary.withValues(alpha: 0.6),
                 ),
               ),
+
               SizedBox(height: 40.h),
+
               Text(
                 'Protect your account\nwith biometrics',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontFamily: 'Poppins',
                   fontWeight: FontWeight.w600,
-                  fontSize: 28.sp,
+                  fontSize: 25.sp,
                   color: colorScheme.onSurface,
                   height: 1.2,
                 ),
               ),
+
               SizedBox(height: 16.h),
+
               Text(
                 'Add an extra layer of security to your wise app.',
                 textAlign: TextAlign.center,
@@ -64,23 +69,32 @@ class BiometricsIntroPage extends StatelessWidget {
                   fontFamily: 'Poppins',
                   fontWeight: FontWeight.w400,
                   fontSize: 12.sp,
-                   color: theme.brightness == Brightness.light
-      ? AppColors.darktextclr
-      : AppColors.darktextclr,
+                  color: AppColors.darktextclr,
                 ),
               ),
+
               const Spacer(),
-              CustomElevatedButton(
-                text: 'Set Fingerprint',
-                onPressed: () => Get.toNamed(AppRoutes.biometricsScanning),
+
+              /// Common Button
+              Center(
+                child: CommonButton(
+                  title: 'Set Fingerprint',
+                  onTap: () {
+                    Get.toNamed(AppRoutes.biometricsScanning);
+                  },
+                ),
               ),
-              SizedBox(height: 1.h),
+
+              
+
               SafeArea(
                 child: GestureDetector(
-                  onTap: () => Get.toNamed(AppRoutes.pinCodeCreation),
+                  onTap: () {
+                    Get.toNamed(AppRoutes.pinCodeCreation);
+                  },
                   child: Container(
-                    width: double.infinity,
-                    height: 56.h,
+                    width: 222,
+                    height: 50.h,
                     alignment: Alignment.center,
                     decoration: BoxDecoration(
                       border: Border.all(
@@ -104,6 +118,7 @@ class BiometricsIntroPage extends StatelessWidget {
                   ),
                 ),
               ),
+
               SizedBox(height: 40.h),
             ],
           ),

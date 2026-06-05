@@ -6,6 +6,7 @@ import 'package:maxpay/core/constants/asset_images.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/core/utils/responsive.dart';
 import 'package:maxpay/core/utils/theme.dart';
+import 'package:maxpay/view/statement/statement_screen.dart';
 
 class ReportPage extends StatelessWidget {
   const ReportPage({super.key});
@@ -76,14 +77,16 @@ class ReportPage extends StatelessWidget {
 
                     SvgPicture.asset(AssetImages.refunds, width: 24.w),
                   ),
-                  _buildMenuTile(
-                    context,
-                    'Cash Back',
-                    () {
-                        Get.toNamed(AppRoutes.cashback);
-                    },
-                    SvgPicture.asset(AssetImages.cashback, width: 24.w),
-                  ),
+
+                  // _buildMenuTile(
+                  //   context,
+                  //   'Cash Back',
+                  //   () {
+                  //       Get.toNamed(AppRoutes.cashback);
+                  //   },
+                  //   SvgPicture.asset(AssetImages.cashback, width: 24.w),
+                  // ),
+                  
                    _buildMenuTile(
                     context,
                     'Dispute Report',
@@ -91,6 +94,14 @@ class ReportPage extends StatelessWidget {
                         Get.toNamed(AppRoutes.dispute);
                     },
                     SvgPicture.asset(AssetImages.cashback, width: 24.w),
+                  ),
+                  _buildMenuTile(
+                    context,
+                    'Statement',
+                    () {
+                       Get.to(StatementScreen());
+                    },
+                    SvgPicture.asset(AssetImages.dispute, width: 21.w),
                   ),
                 ],
               ),

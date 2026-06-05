@@ -10,10 +10,17 @@ import 'package:maxpay/global_widget/custom_app.dart';
 class ProfileScreen extends GetView<ProfileController> {
   ProfileScreen({super.key});
 
-  final nameController = TextEditingController();
-  final pinController = TextEditingController();
-  final emailController = TextEditingController();
-  final phoneController = TextEditingController();
+  final TextEditingController nameController =
+      TextEditingController();
+
+  final TextEditingController pinController =
+      TextEditingController();
+
+  final TextEditingController emailController =
+      TextEditingController();
+
+  final TextEditingController phoneController =
+      TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -23,15 +30,16 @@ class ProfileScreen extends GetView<ProfileController> {
       backgroundColor:
           theme.scaffoldBackgroundColor,
 
-      appBar:CommonAppBar(
+      resizeToAvoidBottomInset: true,
+
+      appBar: const CommonAppBar(
         title: "Profile",
       ),
 
       body: Obx(() {
         if (controller.isLoading.value) {
           return const Center(
-            child:
-                CircularProgressIndicator(),
+            child: CircularProgressIndicator(),
           );
         }
 
@@ -58,127 +66,132 @@ class ProfileScreen extends GetView<ProfileController> {
               horizontal: 20,
             ),
 
-            child: Column(
+            child: ListView(
               children: [
                 const SizedBox(height: 20),
 
                 /// PROFILE IMAGE
-                Stack(
-                  children: [
-                    Container(
-                      width: 95,
-                      height: 95,
-
-                      decoration:
-                          const BoxDecoration(
-                        shape: BoxShape.circle,
-
-                        image:
-                            DecorationImage(
-                          image: AssetImage(
-                            AssetImages
-                                .profileImage,
-                          ),
-
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
-
-                      child: Container(
-                        width: 28,
-                        height: 28,
+                Center(
+                  child: Stack(
+                    children: [
+                      Container(
+                        width: 95,
+                        height: 95,
 
                         decoration:
-                            BoxDecoration(
-                          color: AppColors
-                              .clrPrimary,
+                            const BoxDecoration(
+                          shape: BoxShape.circle,
 
-                          shape:
-                              BoxShape.circle,
+                          image:
+                              DecorationImage(
+                            image: AssetImage(
+                              AssetImages
+                                  .profileImage,
+                            ),
 
-                          border: Border.all(
-                            color: theme
-                                .colorScheme
-                                .surface,
-                            width: 2,
+                            fit: BoxFit.cover,
                           ),
                         ),
+                      ),
 
-                        child: const Icon(
-                          Icons
-                              .camera_alt_outlined,
-                          color:
-                              Colors.white,
-                          size: 16,
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+
+                        child: Container(
+                          width: 28,
+                          height: 28,
+
+                          decoration:
+                              BoxDecoration(
+                            color: AppColors
+                                .clrPrimary,
+
+                            shape:
+                                BoxShape.circle,
+
+                            border:
+                                Border.all(
+                              color: theme
+                                  .colorScheme
+                                  .surface,
+                              width: 2,
+                            ),
+                          ),
+
+                          child: const Icon(
+                            Icons
+                                .camera_alt_outlined,
+                            color:
+                                Colors.white,
+                            size: 16,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
 
                 const SizedBox(height: 18),
 
                 /// USER INFO
-                RichText(
-                  text: TextSpan(
-                    style: TextHelper.max3
-                        .copyWith(
-                      color: theme
-                          .colorScheme
-                          .onSurface,
+                Center(
+                  child: RichText(
+                    text: TextSpan(
+                      style: TextHelper.max3
+                          .copyWith(
+                        color: theme
+                            .colorScheme
+                            .onSurface,
+                      ),
+
+                      children: [
+                        TextSpan(
+                          text:
+                              "User ID: ${profile?.userId ?? ""}  ",
+
+                          style: TextHelper
+                              .max3
+                              .copyWith(
+                            fontSize: 14.6,
+                            fontWeight:
+                                FontWeight
+                                    .bold,
+                            color: theme
+                                .colorScheme
+                                .onSurface,
+                          ),
+                        ),
+
+                        TextSpan(
+                          text: "Status: ",
+
+                          style: TextHelper
+                              .max4
+                              .copyWith(
+                            fontSize: 14.6,
+                            color: theme
+                                .colorScheme
+                                .onSurfaceVariant,
+                          ),
+                        ),
+
+                        TextSpan(
+                          text:
+                              profile?.status ??
+                                  "",
+
+                          style: TextHelper
+                              .max5
+                              .copyWith(
+                            fontSize: 14.6,
+                            color: theme
+                                .colorScheme
+                                .primary,
+                          ),
+                        ),
+                      ],
                     ),
-
-                    children: [
-                      TextSpan(
-                        text:
-                            "User ID: ${profile?.userId ?? ""}  ",
-
-                        style: TextHelper
-                            .max3
-                            .copyWith(
-                          fontSize: 14.6,
-                          fontWeight:
-                              FontWeight
-                                  .bold,
-                          color: theme
-                              .colorScheme
-                              .onSurface,
-                        ),
-                      ),
-
-                      TextSpan(
-                        text: "Status: ",
-
-                        style: TextHelper
-                            .max4
-                            .copyWith(
-                          fontSize: 14.6,
-                          color: theme
-                              .colorScheme
-                              .onSurfaceVariant,
-                        ),
-                      ),
-
-                      TextSpan(
-                        text:
-                            profile?.status ??
-                                "",
-
-                        style: TextHelper
-                            .max5
-                            .copyWith(
-                          fontSize: 14.6,
-                          color: theme
-                              .colorScheme
-                              .primary,
-                        ),
-                      ),
-                    ],
                   ),
                 ),
 
@@ -242,7 +255,7 @@ class ProfileScreen extends GetView<ProfileController> {
                   phoneController,
                 ),
 
-                const Spacer(),
+                const SizedBox(height: 35),
 
                 /// UPDATE BUTTON
                 CommonButton(
@@ -288,6 +301,8 @@ class ProfileScreen extends GetView<ProfileController> {
     return TextFormField(
       controller: controller,
 
+      enabled: false,
+
       style: TextStyle(
         color: theme.colorScheme.onSurface,
       ),
@@ -303,6 +318,17 @@ class ProfileScreen extends GetView<ProfileController> {
                   )
                 : theme.colorScheme
                     .surfaceContainer,
+
+        disabledBorder:
+            OutlineInputBorder(
+          borderRadius:
+              BorderRadius.circular(10),
+
+          borderSide: BorderSide(
+            color:
+                theme.colorScheme.outline,
+          ),
+        ),
 
         contentPadding:
             const EdgeInsets.symmetric(

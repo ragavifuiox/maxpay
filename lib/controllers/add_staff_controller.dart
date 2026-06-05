@@ -1,114 +1,140 @@
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/core/constants/snackbar.dart';
+import 'package:maxpay/core/data/model/search_staff_model.dart' hide Data;
 import 'package:maxpay/core/data/model/staff_lsit_model.dart';
 import 'package:maxpay/core/domain/usecase/addd_staff_usecase.dart';
+import 'package:maxpay/core/domain/usecase/search_staff_usecase.dart';
 import 'package:maxpay/core/domain/usecase/staff_list_usecase.dart';
 
 class AddStaffController extends GetxController {
   final AddStaffUsecase addStaffUsecase;
-  final StaffListUseCase staffListUseCase; 
+  final StaffListUseCase staffListUseCase;
+  final SearchStaffUsecase searchStaffUsecase;
 
   AddStaffController({
     required this.addStaffUsecase,
-  
-     required this.staffListUseCase,
+    required this.staffListUseCase,
+    required this.searchStaffUsecase,
   });
- final staff = <Data>[].obs;
+@override
+void onInit() {
+  stafflist();
+  super.onInit();
+}
+  final staff = <Data>[].obs;
+  final searchStaffData = <SearchStaffData>[].obs;
   bool isLoading = false;
+ final TextEditingController nameController = TextEditingController();
+  final TextEditingController packageController = TextEditingController();
+  // ================= ADD STAFF =================
+  Future<void> addstaff(String name, String mobile, String package) async {
+    try {
+      isLoading = true;
+      update();
 
-  Future<void> addstaff(
-  String name,
-  String mobile,
-) async {
+      print("=========== REQUEST DATA ===========");
+      print("NAME : $name");
+      print("MOBILE : $mobile");
+      print("PACKAGE : $package");
+      print("===================================");
 
+      final result = await addStaffUsecase(name, mobile, package);
+
+      result.fold(
+        (failure) {
+          print("=========== FAILURE ===========");
+          print(failure.message);
+          print("================================");
+
+          CustomToast.error(failure.message);
+        },
+        (response) {
+          print("=========== BACKEND RESPONSE ===========");
+          print("SUCCESS : ${response.success}");
+          print("MESSAGE : ${response.message}");
+          print("FULL RESPONSE : $response");
+          print("========================================");
+
+          if (response.success == true) {
+            CustomToast.success(
+              response.message ?? "Staff Added Successfully",
+            );
+
+      Get.back(result: true);
+Get.find<AddStaffController>().stafflist();
+          } else {
+            CustomToast.error(
+              response.message ?? "Failed to Add Staff",
+            );
+          }
+        },
+      );
+    } finally {
+      isLoading = false;
+      update();
+    }
+  }
+
+Future<void> searchStaff(String mobile) async {
   try {
-
     isLoading = true;
     update();
 
-    print("=========== REQUEST DATA ===========");
-    print("NAME : $name");
-    print("MOBILE : $mobile");
-    print("===================================");
+    print("Searching Mobile: $mobile");
 
-    final result = await addStaffUsecase(
-      name,
-      mobile,
-    );
+    final result = await searchStaffUsecase(mobile);
 
     result.fold(
       (failure) {
-
-        print("=========== FAILURE ===========");
-        print(failure.message);
-        print("================================");
-
-        CustomToast.error(
-          failure.message,
-        );
-
+        print("FAILURE: ${failure.message}");
+        CustomToast.error(failure.message);
       },
-      (response) async {
-
-        print("=========== BACKEND RESPONSE ===========");
-        print("SUCCESS : ${response.success}");
-        print("MESSAGE : ${response.message}");
-        print("FULL RESPONSE : $response");
-        print("========================================");
+      (response) {
+        print("SUCCESS: ${response.success}");
+        print("NAME: ${response.data?.data?.retailerName}");
 
         if (response.success == true) {
+          nameController.text =
+              response.data?.data?.retailerName ?? '';
+               packageController.text =
+      response.data?.data?.commissionPackage ?? '';
 
-          CustomToast.success(
-            response.message ??
-                "Staff Added Successfully",
-          );
-
-          Get.offAllNamed(
-            AppRoutes.stafflist,
-          );
-
+          print("TEXT SET: ${nameController.text}");
         } else {
-
-          CustomToast.error(
-            response.message ??
-                "Failed to Add Staff",
-          );
+          nameController.clear();
+          packageController.clear();
         }
+
+        update();
       },
     );
-
   } finally {
-
     isLoading = false;
     update();
   }
-}Future<void> stafflist() async {
-  isLoading = true;
-  update();
-
-  final result = await staffListUseCase();
-
-  result.fold(
-    (failure) {
-      isLoading = false;
-      update();
-
-      Get.snackbar(
-        'Error',
-        failure.message,
-      );
-    },
-    (data) {
-
-      /// backend data list
-      staff.value = data.data ?? [];
-
-      isLoading = false;
-      update();
-    },
-  );
 }
+
+  // ================= STAFF LIST =================
+  Future<void> stafflist() async {
+    try {
+      isLoading = true;
+      update();
+
+      final result = await staffListUseCase();
+
+      result.fold(
+        (failure) {
+          CustomToast.error(failure.message);
+        },
+        (data) {
+          staff.value = data.data ?? [];
+        },
+      );
+    } finally {
+      isLoading = false;
+      update();
+    }
   }
-
-
+}

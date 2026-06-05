@@ -11,13 +11,13 @@ class PlanRepoImpl implements PlanRepository {
   PlanRepoImpl(this.apiService);
   @override
   Future<Either<Failure, Plan>> getplan({
-    required String planid,
+    required String productid,
 
   }) async {
-    print(planid);
+    print(productid);
     try {
       final response = await apiService.get(
-       "${ApiRoutes.plans}$planid"
+       "${ApiRoutes.plans}$productid"
       );
       final model = Plan.fromJson(response);
       return Right(model);

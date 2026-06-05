@@ -16,10 +16,8 @@ class StaffListPage extends StatelessWidget {
   Widget build(BuildContext context) {
 
     return GetBuilder<AddStaffController>(
-      initState: (state) {
-        Get.find<AddStaffController>().stafflist();
-      },
-      builder: (controller) {
+     
+      builder: (controller) { 
 
         return Scaffold(
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -38,9 +36,13 @@ class StaffListPage extends StatelessWidget {
                 /// ADD STAFF BUTTON
                 Center(
                   child: GestureDetector(
-                    onTap: () {
-                      Get.toNamed(AppRoutes.addstaff);
-                    },
+                   onTap: () async {
+  final result = await Get.toNamed(AppRoutes.addstaff);
+
+  if (result == true) {
+    controller.stafflist();
+  }
+},
                     child: Container(
                       width: 170.w,
                       height: 45.h,

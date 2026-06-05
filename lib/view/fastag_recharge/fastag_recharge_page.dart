@@ -160,18 +160,18 @@ class _FastagRechargePageState extends State<FastagRechargePage> {
                 height: 50.h,
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ConfirmTransactionPage(
-                          productName: 'FASTag',
-                          operatorInitial: 'F',
-                          operatorColor: Colors.blue,
-                          transactionNo: 'TXN${DateTime.now().millisecondsSinceEpoch}',
-                          amount: '₹${_amountController.text.isEmpty ? "1000.00" : _amountController.text}',
-                        ),
-                      ),
-                    );
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(
+                    //     builder: (context) => ConfirmTransactionPage(
+                    //       productName: 'FASTag',
+                    //       operatorInitial: 'F',
+                    //       operatorColor: Colors.blue,
+                    //       transactionNo: 'TXN${DateTime.now().millisecondsSinceEpoch}',
+                    //       amount: '₹${_amountController.text.isEmpty ? "1000.00" : _amountController.text}',
+                    //     ),
+                    //   ),
+                    // );
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.clrPrimary,

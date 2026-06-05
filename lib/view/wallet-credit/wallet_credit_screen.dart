@@ -32,7 +32,12 @@ class WalletCreditScreen extends GetView<CreditController> {
 
             const SizedBox(height: 16),
 
-           
+            Divider(
+  color: Theme.of(context).brightness == Brightness.light
+      ? Colors.black12
+      : Colors.white24,
+),
+const SizedBox(height: 16),
             Obx(
               () => Container(
                 width: double.infinity,
@@ -190,12 +195,11 @@ class _WalletCreditCard extends StatelessWidget {
 
           const SizedBox(height: 8),
 
-          Divider(
-            color: isDark
-                ? const Color(0xFFFFFFFF)
-                    .withValues(alpha: 0.7)
-                : AppColors.darktextclr,
-          ),
+           Divider(
+  color: Theme.of(context).brightness == Brightness.light
+      ? Colors.black12
+      : Colors.white24,
+),
 
           const SizedBox(height: 8),
 

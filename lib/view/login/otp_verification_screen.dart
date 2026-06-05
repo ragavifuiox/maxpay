@@ -8,6 +8,7 @@ import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/core/constants/snackbar.dart';
 import 'package:maxpay/core/utils/responsive.dart';
+import 'package:maxpay/global_widget/commom_button.dart';
 import 'package:maxpay/view/login/widgets/custom_numeric_keyboard.dart';
 import 'package:maxpay/view/login/widgets/cutom_elevated_button.dart';
 import 'package:pinput/pinput.dart';
@@ -424,27 +425,24 @@ class _ScreenOtpVerificationState
                             40.h,
                           ),
 
-                          child: CustomElevatedButton(
-                            text: 'Verify',
+                          child:
+                          CommonButton(
+  title: "Verify",
+  onTap: () async {
+    /// OTP EXPIRED
+    if (isOtpExpired) {
+      CustomToast.error(
+        "OTP Expired. Please resend the OTP.",
+      );
+      return;
+    }
 
-                            onPressed: () async {
-
-  /// OTP EXPIRED
-  if (isOtpExpired) {
-
-    CustomToast.error(
-      "OTP Expired. Please resend the OTP.",
+    /// API CALL
+    await authController.verifyOtp(
+      _otpController.text.trim(),
     );
-
-    return;
-  }
-
-  /// API CALL
-  await authController.verifyOtp(
-    _otpController.text.trim(),
-  );
-},
-                          ),
+  },
+),
                         )
 
                       /// 🔹 CUSTOM KEYBOARD

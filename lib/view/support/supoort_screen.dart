@@ -11,8 +11,11 @@ class SupportScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor:
+          theme.scaffoldBackgroundColor,
 
       appBar: const CommonAppBar(
         title: "Support",
@@ -33,9 +36,14 @@ class SupportScreen extends StatelessWidget {
 
         /// Empty
         if (supportList.isEmpty) {
-          return const Center(
+          return Center(
             child: Text(
               "No Support Data Found",
+
+              style: TextStyle(
+                color:
+                    theme.colorScheme.onSurface,
+              ),
             ),
           );
         }
@@ -53,26 +61,41 @@ class SupportScreen extends StatelessWidget {
             final item = supportList[index];
 
             return Container(
-              padding: const EdgeInsets.symmetric(
+              padding:
+                  const EdgeInsets.symmetric(
                 horizontal: 14,
                 vertical: 14,
               ),
 
               decoration: BoxDecoration(
-                color: Colors.white,
+                color:
+                    theme.brightness ==
+                            Brightness.dark
+                        ? theme.colorScheme
+                            .surfaceContainer
+                        : Colors.white,
 
                 borderRadius:
                     BorderRadius.circular(14),
 
                 border: Border.all(
-                  color: Colors.grey.shade200,
+                  color:
+                      theme.colorScheme.outline,
                 ),
 
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.03),
+                    color: theme.brightness ==
+                            Brightness.dark
+                        ? Colors.transparent
+                        : Colors.black.withOpacity(
+                            0.03,
+                          ),
+
                     blurRadius: 8,
-                    offset: const Offset(0, 2),
+
+                    offset:
+                        const Offset(0, 2),
                   ),
                 ],
               ),
@@ -83,12 +106,21 @@ class SupportScreen extends StatelessWidget {
                   /// Profile Icon
                   CircleAvatar(
                     radius: 24,
+
                     backgroundColor:
-                        Colors.grey.shade200,
+                        theme.brightness ==
+                                Brightness.dark
+                            ? Colors.grey.shade800
+                            : Colors.grey.shade200,
 
                     child: Icon(
                       Icons.person,
-                      color: Colors.grey.shade600,
+
+                      color:
+                          theme.brightness ==
+                                  Brightness.dark
+                              ? Colors.white70
+                              : Colors.grey.shade600,
                     ),
                   ),
 
@@ -98,39 +130,50 @@ class SupportScreen extends StatelessWidget {
                   Expanded(
                     child: Column(
                       crossAxisAlignment:
-                          CrossAxisAlignment.start,
+                          CrossAxisAlignment
+                              .start,
 
                       children: [
 
                         Text(
                           item.name ?? "",
-                          style: const TextStyle(
+
+                          style: TextStyle(
                             fontSize: 16,
                             fontWeight:
                                 FontWeight.w600,
-                            color: Colors.black87,
+
+                            color: theme
+                                .colorScheme
+                                .onSurface,
                           ),
                         ),
 
-                        const SizedBox(height: 4),
-                        
+                        const SizedBox(
+                          height: 4,
+                        ),
+
                         Text(
-                          item.phoneNumber?? "",
+                          item.phoneNumber ?? "",
+
                           style: TextStyle(
                             fontSize: 14,
-                            color:
-                                Colors.grey.shade600,
+
+                            color: theme
+                                .colorScheme
+                                .onSurfaceVariant,
                           ),
                         ),
                       ],
                     ),
                   ),
 
-                  /// Call Button
+               
                   SizedBox(
                     height: 36,
 
-                    child: ElevatedButton.icon(
+                    child:
+                        ElevatedButton.icon(
 
                       onPressed: () {
 
@@ -138,21 +181,28 @@ class SupportScreen extends StatelessWidget {
                       },
 
                       style:
-                          ElevatedButton.styleFrom(
+                          ElevatedButton
+                              .styleFrom(
                         backgroundColor:
-                            const Color(0xff0EA5C6),
+                            const Color(
+                          0xff0EA5C6,
+                        ),
 
                         elevation: 0,
 
                         padding:
-                            const EdgeInsets.symmetric(
+                            const EdgeInsets
+                                .symmetric(
                           horizontal: 14,
                         ),
 
                         shape:
                             RoundedRectangleBorder(
                           borderRadius:
-                              BorderRadius.circular(8),
+                              BorderRadius
+                                  .circular(
+                            8,
+                          ),
                         ),
                       ),
 
@@ -164,6 +214,7 @@ class SupportScreen extends StatelessWidget {
 
                       label: const Text(
                         "Call",
+
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 13,

@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -45,22 +46,44 @@ class WalletRequestScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Get.isDarkMode;
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor:
+          Theme.of(context)
+              .scaffoldBackgroundColor,
 
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor:
+            Theme.of(context)
+                .appBarTheme
+                .backgroundColor,
+
         elevation: 0,
         centerTitle: false,
 
-        leading: const BackButton(
-          color: Colors.black,
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+            color:
+                Theme.of(context)
+                    .colorScheme
+                    .onSurface,
+          ),
+
+          onPressed: () {
+            Get.back();
+          },
         ),
 
         title: Text(
           "Wallet Request",
           style: TextStyle(
-            color: Colors.black,
+            color:
+                Theme.of(context)
+                    .colorScheme
+                    .onSurface,
+
             fontSize: 16.sp,
             fontWeight: FontWeight.w500,
           ),
@@ -81,15 +104,17 @@ class WalletRequestScreen extends StatelessWidget {
                 CrossAxisAlignment.start,
 
             children: [
-              /// Due Amount Card
+              /// Due Amount
               Container(
                 width: double.infinity,
+
                 padding: EdgeInsets.symmetric(
                   vertical: 12.h,
                 ),
 
                 decoration: BoxDecoration(
                   color: Colors.red,
+
                   borderRadius:
                       BorderRadius.circular(
                     8.r,
@@ -126,9 +151,13 @@ class WalletRequestScreen extends StatelessWidget {
               SizedBox(height: 22.h),
 
               /// Amount
-              buildLabel("Amount"),
+              buildLabel(
+                context,
+                "Amount",
+              ),
 
               buildTextField(
+                context: context,
                 controller:
                     amountController,
                 hint: "Enter Amount",
@@ -137,12 +166,22 @@ class WalletRequestScreen extends StatelessWidget {
               SizedBox(height: 16.h),
 
               /// Payment Type
-              buildLabel("Payment Type"),
+              buildLabel(
+                context,
+                "Payment Type",
+              ),
 
               Obx(
                 () =>
                     DropdownButtonFormField<
                         String>(
+                  dropdownColor:
+                      isDark
+                          ? const Color(
+                            0xFF1E1E1E,
+                          )
+                          : Colors.white,
+
                   value: paymentType
                           .value
                           .isEmpty
@@ -151,13 +190,25 @@ class WalletRequestScreen extends StatelessWidget {
 
                   decoration:
                       inputDecoration(
+                    context,
                     "Select",
                   ),
 
-                  icon: const Icon(
+                  style: TextStyle(
+                    color:
+                        Theme.of(context)
+                            .colorScheme
+                            .onSurface,
+                  ),
+
+                  icon: Icon(
                     Icons
                         .keyboard_arrow_down,
-                    color: Colors.grey,
+
+                    color:
+                        Theme.of(context)
+                            .colorScheme
+                            .onSurface,
                   ),
 
                   validator: (value) {
@@ -178,8 +229,9 @@ class WalletRequestScreen extends StatelessWidget {
                     DropdownMenuItem(
                       value:
                           "not_received",
+
                       child: Text(
-                        "not_received",
+                        "not received",
                       ),
                     ),
                   ],
@@ -194,21 +246,47 @@ class WalletRequestScreen extends StatelessWidget {
               SizedBox(height: 16.h),
 
               /// Bank Name
-              buildLabel("Bank Name"),
+              buildLabel(
+                context,
+                "Bank Name",
+              ),
 
               Obx(() {
                 return DropdownButtonFormField<
                     Data>(
+                  dropdownColor:
+                      isDark
+                          ? const Color(
+                            0xFF1E1E1E,
+                          )
+                          : Colors.white,
+
                   value: controller
-                      .selectedPlan.value,
+                      .selectedPlan
+                      .value,
 
                   decoration:
                       inputDecoration(
+                    context,
                     "Select Bank",
                   ),
 
-                  hint: const Text(
+                  hint: Text(
                     "Select Bank",
+
+                    style: TextStyle(
+                      color:
+                          Theme.of(context)
+                              .colorScheme
+                              .onSurfaceVariant,
+                    ),
+                  ),
+
+                  style: TextStyle(
+                    color:
+                        Theme.of(context)
+                            .colorScheme
+                            .onSurface,
                   ),
 
                   validator: (value) {
@@ -243,9 +321,13 @@ class WalletRequestScreen extends StatelessWidget {
               SizedBox(height: 16.h),
 
               /// UTR
-              buildLabel("UTR No"),
+              buildLabel(
+                context,
+                "UTR No",
+              ),
 
               buildTextField(
+                context: context,
                 controller:
                     utrController,
                 hint: "Enter UTR No",
@@ -254,9 +336,13 @@ class WalletRequestScreen extends StatelessWidget {
               SizedBox(height: 16.h),
 
               /// Description
-              buildLabel("Description"),
+              buildLabel(
+                context,
+                "Description",
+              ),
 
               buildTextField(
+                context: context,
                 controller:
                     descriptionController,
                 hint: "Write Here",
@@ -266,7 +352,10 @@ class WalletRequestScreen extends StatelessWidget {
               SizedBox(height: 16.h),
 
               /// Upload
-              buildLabel("Upload"),
+              buildLabel(
+                context,
+                "Upload",
+              ),
 
               Obx(() {
                 return GestureDetector(
@@ -285,20 +374,25 @@ class WalletRequestScreen extends StatelessWidget {
 
                     decoration:
                         BoxDecoration(
-                      color: const Color(
-                        0xFFF5F5F5,
-                      ),
+                      color:
+                          isDark
+                              ? const Color(
+                                0xFF1E1E1E,
+                              )
+                              : const Color(
+                                0xFFF5F5F5,
+                              ),
 
                       borderRadius:
-                          BorderRadius
-                              .circular(
+                          BorderRadius.circular(
                         10.r,
                       ),
 
                       border: Border.all(
-                        color: Colors
-                            .grey
-                            .shade300,
+                        color:
+                            Colors
+                                .grey
+                                .shade300,
                       ),
                     ),
 
@@ -335,12 +429,14 @@ class WalletRequestScreen extends StatelessWidget {
 
                                   Text(
                                     "Image Selected",
+
                                     style:
                                         TextStyle(
                                       fontSize:
                                           13.sp,
                                       color: Colors
                                           .green,
+
                                       fontWeight:
                                           FontWeight
                                               .w600,
@@ -353,10 +449,16 @@ class WalletRequestScreen extends StatelessWidget {
                                   Icon(
                                     Icons
                                         .cloud_upload_outlined,
+
                                     size:
                                         32.sp,
-                                    color: Colors
-                                        .black54,
+
+                                    color:
+                                        Theme.of(
+                                              context,
+                                            )
+                                            .colorScheme
+                                            .onSurfaceVariant,
                                   ),
 
                                   SizedBox(
@@ -366,15 +468,22 @@ class WalletRequestScreen extends StatelessWidget {
 
                                   Text(
                                     "Browse and choose the files you want to upload from your device",
+
                                     textAlign:
                                         TextAlign
                                             .center,
+
                                     style:
                                         TextStyle(
                                       fontSize:
                                           12.sp,
-                                      color: Colors
-                                          .black54,
+
+                                      color:
+                                          Theme.of(
+                                                context,
+                                              )
+                                              .colorScheme
+                                              .onSurfaceVariant,
                                     ),
                                   ),
 
@@ -391,8 +500,9 @@ class WalletRequestScreen extends StatelessWidget {
 
                                     decoration:
                                         BoxDecoration(
-                                      color: Colors
-                                          .green,
+                                      color:
+                                          Colors
+                                              .green,
 
                                       borderRadius:
                                           BorderRadius.circular(
@@ -403,8 +513,9 @@ class WalletRequestScreen extends StatelessWidget {
                                     child:
                                         const Icon(
                                       Icons.add,
-                                      color: Colors
-                                          .white,
+                                      color:
+                                          Colors
+                                              .white,
                                     ),
                                   ),
                                 ],
@@ -432,8 +543,10 @@ class WalletRequestScreen extends StatelessWidget {
                       if (selectedImage
                               .value ==
                           null) {
-                            CustomToast.error("Please upload receipt image");
-                      
+                        CustomToast.error(
+                          "Please upload receipt image",
+                        );
+
                         return;
                       }
 
@@ -458,7 +571,8 @@ class WalletRequestScreen extends StatelessWidget {
                                 .text
                                 .trim(),
 
-                        bankid: bank?.id
+                        bankid:
+                            bank?.id
                                 .toString() ??
                             "",
 
@@ -472,27 +586,29 @@ class WalletRequestScreen extends StatelessWidget {
                                 .text
                                 .trim(),
                       );
-                       controller.clearForm(
-    amountController:
-        amountController,
 
-    utrController:
-        utrController,
+                      controller.clearForm(
+                        amountController:
+                            amountController,
 
-    descriptionController:
-        descriptionController,
+                        utrController:
+                            utrController,
 
-    receiptController:
-        receiptController,
+                        descriptionController:
+                            descriptionController,
 
-    paymentType: paymentType,
+                        receiptController:
+                            receiptController,
 
-    selectedImage: selectedImage,
-  );
+                        paymentType:
+                            paymentType,
+
+                        selectedImage:
+                            selectedImage,
+                      );
                     },
 
-                    style: ElevatedButton
-                        .styleFrom(
+                    style: ElevatedButton.styleFrom(
                       backgroundColor:
                           const Color(
                         0xFF1CA3BA,
@@ -503,8 +619,7 @@ class WalletRequestScreen extends StatelessWidget {
                       shape:
                           RoundedRectangleBorder(
                         borderRadius:
-                            BorderRadius
-                                .circular(
+                            BorderRadius.circular(
                           8.r,
                         ),
                       ),
@@ -512,9 +627,9 @@ class WalletRequestScreen extends StatelessWidget {
 
                     child: Text(
                       "Submit",
+
                       style: TextStyle(
-                        color:
-                            Colors.white,
+                        color: Colors.white,
                         fontSize: 14.sp,
                         fontWeight:
                             FontWeight.w500,
@@ -533,7 +648,10 @@ class WalletRequestScreen extends StatelessWidget {
   }
 
   /// Label
-  Widget buildLabel(String text) {
+  Widget buildLabel(
+    BuildContext context,
+    String text,
+  ) {
     return Padding(
       padding: EdgeInsets.only(
         bottom: 6.h,
@@ -541,10 +659,15 @@ class WalletRequestScreen extends StatelessWidget {
 
       child: Text(
         text,
+
         style: TextStyle(
           fontSize: 13.sp,
           fontWeight: FontWeight.w400,
-          color: Colors.black87,
+
+          color:
+              Theme.of(context)
+                  .colorScheme
+                  .onSurface,
         ),
       ),
     );
@@ -552,6 +675,7 @@ class WalletRequestScreen extends StatelessWidget {
 
   /// TextField
   Widget buildTextField({
+    required BuildContext context,
     required TextEditingController
         controller,
     required String hint,
@@ -560,6 +684,13 @@ class WalletRequestScreen extends StatelessWidget {
     return TextFormField(
       controller: controller,
       maxLines: maxLines,
+
+      style: TextStyle(
+        color:
+            Theme.of(context)
+                .colorScheme
+                .onSurface,
+      ),
 
       validator: (value) {
         if (value == null ||
@@ -570,6 +701,7 @@ class WalletRequestScreen extends StatelessWidget {
       },
 
       decoration: inputDecoration(
+        context,
         hint,
       ),
     );
@@ -577,19 +709,33 @@ class WalletRequestScreen extends StatelessWidget {
 
   /// Input Decoration
   InputDecoration inputDecoration(
+    BuildContext context,
     String hint,
   ) {
+    final isDark = Get.isDarkMode;
+
     return InputDecoration(
       hintText: hint,
 
       hintStyle: TextStyle(
-        color: Colors.grey.shade400,
+        color:
+            Theme.of(context)
+                .colorScheme
+                .onSurfaceVariant,
+
         fontSize: 13.sp,
       ),
 
       filled: true,
+
       fillColor:
-          const Color(0xFFF2F2F2),
+          isDark
+              ? const Color(
+                0xFF1E1E1E,
+              )
+              : const Color(
+                0xFFF2F2F2,
+              ),
 
       contentPadding:
           const EdgeInsets.symmetric(
@@ -599,21 +745,30 @@ class WalletRequestScreen extends StatelessWidget {
 
       border: OutlineInputBorder(
         borderRadius:
-            BorderRadius.circular(8.r),
+            BorderRadius.circular(
+          8.r,
+        ),
+
         borderSide: BorderSide.none,
       ),
 
       enabledBorder:
           OutlineInputBorder(
         borderRadius:
-            BorderRadius.circular(8.r),
+            BorderRadius.circular(
+          8.r,
+        ),
+
         borderSide: BorderSide.none,
       ),
 
       focusedBorder:
           OutlineInputBorder(
         borderRadius:
-            BorderRadius.circular(8.r),
+            BorderRadius.circular(
+          8.r,
+        ),
+
         borderSide: const BorderSide(
           color: Color(0xFF1CA3BA),
         ),
@@ -621,7 +776,10 @@ class WalletRequestScreen extends StatelessWidget {
 
       errorBorder: OutlineInputBorder(
         borderRadius:
-            BorderRadius.circular(8.r),
+            BorderRadius.circular(
+          8.r,
+        ),
+
         borderSide: const BorderSide(
           color: Colors.red,
         ),
@@ -630,7 +788,10 @@ class WalletRequestScreen extends StatelessWidget {
       focusedErrorBorder:
           OutlineInputBorder(
         borderRadius:
-            BorderRadius.circular(8.r),
+            BorderRadius.circular(
+          8.r,
+        ),
+
         borderSide: const BorderSide(
           color: Colors.red,
         ),
@@ -655,8 +816,7 @@ class WalletRequestScreen extends StatelessWidget {
 
       print(
         "Selected Image: ${image.path}",
-     );
-    
+      );
     }
   }
 }

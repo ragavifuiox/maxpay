@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:maxpay/controllers/homepage_controller.dart';
 import 'package:maxpay/controllers/menu_controlller.dart';
 import 'package:maxpay/core/constants/asset_images.dart';
 import 'package:maxpay/core/constants/colors.dart';
@@ -57,7 +58,7 @@ class MenuScreen extends GetView<ServiceController> {
                             vertical: 18.h,
                           ),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF11B4B6),
+                            color: AppColors.clrPrimary,
                             borderRadius:
                                 BorderRadius.circular(14.r),
                           ),
@@ -76,15 +77,18 @@ class MenuScreen extends GetView<ServiceController> {
 
                               SizedBox(height: 6.h),
 
-                              Text(
-                                "₹ 245005.23",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 24.sp,
-                                  fontWeight:
-                                      FontWeight.bold,
-                                ),
-                              ),
+                             Obx(() {
+                              final balance = Get.find<HomePageController>().walletBalance.value;
+
+                         return Text(
+                             "₹ ${balance?.data?.balance ?? "0.00"}",
+                              style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 24.sp,
+                              fontWeight: FontWeight.bold,
+                        ),
+                      );
+                  }),
                             ],
                           ),
                         ),
@@ -113,7 +117,7 @@ class MenuScreen extends GetView<ServiceController> {
                             vertical: 12.h,
                           ),
                           decoration: BoxDecoration(
-                            color: const Color(0xFF11B4B6),
+                            color: AppColors.clrPrimary,
                             borderRadius:
                                 BorderRadius.circular(10.r),
                           ),
@@ -164,17 +168,13 @@ class MenuScreen extends GetView<ServiceController> {
 
                         SizedBox(height: 20.h),
 
-                        /// SECOND ROW
-                        Row(
+                     Row(
                           crossAxisAlignment:
                               CrossAxisAlignment.start,
                           children: [
-
-                            /// LEFT SIDE
-                            Column(
+                       Column(
                               children: [
-
-                                if (productList.length > 4)
+                                 if (productList.length > 4)
                                   _dynamicServiceItem(
                                     context,
                                     productList[4],
@@ -277,31 +277,23 @@ class MenuScreen extends GetView<ServiceController> {
 
                             SizedBox(width: 12.w),
 
-                           
-                            // Column(
-                            //   children: [
+                          Column(
+  children: [
+    if (productList.length > 11)
+      _dynamicServiceItem(
+        context,
+        productList[11], // Payment Status
+      ),
 
-                            //     _serviceItem(
-                            //       context,
-                            //       "Payment\nStatus",
-                            //       AssetImages
-                            //           .paymentStatus,
-                            //       AppColors.box2,
-                            //     ),
+    SizedBox(height: 18.h),
 
-                            //     SizedBox(
-                            //       height: 18.h,
-                            //     ),
-
-                            //     _serviceItem(
-                            //       context,
-                            //       "DTH\nRefresh",
-                            //       AssetImages
-                            //           .dthRefresh,
-                            //       AppColors.box1,
-                            //     ),
-                            //   ],
-                            // ),
+    if (productList.length > 10)
+      _dynamicServiceItem(
+        context,
+        productList[10], // DTH Refresh
+      ),
+  ],
+),
                           ],
                         ),
 
@@ -336,100 +328,112 @@ _dynamicServiceItem(
 
   /// COMMON SERVICE ITEM
   Widget _serviceItem(
-    BuildContext context,
-    String title,
-    String image,
-    Color bgColor, {
-    VoidCallback? onTap,
-  }) {
-    final theme = Theme.of(context);
+  BuildContext context,
+  String title,
+  String image,
+  Color bgColor, {
+  VoidCallback? onTap,
+}) {
+  final theme = Theme.of(context);
 
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        borderRadius:
-            BorderRadius.circular(14.r),
-        onTap: onTap,
-        child: Padding(
-          padding: EdgeInsets.all(4.w),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
+String displayTitle = title;
 
-              Container(
-                width: 62.w,
-                height: 62.w,
-                padding: EdgeInsets.all(16.w),
-                decoration: BoxDecoration(
-                  color: bgColor,
-                  borderRadius:
-                      BorderRadius.circular(
-                    14.r,
-                  ),
-                ),
-                child: SvgPicture.asset(
-                  image,
-                  fit: BoxFit.contain,
-                ),
+if (title.toLowerCase() == "payment status") {
+  displayTitle = "Payment\nStatus";
+} else if (title.toLowerCase() == "dth refresh") {
+  displayTitle = "DTH\nRefresh";
+}
+
+
+  return Material(
+    color: Colors.transparent,
+    child: InkWell(
+      borderRadius: BorderRadius.circular(14.r),
+      onTap: onTap,
+      child: Padding(
+        padding: EdgeInsets.all(4.w),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 62.w,
+              height: 62.w,
+              padding: EdgeInsets.all(16.w),
+              decoration: BoxDecoration(
+                color: bgColor,
+                borderRadius: BorderRadius.circular(14.r),
               ),
-
-              SizedBox(height: 8.h),
-
-              Text(
-                title,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 11.sp,
-                  fontWeight:
-                      FontWeight.w500,
-                  color: theme
-                      .colorScheme.onSurface,
-                ),
+              child: SvgPicture.asset(
+                image,
+                fit: BoxFit.contain,
               ),
-            ],
-          ),
+            ),
+
+            SizedBox(height: 8.h),
+
+SizedBox(
+  width: 70.w,
+  child: Text(
+    displayTitle,
+    textAlign: TextAlign.center,
+    maxLines: 2,
+    overflow: TextOverflow.visible,
+    style: TextStyle(
+      fontSize: 11.sp,
+      fontWeight: FontWeight.w500,
+      color: theme.colorScheme.onSurface,
+    ),
+  ),
+),
+          ],
         ),
       ),
-    );
-  }
-
+    ),
+  );
+}
   /// IMAGE MAP
   String _getImage(String name) {
-    switch (name.toLowerCase()) {
-      case 'prepaid':
-        return AssetImages.prepaid;
+  switch (name.toLowerCase()) {
+    case 'prepaid':
+      return AssetImages.prepaid;
 
-      case 'postpaid':
-        return AssetImages.prepaid;
+    case 'postpaid':
+      return AssetImages.prepaid;
 
-      case 'dth':
-        return AssetImages.dth;
+    case 'dth':
+      return AssetImages.dth;
 
-      case 'fastag':
-        return AssetImages.fastag;
+    case 'fastag':
+      return AssetImages.fastag;
 
-      case 'gas':
-        return AssetImages.gas;
+    case 'gas':
+      return AssetImages.gas;
 
-      case 'electricity':
-        return AssetImages.promoFrame;
+    case 'electricity':
+      return AssetImages.promoFrame;
 
-      case 'water':
-        return AssetImages.water;
+    case 'water':
+      return AssetImages.water;
 
-      case 'landline':
-        return AssetImages.landline;
+    case 'landline':
+      return AssetImages.landline;
 
-      case 'broadband':
-        return AssetImages.broadband;
+    case 'broadband':
+      return AssetImages.broadband;
 
-      case 'cable tv':
-        return AssetImages.statement;
+    case 'cabletv': // API returns CableTV
+      return AssetImages.statement;
 
-      default:
-        return AssetImages.prepaid;
-    }
+    case 'payment status':
+      return AssetImages.paymentStatus;
+
+    case 'dth refresh':
+      return AssetImages.dthRefresh;
+
+    default:
+      return AssetImages.prepaid;
   }
+}
 
   /// COLOR MAP
   Color _getBgColor(String name) {
@@ -469,7 +473,7 @@ _dynamicServiceItem(
     }
   }
 
-  /// NAVIGATION
+  
   /// NAVIGATION
 void _handleNavigation(Data item) {
 
@@ -488,16 +492,16 @@ void _handleNavigation(Data item) {
 
       break;
 
-    case 'postpaid':
+    // case 'postpaid':
 
-      Get.to(
-        () => MobileRechargePage(
-          productId: item.id.toString(),
-          productName: item.name ?? "",
-        ),
-      );
+    //   Get.to(
+    //     () => MobileRechargePage(
+    //       productId: item.id.toString(),
+    //       productName: item.name ?? "",
+    //     ),
+    //   );
 
-      break;
+    //   break;
 
     case 'dth':
 

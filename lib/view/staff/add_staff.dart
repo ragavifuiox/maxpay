@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:maxpay/controllers/add_staff_controller.dart';
@@ -6,7 +7,6 @@ import 'package:maxpay/core/constants/snackbar.dart';
 import 'package:maxpay/core/utils/texthelper.dart';
 import 'package:maxpay/global_widget/commom_button.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
-
 import 'package:maxpay/view/staff/widget/staff_textfield_widget.dart';
 
 class AddStaffPage extends GetView<AddStaffController> {
@@ -14,23 +14,17 @@ class AddStaffPage extends GetView<AddStaffController> {
 
   final TextEditingController mobileController =
       TextEditingController();
-
-  final TextEditingController nameController =
-      TextEditingController();
-
+final TextEditingController packageController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-
-      appBar: const CommonAppBar(
-        title: "Add Staff",
-      ),
+      appBar: const CommonAppBar(title: "Add Staff"),
 
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 24.w),
         child: GetBuilder<AddStaffController>(
-          builder: (_) {
+          builder: (controller) {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -47,6 +41,17 @@ class AddStaffPage extends GetView<AddStaffController> {
                   hintText: "Enter Mobile No",
                   controller: mobileController,
                   keyboardType: TextInputType.phone,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                    LengthLimitingTextInputFormatter(10),
+                  ],
+                  onChanged: (value) {
+                    if (value.length == 10) {
+                      controller.searchStaff(value);
+                    } else {
+                      controller.nameController.clear();
+                    }
+                  },
                 ),
 
                 SizedBox(height: 22.h),
@@ -59,14 +64,23 @@ class AddStaffPage extends GetView<AddStaffController> {
                 SizedBox(height: 10.h),
 
                 StaffTextFieldWidget(
-                  hintText: "Enter Name",
-                  controller: nameController,
+                  hintText: "Staff Name",
+                  controller: controller.nameController,
                 ),
+                
+SizedBox(height: 22.h),
 
-             
+Text(
+  "Package",
+  style: TextHelper.max17(context),
+),
 
-               
+SizedBox(height: 10.h),
 
+StaffTextFieldWidget(
+  hintText: "Package",
+  controller: controller.packageController,
+),
                 const Spacer(),
 
                 Center(
@@ -75,27 +89,33 @@ class AddStaffPage extends GetView<AddStaffController> {
                         ? "Loading..."
                         : "Submit",
                     onTap: () {
+                      final mobile =
+                          mobileController.text.trim();
 
-                      if (mobileController.text.trim().isEmpty) {
+                      final name =
+                          controller.nameController.text.trim();
+                      final package = controller.packageController.text.trim();
+
+                      if (mobile.isEmpty) {
                         CustomToast.error(
                           "Enter Mobile Number",
                         );
                         return;
                       }
 
-                      if (nameController.text.trim().isEmpty) {
-
-                       CustomToast.error(
-                          "Enter Name",
+                      if (mobile.length != 10) {
+                        CustomToast.error(
+                          "Please enter 10 digit number",
                         );
-                       
                         return;
                       }
 
-                      controller.addstaff(
-                        nameController.text.trim(),
-                        mobileController.text.trim(),
-                      );
+                      if (name.isEmpty) {
+                        CustomToast.error("Enter Name");
+                        return;
+                      }
+
+                      controller.addstaff(name, mobile, package);
                     },
                   ),
                 ),

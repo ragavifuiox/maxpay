@@ -1,4 +1,4 @@
-package com.example.maxpay
+package com.example.paylink
 
 import io.flutter.embedding.android.FlutterFragmentActivity
 

@@ -1,39 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:maxpay/controllers/prepaid_controller.dart';
 import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/global_widget/commom_button.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
 import 'package:maxpay/view/recharge/success_recharge_page.dart';
 
-class CustomerTransConfirmationScreen extends StatelessWidget {
-   final String productName;
-  final String operatorInitial;
-  final Color operatorColor;
-  final String transactionNo;
-  final String amount;
-  final String commission;
-  final String surcharge;
+class CustomerTransConfirmationScreen extends GetView<PrePaidController> {
+   CustomerTransConfirmationScreen({super.key});
 
-const CustomerTransConfirmationScreen({  super.key,
-    this.productName = 'Jio',
-    this.operatorInitial = 'J',
-    this.operatorColor = Colors.red,
-    this.transactionNo = 'TXN24321232323',
-    this.amount = '₹365.00',
-    this.commission = '₹40.00',
-    this.surcharge = '₹5',});
+  final TextEditingController whatsappController =
+      TextEditingController();
+
+  final TextEditingController amountController =
+      TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    final args = Get.arguments ?? {};
+      final confirmData = controller.transConfirmData.value?.data;
+      final OperatorLogo = confirmData?.logo ?? '';
+
+    final productName = args['productName'] ?? '';
+    final paymentStatus = args['paymentStatus'] ?? '';
+    final transactionNo = args['transactionNo'] ?? '';
+    final transactionAmount = args['transactionAmount'] ?? '';
+    final whatsappNumber = args['whatsappNumber'] ?? '';
+    final operatorInitial = args['operatorInitial'] ?? '';
+    final operatorColor = args['operatorColor'] ?? Colors.red;
+    final operatorLogo = args['operatorLogo'] ?? '';
+    final mobileNumber = args['mobileNumber'] ?? '';
+
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
 
       appBar: CommonAppBar(title: ""),
-
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.w),
 
@@ -67,53 +71,44 @@ RotatedBox(
 
     child: Column(
       children: [
-        _buildRow(
-          context,
-          "Product Name",
-          "Jio",
-          isLogo: true,
-        ),
+    _buildRow(context, "Operator", operatorLogo, isLogo: true),
 
         SizedBox(height: 14.h),
 
         _buildRow(
           context,
           "Payment Status",
-          "Paid",
+          paymentStatus,
           valueColor: Colors.green,
         ),
 
         SizedBox(height: 14.h),
 
         _buildRow(
-          context,
-          "Transaction No",
-          "TXN24321232323",
-        ),
+  context,
+  "Transaction No",
+  transactionNo,
+),
 
         SizedBox(height: 14.h),
 
         _buildRow(
           context,
           "Transaction Amount",
-          "₹365.00",
+          transactionAmount,
         ),
 
         SizedBox(height: 14.h),
 
-        _buildRow(
-          context,
-          "User Name",
-          "Non Stop Unlimited",
-        ),
+       
 
         SizedBox(height: 14.h),
 
-        _buildRow(
-          context,
-          "Whatsapp no",
-          "9856389363",
-        ),
+       _buildRow(
+  context,
+  "Whatsapp no",
+  whatsappNumber,
+),
       ],
     ),
   ),
@@ -153,22 +148,63 @@ RotatedBox(
             const Spacer(),
 
             /// PAY NOW
-            CommonButton(
-              title: "Pay Now",
-              onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => SuccessRechargePage(
-                          productName: productName,
-                          operatorInitial: operatorInitial,
-                          operatorColor: operatorColor,
-                          rechargeAmount: amount,
-                        ),
-                      ),
-                    );
-                  },
-            ),
+            Obx(() => Center(
+  child: CommonButton(
+    title: controller.isRechargeLoading.value
+        ? "Processing..."
+        : "Pay Now",
+
+    onTap: controller.isRechargeLoading.value
+        ? null
+        : () async {
+
+           
+
+            print("👉 FINAL PRODUCT ID: ${controller.productdetid}");
+
+            final success = await controller.mobilerecharge(
+              controller.productdetid,
+                mobileNumber,
+             transactionAmount,
+            );
+
+print("AFTER API CALL");
+            final rechargeData =
+    controller.rechargeResponse.value;
+
+if (success && rechargeData != null) {
+  final apiData = rechargeData.data?.apiResponse;
+
+  Get.to(
+    () => SuccessRechargePage(
+      productName: apiData?.logo ??
+          confirmData?.productName ??
+          "",
+ operatorLogo: apiData?.logo ?? "",
+      operatorInitial:
+          (apiData?.operatorName?.isNotEmpty ?? false)
+              ? apiData!.operatorName![0]
+              : "J",
+
+      operatorColor: Colors.red,
+
+      transactionNo:
+          apiData?.mobileno ?? mobileNumber,
+
+      rechargeAmount:
+          "₹${apiData?.amount ?? amountController.text}",
+
+      transactionId:
+          apiData?.txnid ?? "",
+
+      dateTime:
+          apiData?.requestDatetime ?? "",
+    ),
+  );
+}
+          },
+  ),
+)),
 
             SizedBox(height: 30.h),
           ],
@@ -178,67 +214,68 @@ RotatedBox(
   }
 
   Widget _buildRow(
-    BuildContext context,
-    String title,
-    String value, {
-    bool isLogo = false,
-    Color? valueColor,
-  }) {
-    final theme = Theme.of(context);
+  BuildContext context,
+  String title,
+  String value, {
+  bool isLogo = false,
+  Color? valueColor,
+}) {
+  final theme = Theme.of(context);
 
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(
-          flex: 4,
-          child: Text(
-            title,
-            style: TextStyle(
-              fontSize: 13.sp,
-              color: Colors.grey,
-              fontWeight: FontWeight.w500,
-            ),
+  return Row(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      /// LABEL
+      SizedBox(
+        width: 140.w, // fixed width = alignment fix
+        child: Text(
+          title,
+          style: TextStyle(
+            fontSize: 13.sp,
+            color: Colors.grey,
+            fontWeight: FontWeight.w500,
           ),
         ),
-
-        Expanded(
-          flex: 5,
-          child: Row(
-            children: [
-              if (isLogo) ...[
-                CircleAvatar(
-                  radius: 10.r,
-                  backgroundColor: Colors.red,
-
-                  child: Text(
-                    "Jio",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 7.sp,
-                      fontWeight: FontWeight.bold,
-                    ),
+      ),
+      SizedBox(width: 15.w),
+      /// COLON
+      Text(
+        ":  ",
+        style: TextStyle(
+          fontSize: 13.sp,
+          color: Colors.grey,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+      SizedBox(width: 10.w),
+      /// VALUE
+      Expanded(
+        child: Align(
+          alignment: Alignment.centerLeft,
+          child: isLogo
+              ? ClipRRect(
+                  borderRadius: BorderRadius.circular(6.r),
+                  child: Image.network(
+                    value,
+                    width: 40.w,
+                    height: 20.h,
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Icon(Icons.image_not_supported, size: 20.sp);
+                    },
                   ),
-                ),
-
-                SizedBox(width: 8.w),
-              ],
-
-              Expanded(
-                child: Text(
+                )
+              : Text(
                   value,
                   style: TextStyle(
                     fontSize: 13.sp,
                     fontWeight: FontWeight.w600,
-                    color:
-                        valueColor ??
-                        theme.colorScheme.onSurface,
+                    color: valueColor ?? theme.colorScheme.onSurface,
                   ),
                 ),
-              ),
-            ],
-          ),
         ),
-      ],
-    );
-  }
+      ),
+    ],
+  );
+}
 }

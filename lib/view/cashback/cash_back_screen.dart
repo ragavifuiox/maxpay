@@ -26,22 +26,23 @@ class CashbackScreen extends StatelessWidget {
         child: Column(
           children: [
             /// 🔵 Filter Box
-            Container(
-              padding: const EdgeInsets.all(14),
+             Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: theme.brightness == Brightness.light
+            ? AppColors.background
+            : const Color(0xFF2F3349),
 
-              decoration: BoxDecoration(
-                color: theme.brightness == Brightness.light
-                    ? AppColors.background
-                    : theme.colorScheme.surfaceContainer,
+        borderRadius: BorderRadius.circular(12),
 
-                borderRadius: BorderRadius.circular(14),
+        border: theme.brightness == Brightness.dark
+            ? Border.all(
+                color: const Color(0xFF3C3F52),
+              )
+            : null,
+      ),
 
-                border: theme.brightness == Brightness.dark
-                    ? Border.all(
-                        color: theme.colorScheme.outline,
-                      )
-                    : null,
-              ),
 
               /// Search / Dropdown
               child: Container(
@@ -60,7 +61,10 @@ class CashbackScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
 
                   border: Border.all(
-                    color: theme.colorScheme.outline,
+                    color:
+                      theme.brightness == Brightness.light
+                          ? Colors.black
+                          : Color(0xFF3C3F52),
                   ),
                 ),
 
@@ -160,7 +164,7 @@ class CashbackTile extends StatelessWidget {
 
         border: theme.brightness == Brightness.dark
             ? Border.all(
-                color: theme.colorScheme.outline,
+               color: const Color(0xFF3C3F52),
               )
             : null,
       ),
@@ -215,10 +219,11 @@ class CashbackTile extends StatelessWidget {
                 "Cashback",
 
                 style: TextHelper.max2.copyWith(
-                  color:
-                      theme.colorScheme.onSurfaceVariant,
-                ),
+                color: theme.brightness == Brightness.light
+                ? AppColors.darktextclr
+                :  Colors.white,
               ),
+            ),
 
               const SizedBox(height: 3),
 

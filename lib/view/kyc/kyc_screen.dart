@@ -11,172 +11,147 @@ class KycScreen extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor:
-          theme.scaffoldBackgroundColor,
+      backgroundColor: theme.scaffoldBackgroundColor,
 
       appBar: const CommonAppBar(
         title: "KYC",
       ),
 
+      /// ✅ Submit button scroll aagum
       body: SafeArea(
-        child: Padding(
-          padding:
-              const EdgeInsets.symmetric(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(
             horizontal: 20,
+            vertical: 20,
           ),
 
           child: Column(
+            crossAxisAlignment:
+                CrossAxisAlignment.start,
+
             children: [
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment:
-                        CrossAxisAlignment.start,
+              /// MAIL ID
+              Text(
+                "Mail ID",
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color:
+                      theme.colorScheme.onSurface,
+                ),
+              ),
 
-                    children: [
-                      const SizedBox(height: 20),
+              const SizedBox(height: 10),
 
-                      /// MAIL ID
-                      Text(
-                        "Mail ID",
+              /// INPUT FIELD
+              Container(
+                height: 52,
 
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight:
-                              FontWeight.w500,
-                          color: theme
-                              .colorScheme
-                              .onSurface,
-                        ),
-                      ),
+                decoration: BoxDecoration(
+                  color:
+                      theme.brightness ==
+                              Brightness.light
+                          ? AppColors.background
+                          : theme.colorScheme
+                              .surfaceContainer,
 
-                      const SizedBox(height: 10),
+                  borderRadius:
+                      BorderRadius.circular(10),
 
-                      /// INPUT FIELD
-                      Container(
-                        height: 52,
+                  border: Border.all(
+                    color:
+                        theme.colorScheme.outline,
+                  ),
+                ),
 
-                        decoration: BoxDecoration(
-                          color: theme
-                                      .brightness ==
-                                  Brightness.light
-                              ? AppColors
-                                  .background
-                              : theme
-                                  .colorScheme
-                                  .surfaceContainer,
+                child: TextFormField(
+                  style: TextStyle(
+                    color:
+                        theme.colorScheme.onSurface,
+                  ),
 
-                          borderRadius:
-                              BorderRadius.circular(
-                            10,
-                          ),
+                  decoration: InputDecoration(
+                    hintText: "Enter Mail ID",
 
-                          border: Border.all(
-                            color: theme
-                                .colorScheme
-                                .outline,
-                          ),
-                        ),
+                    hintStyle: TextStyle(
+                      color: theme.colorScheme
+                          .onSurfaceVariant,
+                      fontSize: 14,
+                    ),
 
-                        child: TextFormField(
-                          style: TextStyle(
-                            color: theme
-                                .colorScheme
-                                .onSurface,
-                          ),
+                    border: InputBorder.none,
 
-                          decoration: InputDecoration(
-                            hintText:
-                                "Enter Amount",
-
-                            hintStyle: TextStyle(
-                              color: theme
-                                  .colorScheme
-                                  .onSurfaceVariant,
-                              fontSize: 14,
-                            ),
-
-                            border:
-                                InputBorder.none,
-
-                            contentPadding:
-                                 EdgeInsets
-                                    .symmetric(
-                              horizontal: 14,
-                              vertical: 15,
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      const SizedBox(height: 22),
-
-                      /// ADDRESS PROOF
-                      Text(
-                        "Address Proof",
-
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight:
-                              FontWeight.w500,
-                          color: theme
-                              .colorScheme
-                              .onSurface,
-                        ),
-                      ),
-
-                      const SizedBox(height: 10),
-
-                      const UploadCard(),
-
-                      const SizedBox(height: 22),
-
-                      /// GST NO
-                      Text(
-                        "GST No",
-
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight:
-                              FontWeight.w500,
-                          color: theme
-                              .colorScheme
-                              .onSurface,
-                        ),
-                      ),
-
-                      const SizedBox(height: 10),
-
-                      const UploadCard(),
-
-                      const SizedBox(height: 22),
-
-                      /// PAN CARD
-                      Text(
-                        "Pan Card",
-
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight:
-                              FontWeight.w500,
-                          color: theme
-                              .colorScheme
-                              .onSurface,
-                        ),
-                      ),
-
-                      const SizedBox(height: 10),
-
-                      const UploadCard(),
-
-                      const SizedBox(height: 40),
-                    ],
+                    contentPadding:
+                        const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 15,
+                    ),
                   ),
                 ),
               ),
 
-              /// SUBMIT BUTTON
-             CommonButton(title: "SUbmit", onTap: (){})
+              const SizedBox(height: 22),
+
+              /// ADDRESS PROOF
+              Text(
+                "Address Proof",
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color:
+                      theme.colorScheme.onSurface,
+                ),
+              ),
+
+              const SizedBox(height: 10),
+
+              const UploadCard(),
+
+              const SizedBox(height: 22),
+
+              /// GST NO
+              Text(
+                "GST No",
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color:
+                      theme.colorScheme.onSurface,
+                ),
+              ),
+
+              const SizedBox(height: 10),
+
+              const UploadCard(),
+
+              const SizedBox(height: 22),
+
+              /// PAN CARD
+              Text(
+                "Pan Card",
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color:
+                      theme.colorScheme.onSurface,
+                ),
+              ),
+
+              const SizedBox(height: 10),
+
+              const UploadCard(),
+
+              const SizedBox(height: 35),
+
+              /// ✅ SUBMIT BUTTON INSIDE SCROLL
+              Center(
+                child: CommonButton(
+                  title: "Submit",
+                  onTap: () {},
+                ),
+              ),
+
+              const SizedBox(height: 25),
             ],
           ),
         ),
@@ -195,8 +170,7 @@ class UploadCard extends StatelessWidget {
     return Container(
       width: double.infinity,
 
-      padding:
-          const EdgeInsets.symmetric(
+      padding: const EdgeInsets.symmetric(
         horizontal: 16,
         vertical: 24,
       ),

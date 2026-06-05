@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.maxpay"
+    namespace = "com.example.paylink"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 

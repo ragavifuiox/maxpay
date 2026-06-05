@@ -11,22 +11,19 @@ class EarningsCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration( 
-  color: theme.brightness == Brightness.light
-      ? AppColors.background
-      : theme.colorScheme.surfaceContainer,
+      decoration: BoxDecoration(
+        color: theme.brightness == Brightness.light
+            ? AppColors.background
+            : const Color(0xFF2F3349),
 
-  borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(12),
 
-  border: theme.brightness == Brightness.dark
-      ? Border.all(
-          color: theme.brightness == Brightness.light
-      ? AppColors.background
-      : AppColors.totalborder1,
-          width: 1,
-        )
-      : null,
-),
+        border: theme.brightness == Brightness.dark
+            ? Border.all(
+                color: const Color(0xFF3C3F52),
+              )
+            : null,
+      ),
 
       child: Column(
         children: [
@@ -57,9 +54,11 @@ class EarningsCard extends StatelessWidget {
           const SizedBox(height: 8),
 
           /// 🔹 Divider
-          Divider(
-            color: theme.colorScheme.outline,
-          ),
+        Divider(
+  color: Theme.of(context).brightness == Brightness.light
+      ? Colors.black12
+      : Colors.white24,
+),
 
           const SizedBox(height: 8),
 

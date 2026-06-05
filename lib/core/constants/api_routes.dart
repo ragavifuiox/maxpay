@@ -22,5 +22,12 @@ class ApiRoutes {
   static const credit = "/total_credit";
   static const searchearnings = "/my_earnings";
   static const Support = "/get_support";
+  static const searchplans = "/search_plan";
+  static const getplandetail = "/get_paln_product/";
+  static const TransactionConfirm = "/confirm_transaction/";
+  static const mobilerecharge = "/mobile_recharge";
+  static const searchstaff = "/search_staff";
+  static const plantab = "/get_plans";
+  static const tabdetail = "/get_plan_details/";
 
 }

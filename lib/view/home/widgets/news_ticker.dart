@@ -1,13 +1,65 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:maxpay/controllers/homepage_controller.dart';
-
 import 'package:maxpay/core/constants/colors.dart';
 
-class NewsTicker extends GetView<HomePageController> {
+class NewsTicker extends StatefulWidget {
   const NewsTicker({super.key});
+
+  @override
+  State<NewsTicker> createState() => _NewsTickerState();
+}
+
+class _NewsTickerState extends State<NewsTicker> {
+  final HomePageController controller = Get.find<HomePageController>();
+
+  final ScrollController scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      startScrolling();
+    });
+  }
+
+  @override
+  void dispose() {
+    scrollController.dispose();
+    super.dispose();
+  }
+
+  void startScrolling() {
+    if (!scrollController.hasClients) return;
+
+    final maxScrollExtent = scrollController.position.maxScrollExtent;
+
+    if (maxScrollExtent <= 0) {
+      Future.delayed(const Duration(seconds: 1), () {
+        if (mounted) {
+          startScrolling();
+        }
+      });
+      return;
+    }
+
+    scrollController
+        .animateTo(
+          maxScrollExtent,
+          duration: const Duration(seconds: 15),
+          curve: Curves.linear,
+        )
+        .then((_) {
+          if (!mounted) return;
+
+          scrollController.jumpTo(0);
+          startScrolling();
+        });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -15,24 +67,25 @@ class NewsTicker extends GetView<HomePageController> {
     final colorScheme = theme.colorScheme;
     final isDark = theme.brightness == Brightness.dark;
 
-    final ScrollController scrollController = ScrollController();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      startScrolling(scrollController);
-    });
+    print("🔥 NewsTicker Build Called");
+    print("🔥 Controller Hash: ${controller.hashCode}");
 
     return Obx(() {
-      String newsText = '';
+  final newsResponse = controller.news.value;
 
-      if (controller.news.isNotEmpty) {
-        newsText = controller.news.first.message ?? '';
-      }
+  String newsText = "No News Available";
 
-      if (newsText.isEmpty) {
-        newsText = 'No News Available';
-      }
+  if (newsResponse != null &&
+      newsResponse.data != null &&
+      newsResponse.data!.isNotEmpty) {
+    newsText = newsResponse.data!.first.message ?? "";
+  }
 
-      return Container(
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+   if (!scrollController.hasClients) return;
+  });
+
+  return Container(
         height: 50.h,
         margin: EdgeInsets.symmetric(vertical: 16.h),
         decoration: BoxDecoration(
@@ -49,7 +102,7 @@ class NewsTicker extends GetView<HomePageController> {
           borderRadius: BorderRadius.circular(3.r),
           child: Row(
             children: [
-              /// 🔹 NEWS LABEL
+              /// NEWS LABEL
               ClipPath(
                 clipper: NewsClipper(),
                 child: Container(
@@ -70,7 +123,7 @@ class NewsTicker extends GetView<HomePageController> {
                 ),
               ),
 
-              /// 🔹 SCROLLING NEWS
+              /// SCROLLING NEWS
               Expanded(
                 child: SingleChildScrollView(
                   controller: scrollController,
@@ -91,7 +144,7 @@ class NewsTicker extends GetView<HomePageController> {
 
                         SizedBox(width: 50.w),
 
-                        /// duplicate text
+                        /// Duplicate text for seamless loop
                         Text(
                           newsText,
                           style: TextStyle(
@@ -109,23 +162,6 @@ class NewsTicker extends GetView<HomePageController> {
           ),
         ),
       );
-    });
-  }
-
-  void startScrolling(ScrollController controller) {
-    if (!controller.hasClients) return;
-
-    final maxScrollExtent = controller.position.maxScrollExtent;
-
-    controller
-        .animateTo(
-      maxScrollExtent,
-      duration: const Duration(seconds: 15),
-      curve: Curves.linear,
-    )
-        .then((_) {
-      controller.jumpTo(0);
-      startScrolling(controller);
     });
   }
 }

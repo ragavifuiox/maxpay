@@ -11,6 +11,7 @@ abstract class AddStaffRepository {
     required String name,
    
     required String phone,
+    required String package
    
   });
 

@@ -49,7 +49,7 @@ class MyApp extends StatelessWidget {
 
         return GetMaterialApp(
 
-          title: 'MaxPay',
+          title: 'PayLink',
           debugShowCheckedModeBanner: false,
 
           theme: AppTheme.lightTheme,
