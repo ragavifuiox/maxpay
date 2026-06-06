@@ -64,7 +64,6 @@ import 'package:maxpay/core/domain/usecase/wallet_request_usecase.dart';
 import 'package:maxpay/core/domain/usecase/wallet_usecase.dart';
 import 'package:maxpay/core/services/api_services.dart';
 import 'package:maxpay/core/services/local_storage_service.dart';
-import 'package:maxpay/core/services/local_storage_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final sl = GetIt.instance;
@@ -76,14 +75,16 @@ Future<void> initDependencies() async {
   // SharedPreferences
   final prefs = await SharedPreferences.getInstance();
   await LocalStorageService().init();
-  if (!sl.isRegistered<SharedPreferences>())
+  if (!sl.isRegistered<SharedPreferences>()) {
     sl.registerSingleton<SharedPreferences>(prefs);
+  }
 
   
 
   // Core services
-  if (!sl.isRegistered<ApiService>())
+  if (!sl.isRegistered<ApiService>()) {
     sl.registerLazySingleton(() => ApiService());
+  }
 
 
 

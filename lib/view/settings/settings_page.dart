@@ -6,7 +6,6 @@ import 'package:maxpay/core/constants/asset_images.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/core/utils/responsive.dart';
 import 'package:maxpay/core/utils/theme.dart';
-import 'package:maxpay/view/profile/profile_screen.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});

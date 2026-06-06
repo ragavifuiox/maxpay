@@ -11,9 +11,7 @@ import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/core/constants/snackbar.dart';
 import 'package:maxpay/core/data/model/plan_model.dart';
-import 'package:maxpay/core/data/model/search_plan_model.dart';
 import 'package:maxpay/view/mobile_recharge/contact_list_page.dart';
-import 'package:maxpay/view/recharge/confirm_transaction_page.dart';
 import 'package:permission_handler/permission_handler.dart' as ph;
 class MobileRechargePage extends StatefulWidget {
   final String productId;
@@ -113,11 +111,11 @@ Future<void> loadTabs() async {
     tabid: selectedTabId,
   );
 
-  _tabController!.addListener(() {
-    if (_tabController!.indexIsChanging) return;
+  _tabController.addListener(() {
+    if (_tabController.indexIsChanging) return;
 
     final tab =
-        controller.planTabs[_tabController!.index];
+        controller.planTabs[_tabController.index];
 
     selectedTabId = tab.id.toString();
 
@@ -132,7 +130,7 @@ Future<void> loadTabs() async {
 void dispose() {
   _debounce?.cancel();
 
-_tabController?.dispose();
+_tabController.dispose();
   mobileController.dispose();
   amountController.dispose();
   searchController.dispose();
@@ -632,9 +630,8 @@ _tabController?.dispose();
 
               /// TABBAR
               Obx(() {
-  if (_tabController == null ||
-    controller.planTabs.isEmpty ||
-    _tabController!.length != controller.planTabs.length) {
+  if (controller.planTabs.isEmpty ||
+    _tabController.length != controller.planTabs.length) {
   return const SizedBox();
 }
 

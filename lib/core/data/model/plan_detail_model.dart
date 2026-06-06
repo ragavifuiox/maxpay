@@ -175,7 +175,7 @@ class PlanDetail {
     if (json['data'] != null) {
       data = <PlanDetailData>[];
       json['data'].forEach((v) {
-        data!.add(new PlanDetailData.fromJson(v));
+        data!.add(PlanDetailData.fromJson(v));
       });
     }
     message = json['message'];
@@ -183,13 +183,13 @@ class PlanDetail {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['success'] = this.success;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['success'] = success;
     if (this.data != null) {
       data['data'] = this.data!.map((v) => v.toJson()).toList();
     }
-    data['message'] = this.message;
-    data['code'] = this.code;
+    data['message'] = message;
+    data['code'] = code;
     return data;
   }
 }
@@ -232,17 +232,17 @@ class PlanDetailData {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['plan_id'] = this.planId;
-    data['product_id'] = this.productId;
-    data['product_name'] = this.productName;
-    data['talk_time'] = this.talkTime;
-    data['amount'] = this.amount;
-    data['validity'] = this.validity;
-    data['plan_details'] = this.planDetails;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['plan_id'] = planId;
+    data['product_id'] = productId;
+    data['product_name'] = productName;
+    data['talk_time'] = talkTime;
+    data['amount'] = amount;
+    data['validity'] = validity;
+    data['plan_details'] = planDetails;
+    data['created_at'] = createdAt;
+    data['updated_at'] = updatedAt;
     return data;
   }
 }

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:maxpay/view/home/pages/home_page.dart';
-import 'package:maxpay/view/home/widgets/services_section.dart';
 import 'package:maxpay/view/nav_page/navbar.dart';
 import 'package:maxpay/view/nav_page/navbar_provider.dart';
 import 'package:maxpay/view/report/report_page.dart';

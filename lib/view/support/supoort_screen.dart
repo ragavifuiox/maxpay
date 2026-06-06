@@ -53,7 +53,7 @@ class SupportScreen extends StatelessWidget {
 
           itemCount: supportList.length,
 
-          separatorBuilder: (_, __) =>
+          separatorBuilder: (_, _) =>
               const SizedBox(height: 16),
 
           itemBuilder: (context, index) {

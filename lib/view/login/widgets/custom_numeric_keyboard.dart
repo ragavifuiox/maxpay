@@ -1,15 +1,9 @@
-import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:maxpay/controllers/auth_controller.dart';
 import 'package:maxpay/core/constants/colors.dart';
-import 'package:maxpay/core/constants/routes_path.dart';
-import 'package:maxpay/core/utils/responsive.dart';
-import 'package:maxpay/view/login/widgets/cutom_elevated_button.dart';
-import 'package:pinput/pinput.dart';
 
 /// ================= CUSTOM KEYBOARD =================
 

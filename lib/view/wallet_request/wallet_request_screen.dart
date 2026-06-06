@@ -182,7 +182,7 @@ class WalletRequestScreen extends StatelessWidget {
                           )
                           : Colors.white,
 
-                  value: paymentType
+                  initialValue: paymentType
                           .value
                           .isEmpty
                       ? null
@@ -261,7 +261,7 @@ class WalletRequestScreen extends StatelessWidget {
                           )
                           : Colors.white,
 
-                  value: controller
+                  initialValue: controller
                       .selectedPlan
                       .value,
 

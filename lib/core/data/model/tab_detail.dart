@@ -11,7 +11,7 @@ class TabDetail {
     if (json['data'] != null) {
       data = <TabDetailData>[];
       json['data'].forEach((v) {
-        data!.add(new TabDetailData.fromJson(v));
+        data!.add(TabDetailData.fromJson(v));
       });
     }
     message = json['message'];
@@ -19,13 +19,13 @@ class TabDetail {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['success'] = this.success;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['success'] = success;
     if (this.data != null) {
       data['data'] = this.data!.map((v) => v.toJson()).toList();
     }
-    data['message'] = this.message;
-    data['code'] = this.code;
+    data['message'] = message;
+    data['code'] = code;
     return data;
   }
 }
@@ -62,15 +62,15 @@ class TabDetailData {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['plan_id'] = this.planId;
-    data['product_id'] = this.productId;
-    data['product_name'] = this.productName;
-    data['amount'] = this.amount;
-    data['validity'] = this.validity;
-    data['talk_time'] = this.talkTime;
-    data['plan_details'] = this.planDetails;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['plan_id'] = planId;
+    data['product_id'] = productId;
+    data['product_name'] = productName;
+    data['amount'] = amount;
+    data['validity'] = validity;
+    data['talk_time'] = talkTime;
+    data['plan_details'] = planDetails;
     return data;
   }
 }

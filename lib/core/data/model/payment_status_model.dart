@@ -11,7 +11,7 @@ class PaymentStatus {
     if (json['data'] != null) {
       data = <Data>[];
       json['data'].forEach((v) {
-        data!.add(new Data.fromJson(v));
+        data!.add(Data.fromJson(v));
       });
     }
     message = json['message'];
@@ -19,13 +19,13 @@ class PaymentStatus {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['success'] = this.success;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['success'] = success;
     if (this.data != null) {
       data['data'] = this.data!.map((v) => v.toJson()).toList();
     }
-    data['message'] = this.message;
-    data['code'] = this.code;
+    data['message'] = message;
+    data['code'] = code;
     return data;
   }
 }
@@ -40,7 +40,7 @@ class Data {
   String? outstandingAmount;
   String? requestAmount;
   String? paymentType;
-  Null? bankName;
+  Null bankName;
   String? refNumber;
   String? receipt;
   String? description;
@@ -92,25 +92,25 @@ class Data {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['retailer_id'] = this.retailerId;
-    data['retailer_user_id'] = this.retailerUserId;
-    data['bank_id'] = this.bankId;
-    data['user_type'] = this.userType;
-    data['payment_for'] = this.paymentFor;
-    data['outstanding_amount'] = this.outstandingAmount;
-    data['request_amount'] = this.requestAmount;
-    data['payment_type'] = this.paymentType;
-    data['bank_name'] = this.bankName;
-    data['ref_number'] = this.refNumber;
-    data['receipt'] = this.receipt;
-    data['description'] = this.description;
-    data['remark'] = this.remark;
-    data['txn_id'] = this.txnId;
-    data['status'] = this.status;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['retailer_id'] = retailerId;
+    data['retailer_user_id'] = retailerUserId;
+    data['bank_id'] = bankId;
+    data['user_type'] = userType;
+    data['payment_for'] = paymentFor;
+    data['outstanding_amount'] = outstandingAmount;
+    data['request_amount'] = requestAmount;
+    data['payment_type'] = paymentType;
+    data['bank_name'] = bankName;
+    data['ref_number'] = refNumber;
+    data['receipt'] = receipt;
+    data['description'] = description;
+    data['remark'] = remark;
+    data['txn_id'] = txnId;
+    data['status'] = status;
+    data['created_at'] = createdAt;
+    data['updated_at'] = updatedAt;
     return data;
   }
 }

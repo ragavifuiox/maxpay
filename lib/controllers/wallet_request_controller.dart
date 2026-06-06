@@ -6,7 +6,6 @@ import 'package:maxpay/core/constants/snackbar.dart';
 import 'package:maxpay/core/data/model/get_bank_model.dart';
 import 'package:maxpay/core/domain/usecase/get_bank_usecase.dart';
 import 'package:maxpay/core/domain/usecase/wallet_request_usecase.dart';
-import 'package:maxpay/core/error/failure.dart';
 
 class GetBankController extends GetxController {
   final GetBankUseCase bankusecase;

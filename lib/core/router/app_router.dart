@@ -11,7 +11,6 @@ import 'package:maxpay/controllers/profile_controller.dart';
 import 'package:maxpay/controllers/support_controller.dart';
 import 'package:maxpay/controllers/wallet_request_controller.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
-import 'package:maxpay/core/data/model/gredit_model.dart';
 import 'package:maxpay/core/di/service_locator.dart';
 import 'package:maxpay/view/add_wallet/add_wallet_screen.dart';
 import 'package:maxpay/view/cashback/cash_back_screen.dart';

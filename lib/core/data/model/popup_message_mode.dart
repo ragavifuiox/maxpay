@@ -11,7 +11,7 @@ class PopupMessage {
     if (json['data'] != null) {
       data = <Data>[];
       json['data'].forEach((v) {
-        data!.add(new Data.fromJson(v));
+        data!.add(Data.fromJson(v));
       });
     }
     message = json['message'];
@@ -19,13 +19,13 @@ class PopupMessage {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['success'] = this.success;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['success'] = success;
     if (this.data != null) {
       data['data'] = this.data!.map((v) => v.toJson()).toList();
     }
-    data['message'] = this.message;
-    data['code'] = this.code;
+    data['message'] = message;
+    data['code'] = code;
     return data;
   }
 }
@@ -74,19 +74,19 @@ class Data {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['title'] = this.title;
-    data['no_of_msg'] = this.noOfMsg;
-    data['business_type'] = this.businessType;
-    data['user_type'] = this.userType;
-    data['live_from_date'] = this.liveFromDate;
-    data['live_to_date'] = this.liveToDate;
-    data['screen_type'] = this.screenType;
-    data['message'] = this.message;
-    data['is_active'] = this.isActive;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['title'] = title;
+    data['no_of_msg'] = noOfMsg;
+    data['business_type'] = businessType;
+    data['user_type'] = userType;
+    data['live_from_date'] = liveFromDate;
+    data['live_to_date'] = liveToDate;
+    data['screen_type'] = screenType;
+    data['message'] = message;
+    data['is_active'] = isActive;
+    data['created_at'] = createdAt;
+    data['updated_at'] = updatedAt;
     return data;
   }
 }

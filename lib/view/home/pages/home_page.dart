@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_instance/src/extension_instance.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:get/get_state_manager/src/simple/get_view.dart';
@@ -13,9 +12,7 @@ import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/view/home/widgets/earnings_chart.dart';
 import 'package:maxpay/view/home/widgets/home_header.dart';
 import 'package:maxpay/view/home/widgets/news_ticker.dart';
-import 'package:maxpay/view/home/widgets/services_section.dart';
 import 'package:maxpay/view/home/widgets/stat_card.dart';
-import 'package:maxpay/view/nav_page/navbar_provider.dart';
 import 'package:maxpay/view/transaction_screens/transaction_success_screen.dart';
 
 class HomePageScreen extends GetView<HomePageController> {

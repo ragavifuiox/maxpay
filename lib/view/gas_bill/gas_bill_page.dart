@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:maxpay/core/constants/colors.dart';
-import 'package:maxpay/view/recharge/confirm_transaction_page.dart';
 
 class GasBillPage extends StatefulWidget {
   const GasBillPage({super.key});

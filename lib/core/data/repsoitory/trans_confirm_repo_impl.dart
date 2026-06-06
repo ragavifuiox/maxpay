@@ -26,11 +26,8 @@ if (decoded is List) {
   jsonMap = decoded.isNotEmpty
       ? Map<String, dynamic>.from(decoded[0])
       : {};
-} else if (decoded is Map<String, dynamic>) {
-  jsonMap = decoded;
-} else {
-  throw Exception("Invalid response format");
-}
+} else {jsonMap = decoded;}
+
 
 final model = TransConfirm.fromJson(jsonMap);
 return Right(model);

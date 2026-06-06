@@ -1,7 +1,5 @@
 import 'package:dartz/dartz.dart';
-import 'package:maxpay/core/data/model/news_model.dart';
 import 'package:maxpay/core/data/model/plan_model.dart';
-import 'package:maxpay/core/domain/repository/news_repository.dart';
 import 'package:maxpay/core/domain/repository/plan_repository.dart';
 import 'package:maxpay/core/error/failure.dart';
 

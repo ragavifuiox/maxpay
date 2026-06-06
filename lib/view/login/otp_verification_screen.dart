@@ -5,12 +5,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:maxpay/controllers/auth_controller.dart';
 import 'package:maxpay/core/constants/colors.dart';
-import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/core/constants/snackbar.dart';
 import 'package:maxpay/core/utils/responsive.dart';
 import 'package:maxpay/global_widget/commom_button.dart';
 import 'package:maxpay/view/login/widgets/custom_numeric_keyboard.dart';
-import 'package:maxpay/view/login/widgets/cutom_elevated_button.dart';
 import 'package:pinput/pinput.dart';
 
 class ScreenOtpVerification extends StatefulWidget {
