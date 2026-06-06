@@ -13,18 +13,13 @@ class OtpRepoImpl implements OtpRepository {
   @override
   Future<Either<Failure, OtpResponse>> otp({
     required String phoneNumber,
-   
+
     required String otp,
   }) async {
     try {
       final response = await apiService.post(
         ApiRoutes.verifyotp,
-        data: {
-          "phone_number": phoneNumber,
-          "otp": otp,
-          
-
-        },
+        data: {"phone_number": phoneNumber, "otp": otp},
       );
 
       final model = OtpResponse.fromJson(response);

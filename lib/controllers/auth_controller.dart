@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:local_auth/local_auth.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/core/constants/snackbar.dart';
 import 'package:maxpay/core/domain/usecase/create_pin_usecase.dart';
@@ -115,13 +116,17 @@ class AuthController extends GetxController {
         },
 
         (response) async {
-          AppLogger.logError("============== OTP VERIFY RESPONSE ==============");
+          AppLogger.logError(
+            "============== OTP VERIFY RESPONSE ==============",
+          );
           AppLogger.logError("SUCCESS : ${response.success}");
           AppLogger.logError("MESSAGE : ${response.message}");
           AppLogger.logError("CODE : ${response.code}");
           AppLogger.logError("USER ID : ${response.data?.userId}");
           AppLogger.logError("TOKEN : ${response.data?.token}");
-          AppLogger.logError("=================================================");
+          AppLogger.logError(
+            "=================================================",
+          );
 
           if (response.success == true) {
             /// SAVE TOKEN
@@ -134,7 +139,27 @@ class AuthController extends GetxController {
 
             CustomToast.success(response.message ?? "OTP Verified");
 
-            Get.offAllNamed(AppRoutes.biometricsIntro);
+            if (response.data?.isFingerPrint == 1) {
+              final LocalAuthentication auth = LocalAuthentication();
+              try {
+                bool authenticated = await auth.authenticate(
+                  localizedReason: 'Scan your fingerprint to continue',
+                  biometricOnly: true,
+                  persistAcrossBackgrounding: true,
+                );
+
+                if (authenticated) {
+                  Get.offAllNamed(AppRoutes.main);
+                } else {
+                  CustomToast.error("Fingerprint authentication failed");
+                }
+              } catch (e) {
+                AppLogger.logError("Fingerprint error: $e");
+                CustomToast.error("Biometrics error: ${e.toString()}");
+              }
+            } else {
+              Get.offAllNamed(AppRoutes.biometricsIntro);
+            }
           } else {
             CustomToast.error(response.message ?? "Invalid OTP");
           }

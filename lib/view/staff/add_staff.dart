@@ -12,15 +12,14 @@ import 'package:maxpay/view/staff/widget/staff_textfield_widget.dart';
 class AddStaffPage extends GetView<AddStaffController> {
   AddStaffPage({super.key});
 
-  final TextEditingController mobileController =
-      TextEditingController();
-final TextEditingController packageController = TextEditingController();
+  final TextEditingController mobileController = TextEditingController();
+  final TextEditingController packageController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: const CommonAppBar(title: "Add Staff"),
-
+      resizeToAvoidBottomInset: false,
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 24.w),
         child: GetBuilder<AddStaffController>(
@@ -30,10 +29,7 @@ final TextEditingController packageController = TextEditingController();
               children: [
                 SizedBox(height: 30.h),
 
-                Text(
-                  "RegMob No",
-                  style: TextHelper.max17(context),
-                ),
+                Text("RegMob No", style: TextHelper.max17(context)),
 
                 SizedBox(height: 10.h),
 
@@ -56,10 +52,7 @@ final TextEditingController packageController = TextEditingController();
 
                 SizedBox(height: 22.h),
 
-                Text(
-                  "Name",
-                  style: TextHelper.max17(context),
-                ),
+                Text("Name", style: TextHelper.max17(context)),
 
                 SizedBox(height: 10.h),
 
@@ -67,46 +60,35 @@ final TextEditingController packageController = TextEditingController();
                   hintText: "Staff Name",
                   controller: controller.nameController,
                 ),
-                
-SizedBox(height: 22.h),
 
-Text(
-  "Package",
-  style: TextHelper.max17(context),
-),
+                SizedBox(height: 22.h),
 
-SizedBox(height: 10.h),
+                Text("Package", style: TextHelper.max17(context)),
 
-StaffTextFieldWidget(
-  hintText: "Package",
-  controller: controller.packageController,
-),
+                SizedBox(height: 10.h),
+
+                StaffTextFieldWidget(
+                  hintText: "Package",
+                  controller: controller.packageController,
+                ),
                 const Spacer(),
 
                 Center(
                   child: CommonButton(
-                    title: controller.isLoading
-                        ? "Loading..."
-                        : "Submit",
+                    title: controller.isLoading ? "Loading..." : "Submit",
                     onTap: () {
-                      final mobile =
-                          mobileController.text.trim();
+                      final mobile = mobileController.text.trim();
 
-                      final name =
-                          controller.nameController.text.trim();
+                      final name = controller.nameController.text.trim();
                       final package = controller.packageController.text.trim();
 
                       if (mobile.isEmpty) {
-                        CustomToast.error(
-                          "Enter Mobile Number",
-                        );
+                        CustomToast.error("Enter Mobile Number");
                         return;
                       }
 
                       if (mobile.length != 10) {
-                        CustomToast.error(
-                          "Please enter 10 digit number",
-                        );
+                        CustomToast.error("Please enter 10 digit number");
                         return;
                       }
 
