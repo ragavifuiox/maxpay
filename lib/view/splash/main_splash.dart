@@ -7,6 +7,7 @@ import 'package:get/get_navigation/src/extension_navigation.dart'
 import 'package:maxpay/core/constants/asset_images.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/core/services/local_storage_service.dart';
+import 'package:maxpay/core/utils/logg_helper.dart';
 
 class MainSplashScreen extends StatefulWidget {
   const MainSplashScreen({super.key});
@@ -26,7 +27,7 @@ class _MainSplashScreenState extends State<MainSplashScreen> {
     final storage = LocalStorageService();
     await storage.init();
     final token = storage.getString("auth_token");
-    print("TOKEN : $token");
+    AppLogger.logError("TOKEN : $token");
     await Future.delayed(const Duration(seconds: 2));
 
     if (mounted) {

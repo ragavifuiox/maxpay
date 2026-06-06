@@ -29,7 +29,7 @@ class StaffCardWidget extends StatelessWidget {
         color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(10.r),
         border: Border.all(
-          color: theme.colorScheme.outline.withOpacity(0.2),
+          color: theme.colorScheme.outline.withValues(alpha: 0.2),
         ),
       ),
       child: Column(

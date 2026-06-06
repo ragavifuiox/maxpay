@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'package:maxpay/core/constants/snackbar.dart';
+import 'package:maxpay/core/utils/logg_helper.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:media_store_plus/media_store_plus.dart';
 
@@ -68,7 +69,7 @@ Future<void> downloadPdf(
       Get.back();
     }
    
-    print(e);
+    AppLogger.debugPrint(e);
  CustomToast.error("An error occurred while downloading PDF");
     
   }

@@ -57,53 +57,54 @@ class LoginHistoryScreen extends StatelessWidget {
 }
 
 /// DATE FIELD
-class _DateField extends StatelessWidget {
-  final String hint;
 
-  const _DateField({
-    required this.hint,
-  });
+// class _DateField extends StatelessWidget {
+//   final String hint;
 
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+//   const _DateField({
+//     required this.hint,
+//   });
 
-    return Expanded(
-      child: Container(
-        padding:
-            const EdgeInsets.symmetric(
-          horizontal: 10,
-          vertical: 10,
-        ),
+//   @override
+//   Widget build(BuildContext context) {
+//     final theme = Theme.of(context);
 
-        decoration: BoxDecoration(
-          color: theme.brightness ==
-                  Brightness.light
-              ? Colors.white
-              : theme.colorScheme.surface,
+//     return Expanded(
+//       child: Container(
+//         padding:
+//             const EdgeInsets.symmetric(
+//           horizontal: 10,
+//           vertical: 10,
+//         ),
 
-          borderRadius:
-              BorderRadius.circular(7),
+//         decoration: BoxDecoration(
+//           color: theme.brightness ==
+//                   Brightness.light
+//               ? Colors.white
+//               : theme.colorScheme.surface,
 
-          border: Border.all(
-            color:
-                theme.colorScheme.outline,
-          ),
-        ),
+//           borderRadius:
+//               BorderRadius.circular(7),
 
-        child: Text(
-          hint,
+//           border: Border.all(
+//             color:
+//                 theme.colorScheme.outline,
+//           ),
+//         ),
 
-          style: TextStyle(
-            fontSize: 12,
-            color: theme.colorScheme
-                .onSurfaceVariant,
-          ),
-        ),
-      ),
-    );
-  }
-}
+//         child: Text(
+//           hint,
+
+//           style: TextStyle(
+//             fontSize: 12,
+//             color: theme.colorScheme
+//                 .onSurfaceVariant,
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
 
 /// LOGIN HISTORY CARD
 class _LoginHistoryCard

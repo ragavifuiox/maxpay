@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:maxpay/core/constants/colors.dart';
+import 'package:maxpay/core/utils/logg_helper.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
 
 class DTHRechargePage extends StatefulWidget {
@@ -314,7 +315,7 @@ if (showNextButton) ...[
       width: 90.w,
       child: ElevatedButton(
         onPressed: () {
-          print(amountController.text);
+          AppLogger.debugPrint(amountController.text);
         },
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.clrPrimary,
@@ -633,31 +634,31 @@ Widget _buildCustomerInfoSection(bool isDark) {
   );
 }
 
-Widget _buildLeftText(String text) {
-  return Padding(
-    padding: EdgeInsets.only(bottom: 18.h),
-    child: Text(
-      text,
-      style: TextStyle(
-        fontSize: 13.sp,
-        fontWeight: FontWeight.w500,
-      ),
-    ),
-  );
-}
+// Widget _buildLeftText(String text) {
+//   return Padding(
+//     padding: EdgeInsets.only(bottom: 18.h),
+//     child: Text(
+//       text,
+//       style: TextStyle(
+//         fontSize: 13.sp,
+//         fontWeight: FontWeight.w500,
+//       ),
+//     ),
+//   );
+// }
 
-Widget _buildRightText(String text) {
-  return Padding(
-    padding: EdgeInsets.only(bottom: 18.h),
-    child: Text(
-      text,
-      style: TextStyle(
-        fontSize: 13.sp,
-        fontWeight: FontWeight.w600,
-      ),
-    ),
-  );
-}
+// Widget _buildRightText(String text) {
+//   return Padding(
+//     padding: EdgeInsets.only(bottom: 18.h),
+//     child: Text(
+//       text,
+//       style: TextStyle(
+//         fontSize: 13.sp,
+//         fontWeight: FontWeight.w600,
+//       ),
+//     ),
+//   );
+// }
 Widget _buildInfoRow(
   String label,
   String value,

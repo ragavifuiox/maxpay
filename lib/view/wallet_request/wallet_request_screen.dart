@@ -8,6 +8,7 @@ import 'package:maxpay/controllers/wallet_request_controller.dart';
 import 'package:maxpay/core/constants/snackbar.dart';
 import 'package:maxpay/core/data/model/get_bank_model.dart';
 import 'package:maxpay/core/di/service_locator.dart';
+import 'package:maxpay/core/utils/logg_helper.dart';
 
 class WalletRequestScreen extends StatelessWidget {
   WalletRequestScreen({super.key});
@@ -814,7 +815,7 @@ class WalletRequestScreen extends StatelessWidget {
       receiptController.text =
           image.path;
 
-      print(
+      AppLogger.debugPrint(
         "Selected Image: ${image.path}",
       );
     }

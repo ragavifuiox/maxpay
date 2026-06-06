@@ -88,7 +88,7 @@ class SupportScreen extends StatelessWidget {
                     color: theme.brightness ==
                             Brightness.dark
                         ? Colors.transparent
-                        : Colors.black.withOpacity(
+                        : Colors.black.withValues(alpha: 
                             0.03,
                           ),
 

@@ -34,7 +34,7 @@ class WalletBalanceScreen extends StatelessWidget {
               BoxShadow(
                 color: theme.brightness == Brightness.dark
                     ? Colors.black54
-                    : Colors.black.withOpacity(0.15),
+                    : Colors.black.withValues(alpha:  0.15),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),
@@ -49,14 +49,14 @@ class WalletBalanceScreen extends StatelessWidget {
                   Text(
                     "Total Balance",
                     style: TextStyle(
-                      color: Colors.white.withOpacity(0.8),
+                      color: Colors.white.withValues(alpha: 0.8),
                       fontSize: 13,
                     ),
                   ),
                   const SizedBox(width: 5),
                   Icon(
                     Icons.visibility_off_outlined,
-                    color: Colors.white.withOpacity(0.8),
+                    color: Colors.white.withValues(alpha: 0.8),
                     size: 16,
                   ),
                 ],

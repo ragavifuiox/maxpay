@@ -15,18 +15,13 @@ class ScreenOtpVerification extends StatefulWidget {
   const ScreenOtpVerification({super.key});
 
   @override
-  State<ScreenOtpVerification> createState() =>
-      _ScreenOtpVerificationState();
+  State<ScreenOtpVerification> createState() => _ScreenOtpVerificationState();
 }
 
-class _ScreenOtpVerificationState
-    extends State<ScreenOtpVerification> {
+class _ScreenOtpVerificationState extends State<ScreenOtpVerification> {
+  final AuthController authController = Get.find<AuthController>();
 
-  final AuthController authController =
-      Get.find<AuthController>();
-
-  final TextEditingController _otpController =
-      TextEditingController();
+  final TextEditingController _otpController = TextEditingController();
 
   bool _showVerifyButton = false;
 
@@ -43,30 +38,22 @@ class _ScreenOtpVerificationState
   }
 
   void startTimer() {
+    timer?.cancel();
 
-  timer?.cancel();
-
-  timer = Timer.periodic(
-    const Duration(seconds: 1),
-    (timer) {
-
+    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (secondsRemaining > 0) {
-
         setState(() {
           secondsRemaining--;
         });
-
       } else {
-
         setState(() {
           isOtpExpired = true;
         });
 
         timer.cancel();
       }
-    },
-  );
-}
+    });
+  }
 
   @override
   void dispose() {
@@ -77,33 +64,24 @@ class _ScreenOtpVerificationState
 
   /// 🔹 KEYBOARD ACTION
   void _handleKeyPress(String key) {
-
     setState(() {
-
       /// 🔹 BACKSPACE
       if (key == 'backspace') {
-
         /// VERIFY BUTTON SHOWING -> HIDE BUTTON
         if (_showVerifyButton) {
-
           _showVerifyButton = false;
         }
 
         if (_otpController.text.isNotEmpty) {
-
-          _otpController.text =
-              _otpController.text.substring(
+          _otpController.text = _otpController.text.substring(
             0,
             _otpController.text.length - 1,
           );
         }
       }
-
       /// 🔹 NUMBER PRESS
       else {
-
         if (_otpController.text.length < 4) {
-
           _otpController.text += key;
         }
       }
@@ -112,7 +90,6 @@ class _ScreenOtpVerificationState
 
   @override
   Widget build(BuildContext context) {
-
     final theme = Theme.of(context);
 
     final colorScheme = theme.colorScheme;
@@ -126,13 +103,11 @@ class _ScreenOtpVerificationState
         child: Center(
           child: ConstrainedBox(
             constraints: BoxConstraints(
-              maxWidth:
-                  isTablet ? 500 : double.infinity,
+              maxWidth: isTablet ? 500 : double.infinity,
             ),
 
             child: Column(
               children: [
-
                 /// 🔹 BACK BUTTON
                 Padding(
                   padding: EdgeInsets.symmetric(
@@ -144,25 +119,19 @@ class _ScreenOtpVerificationState
                     alignment: Alignment.centerLeft,
 
                     child: GestureDetector(
-                     onTap: () {
-
-  /// VERIFY BUTTON SHOWING
-  if (_showVerifyButton) {
-
-    setState(() {
-
-      /// SHOW KEYBOARD AGAIN
-      _showVerifyButton = false;
-    });
-
-  }
-
-  /// NORMAL BACK
-  else {
-
-    Get.back();
-  }
-},
+                      onTap: () {
+                        /// VERIFY BUTTON SHOWING
+                        if (_showVerifyButton) {
+                          setState(() {
+                            /// SHOW KEYBOARD AGAIN
+                            _showVerifyButton = false;
+                          });
+                        }
+                        /// NORMAL BACK
+                        else {
+                          Get.back();
+                        }
+                      },
 
                       child: Container(
                         width: 45.w,
@@ -172,15 +141,11 @@ class _ScreenOtpVerificationState
                           shape: BoxShape.circle,
 
                           border: Border.all(
-                            color: Colors.grey
-                                .withOpacity(0.3),
+                            color: Colors.grey.withValues(alpha: .3),
                           ),
                         ),
 
-                        child: Icon(
-                          Icons.arrow_back_ios_new,
-                          size: 18.sp,
-                        ),
+                        child: Icon(Icons.arrow_back_ios_new, size: 18.sp),
                       ),
                     ),
                   ),
@@ -189,17 +154,11 @@ class _ScreenOtpVerificationState
                 /// 🔹 CONTENT
                 Expanded(
                   child: SingleChildScrollView(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 24.w,
-                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 24.w),
 
                     child: Column(
                       children: [
-
-                        SizedBox(
-                          height:
-                              isTablet ? 40.h : 20.h,
-                        ),
+                        SizedBox(height: isTablet ? 40.h : 20.h),
 
                         /// 🔹 TITLE
                         Text(
@@ -210,12 +169,8 @@ class _ScreenOtpVerificationState
                           style: TextStyle(
                             fontFamily: 'Poppins',
                             fontWeight: FontWeight.w700,
-                            fontSize:
-                                isTablet
-                                    ? 28.sp
-                                    : 22.sp,
-                            color:
-                                colorScheme.onSurface,
+                            fontSize: isTablet ? 28.sp : 22.sp,
+                            color: colorScheme.onSurface,
                           ),
                         ),
 
@@ -230,14 +185,9 @@ class _ScreenOtpVerificationState
 
                             style: TextStyle(
                               fontFamily: 'Poppins',
-                              fontWeight:
-                                  FontWeight.w400,
-                              fontSize:
-                                  isTablet
-                                      ? 16.sp
-                                      : 14.sp,
-                              color:
-                                  AppColors.clrTextgrey,
+                              fontWeight: FontWeight.w400,
+                              fontSize: isTablet ? 16.sp : 14.sp,
+                              color: AppColors.clrTextgrey,
                               height: 1.5,
                             ),
                           ),
@@ -251,91 +201,54 @@ class _ScreenOtpVerificationState
                           controller: _otpController,
                           readOnly: true,
 
-                          mainAxisAlignment:
-                              MainAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
 
                           submittedPinTheme: PinTheme(
-                            width:
-                                isTablet
-                                    ? 70.w
-                                    : 60.w,
+                            width: isTablet ? 70.w : 60.w,
 
-                            height:
-                                isTablet
-                                    ? 70.w
-                                    : 60.w,
+                            height: isTablet ? 70.w : 60.w,
 
                             textStyle: TextStyle(
                               fontFamily: 'Poppins',
-                              fontSize:
-                                  isTablet
-                                      ? 28.sp
-                                      : 24.sp,
-                              fontWeight:
-                                  FontWeight.w600,
-                              color:
-                                  AppColors.clrBg,
+                              fontSize: isTablet ? 28.sp : 24.sp,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.clrBg,
                             ),
 
-                            decoration:
-                                const BoxDecoration(
+                            decoration: const BoxDecoration(
                               shape: BoxShape.circle,
-                              color:
-                                  AppColors.clrPrimary,
+                              color: AppColors.clrPrimary,
                             ),
                           ),
 
                           defaultPinTheme: PinTheme(
-                            width:
-                                isTablet
-                                    ? 70.w
-                                    : 60.w,
+                            width: isTablet ? 70.w : 60.w,
 
-                            height:
-                                isTablet
-                                    ? 70.w
-                                    : 60.w,
+                            height: isTablet ? 70.w : 60.w,
 
                             textStyle: TextStyle(
                               fontFamily: 'Poppins',
-                              fontSize:
-                                  isTablet
-                                      ? 28.sp
-                                      : 24.sp,
-                              fontWeight:
-                                  FontWeight.w600,
-                              color:
-                                  colorScheme.onSurface,
+                              fontSize: isTablet ? 28.sp : 24.sp,
+                              fontWeight: FontWeight.w600,
+                              color: colorScheme.onSurface,
                             ),
 
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color:
-                                  colorScheme.surfaceBright,
+                              color: colorScheme.surfaceBright,
                             ),
                           ),
 
                           focusedPinTheme: PinTheme(
-                            width:
-                                isTablet
-                                    ? 70.w
-                                    : 60.w,
+                            width: isTablet ? 70.w : 60.w,
 
-                            height:
-                                isTablet
-                                    ? 70.w
-                                    : 60.w,
+                            height: isTablet ? 70.w : 60.w,
 
                             textStyle: TextStyle(
                               fontFamily: 'Poppins',
-                              fontSize:
-                                  isTablet
-                                      ? 28.sp
-                                      : 24.sp,
-                              fontWeight:
-                                  FontWeight.w600,
-                              color:
-                                  colorScheme.onSurface,
+                              fontSize: isTablet ? 28.sp : 24.sp,
+                              fontWeight: FontWeight.w600,
+                              color: colorScheme.onSurface,
                             ),
 
                             decoration: BoxDecoration(
@@ -343,8 +256,7 @@ class _ScreenOtpVerificationState
                               shape: BoxShape.circle,
 
                               border: Border.all(
-                                color:
-                                    AppColors.clrPrimary,
+                                color: AppColors.clrPrimary,
                                 width: 2,
                               ),
                             ),
@@ -355,53 +267,48 @@ class _ScreenOtpVerificationState
 
                         /// 🔹 TIMER
                         GestureDetector(
+                          onTap: isOtpExpired
+                              ? () async {
+                                  /// CLEAR OLD OTP
+                                  _otpController.clear();
 
-  onTap: isOtpExpired
-    ? () async {
+                                  /// HIDE VERIFY BUTTON
+                                  _showVerifyButton = false;
 
-        /// CLEAR OLD OTP
-        _otpController.clear();
+                                  /// RESEND API
+                                  await authController.resendOtp();
 
-        /// HIDE VERIFY BUTTON
-        _showVerifyButton = false;
+                                  /// RESET TIMER
+                                  setState(() {
+                                    secondsRemaining = 30;
+                                    isOtpExpired = false;
+                                  });
 
-        /// RESEND API
-        await authController.resendOtp();
+                                  /// START TIMER AGAIN
+                                  startTimer();
+                                }
+                              : null,
 
-        /// RESET TIMER
-        setState(() {
+                          child: Text(
+                            isOtpExpired
+                                ? 'Resend OTP'
+                                : 'Resend code in 00:$secondsRemaining',
 
-          secondsRemaining = 30;
-          isOtpExpired = false;
-        });
+                            style: TextStyle(
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.w500,
+                              fontSize: isTablet ? 16.sp : 14.sp,
 
-        /// START TIMER AGAIN
-        startTimer();
-      }
-    : null,
+                              color: isOtpExpired
+                                  ? Colors.red
+                                  : AppColors.clrPrimary,
 
-  child: Text(
-
-    isOtpExpired
-        ? 'Resend OTP'
-        : 'Resend code in 00:$secondsRemaining',
-
-    style: TextStyle(
-      fontFamily: 'Poppins',
-      fontWeight: FontWeight.w500,
-      fontSize:
-          isTablet ? 16.sp : 14.sp,
-
-      color: isOtpExpired
-          ? Colors.red
-          : AppColors.clrPrimary,
-
-      decoration: isOtpExpired
-          ? TextDecoration.underline
-          : TextDecoration.none,
-    ),
-  ),
-),
+                              decoration: isOtpExpired
+                                  ? TextDecoration.underline
+                                  : TextDecoration.none,
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -409,95 +316,66 @@ class _ScreenOtpVerificationState
 
                 /// 🔹 KEYBOARD / VERIFY BUTTON
                 AnimatedSwitcher(
-                  duration:
-                      const Duration(milliseconds: 300),
+                  duration: const Duration(milliseconds: 300),
 
                   child: _showVerifyButton
-
                       /// 🔹 VERIFY BUTTON
                       ? Padding(
-                          padding: EdgeInsets.fromLTRB(
-                            24.w,
-                            0,
-                            24.w,
-                            40.h,
+                          padding: EdgeInsets.fromLTRB(24.w, 0, 24.w, 40.h),
+
+                          child: CommonButton(
+                            title: "Verify",
+                            onTap: () async {
+                              /// OTP EXPIRED
+                              if (isOtpExpired) {
+                                CustomToast.error(
+                                  "OTP Expired. Please resend the OTP.",
+                                );
+                                return;
+                              }
+
+                              /// API CALL
+                              await authController.verifyOtp(
+                                _otpController.text.trim(),
+                              );
+                            },
                           ),
-
-                          child:
-                          CommonButton(
-  title: "Verify",
-  onTap: () async {
-    /// OTP EXPIRED
-    if (isOtpExpired) {
-      CustomToast.error(
-        "OTP Expired. Please resend the OTP.",
-      );
-      return;
-    }
-
-    /// API CALL
-    await authController.verifyOtp(
-      _otpController.text.trim(),
-    );
-  },
-),
                         )
-
                       /// 🔹 CUSTOM KEYBOARD
                       : Padding(
-                          padding: EdgeInsets.only(
-                            bottom: 20.h,
-                          ),
+                          padding: EdgeInsets.only(bottom: 20.h),
 
                           child: CustomNumericKeyboard(
                             onKeyPressed: (key) {
-
                               /// 🔹 ARROW CLICK
-                            if (key == 'submit') {
+                              if (key == 'submit') {
+                                /// OTP EXPIRED
+                                if (isOtpExpired) {
+                                  CustomToast.error(
+                                    "OTP Expired. Please resend the OTP.",
+                                  );
 
-  /// OTP EXPIRED
-  if (isOtpExpired) {
+                                  return;
+                                }
+                                /// EMPTY OTP
+                                else if (_otpController.text.isEmpty) {
+                                  CustomToast.error("Please enter the OTP");
 
-    CustomToast.error(
-      "OTP Expired. Please resend the OTP.",
-    );
+                                  return;
+                                }
+                                /// LESS THAN 4 DIGITS
+                                else if (_otpController.text.length < 4) {
+                                  CustomToast.error("Please enter 4 digit OTP");
 
-    return;
-  }
-
-  /// EMPTY OTP
-  else if (_otpController.text.isEmpty) {
-
-    CustomToast.error(
-      "Please enter the OTP",
-    );
-
-    return;
-  }
-
-  /// LESS THAN 4 DIGITS
-  else if (_otpController.text.length < 4) {
-
-    CustomToast.error(
-      "Please enter 4 digit OTP",
-    );
-
-    return;
-  }
-
-  /// SHOW VERIFY BUTTON
-  else {
-
-    setState(() {
-
-      _showVerifyButton = true;
-    });
-  }
-}
-
-                              
-                              else {
-
+                                  return;
+                                }
+                                /// SHOW VERIFY BUTTON
+                                else {
+                                  setState(() {
+                                    _showVerifyButton = true;
+                                  });
+                                }
+                              } else {
                                 _handleKeyPress(key);
                               }
                             },

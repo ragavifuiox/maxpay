@@ -697,7 +697,7 @@ class _MobileRechargePageState extends State<MobileRechargePage>
                           return;
                         }
 
-                        print("Validated Mobile: $mobile");
+                        AppLogger.logError("Validated Mobile: $mobile");
 
                         await controller.confirmtrans(
                           plan.productId.toString(),
@@ -1052,66 +1052,66 @@ class _MobileRechargePageState extends State<MobileRechargePage>
   //   );
   // }
 
-  Widget _buildPlanBullet(String text) {
-    return Text(
-      "• $text",
+  // Widget _buildPlanBullet(String text) {
+  //   return Text(
+  //     "• $text",
 
-      style: TextStyle(
-        fontSize: 11.sp,
-        color: Colors.grey,
-        height: 1.5,
-        fontFamily: 'Poppins',
-      ),
-    );
-  }
+  //     style: TextStyle(
+  //       fontSize: 11.sp,
+  //       color: Colors.grey,
+  //       height: 1.5,
+  //       fontFamily: 'Poppins',
+  //     ),
+  //   );
+  // }
 
-  Widget _buildPlanStat(String value, String subLabel, String label) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+  // Widget _buildPlanStat(String value, String subLabel, String label) {
+  //   return Column(
+  //     crossAxisAlignment: CrossAxisAlignment.start,
 
-      children: [
-        RichText(
-          text: TextSpan(
-            children: [
-              TextSpan(
-                text: value,
+  //     children: [
+  //       RichText(
+  //         text: TextSpan(
+  //           children: [
+  //             TextSpan(
+  //               text: value,
 
-                style: TextStyle(
-                  fontSize: 12.sp,
+  //               style: TextStyle(
+  //                 fontSize: 12.sp,
 
-                  fontWeight: FontWeight.w500,
+  //                 fontWeight: FontWeight.w500,
 
-                  color: Theme.of(context).brightness == Brightness.dark
-                      ? Colors.white
-                      : Colors.black,
-                ),
-              ),
+  //                 color: Theme.of(context).brightness == Brightness.dark
+  //                     ? Colors.white
+  //                     : Colors.black,
+  //               ),
+  //             ),
 
-              TextSpan(
-                text: subLabel,
+  //             TextSpan(
+  //               text: subLabel,
 
-                style: TextStyle(
-                  fontSize: 8.sp,
-                  fontFamily: 'Poppins',
-                  color: Theme.of(context).brightness == Brightness.dark
-                      ? Colors.white
-                      : AppColors.clrTextgrey,
-                ),
-              ),
-            ],
-          ),
-        ),
+  //               style: TextStyle(
+  //                 fontSize: 8.sp,
+  //                 fontFamily: 'Poppins',
+  //                 color: Theme.of(context).brightness == Brightness.dark
+  //                     ? Colors.white
+  //                     : AppColors.clrTextgrey,
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //       ),
 
-        Text(
-          label,
+  //       Text(
+  //         label,
 
-          style: TextStyle(
-            fontSize: 8.sp,
-            fontFamily: 'Poppins',
-            color: Colors.grey,
-          ),
-        ),
-      ],
-    );
-  }
+  //         style: TextStyle(
+  //           fontSize: 8.sp,
+  //           fontFamily: 'Poppins',
+  //           color: Colors.grey,
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
 }

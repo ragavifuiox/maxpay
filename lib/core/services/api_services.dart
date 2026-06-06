@@ -5,6 +5,7 @@ import 'package:get/get.dart' as g;
 import 'package:maxpay/core/constants/api_routes.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/core/services/local_storage_service.dart';
+import 'package:maxpay/core/utils/logg_helper.dart';
 
 class ApiService {
   final Dio _dio;
@@ -87,7 +88,7 @@ class ApiService {
     String endpoint, {
     Map<String, dynamic>? params,
   }) async {
-    print(endpoint);
+    AppLogger.debugPrint(endpoint);
     return _handleResponse(() => _dio.get(endpoint, queryParameters: params));
   }
 
