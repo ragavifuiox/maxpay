@@ -4,6 +4,7 @@ import 'package:maxpay/core/data/model/plan_model.dart';
 import 'package:maxpay/core/domain/repository/plan_repository.dart';
 import 'package:maxpay/core/error/failure.dart';
 import 'package:maxpay/core/services/api_services.dart';
+import 'package:maxpay/core/utils/logg_helper.dart';
 
 
 class PlanRepoImpl implements PlanRepository {
@@ -14,7 +15,7 @@ class PlanRepoImpl implements PlanRepository {
     required String productid,
 
   }) async {
-    print(productid);
+    AppLogger.logError(productid);
     try {
       final response = await apiService.get(
        "${ApiRoutes.plans}$productid"

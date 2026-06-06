@@ -13,7 +13,6 @@ class NavPageScreen extends StatefulWidget {
 
   @override
   State<NavPageScreen> createState() => _ScreenNavBarState();
-  
 }
 
 class _ScreenNavBarState extends State<NavPageScreen>
@@ -35,19 +34,19 @@ class _ScreenNavBarState extends State<NavPageScreen>
 
   @override
   Widget build(BuildContext context) {
-final List<Widget> screens = [
-  const HomePageScreen(),
-  const ReportPage(),
+    final List<Widget> screens = [
+      const HomePageScreen(),
+      const ReportPage(),
 
- WalletRequestScreen(),
- 
-const ReportPage(),
-  const SettingsPage(),
-];
+      WalletRequestScreen(),
+
+      const ReportPage(),
+      const SettingsPage(),
+    ];
 
     return Obx(() {
       final selectedIndex = _navbarController.selectedIndex;
-      
+
       return PopScope(
         canPop: false,
         onPopInvokedWithResult: (didPop, _) {

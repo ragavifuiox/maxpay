@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:maxpay/controllers/auth_controller.dart';
+import 'package:maxpay/controllers/profile_controller.dart';
 import 'package:maxpay/core/constants/asset_images.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/core/utils/responsive.dart';
@@ -55,14 +57,11 @@ class SettingsPage extends StatelessWidget {
                     context,
                     'Profile',
                     () {
-                
                       Get.toNamed(AppRoutes.profile);
-
-                      
                     },
                     SvgPicture.asset(AssetImages.profile, width: 24.w),
                   ),
-                   _buildMenuTile(
+                  _buildMenuTile(
                     context,
                     'Staff List',
                     () {
@@ -70,36 +69,26 @@ class SettingsPage extends StatelessWidget {
                     },
                     SvgPicture.asset(AssetImages.stafflist, width: 24.w),
                   ),
-                  _buildMenuTile(
-                    context,
-                    'Grade',
-                    () {
-                      Get.toNamed(AppRoutes.grade);
-                    },
-                    SvgPicture.asset(AssetImages.grade, width: 24.w),
-                  ),
-                  _buildMenuTile(
-                    context,
-                    'KYC',
-                    () {
-                      Get.toNamed(AppRoutes.kyc);
-                    },
-                    SvgPicture.asset(AssetImages.kyc, width: 24.w),
-                  ),
+                  _buildMenuTile(context, 'Grade', () {
+                    Get.toNamed(AppRoutes.grade);
+                  }, SvgPicture.asset(AssetImages.grade, width: 24.w)),
+                  _buildMenuTile(context, 'KYC', () {
+                    Get.toNamed(AppRoutes.kyc);
+                  }, SvgPicture.asset(AssetImages.kyc, width: 24.w)),
                   _buildMenuTile(
                     context,
                     'Update Pin',
                     () {
-                       Get.toNamed(AppRoutes.veirfypin);
+                      Get.toNamed(AppRoutes.veirfypin);
                     },
                     SvgPicture.asset(AssetImages.updatePin, width: 24.w),
                   ),
 
- _buildMenuTile(
+                  _buildMenuTile(
                     context,
                     'Cashback',
                     () {
-                       Get.toNamed(AppRoutes.cashback);
+                      Get.toNamed(AppRoutes.cashback);
                     },
                     SvgPicture.asset(AssetImages.cashback, width: 24.w),
                   ),
@@ -107,7 +96,9 @@ class SettingsPage extends StatelessWidget {
                   _buildMenuTile(
                     context,
                     'Privacy Policy',
-                    () {},
+                    () {
+                      Get.find<ProfileController>().fetchPrivacyPolicyLink();
+                    },
                     SvgPicture.asset(AssetImages.privacyPolicy, width: 24.w),
                   ),
                   _buildMenuTile(
@@ -127,71 +118,67 @@ class SettingsPage extends StatelessWidget {
                     SvgPicture.asset(AssetImages.webSignup, width: 24.w),
                   ),
                   _buildMenuTile(
-  context,
-  'Web Login',
-  () {
-    Get.toNamed(AppRoutes.webloginqr);
-  },
-  SvgPicture.asset(
-    AssetImages.webLogin,
-    width: 24.w,
-  ),
+                    context,
+                    'Web Login',
+                    () {
+                      Get.toNamed(AppRoutes.webloginqr);
+                    },
+                    SvgPicture.asset(AssetImages.webLogin, width: 24.w),
 
- trailingWidget: FittedBox(
-  fit: BoxFit.scaleDown,
+                    trailingWidget: FittedBox(
+                      fit: BoxFit.scaleDown,
 
-  child: Row(
-    mainAxisSize: MainAxisSize.min,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
 
-    children: [
-      Container(
-        padding: EdgeInsets.symmetric(
-          horizontal: 6.w,
-          vertical: 2.h,
-        ),
+                        children: [
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 6.w,
+                              vertical: 2.h,
+                            ),
 
-        decoration: BoxDecoration(
-          color: Colors.green,
-          borderRadius:
-              BorderRadius.circular(4.r),
-        ),
+                            decoration: BoxDecoration(
+                              color: Colors.green,
+                              borderRadius: BorderRadius.circular(4.r),
+                            ),
 
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
 
-          children: [
-            Text(
-              'Link',
+                              children: [
+                                Text(
+                                  'Link',
 
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 9.sp,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 9.sp,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
 
-            SizedBox(width: 2.w),
+                                SizedBox(width: 2.w),
 
-            Icon(
-              Icons.reply_rounded,
-              color: Colors.white,
-              size: 10.sp,
-            ),
-          ],
-        ),
-      ),
+                                Icon(
+                                  Icons.reply_rounded,
+                                  color: Colors.white,
+                                  size: 10.sp,
+                                ),
+                              ],
+                            ),
+                          ),
 
-      SizedBox(width: 6.w),
+                          SizedBox(width: 6.w),
 
-      Image.asset(
-        AssetImages.qrcode,
-        width: 24.w,
-        height: 24.w,
-        fit: BoxFit.contain,
-      ),
-    ],
-  ),
-),
+                          Image.asset(
+                            AssetImages.qrcode,
+                            width: 24.w,
+                            height: 24.w,
+                            fit: BoxFit.contain,
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                   _buildMenuTile(
                     context,
@@ -215,7 +202,9 @@ class SettingsPage extends StatelessWidget {
                             context,
                             'Logout',
                             Icons.logout_rounded,
-                            () {},
+                            () {
+                              Get.find<AuthController>().logout();
+                            },
                           ),
                         ),
                         SizedBox(width: 15.w),
@@ -255,11 +244,10 @@ class SettingsPage extends StatelessWidget {
     BuildContext context,
     String title,
     VoidCallback onTap,
-    
-     Widget leadingIcon, {
-  Widget? trailingWidget,
-}
-  ) {
+
+    Widget leadingIcon, {
+    Widget? trailingWidget,
+  }) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
@@ -275,7 +263,7 @@ class SettingsPage extends StatelessWidget {
       child: ListTile(
         onTap: onTap,
         dense: true,
-        contentPadding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 4.w,),
+        contentPadding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 4.w),
         leading: leadingIcon,
         title: Text(
           title,
@@ -286,13 +274,13 @@ class SettingsPage extends StatelessWidget {
             color: colorScheme.onSurface,
           ),
         ),
-        trailing: 
-          trailingWidget ??
-          Icon(
-            Icons.chevron_right,
-            color: colorScheme.onSurface.withValues(alpha: 0.5),
-            size: 24.sp,
-          ),
+        trailing:
+            trailingWidget ??
+            Icon(
+              Icons.chevron_right,
+              color: colorScheme.onSurface.withValues(alpha: 0.5),
+              size: 24.sp,
+            ),
       ),
     );
   }
@@ -327,5 +315,4 @@ class SettingsPage extends StatelessWidget {
       ),
     );
   }
-  
 }

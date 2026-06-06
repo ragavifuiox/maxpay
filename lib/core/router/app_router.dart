@@ -54,361 +54,343 @@ import 'package:maxpay/view/web_sign_up/web_signup_success_screen.dart';
 import 'package:maxpay/view/weblogin/web_login_screen.dart';
 
 class AppPages {
-  
   static final pages = [
     GetPage(name: AppRoutes.splash, page: () => const MainSplashScreen()),
     GetPage(name: AppRoutes.intro, page: () => const IntroPage()),
     GetPage(name: AppRoutes.welcome, page: () => const WelcomePage()),
-  
+
     GetPage(
-  transition: Transition.fade,
+      transition: Transition.fade,
 
-  name: AppRoutes.loginPhoneName,
+      name: AppRoutes.loginPhoneName,
 
-  page: () => const LoginPhoneNamePage(),
+      page: () => const LoginPhoneNamePage(),
 
-  binding: BindingsBuilder(() {
+      binding: BindingsBuilder(() {
+        Get.lazyPut<AuthController>(
+          () => AuthController(
+            loginUseCase: sl(),
+            otpUsecase: sl(),
+            createPinUsecase: sl(),
+            fingerPrintUsecase: sl(),
+          ),
 
-    Get.lazyPut<AuthController>(
-      () => AuthController(
-      
-     loginUseCase: sl(),
-        otpUsecase: sl(),
-        createPinUsecase: sl(),
-        fingerPrintUsecase: sl(),
-      ),
+          fenix: true,
+        );
+      }),
+    ),
 
-      fenix: true,
-    );
-  }),
-),
+    GetPage(
+      transition: Transition.fade,
 
+      name: AppRoutes.customertrans,
 
-GetPage(
-  transition: Transition.fade,
+      page: () => CustomerTransConfirmationScreen(),
 
-  name: AppRoutes.customertrans,
+      binding: BindingsBuilder(() {
+        Get.lazyPut<PrePaidController>(
+          () => PrePaidController(
+            planUseCase: sl(),
+            searchPlanUsecase: sl(),
+            planDetailUseCase: sl(),
+            transConfirmUseCase: sl(),
+            mobileRechargeUseCase: sl(),
+            plantabusecase: sl(),
+            tabdetailusecase: sl(),
+          ),
 
-  page: () =>  CustomerTransConfirmationScreen (),
+          fenix: true,
+        );
+      }),
+    ),
+    GetPage(
+      transition: Transition.fade,
 
-  binding: BindingsBuilder(() {
+      name: AppRoutes.pinCodeCreation,
 
-    Get.lazyPut<PrePaidController>(
-      () => PrePaidController(planUseCase: sl(),
-       searchPlanUsecase: sl(),
-        planDetailUseCase: sl(),
-         transConfirmUseCase: sl(), mobileRechargeUseCase: sl(),
-         plantabusecase: sl(),
-         tabdetailusecase: sl()
-      
-     
-      ),
+      page: () => PinCodeCreationPage(),
 
-      fenix: true,
-    );
-  }),
-),
-GetPage(
-  transition: Transition.fade,
+      binding: BindingsBuilder(() {
+        Get.lazyPut<AuthController>(
+          () => AuthController(
+            loginUseCase: sl(),
+            otpUsecase: sl(),
+            createPinUsecase: sl(),
+            fingerPrintUsecase: sl(),
+          ),
 
-  name: AppRoutes.pinCodeCreation,
+          fenix: true,
+        );
+      }),
+    ),
+    GetPage(
+      name: AppRoutes.otpVerification,
+      page: () => const ScreenOtpVerification(),
+    ),
+    GetPage(
+      name: AppRoutes.biometricsIntro,
+      page: () => const BiometricsIntroPage(),
+    ),
+    GetPage(
+      name: AppRoutes.biometricsScanning,
+      page: () => const BiometricsScanningPage(),
+    ),
 
-  page: () => PinCodeCreationPage(),
-
-  binding: BindingsBuilder(() {
-
-    Get.lazyPut<AuthController>(
-      () => AuthController(
-        loginUseCase: sl(),
-        otpUsecase: sl(),
-        createPinUsecase: sl(),
-        fingerPrintUsecase: sl(),
-      ),
-
-      fenix: true,
-    );
-  }),
-),
-    GetPage(name: AppRoutes.otpVerification, page: () => const ScreenOtpVerification()),
-    GetPage(name: AppRoutes.biometricsIntro, page: () => const BiometricsIntroPage()),
-    GetPage(name: AppRoutes.biometricsScanning, page: () => const BiometricsScanningPage()),
- 
     GetPage(name: AppRoutes.successScreen, page: () => const SuccessScreen()),
 
+    GetPage(
+      transition: Transition.fade,
 
-     GetPage(
-  transition: Transition.fade,
+      name: AppRoutes.main,
 
-  name: AppRoutes.main,
+      page: () => const NavPageScreen(),
 
-  page: () => const NavPageScreen(),
+      binding: BindingsBuilder(() {
+        Get.lazyPut<HomePageController>(
+          () => HomePageController(
+            getNewsUseCase: sl(),
+            getWalletBalanceUseCase: sl(),
+            transSucFailUsecase: sl(),
+            complaintsUseCase: sl(),
+            getPopupMessageUseCase: sl(),
+          ),
 
-  binding: BindingsBuilder(() {
-
-    Get.lazyPut<HomePageController>(
-      () => HomePageController(
-        getNewsUseCase: sl(),
-        getWalletBalanceUseCase: sl(),
-        transSucFailUsecase: sl(),
-        complaintsUseCase: sl(),
-        getPopupMessageUseCase: sl(),
-      ),
-
-      fenix: true,
-    );
-  }),
-),
+          fenix: true,
+        );
+      }),
+    ),
     GetPage(name: AppRoutes.home, page: () => const HomePageScreen()),
+
     // GetPage(name: AppRoutes.main, page: () => const NavPageScreen()),
     // GetPage(name: AppRoutes.myearning, page: () => const MyEarningsScreen()),
-
-
-     GetPage(
-  transition: Transition.fade,
-
-  name: AppRoutes.myearning,
-
-  page: () => const MyEarningsScreen(),
-
-  binding: BindingsBuilder(() {
-
-    Get.lazyPut<EarningController>(
-      () => EarningController(
-        getEarningsUseCase: sl(), searchEarningsUseCase: sl(),
-      ),
-
-      fenix: true,
-    );
-  }),
-),
-
- GetPage(
-  transition: Transition.fade,
-
-  name: AppRoutes.walletcredit,
-
-  page: () => const WalletCreditScreen(),
-
-  binding: BindingsBuilder(() {
-
-    Get.lazyPut<CreditController>(
-      () => CreditController(
-        getCreditUseCase: sl()
-        
-      ),
-
-      fenix: true,
-    );
-  }),
-),
-    
-    GetPage(name: AppRoutes.refund, page: () => const RefundScreen()),
-    GetPage(name:AppRoutes.cashback, page: () => const CashbackScreen()),
-  
-    
-
-     GetPage(
-  transition: Transition.fade,
-
-  name: AppRoutes.walletrequest,
-
-  page: () =>  WalletRequestScreen(),
-
-  binding: BindingsBuilder(() {
-
-    Get.lazyPut<GetBankController>(
-      () => GetBankController(
-        bankusecase: sl(),
-        walletRequestUsecase: sl(),
-      ),
-
-      fenix: true,
-    );
-  }),
-),
-    
-     GetPage(
-  transition: Transition.fade,
-
-  name: AppRoutes.profile,
-
-  page: () => ProfileScreen(),
-
-  binding: BindingsBuilder(() {
-
-    Get.lazyPut<ProfileController>(
-      () => ProfileController(
-        getProfileUseCase: sl(),
-      ),
-
-      fenix: true,
-    );
-  }),
-),
-
-
-  GetPage(
-  transition: Transition.fade,
-
-  name: AppRoutes.support,
-
-  page: () => SupportScreen(),
-
-  binding: BindingsBuilder(() {
-
-    Get.lazyPut<SupportController>(
-      () => SupportController(
-        supportUseCase: sl(),
-      ),
-
-      fenix: true,
-    );
-  }),
-),
-
-
-
-  GetPage(
-  transition: Transition.fade,
-
-  name: AppRoutes.transconfirm,
-
-  page: () => ConfirmTransactionPage(),
-
-  binding: BindingsBuilder(() {
-
-    Get.lazyPut<PrePaidController>(
-      () => PrePaidController(
-        transConfirmUseCase: sl(),
-         planUseCase: sl(),
-          searchPlanUsecase: sl(),
-           planDetailUseCase: sl(),
-           mobileRechargeUseCase: sl(),
-           plantabusecase: sl(),
-           tabdetailusecase: sl(),
-      ),
-
-      fenix: true,
-    );
-  }),
-),
-     GetPage(name:AppRoutes.kyc, page:()=>const KycScreen()),
-     GetPage(name:AppRoutes.loginhistory, page:()=>const LoginHistoryScreen()),
-     GetPage(name:AppRoutes.weblogin, page:()=>const WebSignupScreen()),
-     GetPage(name:AppRoutes.webotp, page:()=>const WebOtpScreen()),
-     GetPage(name:AppRoutes.websuccess, page:()=>const WebSignupSuccessScreen()),
-     GetPage(name:AppRoutes.setting, page:()=>const SettingsPage()),
-     GetPage(name:AppRoutes.grade, page:()=>const GradeScreen()),
-     GetPage(
-  transition: Transition.fade,
-
-  name: AppRoutes.prepaid,
-
-  page: () {
-    final args = Get.arguments ?? {};
-
-    return MobileRechargePage(
-      productId: args['productId'] ?? '',
-      productName: args['productName'] ?? '',
-    );
-  },
-
-  binding: BindingsBuilder(() {
-
-    Get.lazyPut<PrePaidController>(
-      () => PrePaidController(
-        planDetailUseCase: sl(),
-        planUseCase: sl(),
-        searchPlanUsecase: sl(),
-        transConfirmUseCase: sl(),
-        mobileRechargeUseCase:sl(),
-        plantabusecase: sl(),
-        tabdetailusecase: sl(),
-      ),
-
-      fenix: true,
-    );
-  }),
-),
- 
-
-
-     GetPage(
-  transition: Transition.fade,
-
-  name: AppRoutes.menu,
-
-  page: () => MenuScreen(),
-
-  binding: BindingsBuilder(() {
-
-    Get.lazyPut<ServiceController>(
-      () => ServiceController(
-        productTypeUseCase: sl(),
-      ),
-
-      fenix: true,
-    );
-  }),
-),
-
-  GetPage(
-  transition: Transition.fade,
-
-  name: AppRoutes.addstaff,
-
-  page: () => AddStaffPage(),
-
-  binding: BindingsBuilder(() {
-
-    Get.lazyPut<AddStaffController>(
-      () => AddStaffController(
-         addStaffUsecase: sl(), 
-         staffListUseCase: sl(),
-         searchStaffUsecase: sl(),
-      ),
-
-      fenix: true,
-    );
-  }),
-),
-          GetPage(name:AppRoutes.walletbal, page:()=>const WalletBalanceScreen()),
-          GetPage(name:AppRoutes.dth, page:()=>const DTHRechargePage()),
-          GetPage(name:AppRoutes.addwallet, page:()=>const AddWalletScreen()),
-          GetPage(name:AppRoutes.veirfypin, page:()=>const VerifyPinPage()),
-          GetPage(name:AppRoutes.statementReadMore, page:()=>const StatementReadMoreScreen()),
-          GetPage(name:AppRoutes.webloginqr, page:()=>const WebLoginScreen()),
-          GetPage(name:AppRoutes.dispute, page:()=>const DisputeReportScreen()),
-          GetPage(name:AppRoutes.customertrans, page:()=>const DisputeReportScreen()),
- GetPage(
-  transition: Transition.fade,
-  name: AppRoutes.stafflist,
-
-  page: () => StaffListPage(),
-
-  binding: BindingsBuilder(() {
-
-    Get.lazyPut<AddStaffController>(
-      () => AddStaffController(
-        staffListUseCase: sl(), 
-        addStaffUsecase: sl(),
-        searchStaffUsecase: sl(),
-      ),
-
-      fenix: true,
-    );
-  }),
-),
     GetPage(
-  name: AppRoutes.transaction,
-  page: () {
-    final status =
-        Get.arguments as TransactionStatus?;
+      transition: Transition.fade,
 
-    return TransactionScreen(
-      status: status ?? TransactionStatus.success,
-    );
-  },
-),
+      name: AppRoutes.myearning,
+
+      page: () => const MyEarningsScreen(),
+
+      binding: BindingsBuilder(() {
+        Get.lazyPut<EarningController>(
+          () => EarningController(
+            getEarningsUseCase: sl(),
+            searchEarningsUseCase: sl(),
+          ),
+
+          fenix: true,
+        );
+      }),
+    ),
+
+    GetPage(
+      transition: Transition.fade,
+
+      name: AppRoutes.walletcredit,
+
+      page: () => const WalletCreditScreen(),
+
+      binding: BindingsBuilder(() {
+        Get.lazyPut<CreditController>(
+          () => CreditController(getCreditUseCase: sl()),
+
+          fenix: true,
+        );
+      }),
+    ),
+
+    GetPage(name: AppRoutes.refund, page: () => const RefundScreen()),
+    GetPage(name: AppRoutes.cashback, page: () => const CashbackScreen()),
+
+    GetPage(
+      transition: Transition.fade,
+
+      name: AppRoutes.walletrequest,
+
+      page: () => WalletRequestScreen(),
+
+      binding: BindingsBuilder(() {
+        Get.lazyPut<GetBankController>(
+          () =>
+              GetBankController(bankusecase: sl(), walletRequestUsecase: sl()),
+
+          fenix: true,
+        );
+      }),
+    ),
+
+    GetPage(
+      transition: Transition.fade,
+
+      name: AppRoutes.profile,
+
+      page: () => ProfileScreen(),
+
+      binding: BindingsBuilder(() {
+        Get.lazyPut<ProfileController>(
+          () => ProfileController(getProfileUseCase: sl(),),
+
+          fenix: true,
+        );
+      }),
+    ),
+
+    GetPage(
+      transition: Transition.fade,
+
+      name: AppRoutes.support,
+
+      page: () => SupportScreen(),
+
+      binding: BindingsBuilder(() {
+        Get.lazyPut<SupportController>(
+          () => SupportController(supportUseCase: sl()),
+
+          fenix: true,
+        );
+      }),
+    ),
+
+    GetPage(
+      transition: Transition.fade,
+
+      name: AppRoutes.transconfirm,
+
+      page: () => ConfirmTransactionPage(),
+
+      binding: BindingsBuilder(() {
+        Get.lazyPut<PrePaidController>(
+          () => PrePaidController(
+            transConfirmUseCase: sl(),
+            planUseCase: sl(),
+            searchPlanUsecase: sl(),
+            planDetailUseCase: sl(),
+            mobileRechargeUseCase: sl(),
+            plantabusecase: sl(),
+            tabdetailusecase: sl(),
+          ),
+
+          fenix: true,
+        );
+      }),
+    ),
+    GetPage(name: AppRoutes.kyc, page: () => const KycScreen()),
+    GetPage(
+      name: AppRoutes.loginhistory,
+      page: () => const LoginHistoryScreen(),
+    ),
+    GetPage(name: AppRoutes.weblogin, page: () => const WebSignupScreen()),
+    GetPage(name: AppRoutes.webotp, page: () => const WebOtpScreen()),
+    GetPage(
+      name: AppRoutes.websuccess,
+      page: () => const WebSignupSuccessScreen(),
+    ),
+    GetPage(name: AppRoutes.setting, page: () => const SettingsPage()),
+    GetPage(name: AppRoutes.grade, page: () => const GradeScreen()),
+    GetPage(
+      transition: Transition.fade,
+
+      name: AppRoutes.prepaid,
+
+      page: () {
+        final args = Get.arguments ?? {};
+
+        return MobileRechargePage(
+          productId: args['productId'] ?? '',
+          productName: args['productName'] ?? '',
+        );
+      },
+
+      binding: BindingsBuilder(() {
+        Get.lazyPut<PrePaidController>(
+          () => PrePaidController(
+            planDetailUseCase: sl(),
+            planUseCase: sl(),
+            searchPlanUsecase: sl(),
+            transConfirmUseCase: sl(),
+            mobileRechargeUseCase: sl(),
+            plantabusecase: sl(),
+            tabdetailusecase: sl(),
+          ),
+
+          fenix: true,
+        );
+      }),
+    ),
+
+    GetPage(
+      transition: Transition.fade,
+
+      name: AppRoutes.menu,
+
+      page: () => MenuScreen(),
+
+      binding: BindingsBuilder(() {
+        Get.lazyPut<ServiceController>(
+          () => ServiceController(productTypeUseCase: sl()),
+
+          fenix: true,
+        );
+      }),
+    ),
+
+    GetPage(
+      transition: Transition.fade,
+
+      name: AppRoutes.addstaff,
+
+      page: () => AddStaffPage(),
+
+      binding: BindingsBuilder(() {
+        Get.lazyPut<AddStaffController>(
+          () => AddStaffController(
+            addStaffUsecase: sl(),
+            staffListUseCase: sl(),
+            searchStaffUsecase: sl(),
+          ),
+
+          fenix: true,
+        );
+      }),
+    ),
+    GetPage(name: AppRoutes.walletbal, page: () => const WalletBalanceScreen()),
+    GetPage(name: AppRoutes.dth, page: () => const DTHRechargePage()),
+    GetPage(name: AppRoutes.addwallet, page: () => const AddWalletScreen()),
+    GetPage(name: AppRoutes.veirfypin, page: () => const VerifyPinPage()),
+    GetPage(
+      name: AppRoutes.statementReadMore,
+      page: () => const StatementReadMoreScreen(),
+    ),
+    GetPage(name: AppRoutes.webloginqr, page: () => const WebLoginScreen()),
+    GetPage(name: AppRoutes.dispute, page: () => const DisputeReportScreen()),
+    GetPage(
+      name: AppRoutes.customertrans,
+      page: () => const DisputeReportScreen(),
+    ),
+    GetPage(
+      transition: Transition.fade,
+      name: AppRoutes.stafflist,
+
+      page: () => StaffListPage(),
+
+      binding: BindingsBuilder(() {
+        Get.lazyPut<AddStaffController>(
+          () => AddStaffController(
+            staffListUseCase: sl(),
+            addStaffUsecase: sl(),
+            searchStaffUsecase: sl(),
+          ),
+
+          fenix: true,
+        );
+      }),
+    ),
+    GetPage(
+      name: AppRoutes.transaction,
+      page: () {
+        final status = Get.arguments as TransactionStatus?;
+
+        return TransactionScreen(status: status ?? TransactionStatus.success);
+      },
+    ),
   ];
 }

@@ -9,7 +9,7 @@ import 'package:maxpay/core/error/failure.dart';
 class PlanDetailUseCase {
   final PlanDetailRepository repository;
   PlanDetailUseCase(this.repository,);
-  Future<Either<Failure, PlanDetail>> call({required String Planid}) {
-    return repository.getplandetail(Planid: Planid);
+  Future<Either<Failure, PlanDetail>> call({required String planId}) {
+    return repository.getplandetail(planid: planId);
   }
 }

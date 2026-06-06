@@ -4,6 +4,7 @@ import 'package:maxpay/core/data/model/finger_print_model.dart';
 import 'package:maxpay/core/domain/repository/finger_print_repository.dart';
 import 'package:maxpay/core/error/failure.dart';
 import 'package:maxpay/core/services/api_services.dart';
+import 'package:maxpay/core/utils/logg_helper.dart';
 
 class FingerPrintRepoImpl
     implements FingerPrintRepository {
@@ -22,10 +23,10 @@ class FingerPrintRepoImpl
 
     try {
 
-      print(
+      AppLogger.logError(
           "=========== API REQUEST ==========");
           
-      print(
+      AppLogger.logError(
         "is_finger_print : $fingerprint",
       );
 
@@ -39,10 +40,10 @@ class FingerPrintRepoImpl
         },
       );
 
-      print(
+      AppLogger.logError(
           "=========== API RESPONSE ==========");
 
-      print(response);
+      AppLogger.logError(response);
 
       final model =
           FingerPrint.fromJson(
@@ -53,10 +54,10 @@ class FingerPrintRepoImpl
 
     } catch (e) {
 
-      print(
+      AppLogger.logError(
           "=========== API ERROR ==========");
 
-      print(e.toString());
+      AppLogger.logError(e.toString());
 
       return Left(
         ServerFailure(

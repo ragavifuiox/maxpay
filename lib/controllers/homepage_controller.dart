@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:maxpay/core/utils/logg_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:maxpay/core/data/model/compalints_model.dart' hide Data;
@@ -66,7 +67,7 @@ class HomePageController extends GetxController {
         },
       );
     } catch (e) {
-      print("fetchNews error: $e");
+      AppLogger.logError("fetchNews error: $e");
     } finally {
       isLoading.value = false;
     }
@@ -167,7 +168,7 @@ class HomePageController extends GetxController {
         },
       );
     } catch (e) {
-      print("popup error: $e");
+      AppLogger.logError("popup error: $e");
     } finally {
       isLoading.value = false;
     }
@@ -183,7 +184,7 @@ class HomePageController extends GetxController {
         (data) => walletBalance.value = data,
       );
     } catch (e) {
-      print("wallet error: $e");
+      AppLogger.logError("wallet error: $e");
     }
   }
 
@@ -197,7 +198,7 @@ class HomePageController extends GetxController {
         (data) => complaints.value = data,
       );
     } catch (e) {
-      print("complaints error: $e");
+      AppLogger.logError("complaints error: $e");
     }
   }
 
@@ -211,7 +212,7 @@ class HomePageController extends GetxController {
         (data) => transactionData.value = data,
       );
     } catch (e) {
-      print("transaction error: $e");
+      AppLogger.logError("transaction error: $e");
     }
   }
 }

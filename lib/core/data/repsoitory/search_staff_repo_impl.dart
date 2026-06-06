@@ -4,6 +4,7 @@ import 'package:maxpay/core/data/model/search_staff_model.dart';
 import 'package:maxpay/core/domain/repository/search_staff_repository.dart';
 import 'package:maxpay/core/error/failure.dart';
 import 'package:maxpay/core/services/api_services.dart';
+import 'package:maxpay/core/utils/logg_helper.dart';
 
 class SearchStaffRepoImpl implements SearchStaffRepository {
   final ApiService apiService;
@@ -24,14 +25,14 @@ class SearchStaffRepoImpl implements SearchStaffRepository {
 
   
 
-print("=========== 👍REQUEST BODY ===========");
-print({
+AppLogger.logError("=========== 👍REQUEST BODY ===========");
+AppLogger.logError({
   "mobile": mobile,
 });
 
-print("=========== 👍RAW RESPONSE ===========");
-print(response);
-print("====================================");
+AppLogger.logError("=========== 👍RAW RESPONSE ===========");
+AppLogger.logError(response);
+AppLogger.logError("====================================");
       final model = SearchStaff.fromJson(response);
       return Right(model);
     } catch (e) {

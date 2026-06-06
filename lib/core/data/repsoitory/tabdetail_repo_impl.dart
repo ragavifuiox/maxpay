@@ -5,7 +5,7 @@ import 'package:maxpay/core/data/model/tab_detail.dart';
 import 'package:maxpay/core/domain/repository/tab_detail_repository.dart';
 import 'package:maxpay/core/error/failure.dart';
 import 'package:maxpay/core/services/api_services.dart';
-
+import 'package:maxpay/core/utils/logg_helper.dart';
 
 class TabdetailRepoImpl implements TabDetailRepository {
   final ApiService apiService;
@@ -13,13 +13,10 @@ class TabdetailRepoImpl implements TabDetailRepository {
   @override
   Future<Either<Failure, TabDetail>> gettabdetail({
     required String tabid,
-
   }) async {
-    print(tabid);
+    AppLogger.debugPrint(tabid);
     try {
-      final response = await apiService.get(
-       "${ApiRoutes.tabdetail}$tabid"
-      );
+      final response = await apiService.get("${ApiRoutes.tabdetail}$tabid");
       final model = TabDetail.fromJson(response);
       return Right(model);
     } catch (e) {

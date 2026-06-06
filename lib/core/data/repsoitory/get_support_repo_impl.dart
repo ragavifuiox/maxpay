@@ -13,7 +13,7 @@ class SupportRepoImpl implements SupportRepository {
   @override
   Future<Either<Failure, Support>> getsupport() async {
     try {
-      final response = await apiService.get(ApiRoutes.Support);
+      final response = await apiService.get(ApiRoutes.support);
       final model = Support.fromJson(response);
       return Right(model);
     } catch (e) {

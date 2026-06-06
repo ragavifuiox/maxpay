@@ -1,4 +1,5 @@
 import 'package:get_it/get_it.dart';
+import 'package:maxpay/core/data/repsoitory/add_kyc_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/add_staff_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/compalint_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/create_pin_repo_impl.dart';
@@ -34,6 +35,7 @@ import 'package:maxpay/core/domain/repository/earning_repository.dart';
 import 'package:maxpay/core/domain/repository/finger_print_repository.dart';
 import 'package:maxpay/core/domain/repository/get_bank_repository.dart';
 import 'package:maxpay/core/domain/repository/get_profile_repository.dart';
+import 'package:maxpay/core/domain/repository/kyc_repository.dart';
 import 'package:maxpay/core/domain/repository/login_repository.dart';
 import 'package:maxpay/core/domain/repository/mobile_recharge_repository.dart';
 import 'package:maxpay/core/domain/repository/news_repository.dart';
@@ -62,6 +64,7 @@ import 'package:maxpay/core/domain/usecase/finger_print_usecase.dart';
 import 'package:maxpay/core/domain/usecase/get_bank_usecase.dart';
 import 'package:maxpay/core/domain/usecase/get_profile_usecase.dart';
 import 'package:maxpay/core/domain/usecase/get_support_usecase.dart';
+import 'package:maxpay/core/domain/usecase/kyc_usecase.dart';
 import 'package:maxpay/core/domain/usecase/login_usecase.dart';
 import 'package:maxpay/core/domain/usecase/mobile_recharge_usecase.dart';
 import 'package:maxpay/core/domain/usecase/news_usecase.dart';
@@ -70,6 +73,7 @@ import 'package:maxpay/core/domain/usecase/plan_detail_usecase.dart';
 import 'package:maxpay/core/domain/usecase/plan_tab_usecase.dart';
 import 'package:maxpay/core/domain/usecase/plan_usecase.dart';
 import 'package:maxpay/core/domain/usecase/popup_message_usecase.dart';
+
 import 'package:maxpay/core/domain/usecase/product_type_usecase.dart';
 import 'package:maxpay/core/domain/usecase/search_earnings_usecase.dart';
 import 'package:maxpay/core/domain/usecase/search_plan_usecase.dart';
@@ -87,84 +91,120 @@ import 'package:shared_preferences/shared_preferences.dart';
 final sl = GetIt.instance;
 
 Future<void> initDependencies() async {
-
-
-  
-  // SharedPreferences
+  /*-------------------       SHARED PREFERENCES     --------------------------*/
   final prefs = await SharedPreferences.getInstance();
   await LocalStorageService().init();
   if (!sl.isRegistered<SharedPreferences>()) {
     sl.registerSingleton<SharedPreferences>(prefs);
   }
 
-  
-
-  // Core services
+  /*-------------------       CORE SERVICES   --------------------------*/
   if (!sl.isRegistered<ApiService>()) {
     sl.registerLazySingleton(() => ApiService());
   }
 
+  /*-------------------       REPOSITORY     ---------------------------*/
+  sl.registerLazySingleton<LoginRepository>(() => LoginRepositoryImpl(sl()));
+  sl.registerLazySingleton<OtpRepository>(() => OtpRepoImpl(sl()));
+  sl.registerLazySingleton<GetNewsRepository>(() => GetNewsRepoImpl(sl()));
+  sl.registerLazySingleton<CreatePinRepository>(() => CreatePinRepoImpl(sl()));
+  sl.registerLazySingleton<WalletBalanceRepository>(
+    () => WalletBalanceRepoImpl(sl()),
+  );
+  sl.registerLazySingleton<TransactionSucFailRepository>(
+    () => TransactionSucFailRepoImpl(sl()),
+  );
+  sl.registerLazySingleton<GetProfileRepository>(
+    () => GetProfileRepoImpl(sl()),
+  );
+  sl.registerLazySingleton<FingerPrintRepository>(
+    () => FingerPrintRepoImpl(sl()),
+  );
+  sl.registerLazySingleton<ProductTypeRepository>(
+    () => ProductTypeRepoImpl(sl()),
+  );
+  sl.registerLazySingleton<PlanRepository>(() => PlanRepoImpl(sl()));
+  sl.registerLazySingleton<ComplaintsRepository>(
+    () => ComplaintsRepoImpl(sl()),
+  );
+  sl.registerLazySingleton<GetBankRepository>(() => GetBankRepoImpl(sl()));
+  sl.registerLazySingleton<WalletRequestRepository>(
+    () => WalletRequestRepoImpl(sl()),
+  );
+  sl.registerLazySingleton<AddStaffRepository>(() => AddStaffRepoImpl(sl()));
+  sl.registerLazySingleton<StaffListRepository>(() => StaffListRepoImpl(sl()));
+  sl.registerLazySingleton<PopupMessageRepository>(
+    () => PopupMessageRepoImpl(sl()),
+  );
+  sl.registerLazySingleton<EarningsRepository>(() => EarningsRepoImpl(sl()));
+  sl.registerLazySingleton<CreditRepository>(() => CreditRepoImpl(sl()));
+  sl.registerLazySingleton<SearchEarningsRepository>(
+    () => SearchEarningsRepoImpl(sl()),
+  );
+  sl.registerLazySingleton<SupportRepository>(() => SupportRepoImpl(sl()));
+  sl.registerLazySingleton<SearchPlanRepository>(
+    () => SearchPlanRepoImpl(sl()),
+  );
+  sl.registerLazySingleton<PlanDetailRepository>(
+    () => PlanDetailRepoImpl(sl()),
+  );
+  sl.registerLazySingleton<TransConfirmRepository>(
+    () => TransConfirmRepoImpl(sl()),
+  );
+  sl.registerLazySingleton<MobileRechargeRepository>(
+    () => MobileRechargeRepoImpl(sl()),
+  );
+  sl.registerLazySingleton<SearchStaffRepository>(
+    () => SearchStaffRepoImpl(sl()),
+  );
+  sl.registerLazySingleton<PlanTabRepository>(() => PlanTabRepoImpl(sl()));
+  sl.registerLazySingleton<TabDetailRepository>(() => TabdetailRepoImpl(sl()));
+  sl.registerLazySingleton<KycRepository>(() => AddKycRepoImpl(sl()));
 
-
-    //Repository
-      sl.registerLazySingleton<LoginRepository>(() => LoginRepositoryImpl(sl()));
-      sl.registerLazySingleton<OtpRepository>(() => OtpRepoImpl(sl()));
-      sl.registerLazySingleton<GetNewsRepository>(() => GetNewsRepoImpl(sl()));
-      sl.registerLazySingleton<CreatePinRepository>(() => CreatePinRepoImpl(sl()));
-      sl.registerLazySingleton<WalletBalanceRepository>(() => WalletBalanceRepoImpl(sl()));
-      sl.registerLazySingleton<TransactionSucFailRepository>(() => TransactionSucFailRepoImpl(sl()));
-      sl.registerLazySingleton<GetProfileRepository>(() => GetProfileRepoImpl(sl()));
-      sl.registerLazySingleton<FingerPrintRepository>(() => FingerPrintRepoImpl(sl()));
-      sl.registerLazySingleton<ProductTypeRepository>(() => ProductTypeRepoImpl(sl()));
-      sl.registerLazySingleton<PlanRepository>(() => PlanRepoImpl(sl()));
-      sl.registerLazySingleton<ComplaintsRepository>(() => ComplaintsRepoImpl(sl()));
-      sl.registerLazySingleton<GetBankRepository>(() => GetBankRepoImpl(sl()));
-      sl.registerLazySingleton<WalletRequestRepository>(() => WalletRequestRepoImpl(sl()));
-      sl.registerLazySingleton<AddStaffRepository>(() => AddStaffRepoImpl(sl()));
-      sl.registerLazySingleton<StaffListRepository>(() => StaffListRepoImpl(sl()));
-      sl.registerLazySingleton<PopupMessageRepository>(() => PopupMessageRepoImpl(sl()));
-      sl.registerLazySingleton<EarningsRepository>(() => EarningsRepoImpl(sl()));
-      sl.registerLazySingleton<CreditRepository>(() => CreditRepoImpl(sl()));
-      sl.registerLazySingleton<SearchEarningsRepository>(() => SearchEarningsRepoImpl(sl()));
-      sl.registerLazySingleton<SupportRepository>(() => SupportRepoImpl(sl()));
-      sl.registerLazySingleton<SearchPlanRepository>(() => SearchPlanRepoImpl(sl()));
-      sl.registerLazySingleton<PlanDetailRepository>(() => PlanDetailRepoImpl(sl()));
-      sl.registerLazySingleton<TransConfirmRepository>(() => TransConfirmRepoImpl(sl()));
-      sl.registerLazySingleton<MobileRechargeRepository>(() => MobileRechargeRepoImpl(sl()));
-      sl.registerLazySingleton<SearchStaffRepository>(() => SearchStaffRepoImpl(sl()));
-      sl.registerLazySingleton<PlanTabRepository>(() => PlanTabRepoImpl(sl()));
-      sl.registerLazySingleton<TabDetailRepository>(() => TabdetailRepoImpl(sl()));
-
-
-
-
-
-        //usecase
-        sl.registerLazySingleton<LoginUseCase>(() => LoginUseCase(sl()));
-        sl.registerLazySingleton<OtpUsecase>(() => OtpUsecase(sl()));
-        sl.registerLazySingleton<GetNewsUseCase>(() => GetNewsUseCase(sl()));
-        sl.registerLazySingleton<CreatePinUsecase>(() => CreatePinUsecase(sl()));
-        sl.registerLazySingleton<GetWalletBalanceUseCase>(() => GetWalletBalanceUseCase(sl()));
-        sl.registerLazySingleton<GetProfileUseCase>(() => GetProfileUseCase(sl()));
-        sl.registerLazySingleton<TransSucFailUsecase>(() => TransSucFailUsecase(sl()));
-        sl.registerLazySingleton<FingerPrintUsecase>(() => FingerPrintUsecase(sl()));
-        sl.registerLazySingleton<ProductTypeUseCase>(() => ProductTypeUseCase(sl()));
-        sl.registerLazySingleton<PlanUseCase>(() => PlanUseCase(sl()));
-        sl.registerLazySingleton<ComplaintsUseCase>(() => ComplaintsUseCase(sl()));
-        sl.registerLazySingleton<GetBankUseCase>(() => GetBankUseCase(sl()));
-        sl.registerLazySingleton<WalletRequestUsecase>(() => WalletRequestUsecase(sl()));
-        sl.registerLazySingleton<AddStaffUsecase>(() => AddStaffUsecase(sl()));
-        sl.registerLazySingleton<StaffListUseCase>(() => StaffListUseCase(sl()));
-        sl.registerLazySingleton<GetPopupMessageUseCase>(() => GetPopupMessageUseCase(sl()));
-        sl.registerLazySingleton<GetEarningsUseCase>(() => GetEarningsUseCase(sl()));
-        sl.registerLazySingleton<GetCreditUseCase>(() => GetCreditUseCase(sl()));
-        sl.registerLazySingleton<SearchEarningsUsecase>(() => SearchEarningsUsecase(sl()));
-        sl.registerLazySingleton<GetSupportUsecase>(() => GetSupportUsecase(sl()));
-        sl.registerLazySingleton<SearchPlanUsecase>(() => SearchPlanUsecase(sl()));
-        sl.registerLazySingleton<PlanDetailUseCase>(() => PlanDetailUseCase(sl()));
-        sl.registerLazySingleton<TransConfirmUseCase>(() => TransConfirmUseCase(sl()));
-        sl.registerLazySingleton<MobileRechargeUsecase>(() => MobileRechargeUsecase(sl()));
-        sl.registerLazySingleton<SearchStaffUsecase>(() => SearchStaffUsecase(sl()));
-        sl.registerLazySingleton<PlanTabUseCase>(() => PlanTabUseCase(sl()));
-        sl.registerLazySingleton<TabDetailUsecase>(() => TabDetailUsecase(sl()));
+  /*-------------------       USECASE    ---------------------------------*/
+  sl.registerLazySingleton<LoginUseCase>(() => LoginUseCase(sl()));
+  sl.registerLazySingleton<OtpUsecase>(() => OtpUsecase(sl()));
+  sl.registerLazySingleton<GetNewsUseCase>(() => GetNewsUseCase(sl()));
+  sl.registerLazySingleton<CreatePinUsecase>(() => CreatePinUsecase(sl()));
+  sl.registerLazySingleton<GetWalletBalanceUseCase>(
+    () => GetWalletBalanceUseCase(sl()),
+  );
+  sl.registerLazySingleton<GetProfileUseCase>(() => GetProfileUseCase(sl()));
+  sl.registerLazySingleton<TransSucFailUsecase>(
+    () => TransSucFailUsecase(sl()),
+  );
+  sl.registerLazySingleton<FingerPrintUsecase>(() => FingerPrintUsecase(sl()));
+  sl.registerLazySingleton<ProductTypeUseCase>(() => ProductTypeUseCase(sl()));
+  sl.registerLazySingleton<PlanUseCase>(() => PlanUseCase(sl()));
+  sl.registerLazySingleton<ComplaintsUseCase>(() => ComplaintsUseCase(sl()));
+  sl.registerLazySingleton<GetBankUseCase>(() => GetBankUseCase(sl()));
+  sl.registerLazySingleton<WalletRequestUsecase>(
+    () => WalletRequestUsecase(sl()),
+  );
+  sl.registerLazySingleton<AddStaffUsecase>(() => AddStaffUsecase(sl()));
+  sl.registerLazySingleton<StaffListUseCase>(() => StaffListUseCase(sl()));
+  sl.registerLazySingleton<GetPopupMessageUseCase>(
+    () => GetPopupMessageUseCase(sl()),
+  );
+  sl.registerLazySingleton<GetEarningsUseCase>(() => GetEarningsUseCase(sl()));
+  sl.registerLazySingleton<GetCreditUseCase>(() => GetCreditUseCase(sl()));
+  sl.registerLazySingleton<SearchEarningsUsecase>(
+    () => SearchEarningsUsecase(sl()),
+  );
+  sl.registerLazySingleton<GetSupportUsecase>(() => GetSupportUsecase(sl()));
+  sl.registerLazySingleton<SearchPlanUsecase>(() => SearchPlanUsecase(sl()));
+  sl.registerLazySingleton<PlanDetailUseCase>(() => PlanDetailUseCase(sl()));
+  sl.registerLazySingleton<TransConfirmUseCase>(
+    () => TransConfirmUseCase(sl()),
+  );
+  sl.registerLazySingleton<MobileRechargeUsecase>(
+    () => MobileRechargeUsecase(sl()),
+  );
+  sl.registerLazySingleton<SearchStaffUsecase>(() => SearchStaffUsecase(sl()));
+  sl.registerLazySingleton<PlanTabUseCase>(() => PlanTabUseCase(sl()));
+  sl.registerLazySingleton<TabDetailUsecase>(() => TabDetailUsecase(sl()));
+  sl.registerLazySingleton<AddKycUsecase>(() => AddKycUsecase(sl()));
+  // sl.registerLazySingleton<GetPrivacyPolicyUseCase>(
+  //   () => GetPrivacyPolicyUseCase(sl()),
+  // );
 }

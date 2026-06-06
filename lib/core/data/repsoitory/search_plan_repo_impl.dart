@@ -4,6 +4,7 @@ import 'package:maxpay/core/data/model/search_plan_model.dart';
 import 'package:maxpay/core/domain/repository/search_plan_repository.dart';
 import 'package:maxpay/core/error/failure.dart';
 import 'package:maxpay/core/services/api_services.dart';
+import 'package:maxpay/core/utils/logg_helper.dart';
 
 class SearchPlanRepoImpl implements SearchPlanRepository {
   final ApiService apiService;
@@ -24,15 +25,15 @@ class SearchPlanRepoImpl implements SearchPlanRepository {
   },
 );
 
-print("=========== 👍REQUEST BODY ===========");
-print({
+AppLogger.logError("=========== 👍REQUEST BODY ===========");
+AppLogger.logError({
   "product_id": planid,
   "amount": amount,
 });
 
-print("=========== 👍RAW RESPONSE ===========");
-print(response);
-print("====================================");
+AppLogger.logError("=========== 👍RAW RESPONSE ===========");
+AppLogger.logError(response);
+AppLogger.logError("====================================");
       final model = SearchPlan.fromJson(response);
       return Right(model);
     } catch (e) {

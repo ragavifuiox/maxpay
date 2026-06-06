@@ -1,9 +1,11 @@
 import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_navigation/src/extension_navigation.dart' show ExtensionSnackbar, GetNavigation;
+import 'package:get/get_navigation/src/extension_navigation.dart'
+    show ExtensionSnackbar, GetNavigation;
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:maxpay/core/constants/snackbar.dart';
-import 'package:maxpay/core/data/model/mobile_recharge.dart' show MobileRecharge;
+import 'package:maxpay/core/data/model/mobile_recharge.dart'
+    show MobileRecharge;
 import 'package:maxpay/core/data/model/plan_detail_model.dart';
 import 'package:maxpay/core/data/model/plan_model.dart';
 import 'package:maxpay/core/data/model/plan_tab_model.dart';
@@ -17,6 +19,7 @@ import 'package:maxpay/core/domain/usecase/plan_usecase.dart';
 import 'package:maxpay/core/domain/usecase/search_plan_usecase.dart';
 import 'package:maxpay/core/domain/usecase/tab_detail_usecase.dart';
 import 'package:maxpay/core/domain/usecase/trans_confirm_usecase.dart';
+import 'package:maxpay/core/utils/logg_helper.dart';
 
 class PrePaidController extends GetxController {
   final PlanUseCase planUseCase;
@@ -25,10 +28,9 @@ class PrePaidController extends GetxController {
   final TransConfirmUseCase transConfirmUseCase;
   final MobileRechargeUsecase mobileRechargeUseCase;
   final PlanTabUseCase plantabusecase;
-  final  TabDetailUsecase tabdetailusecase;
-  final String productdetid =
-    Get.arguments?['productId'] ?? '';
-  
+  final TabDetailUsecase tabdetailusecase;
+  final String productdetid = Get.arguments?['productId'] ?? '';
+
   PrePaidController({
     required this.planUseCase,
     required this.searchPlanUsecase,
@@ -36,30 +38,26 @@ class PrePaidController extends GetxController {
     required this.transConfirmUseCase,
     required this.mobileRechargeUseCase,
     required this.plantabusecase,
-    required this.tabdetailusecase
+    required this.tabdetailusecase,
   });
 
   RxBool isLoading = false.obs;
-Rx<MobileRecharge?> rechargeResponse =
-    Rx<MobileRecharge?>(null);
+  Rx<MobileRecharge?> rechargeResponse = Rx<MobileRecharge?>(null);
   RxList<Data> plans = <Data>[].obs;
   RxList<PlanDetailData> plandetail = <PlanDetailData>[].obs;
   RxList<PlanData> searchPlansList = <PlanData>[].obs;
-RxList<PlanDetailData> planDetailList =
-    <PlanDetailData>[].obs;
-   
+  RxList<PlanDetailData> planDetailList = <PlanDetailData>[].obs;
+
   RxString errorMessage = ''.obs;
-RxBool isRechargeLoading = false.obs;
-  Rx<TransConfirm?> transConfirmData =
-      Rx<TransConfirm?>(null);
-      RxList<TabDetailData> tabdetaillist =
-    <TabDetailData>[].obs;
+  RxBool isRechargeLoading = false.obs;
+  Rx<TransConfirm?> transConfirmData = Rx<TransConfirm?>(null);
+  RxList<TabDetailData> tabdetaillist = <TabDetailData>[].obs;
 
-RxList<PlantabData> planTabs = <PlantabData>[].obs;
+  RxList<PlantabData> planTabs = <PlantabData>[].obs;
   Rx<Data?> selectedPlan = Rx<Data?>(null);
-  Rx<PlanDetailData?> selectplandetail= Rx<PlanDetailData?>(null);
+  Rx<PlanDetailData?> selectplandetail = Rx<PlanDetailData?>(null);
 
-String selectedTabId = "";
+  String selectedTabId = "";
   Future<void> getPlans({required String productid}) async {
     try {
       isLoading.value = true;
@@ -82,273 +80,248 @@ String selectedTabId = "";
       isLoading.value = false;
     }
   }
-  
-Future<void> getPlanDetail({
-  required String planId,
-}) async {
-  try {
-    print("🔍 [GET PLAN DETAIL] Started");
-    print("📦 Plan ID: $planId");
 
-    isLoading.value = true;
-    print("⏳ Loading Started");
+  Future<void> getPlanDetail({required String planId}) async {
+    try {
+      AppLogger.debugPrint("🔍 [GET PLAN DETAIL] Started");
+      AppLogger.debugPrint("📦 Plan ID: $planId");
 
-    final result = await planDetailUseCase(
-      Planid: planId,
-    );
+      isLoading.value = true;
+      AppLogger.debugPrint("⏳ Loading Started");
 
-    print("✅ API Response Received");
+      final result = await planDetailUseCase(planId: planId);
 
-    result.fold(
-      (failure) {
-        print("❌ API Failed");
-        print("📝 Error: ${failure.message}");
+      AppLogger.debugPrint("✅ API Response Received");
 
-        CustomToast.error(
-          failure.message,
-        );
-      },
-      (response) {
-        print("🎉 API Success");
-        print("📊 Total Plans: ${response.data?.length ?? 0}");
-        print("📄 Response Data: ${response.data}");
+      result.fold(
+        (failure) {
+          AppLogger.logError("❌ API Failed");
+          AppLogger.logError("📝 Error: ${failure.message}");
 
-        planDetailList.value = response.data ?? [];
+          CustomToast.error(failure.message);
+        },
+        (response) {
+          AppLogger.logError("🎉 API Success");
+          AppLogger.logError("📊 Total Plans: ${response.data?.length ?? 0}");
+          AppLogger.logError("📄 Response Data: ${response.data}");
 
-        print(
-          "✅ planDetailList Updated: ${planDetailList.length} items",
-        );
-      },
-    );
-  } catch (e, s) {
-    print("💥 Exception Occurred");
-    print("Error: $e");
-    print("StackTrace: $s");
-  } finally {
-    isLoading.value = false;
-    print("🏁 Loading Finished");
-  }
-}
+          planDetailList.value = response.data ?? [];
 
-
-
-Future<void> getTabDetail({
-  required String tabid,
-}) async {
-  try {
-    print("🔍 [GET Tab DETAIL] Started");
-    print("📦 Tab ID: $tabid");
-
-    isLoading.value = true;
-    print("⏳ Loading Started");
-
-    final result = await tabdetailusecase(tabid: tabid);
-
-    print("✅ API Response Received");
-
-    result.fold(
-      (failure) {
-        print("❌ API Failed");
-        print("📝 Error: ${failure.message}");
-
-        CustomToast.error(
-          failure.message,
-        );
-      },
-      (response) {
-        print("🎉 API Success");
-        print("📊 Total Plans: ${response.data?.length ?? 0}");
-        print("📄 Response Data: ${response.data}");
-
-        tabdetaillist.value = response.data ?? [];
-
-        print(
-          "✅ planDetailList Updated: ${planDetailList.length} items",
-        );
-      },
-    );
-  } catch (e, s) {
-    print("💥 Exception Occurred");
-    print("Error: $e");
-    print("StackTrace: $s");
-  } finally {
-    isLoading.value = false;
-    print("🏁 Loading Finished");
-  }
-}
-  
-  Future<void> searchPlans(String planId, String amount) async {
-  try {
-    print("🔍 [SEARCH PLANS] Started");
-    print("📦 PlanId: $planId | 💰 Amount: $amount");
-
-    isLoading.value = true;
-    print("⏳ Loading started...");
-
-    final result = await searchPlanUsecase(planId, amount);
-
-    result.fold(
-      (failure) {
-        print("❌ API Failed");
-        print("⚠️ Error: ${failure.message}");
-
-        CustomToast.error(failure.message);
-      },
-      (response) {
-        print("✅ API Success");
-
-        if (response.success == true) {
-          print("📊 Data received: ${response.data}");
-
-          searchPlansList.value = response.data ?? [];
-
-          print("📌 Plans count: ${searchPlansList.length}");
-        } else {
-          print("⚠️ Response success = false");
-          searchPlansList.clear();
-        }
-      },
-    );
-  } catch (e) {
-    print("🔥 Exception occurred: $e");
-  } finally {
-    isLoading.value = false;
-    print("🏁 Loading finished");
-  }
-}
-
-
-
-
-Future<void> confirmtrans(String prodcutdetid) async {
-  print("🚀 [CONFIRM TRANS] Started");
-  print("🆔 Product Detail ID: $prodcutdetid");
-
-  isLoading.value = true;
-  print("⏳ Loading started...");
-
-  final result = await transConfirmUseCase(
-    prodcutdetid: prodcutdetid,
-  );
-
-  result.fold(
-    (failure) {
-      print("❌ [CONFIRM TRANS FAILED]");
-      print("📄 Error Message: ${failure.message}");
-
-      isLoading.value = false;
-      print("⏹️ Loading stopped");
-
-      Get.snackbar(
-        'Error',
-        failure.message,
+          AppLogger.debugPrint(
+            "✅ planDetailList Updated: ${planDetailList.length} items",
+          );
+        },
       );
-    },
-    (data) {
-      print("✅ [CONFIRM TRANS SUCCESS]");
-      print("📦 Response Data: $data");
-
-      transConfirmData.value = data;
-
+    } catch (e, s) {
+      AppLogger.logError("💥 Exception Occurred");
+      AppLogger.logError("Error: $e");
+      AppLogger.logError("StackTrace: $s");
+    } finally {
       isLoading.value = false;
-      print("⏹️ Loading stopped");
-      print("🎉 Transaction Confirmation Completed");
-    },
-  );
-}
- Future<void> getPlanTabs() async {
-  isLoading.value = true;
-
-  final result = await plantabusecase();
-
-  result.fold(
-    (failure) {
-      Get.snackbar('Error', failure.message);
-    },
-    (response) {
-      planTabs.value = response.data ?? [];
-    },
-  );
-
-  isLoading.value = false;
-}
-
-Future<bool> mobilerecharge(
-  String productdetid,
-  String mobile,
-  String amount,
-) async {
-  try {
-    print("👉 Recharge API CALL STARTED");
-
-    if (isRechargeLoading.value) {
-      print("⛔ Already loading - duplicate click blocked");
-      return false;
+      AppLogger.debugPrint("🏁 Loading Finished");
     }
+  }
 
-    isRechargeLoading.value = true;
+  Future<void> getTabDetail({required String tabid}) async {
+    try {
+      AppLogger.debugPrint("🔍 [GET Tab DETAIL] Started");
+      AppLogger.debugPrint("📦 Tab ID: $tabid");
 
-    print("👉 Request Data:");
-    print("productdetid: $productdetid");
-    print("mobile: $mobile");
-    print("amount: $amount");
+      isLoading.value = true;
+      AppLogger.debugPrint("⏳ Loading Started");
 
-   final stopwatch = Stopwatch()..start();
+      final result = await tabdetailusecase(tabid: tabid);
 
-print("🚀 API CALL START");
+      AppLogger.debugPrint("✅ API Response Received");
 
-final result = await mobileRechargeUseCase(
-  productdetid,
-  mobile,
-  amount,
-);
+      result.fold(
+        (failure) {
+          AppLogger.logError("❌ API Failed");
+          AppLogger.logError("📝 Error: ${failure.message}");
 
-print(
-  "✅ API RESPONSE RECEIVED in ${stopwatch.elapsedMilliseconds} ms",
-);
+          CustomToast.error(failure.message);
+        },
+        (response) {
+          AppLogger.logError("🎉 API Success");
+          AppLogger.logError("📊 Total Plans: ${response.data?.length ?? 0}");
+          AppLogger.logError("📄 Response Data: ${response.data}");
 
-    print("👉 API RESPONSE RECEIVED");
+          tabdetaillist.value = response.data ?? [];
 
-    return result.fold(
+          AppLogger.debugPrint(
+            "✅ planDetailList Updated: ${planDetailList.length} items",
+          );
+        },
+      );
+    } catch (e, s) {
+      AppLogger.logError("💥 Exception Occurred");
+      AppLogger.logError("Error: $e");
+      AppLogger.logError("StackTrace: $s");
+    } finally {
+      isLoading.value = false;
+      AppLogger.debugPrint("🏁 Loading Finished");
+    }
+  }
+
+  Future<void> searchPlans(String planId, String amount) async {
+    try {
+      AppLogger.debugPrint("🔍 [SEARCH PLANS] Started");
+      AppLogger.debugPrint("📦 PlanId: $planId | 💰 Amount: $amount");
+
+      isLoading.value = true;
+      AppLogger.debugPrint("⏳ Loading started...");
+
+      final result = await searchPlanUsecase(planId, amount);
+
+      result.fold(
+        (failure) {
+          AppLogger.logError("❌ API Failed");
+          AppLogger.logError("⚠️ Error: ${failure.message}");
+
+          CustomToast.error(failure.message);
+        },
+        (response) {
+          AppLogger.logError("✅ API Success");
+
+          if (response.success == true) {
+            AppLogger.logError("📊 Data received: ${response.data}");
+
+            searchPlansList.value = response.data ?? [];
+
+            AppLogger.debugPrint("📌 Plans count: ${searchPlansList.length}");
+          } else {
+            AppLogger.debugPrint("⚠️ Response success = false");
+            searchPlansList.clear();
+          }
+        },
+      );
+    } catch (e) {
+      AppLogger.logError("🔥 Exception occurred: $e");
+    } finally {
+      isLoading.value = false;
+      AppLogger.logError("🏁 Loading finished");
+    }
+  }
+
+  Future<void> confirmtrans(String prodcutdetid) async {
+    AppLogger.logError("🚀 [CONFIRM TRANS] Started");
+    AppLogger.logError("🆔 Product Detail ID: $prodcutdetid");
+
+    isLoading.value = true;
+    AppLogger.logError("⏳ Loading started...");
+
+    final result = await transConfirmUseCase(prodcutdetid: prodcutdetid);
+
+    result.fold(
       (failure) {
-        print("❌ FAILURE RESPONSE");
-        print("Error message: ${failure.message}");
+        AppLogger.debugPrint("❌ [CONFIRM TRANS FAILED]");
+        AppLogger.debugPrint("📄 Error Message: ${failure.message}");
 
-        CustomToast.error(failure.message);
-        return false;
+        isLoading.value = false;
+        AppLogger.debugPrint("⏹️ Loading stopped");
+
+        Get.snackbar('Error', failure.message);
       },
-      (response) {
-         rechargeResponse.value = response;
-        print("✅ SUCCESS RESPONSE OBJECT");
-        print("Full response: $response");
+      (data) {
+        AppLogger.logError("✅ [CONFIRM TRANS SUCCESS]");
+        AppLogger.logError("📦 Response Data: $data");
 
-      final status = response.data?.recharge?.status?.toLowerCase();
-         print("👉 Parsed status: $status");
+        transConfirmData.value = data;
 
-      final isSuccess = status == "success";
-
-print("👉 isSuccess: $isSuccess");
-
-if (isSuccess) {
-  print("🎉 Recharge SUCCESS");
-  CustomToast.success(response.message ?? "Success");
-  return true;
-} else {
-  print("⚠️ Recharge FAILED");
-  CustomToast.error(response.message ?? "Recharge Failed");
-  return false;
-}
+        isLoading.value = false;
+        AppLogger.debugPrint("⏹️ Loading stopped");
+        AppLogger.debugPrint("🎉 Transaction Confirmation Completed");
       },
     );
-  } catch (e, stack) {
-    print("🔥 EXCEPTION OCCURRED: $e");
-    print("STACKTRACE: $stack");
-
-    CustomToast.error("Something went wrong");
-    return false;
-  } finally {
-    isRechargeLoading.value = false;
-    print("👉 Loading set to false (finally block)");
   }
-}
+
+  Future<void> getPlanTabs() async {
+    isLoading.value = true;
+
+    final result = await plantabusecase();
+
+    result.fold(
+      (failure) {
+        Get.snackbar('Error', failure.message);
+      },
+      (response) {
+        planTabs.value = response.data ?? [];
+      },
+    );
+
+    isLoading.value = false;
+  }
+
+  Future<bool> mobilerecharge(
+    String productdetid,
+    String mobile,
+    String amount,
+  ) async {
+    try {
+      AppLogger.logError("👉 Recharge API CALL STARTED");
+
+      if (isRechargeLoading.value) {
+        AppLogger.logError("⛔ Already loading - duplicate click blocked");
+        return false;
+      }
+
+      isRechargeLoading.value = true;
+
+      AppLogger.logError("👉 Request Data:");
+      AppLogger.logError("productdetid: $productdetid");
+      AppLogger.logError("mobile: $mobile");
+      AppLogger.logError("amount: $amount");
+
+      final stopwatch = Stopwatch()..start();
+
+      AppLogger.logError("🚀 API CALL START");
+
+      final result = await mobileRechargeUseCase(productdetid, mobile, amount);
+
+      AppLogger.logError("✅ API RESPONSE RECEIVED in ${stopwatch.elapsedMilliseconds} ms");
+
+      AppLogger.logError("👉 API RESPONSE RECEIVED");
+
+      return result.fold(
+        (failure) {
+          AppLogger.logError("❌ FAILURE RESPONSE");
+          AppLogger.logError("Error message: ${failure.message}");
+
+          CustomToast.error(failure.message);
+          return false;
+        },
+        (response) {
+          rechargeResponse.value = response;
+          AppLogger.logError("✅ SUCCESS RESPONSE OBJECT");
+          AppLogger.logError("Full response: $response");
+
+          final status = response.data?.recharge?.status?.toLowerCase();
+          AppLogger.logError("👉 Parsed status: $status");
+
+          final isSuccess = status == "success";
+
+          AppLogger.logError("👉 isSuccess: $isSuccess");
+
+          if (isSuccess) {
+            AppLogger.logError("🎉 Recharge SUCCESS");
+            CustomToast.success(response.message ?? "Success");
+            return true;
+          } else {
+            AppLogger.logError("⚠️ Recharge FAILED");
+            CustomToast.error(response.message ?? "Recharge Failed");
+            return false;
+          }
+        },
+      );
+    } catch (e, stack) {
+      AppLogger.logError("🔥 EXCEPTION OCCURRED: $e");
+      AppLogger.logError("STACKTRACE: $stack");
+
+      CustomToast.error("Something went wrong");
+      return false;
+    } finally {
+      isRechargeLoading.value = false;
+      AppLogger.logError("👉 Loading set to false (finally block)");
+    }
+  }
 }

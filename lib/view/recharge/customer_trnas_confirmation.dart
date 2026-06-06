@@ -20,7 +20,7 @@ class CustomerTransConfirmationScreen extends GetView<PrePaidController> {
   Widget build(BuildContext context) {
     final args = Get.arguments ?? {};
       final confirmData = controller.transConfirmData.value?.data;
-      final OperatorLogo = confirmData?.logo ?? '';
+      final operatorlogo = confirmData?.logo ?? '';
 
     final productName = args['productName'] ?? '';
     final paymentStatus = args['paymentStatus'] ?? '';

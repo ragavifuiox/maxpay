@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_navigation/src/extension_navigation.dart' show GetNavigation;
+import 'package:get/get_navigation/src/extension_navigation.dart'
+    show GetNavigation;
 import 'package:maxpay/core/constants/asset_images.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
+import 'package:maxpay/core/services/local_storage_service.dart';
 
 class MainSplashScreen extends StatefulWidget {
   const MainSplashScreen({super.key});
@@ -17,11 +19,23 @@ class _MainSplashScreenState extends State<MainSplashScreen> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(seconds: 2), () {
-      if (mounted) {
-       Get.offAllNamed(AppRoutes.intro);
+    _checkSession();
+  }
+
+  Future<void> _checkSession() async {
+    final storage = LocalStorageService();
+    await storage.init();
+    final token = storage.getString("auth_token");
+    print("TOKEN : $token");
+    await Future.delayed(const Duration(seconds: 2));
+
+    if (mounted) {
+      if (token != null && token.isNotEmpty) {
+        Get.offAllNamed(AppRoutes.main);
+      } else {
+        Get.offAllNamed(AppRoutes.intro);
       }
-    });
+    }
   }
 
   @override
