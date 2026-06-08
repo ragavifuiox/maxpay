@@ -5,13 +5,12 @@ import 'package:get/get.dart' as g;
 import 'package:maxpay/core/constants/api_routes.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/core/services/local_storage_service.dart';
-
-
+import 'package:maxpay/core/utils/logg_helper.dart';
 
 class ApiService {
   final Dio _dio;
   final _storage = LocalStorageService();
-bool _isUnauthorizedHandled = false;
+  bool _isUnauthorizedHandled = false;
   ApiService()
     : _dio = Dio(
         BaseOptions(
@@ -22,7 +21,6 @@ bool _isUnauthorizedHandled = false;
           headers: {
             "Accept": "application/json",
             "x-api-key": "mnbvcxzasdfghjklpoiuytrewqzxcvbnm",
-          
           },
         ),
       ) {
@@ -38,7 +36,6 @@ bool _isUnauthorizedHandled = false;
         // onError: (DioException e, handler) {
         //   log("API Error: ${e.message}");
         //   final statusCode = e.response?.statusCode;
-          
 
         //   if (statusCode == 401) {
         //     _handleUnauthorized();
@@ -53,23 +50,22 @@ bool _isUnauthorizedHandled = false;
         //   return handler.next(e);
         // },
         onError: (DioException e, handler) {
-  log("API Error: ${e.message}");
+          log("API Error: ${e.message}");
 
-  // ✅ If NO INTERNET → go to network screen ONLY
-  
+          // ✅ If NO INTERNET → go to network screen ONLY
 
-  // ✅ Only handle 401 if internet is available
-  if (e.response?.statusCode == 401) {
-    _handleUnauthorized();
-  } else {
-    g.Get.snackbar(
-      "Error",
-      e.response?.data?['message'] ?? "Something went wrong",
-    );
-  }
+          // ✅ Only handle 401 if internet is available
+          if (e.response?.statusCode == 401) {
+            _handleUnauthorized();
+          } else {
+            g.Get.snackbar(
+              "Error",
+              e.response?.data?['message'] ?? "Something went wrong",
+            );
+          }
 
-  return handler.next(e);
-}
+          return handler.next(e);
+        },
       ),
     );
   }
@@ -80,8 +76,9 @@ bool _isUnauthorizedHandled = false;
         endpoint,
         data: data,
         options: Options(
-          contentType:
-              data is FormData ? 'multipart/form-data' : 'application/json',
+          contentType: data is FormData
+              ? 'multipart/form-data'
+              : 'application/json',
         ),
       ),
     );
@@ -91,7 +88,7 @@ bool _isUnauthorizedHandled = false;
     String endpoint, {
     Map<String, dynamic>? params,
   }) async {
-    print(endpoint);
+    AppLogger.debugPrint(endpoint);
     return _handleResponse(() => _dio.get(endpoint, queryParameters: params));
   }
 
@@ -103,10 +100,9 @@ bool _isUnauthorizedHandled = false;
     return _handleResponse(
       () => _dio.put(
         endpoint,
-        data:
-            useFormData && data is Map
-                ? FormData.fromMap(Map<String, dynamic>.from(data))
-                : data,
+        data: useFormData && data is Map
+            ? FormData.fromMap(Map<String, dynamic>.from(data))
+            : data,
         options: Options(
           contentType: useFormData ? 'multipart/form-data' : 'application/json',
         ),
@@ -149,19 +145,17 @@ bool _isUnauthorizedHandled = false;
   //   _storage.remove("auth_token");
   //   g.Get.offAllNamed(AppRoutes.login);
 
-
-    
   //   g.Get.snackbar("Session Expired", "Please login again.");
   // }
 
   void _handleUnauthorized() {
-  if (_isUnauthorizedHandled) return;
-  _isUnauthorizedHandled = true;
+    if (_isUnauthorizedHandled) return;
+    _isUnauthorizedHandled = true;
 
-  _storage.remove("auth_token");
+    _storage.remove("auth_token");
 
-  g.Get.offAllNamed(AppRoutes.welcome);
+    g.Get.offAllNamed(AppRoutes.welcome);
 
-  g.Get.snackbar("Session Expired", "Please login again.");
-}
+    g.Get.snackbar("Session Expired", "Please login again.");
+  }
 }

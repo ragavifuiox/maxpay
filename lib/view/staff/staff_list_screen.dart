@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:maxpay/controllers/add_staff_controller.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
-import 'package:maxpay/view/staff/add_staff.dart';
 
 import 'package:maxpay/view/staff/widget/staff_card_widget.dart';
 

@@ -53,7 +53,7 @@ class SupportScreen extends StatelessWidget {
 
           itemCount: supportList.length,
 
-          separatorBuilder: (_, __) =>
+          separatorBuilder: (_, _) =>
               const SizedBox(height: 16),
 
           itemBuilder: (context, index) {
@@ -88,7 +88,7 @@ class SupportScreen extends StatelessWidget {
                     color: theme.brightness ==
                             Brightness.dark
                         ? Colors.transparent
-                        : Colors.black.withOpacity(
+                        : Colors.black.withValues(alpha: 
                             0.03,
                           ),
 

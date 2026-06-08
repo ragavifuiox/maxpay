@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:maxpay/view/home/pages/home_page.dart';
-import 'package:maxpay/view/home/widgets/services_section.dart';
 import 'package:maxpay/view/nav_page/navbar.dart';
 import 'package:maxpay/view/nav_page/navbar_provider.dart';
 import 'package:maxpay/view/report/report_page.dart';
@@ -14,7 +13,6 @@ class NavPageScreen extends StatefulWidget {
 
   @override
   State<NavPageScreen> createState() => _ScreenNavBarState();
-  
 }
 
 class _ScreenNavBarState extends State<NavPageScreen>
@@ -36,19 +34,19 @@ class _ScreenNavBarState extends State<NavPageScreen>
 
   @override
   Widget build(BuildContext context) {
-final List<Widget> screens = [
-  const HomePageScreen(),
-  const ReportPage(),
+    final List<Widget> screens = [
+      const HomePageScreen(),
+      const ReportPage(),
 
- WalletRequestScreen(),
- 
-const ReportPage(),
-  const SettingsPage(),
-];
+      WalletRequestScreen(),
+
+      const ReportPage(),
+      const SettingsPage(),
+    ];
 
     return Obx(() {
       final selectedIndex = _navbarController.selectedIndex;
-      
+
       return PopScope(
         canPop: false,
         onPopInvokedWithResult: (didPop, _) {

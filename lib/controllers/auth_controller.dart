@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:maxpay/core/constants/colors.dart';
+import 'package:local_auth/local_auth.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/core/constants/snackbar.dart';
 import 'package:maxpay/core/domain/usecase/create_pin_usecase.dart';
@@ -8,12 +8,14 @@ import 'package:maxpay/core/domain/usecase/finger_print_usecase.dart';
 import 'package:maxpay/core/domain/usecase/login_usecase.dart';
 import 'package:maxpay/core/domain/usecase/otp_usecase.dart';
 import 'package:maxpay/core/services/local_storage_service.dart';
+import 'package:maxpay/core/utils/logg_helper.dart';
+import 'package:maxpay/view/nav_page/navbar_provider.dart';
 
 class AuthController extends GetxController {
   final LoginUseCase loginUseCase;
   final OtpUsecase otpUsecase;
   final CreatePinUsecase createPinUsecase;
-  final FingerPrintUsecase fingerPrintUsecase;    
+  final FingerPrintUsecase fingerPrintUsecase;
 
   AuthController({
     required this.loginUseCase,
@@ -30,345 +32,298 @@ class AuthController extends GetxController {
   // Loading
   RxBool isLoading = false.obs;
   RxBool isAccepted = false.obs;
-RxString otp = ''.obs;
-RxString phoneNumber = ''.obs;
-  final LocalStorageService storage =
-      LocalStorageService();
+  RxString otp = ''.obs;
+  RxString phoneNumber = ''.obs;
+  final LocalStorageService storage = LocalStorageService();
   // Login API Call
-Future<void> login() async {
-  try {
-    isLoading.value = true;
+  Future<void> login() async {
+    try {
+      isLoading.value = true;
 
-   final result = await loginUseCase(
-  phoneController.text.trim(),
-  countryCode.value,
-  nameController.text.trim(),
-  pincodeController.text.trim(),
-);
+      final result = await loginUseCase(
+        phoneController.text.trim(),
+        countryCode.value,
+        nameController.text.trim(),
+        pincodeController.text.trim(),
+      );
 
-    print("FULL API RESPONSE :");
-    print(result);
+      AppLogger.logError("FULL API RESPONSE :");
+      AppLogger.logError(result);
 
-    result.fold(
-      (failure) {
+      result.fold(
+        (failure) {
+          AppLogger.logError("FAILURE MESSAGE:");
+          AppLogger.logError(failure.message);
 
-        print("FAILURE MESSAGE:");
-        print(failure.message);
+          CustomToast.error(failure.message);
+        },
 
-        CustomToast.error(
-          failure.message,
-        );
-      },
+        (response) {
+          /// PRINT COMPLETE RESPONSE
+          AppLogger.logError("============== LOGIN RESPONSE ==============");
 
-      (response) {
+          AppLogger.logError("SUCCESS : ${response.success}");
 
-        /// PRINT COMPLETE RESPONSE
-       print("============== LOGIN RESPONSE ==============");
+          AppLogger.logError("MESSAGE : ${response.message}");
 
-print("SUCCESS : ${response.success}");
+          AppLogger.logError("OTP : ${response.data?.otp}");
 
-print("MESSAGE : ${response.message}");
+          AppLogger.logError("PHONE NUMBER : ${response.data?.phoneNumber}");
 
-print("OTP : ${response.data?.otp}");
+          AppLogger.logError("NAME : ${response.data?.name}");
 
-print("PHONE NUMBER : ${response.data?.phoneNumber}");
+          AppLogger.logError("PINCODE : ${response.data?.pincode}");
 
-print("NAME : ${response.data?.name}");
+          AppLogger.logError("============================================");
 
-print("PINCODE : ${response.data?.pincode}");
+          if (response.success != true) {
+            AppLogger.logError("Retailer not found. Contact admin.");
 
-print("============================================");
+            CustomToast.error(response.message ?? "Login Failed");
 
-        if (response.success != true) {
+            return;
+          }
 
-          print("Retailer not found. Contact admin.");
+          otp.value = response.data?.otp?.toString() ?? "";
 
-          CustomToast.error(
-            response.message ?? "Login Failed",
-          );
+          phoneNumber.value = response.data?.phoneNumber ?? "";
 
-          return;
-        }
+          AppLogger.logError("OTP : ${otp.value}");
+          AppLogger.logError("PHONE : ${phoneNumber.value}");
 
-        otp.value =
-            response.data?.otp?.toString() ?? "";
-
-        phoneNumber.value =
-            response.data?.phoneNumber ?? "";
-
-        print("OTP : ${otp.value}");
-        print("PHONE : ${phoneNumber.value}");
-
-        Get.toNamed(
-          AppRoutes.otpVerification,
-        );
-      },
-    );
-
-  } catch (e) {
-
-    print("EXCEPTION:");
-    print(e.toString());
-
-  } finally {
-
-    isLoading.value = false;
+          Get.toNamed(AppRoutes.otpVerification);
+        },
+      );
+    } catch (e) {
+      AppLogger.logError("EXCEPTION:");
+      AppLogger.logError(e.toString());
+    } finally {
+      isLoading.value = false;
+    }
   }
-}
 
-Future<void> verifyOtp(String enteredOtp) async {
+  Future<void> verifyOtp(String enteredOtp) async {
+    try {
+      isLoading.value = true;
 
-  try {
+      final result = await otpUsecase(phoneNumber.value, enteredOtp);
 
-    isLoading.value = true;
+      result.fold(
+        (failure) {
+          AppLogger.logError("FAILURE MESSAGE : ${failure.message}");
 
-    final result = await otpUsecase(
-      phoneNumber.value,
-      enteredOtp,
-    );
+          CustomToast.error(failure.message);
+        },
 
-    result.fold(
-
-      (failure) {
-
-        print("FAILURE MESSAGE : ${failure.message}");
-
-        CustomToast.error(
-          failure.message,
-        );
-      },
-
-      (response) async {
-
-        print("============== OTP VERIFY RESPONSE ==============");
-        print("SUCCESS : ${response.success}");
-        print("MESSAGE : ${response.message}");
-        print("CODE : ${response.code}");
-        print("USER ID : ${response.data?.userId}");
-        print("TOKEN : ${response.data?.token}");
-        print("=================================================");
-
-        if (response.success == true) {
-
-          /// SAVE TOKEN
-          await storage.saveString(
-  "auth_token",
-  response.data?.token ?? "",
-);
-
-          /// SAVE USER ID
-          await storage.saveInt(
-            "user_id",
-            response.data?.userId ?? 0,
+        (response) async {
+          AppLogger.logError(
+            "============== OTP VERIFY RESPONSE ==============",
+          );
+          AppLogger.logError("SUCCESS : ${response.success}");
+          AppLogger.logError("MESSAGE : ${response.message}");
+          AppLogger.logError("CODE : ${response.code}");
+          AppLogger.logError("USER ID : ${response.data?.userId}");
+          AppLogger.logError("TOKEN : ${response.data?.token}");
+          AppLogger.logError(
+            "=================================================",
           );
 
-          print("TOKEN SAVED SUCCESSFULLY");
+          if (response.success == true) {
+            /// SAVE TOKEN
+            await storage.saveString("auth_token", response.data?.token ?? "");
 
-          CustomToast.success(
-            response.message ?? "OTP Verified",
-          );
+            /// SAVE USER ID
+            await storage.saveInt("user_id", response.data?.userId ?? 0);
 
-          Get.offAllNamed(
-            AppRoutes.biometricsIntro,
-          );
+            AppLogger.logError("TOKEN SAVED SUCCESSFULLY");
 
-        } else {
+            CustomToast.success(response.message ?? "OTP Verified");
 
-          CustomToast.error(
-            response.message ?? "Invalid OTP",
-          );
-        }
-      },
-    );
+            if (response.data?.isFingerPrint == 1) {
+              final LocalAuthentication auth = LocalAuthentication();
+              try {
+                bool authenticated = await auth.authenticate(
+                  localizedReason: 'Scan your fingerprint to continue',
+                  biometricOnly: true,
+                  persistAcrossBackgrounding: true,
+                );
 
-  } catch (e) {
+                if (authenticated) {
+                  Get.offAllNamed(AppRoutes.main);
+                } else {
+                  CustomToast.error("Fingerprint authentication failed");
+                }
+              } catch (e) {
+                AppLogger.logError("Fingerprint error: $e");
+                CustomToast.error("Biometrics error: ${e.toString()}");
+              }
+            } else {
+              Get.offAllNamed(AppRoutes.biometricsIntro);
+            }
+          } else {
+            CustomToast.error(response.message ?? "Invalid OTP");
+          }
+        },
+      );
+    } catch (e) {
+      AppLogger.logError(e.toString());
 
-    print(e.toString());
-
-    CustomToast.error(
-      e.toString(),
-    );
-
-  } finally {
-
-    isLoading.value = false;
+      CustomToast.error(e.toString());
+    } finally {
+      isLoading.value = false;
+    }
   }
-}
 
+  Future<void> resendOtp() async {
+    try {
+      isLoading.value = true;
 
-Future<void> resendOtp() async {
+      final result = await loginUseCase(
+        phoneController.text.trim(),
+        countryCode.value,
+        nameController.text.trim(),
+        pincodeController.text.trim(),
+      );
 
-  try {
+      result.fold(
+        (failure) {
+          CustomToast.error(failure.message);
+        },
 
-    isLoading.value = true;
+        (response) {
+          if (response.success == true) {
+            otp.value = response.data?.otp?.toString() ?? "";
 
-    final result = await loginUseCase(
-  phoneController.text.trim(),
-  countryCode.value,
-  nameController.text.trim(),
-  pincodeController.text.trim(),
-);
+            phoneNumber.value = response.data?.phoneNumber ?? "";
 
-    result.fold(
+            AppLogger.logError("NEW OTP : ${otp.value}");
 
-      (failure) {
-
-        CustomToast.error(
-          failure.message,
-        );
-      },
-
-      (response) {
-
-        if (response.success == true) {
-
-          otp.value =
-              response.data?.otp?.toString() ?? "";
-
-          phoneNumber.value =
-              response.data?.phoneNumber ?? "";
-
-          print("NEW OTP : ${otp.value}");
-
-          CustomToast.success(
-            "OTP Resent Successfully",
-          );
-
-        } else {
-
-          CustomToast.error(
-            response.message ?? "Failed",
-          );
-        }
-      },
-    );
-
-  } catch (e) {
-
-    CustomToast.error(
-      e.toString(),
-    );
-
-  } finally {
-
-    isLoading.value = false;
+            CustomToast.success("OTP Resent Successfully");
+          } else {
+            CustomToast.error(response.message ?? "Failed");
+          }
+        },
+      );
+    } catch (e) {
+      CustomToast.error(e.toString());
+    } finally {
+      isLoading.value = false;
+    }
   }
-}
 
-Future<void> createPin(String pin) async {
-  try {
-    isLoading.value = true;
+  Future<void> createPin(String pin) async {
+    try {
+      isLoading.value = true;
 
-    final result = await createPinUsecase(pin);
+      final result = await createPinUsecase(pin);
 
-    result.fold(
-      (failure) {
-        CustomToast.error(failure.message);
-      },
-      (response) async {
+      result.fold(
+        (failure) {
+          CustomToast.error(failure.message);
+        },
+        (response) async {
+          AppLogger.logError("=========== CREATE PIN RESPONSE ===========");
+          AppLogger.logError("SUCCESS : ${response.success}");
+          AppLogger.logError("MESSAGE : ${response.message}");
+          AppLogger.logError("===========================================");
 
-        print("=========== CREATE PIN RESPONSE ===========");
-        print("SUCCESS : ${response.success}");
-        print("MESSAGE : ${response.message}");
-        print("===========================================");
+          if (response.success == true) {
+            CustomToast.success(response.message ?? "PIN Created Successfully");
 
-        if (response.success == true) {
-
-          CustomToast.success(
-            response.message ?? "PIN Created Successfully",
-          );
-
-          Get.offAllNamed(AppRoutes.successScreen);
-
-        } else {
-          CustomToast.error(
-            response.message ?? "Failed to create PIN",
-          );
-        }
-      },
-    );
-
-  } finally {
-    isLoading.value = false;
+            Get.offAllNamed(AppRoutes.successScreen);
+          } else {
+            CustomToast.error(response.message ?? "Failed to create PIN");
+          }
+        },
+      );
+    } finally {
+      isLoading.value = false;
+    }
   }
-}
 
-Future<void> fingerprint(int fingerprint) async {
+  Future<void> fingerprint(int fingerprint) async {
+    try {
+      isLoading.value = true;
 
-  try {
+      final result = await fingerPrintUsecase(fingerprint);
 
-    isLoading.value = true;
+      result.fold(
+        (failure) {
+          AppLogger.logError("FINGERPRINT FAILURE : ${failure.message}");
 
-    final result =
-        await fingerPrintUsecase(
-      fingerprint,
-    );
+          CustomToast.error(failure.message);
+        },
 
-    result.fold(
+        (response) async {
+          AppLogger.logError("=========== FINGERPRINT RESPONSE ===========");
 
-      (failure) {
+          AppLogger.logError("👍SUCCESS : ${response.success}");
 
-        print(
-          "FINGERPRINT FAILURE : ${failure.message}",
-        );
+          AppLogger.logError("MESSAGE : ${response.message}");
 
-        CustomToast.error(
-          failure.message,
-        );
-      },
+          AppLogger.logError("===========================================");
 
-      (response) async {
+          if (response.success == true) {
+            CustomToast.success(
+              response.message ?? "Fingerprint Updated Successfully",
+            );
 
-        print(
-            "=========== FINGERPRINT RESPONSE ===========");
+            Get.offAllNamed(AppRoutes.successScreen);
+          } else {
+            CustomToast.error(response.message ?? "Fingerprint Update Failed");
+          }
+        },
+      );
+    } catch (e) {
+      AppLogger.logError("FINGERPRINT EXCEPTION : $e");
 
-        print(
-          "👍SUCCESS : ${response.success}",
-        );
-
-        print(
-          "MESSAGE : ${response.message}",
-        );
-
-        print(
-            "===========================================");
-
-        if (response.success == true) {
-
-          CustomToast.success(
-            response.message ??
-                "Fingerprint Updated Successfully",
-          );
-
-          Get.offAllNamed(
-            AppRoutes.successScreen,
-          );
-
-        } else {
-
-          CustomToast.error(
-            response.message ??
-                "Fingerprint Update Failed",
-          );
-        }
-      },
-    );
-
-  } catch (e) {
-
-    print(
-      "FINGERPRINT EXCEPTION : $e",
-    );
-
-    CustomToast.error(
-      e.toString(),
-    );
-
-  } finally {
-
-    isLoading.value = false;
+      CustomToast.error(e.toString());
+    } finally {
+      isLoading.value = false;
+    }
   }
-}
+
+  Future<void> logout() async {
+    try {
+      isLoading.value = true;
+
+      final result = await loginUseCase.repository.logout();
+
+      result.fold(
+        (failure) {
+          AppLogger.logError("Logout FAILURE : ${failure.message}");
+
+          CustomToast.error(failure.message);
+        },
+
+        (response) async {
+          AppLogger.logError("=========== Logout RESPONSE ===========");
+
+          AppLogger.logError("👍SUCCESS : $response");
+
+          AppLogger.logError("===========================================");
+
+          if (response['success'] == true) {
+            CustomToast.success("Logout Successfully");
+
+            await storage.remove("auth_token");
+            await storage.remove("user_id");
+
+            Get.offAllNamed(AppRoutes.loginPhoneName);
+            Get.find<NavbarController>().setIndex(0);
+          } else {
+            CustomToast.error("Logout Failed");
+          }
+        },
+      );
+    } catch (e) {
+      AppLogger.logError("FINGERPRINT EXCEPTION : $e");
+
+      CustomToast.error(e.toString());
+    } finally {
+      isLoading.value = false;
+    }
+  }
 
   @override
   void onClose() {

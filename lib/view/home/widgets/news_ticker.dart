@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:maxpay/controllers/homepage_controller.dart';
 import 'package:maxpay/core/constants/colors.dart';
+import 'package:maxpay/core/utils/logg_helper.dart';
 
 class NewsTicker extends StatefulWidget {
   const NewsTicker({super.key});
@@ -67,8 +68,8 @@ class _NewsTickerState extends State<NewsTicker> {
     final colorScheme = theme.colorScheme;
     final isDark = theme.brightness == Brightness.dark;
 
-    print("🔥 NewsTicker Build Called");
-    print("🔥 Controller Hash: ${controller.hashCode}");
+    AppLogger.debugPrint("🔥 NewsTicker Build Called");
+    AppLogger.debugPrint("🔥 Controller Hash: ${controller.hashCode}");
 
     return Obx(() {
   final newsResponse = controller.news.value;

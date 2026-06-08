@@ -1,12 +1,14 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:maxpay/core/utils/logg_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:maxpay/core/data/model/compalints_model.dart' hide Data;
 import 'package:maxpay/core/data/model/news_model.dart';
 import 'package:maxpay/core/data/model/popup_message_mode.dart' hide Data;
-import 'package:maxpay/core/data/model/transaction_suc_faii_model.dart' hide Data;
+import 'package:maxpay/core/data/model/transaction_suc_faii_model.dart'
+    hide Data;
 import 'package:maxpay/core/data/model/wallet_balance.dart' hide Data;
 
 import 'package:maxpay/core/domain/usecase/complaints_usecase.dart';
@@ -66,7 +68,7 @@ class HomePageController extends GetxController {
         },
       );
     } catch (e) {
-      print("fetchNews error: $e");
+      AppLogger.logError("fetchNews error: $e");
     } finally {
       isLoading.value = false;
     }
@@ -97,8 +99,7 @@ class HomePageController extends GetxController {
             String currentUserType = "Retailer";
 
             List<dynamic> userTypes = [];
-            if (popupData.userType != null &&
-                popupData.userType!.isNotEmpty) {
+            if (popupData.userType != null && popupData.userType!.isNotEmpty) {
               userTypes = jsonDecode(popupData.userType!);
             }
 
@@ -121,7 +122,7 @@ class HomePageController extends GetxController {
 
               Get.dialog(
                 barrierDismissible: false,
-                barrierColor: Colors.black.withOpacity(0.4),
+                barrierColor: Colors.black.withValues(alpha: 0.4),
                 Dialog(
                   child: Stack(
                     clipBehavior: Clip.none,
@@ -151,8 +152,11 @@ class HomePageController extends GetxController {
                           child: const CircleAvatar(
                             radius: 12,
                             backgroundColor: Colors.red,
-                            child: Icon(Icons.close,
-                                size: 14, color: Colors.white),
+                            child: Icon(
+                              Icons.close,
+                              size: 14,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
                       ),
@@ -167,7 +171,7 @@ class HomePageController extends GetxController {
         },
       );
     } catch (e) {
-      print("popup error: $e");
+      AppLogger.logError("popup error: $e");
     } finally {
       isLoading.value = false;
     }
@@ -183,7 +187,7 @@ class HomePageController extends GetxController {
         (data) => walletBalance.value = data,
       );
     } catch (e) {
-      print("wallet error: $e");
+      AppLogger.logError("wallet error: $e");
     }
   }
 
@@ -197,7 +201,7 @@ class HomePageController extends GetxController {
         (data) => complaints.value = data,
       );
     } catch (e) {
-      print("complaints error: $e");
+      AppLogger.logError("complaints error: $e");
     }
   }
 
@@ -211,7 +215,7 @@ class HomePageController extends GetxController {
         (data) => transactionData.value = data,
       );
     } catch (e) {
-      print("transaction error: $e");
+      AppLogger.logError("transaction error: $e");
     }
   }
 }

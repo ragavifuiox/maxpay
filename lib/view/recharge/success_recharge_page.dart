@@ -1,3 +1,5 @@
+// ignore_for_file: unused_local_variable
+
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -12,12 +14,9 @@ import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/core/constants/snackbar.dart';
 import 'package:maxpay/core/di/service_locator.dart';
 import 'package:maxpay/global_widget/commom_button.dart';
-import 'package:media_store_plus/media_store_plus.dart';
 import 'package:screenshot/screenshot.dart';
 
 import 'package:pdf/widgets.dart' as pw;
-import 'package:pdf/pdf.dart';
-import 'package:screenshot/screenshot.dart';
 class SuccessRechargePage extends StatelessWidget {
   final String productName;
   final String operatorInitial;
@@ -44,7 +43,7 @@ class SuccessRechargePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-      final ProfileController profileController = Get.put(ProfileController(getProfileUseCase: sl()));
+      final ProfileController profileController = Get.put(ProfileController(getProfileUseCase: sl(),));
       final ScreenshotController screenshotController = ScreenshotController();
 
     final bool isMobileOrDTH =

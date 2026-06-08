@@ -71,7 +71,7 @@ Row(
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Image.asset(
-                AssetImages.qr_code,
+                AssetImages.qrCode,
                 height: 220,
                 width: 220,
                 fit: BoxFit.contain,

@@ -11,7 +11,7 @@ class ProductType {
     if (json['data'] != null) {
       data = <Data>[];
       json['data'].forEach((v) {
-        data!.add(new Data.fromJson(v));
+        data!.add(Data.fromJson(v));
       });
     }
     message = json['message'];
@@ -19,13 +19,13 @@ class ProductType {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['success'] = this.success;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['success'] = success;
     if (this.data != null) {
       data['data'] = this.data!.map((v) => v.toJson()).toList();
     }
-    data['message'] = this.message;
-    data['code'] = this.code;
+    data['message'] = message;
+    data['code'] = code;
     return data;
   }
 }
@@ -33,8 +33,8 @@ class ProductType {
 class Data {
   int? id;
   String? name;
-  Null? createdAt;
-  Null? updatedAt;
+  Null createdAt;
+  Null updatedAt;
 
   Data({this.id, this.name, this.createdAt, this.updatedAt});
 
@@ -46,11 +46,11 @@ class Data {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['name'] = this.name;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['name'] = name;
+    data['created_at'] = createdAt;
+    data['updated_at'] = updatedAt;
     return data;
   }
 }

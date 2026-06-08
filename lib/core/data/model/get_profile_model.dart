@@ -8,19 +8,19 @@ class MyProfile {
 
   MyProfile.fromJson(Map<String, dynamic> json) {
     success = json['success'];
-    data = json['data'] != null ? new Data.fromJson(json['data']) : null;
+    data = json['data'] != null ? Data.fromJson(json['data']) : null;
     message = json['message'];
     code = json['code'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['success'] = this.success;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['success'] = success;
     if (this.data != null) {
       data['data'] = this.data!.toJson();
     }
-    data['message'] = this.message;
-    data['code'] = this.code;
+    data['message'] = message;
+    data['code'] = code;
     return data;
   }
 }
@@ -57,15 +57,15 @@ class Data {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['user_id'] = this.userId;
-    data['name'] = this.name;
-    data['phone_number'] = this.phoneNumber;
-    data['email'] = this.email;
-    data['pincode'] = this.pincode;
-    data['state'] = this.state;
-    data['status'] = this.status;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['user_id'] = userId;
+    data['name'] = name;
+    data['phone_number'] = phoneNumber;
+    data['email'] = email;
+    data['pincode'] = pincode;
+    data['state'] = state;
+    data['status'] = status;
     return data;
   }
 }

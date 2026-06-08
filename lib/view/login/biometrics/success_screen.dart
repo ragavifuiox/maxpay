@@ -6,7 +6,6 @@ import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/core/utils/responsive.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/global_widget/commom_button.dart';
-import 'package:maxpay/view/login/widgets/cutom_elevated_button.dart';
 
 class SuccessScreen extends StatelessWidget {
   const SuccessScreen({super.key});

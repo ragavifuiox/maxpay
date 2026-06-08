@@ -8,19 +8,19 @@ class MobileRecharge {
 
   MobileRecharge.fromJson(Map<String, dynamic> json) {
     success = json['success'];
-    data = json['data'] != null ? new Data.fromJson(json['data']) : null;
+    data = json['data'] != null ? Data.fromJson(json['data']) : null;
     message = json['message'];
     code = json['code'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['success'] = this.success;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['success'] = success;
     if (this.data != null) {
       data['data'] = this.data!.toJson();
     }
-    data['message'] = this.message;
-    data['code'] = this.code;
+    data['message'] = message;
+    data['code'] = code;
     return data;
   }
 }
@@ -33,7 +33,7 @@ class Data {
 
   Data.fromJson(Map<String, dynamic> json) {
     recharge = json['recharge'] != null
-        ? new Recharge.fromJson(json['recharge'])
+        ? Recharge.fromJson(json['recharge'])
         : null;
    apiResponse =
     (json['api_response'] != null &&
@@ -43,12 +43,12 @@ class Data {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.recharge != null) {
-      data['recharge'] = this.recharge!.toJson();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    if (recharge != null) {
+      data['recharge'] = recharge!.toJson();
     }
-    if (this.apiResponse != null) {
-      data['api_response'] = this.apiResponse!.toJson();
+    if (apiResponse != null) {
+      data['api_response'] = apiResponse!.toJson();
     }
     return data;
   }
@@ -108,22 +108,22 @@ class Recharge {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['user_id'] = this.userId;
-    data['user_name'] = this.userName;
-    data['product_id'] = this.productId;
-    data['api_id'] = this.apiId;
-    data['mapping_id'] = this.mappingId;
-    data['mobile'] = this.mobile;
-    data['amount'] = this.amount;
-    data['status'] = this.status;
-    data['api_response'] = this.apiResponse;
-    data['user_type'] = this.userType;
-    data['time'] = this.time;
-    data['request_time'] = this.requestTime;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['user_id'] = userId;
+    data['user_name'] = userName;
+    data['product_id'] = productId;
+    data['api_id'] = apiId;
+    data['mapping_id'] = mappingId;
+    data['mobile'] = mobile;
+    data['amount'] = amount;
+    data['status'] = status;
+    data['api_response'] = apiResponse;
+    data['user_type'] = userType;
+    data['time'] = time;
+    data['request_time'] = requestTime;
+    data['created_at'] = createdAt;
+    data['updated_at'] = updatedAt;
     return data;
   }
 }
@@ -172,19 +172,19 @@ class ApiResponse {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['txnid'] = this.txnid;
-    data['status'] = this.status;
-    data['mobileno'] = this.mobileno;
-    data['amount'] = this.amount;
-    data['operatorcode'] = this.operatorcode;
-    data['operator_name'] = this.operatorName;
-    data['request_datetime'] = this.requestDatetime;
-    data['refid'] = this.refid;
-    data['operatorid'] = this.operatorid;
-    data['message'] = this.message;
-    data['remainamount'] = this.remainamount;
-    data['logo'] = this.logo;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['txnid'] = txnid;
+    data['status'] = status;
+    data['mobileno'] = mobileno;
+    data['amount'] = amount;
+    data['operatorcode'] = operatorcode;
+    data['operator_name'] = operatorName;
+    data['request_datetime'] = requestDatetime;
+    data['refid'] = refid;
+    data['operatorid'] = operatorid;
+    data['message'] = message;
+    data['remainamount'] = remainamount;
+    data['logo'] = logo;
     return data;
   }
 }

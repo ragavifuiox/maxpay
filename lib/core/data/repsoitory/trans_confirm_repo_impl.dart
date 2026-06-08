@@ -4,6 +4,7 @@ import 'package:maxpay/core/data/model/trans_confirm_model.dart';
 import 'package:maxpay/core/domain/repository/trans_confirm_repository.dart';
 import 'package:maxpay/core/error/failure.dart';
 import 'package:maxpay/core/services/api_services.dart';
+import 'package:maxpay/core/utils/logg_helper.dart';
 
 class TransConfirmRepoImpl implements TransConfirmRepository {
   final ApiService apiService;
@@ -11,30 +12,26 @@ class TransConfirmRepoImpl implements TransConfirmRepository {
   @override
   Future<Either<Failure, TransConfirm>> getTransactionConfirm({
     required String prodcutdetid,
-
   }) async {
-    print(prodcutdetid);
+    AppLogger.debugPrint(prodcutdetid);
     try {
       final response = await apiService.get(
-       "${ApiRoutes.TransactionConfirm}$prodcutdetid"
+        "${ApiRoutes.transactionConfirm}$prodcutdetid",
       );
-final decoded = response;
+      final decoded = response;
 
-Map<String, dynamic> jsonMap;
+      Map<String, dynamic> jsonMap;
 
-if (decoded is List) {
-  jsonMap = decoded.isNotEmpty
-      ? Map<String, dynamic>.from(decoded[0])
-      : {};
-} else if (decoded is Map<String, dynamic>) {
-  jsonMap = decoded;
-} else {
-  throw Exception("Invalid response format");
-}
+      if (decoded is List) {
+        jsonMap = decoded.isNotEmpty
+            ? Map<String, dynamic>.from(decoded)
+            : {};
+      } else {
+        jsonMap = decoded;
+      }
 
-final model = TransConfirm.fromJson(jsonMap);
-return Right(model);
-      
+      final model = TransConfirm.fromJson(jsonMap);
+      return Right(model);
     } catch (e) {
       return Left(ServerFailure(message: e.toString()));
     }

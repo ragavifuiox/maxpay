@@ -8,19 +8,19 @@ class TransactionResponse {
 
   TransactionResponse.fromJson(Map<String, dynamic> json) {
     success = json['success'];
-    data = json['data'] != null ? new Data.fromJson(json['data']) : null;
+    data = json['data'] != null ? Data.fromJson(json['data']) : null;
     message = json['message'];
     code = json['code'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['success'] = this.success;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['success'] = success;
     if (this.data != null) {
       data['data'] = this.data!.toJson();
     }
-    data['message'] = this.message;
-    data['code'] = this.code;
+    data['message'] = message;
+    data['code'] = code;
     return data;
   }
 }
@@ -34,24 +34,24 @@ class Data {
 
   Data.fromJson(Map<String, dynamic> json) {
     success =
-        json['success'] != null ? new Success.fromJson(json['success']) : null;
+        json['success'] != null ? Success.fromJson(json['success']) : null;
     failed =
-        json['failed'] != null ? new Success.fromJson(json['failed']) : null;
+        json['failed'] != null ? Success.fromJson(json['failed']) : null;
     processing = json['processing'] != null
-        ? new Success.fromJson(json['processing'])
+        ? Success.fromJson(json['processing'])
         : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.success != null) {
-      data['success'] = this.success!.toJson();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    if (success != null) {
+      data['success'] = success!.toJson();
     }
-    if (this.failed != null) {
-      data['failed'] = this.failed!.toJson();
+    if (failed != null) {
+      data['failed'] = failed!.toJson();
     }
-    if (this.processing != null) {
-      data['processing'] = this.processing!.toJson();
+    if (processing != null) {
+      data['processing'] = processing!.toJson();
     }
     return data;
   }
@@ -69,9 +69,9 @@ class Success {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['amount'] = this.amount;
-    data['count'] = this.count;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['amount'] = amount;
+    data['count'] = count;
     return data;
   }
 }

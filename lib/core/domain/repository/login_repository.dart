@@ -10,4 +10,5 @@ abstract class LoginRepository {
     required String pincode,
     required String countrycode ,
   });
+  Future<Either<Failure, Map<String,dynamic>>> logout();
 }

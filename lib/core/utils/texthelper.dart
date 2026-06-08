@@ -1,10 +1,9 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:maxpay/core/constants/colors.dart';
 
 class TextHelper {
-  static get max1 {
+  static TextStyle get max1 {
     return GoogleFonts.poppins(
       fontSize: 12,
       fontWeight: FontWeight.w500,
@@ -12,7 +11,7 @@ class TextHelper {
     );
   }
 
-  static get max2 {
+  static TextStyle get max2 {
     return GoogleFonts.poppins(
       fontSize: 15,
       fontWeight: FontWeight.w500,
@@ -20,7 +19,7 @@ class TextHelper {
     );
   }
 
-  static get max3 {
+  static TextStyle get max3 {
     return GoogleFonts.poppins(
       fontSize: 19,
       fontWeight: FontWeight.w500,
@@ -28,7 +27,7 @@ class TextHelper {
     );
   }
 
-  static get max4 {
+  static TextStyle get max4 {
     return GoogleFonts.poppins(
       fontSize: 14,
       fontWeight: FontWeight.w500,
@@ -36,7 +35,7 @@ class TextHelper {
     );
   }
 
-  static get max5 {
+  static TextStyle get max5 {
     return GoogleFonts.poppins(
       fontSize: 14,
       fontWeight: FontWeight.w500,
@@ -44,7 +43,7 @@ class TextHelper {
     );
   }
 
-  static get max6 {
+  static TextStyle get max6 {
     return GoogleFonts.poppins(
       fontSize: 15,
       fontWeight: FontWeight.w400,
@@ -53,7 +52,7 @@ class TextHelper {
   }
 
 
-  static get max7 {
+  static TextStyle get max7 {
     return GoogleFonts.poppins(
       fontSize: 13,
       fontWeight: FontWeight.w500,
@@ -61,7 +60,7 @@ class TextHelper {
     );
   }
 
-  static get max8 {
+  static TextStyle get max8 {
     return GoogleFonts.poppins(
       fontSize: 16,
       fontWeight: FontWeight.w400,
@@ -151,7 +150,7 @@ static TextStyle max17(BuildContext context) {
   );
 }
 
-static get max18 {
+static TextStyle get max18 {
     return GoogleFonts.poppins(
       fontSize: 13,
       fontWeight: FontWeight.w500,
@@ -167,7 +166,7 @@ static get max18 {
     
   }
 
-  static get max20 {
+  static TextStyle get max20 {
     return GoogleFonts.poppins(
       fontSize: 14,
       fontWeight: FontWeight.w500,

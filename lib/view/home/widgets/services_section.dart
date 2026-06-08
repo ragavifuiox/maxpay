@@ -8,7 +8,6 @@ import 'package:maxpay/core/constants/asset_images.dart';
 import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/view/home/widgets/home_header.dart';
-import 'package:maxpay/view/mobile_recharge/mobile_recharge_page.dart';
 
 import '../../../core/data/model/product_type.dart';
 
@@ -140,7 +139,7 @@ class MenuScreen extends GetView<ServiceController> {
                               MainAxisAlignment
                                   .spaceBetween,
                           children: [
-                            if (productList.length > 0)
+                            if (productList.isNotEmpty)
                               _dynamicServiceItem(
                                 context,
                                 productList[0],
@@ -311,7 +310,7 @@ class MenuScreen extends GetView<ServiceController> {
   }
 
   /// DYNAMIC ITEM
-_dynamicServiceItem(
+Widget _dynamicServiceItem(
   BuildContext context,
   Data item,
 ) {

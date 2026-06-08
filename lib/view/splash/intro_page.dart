@@ -37,9 +37,7 @@ class _IntroPageState extends State<IntroPage> {
               iconAlignment: IconAlignment.end,
               icon: Icon(
                 Icons.skip_next,
-                color: isDark
-                    ? Colors.white
-                    : AppColors.clrSecondary,
+                color: isDark ? Colors.white : AppColors.clrSecondary,
                 size: 24.sp,
               ),
               label: Text(
@@ -48,9 +46,7 @@ class _IntroPageState extends State<IntroPage> {
                   fontFamily: 'Poppins',
                   fontWeight: FontWeight.w500,
                   fontSize: 14.sp,
-                  color: isDark
-                      ? Colors.white
-                      : AppColors.clrSecondary,
+                  color: isDark ? Colors.white : AppColors.clrSecondary,
                   letterSpacing: -0.41,
                 ),
               ),
@@ -97,7 +93,7 @@ class _IntroPageState extends State<IntroPage> {
                             count: introData.length,
                             effect: ExpandingDotsEffect(
                               activeDotColor: AppColors.clrPrimary,
-                              dotColor: Colors.grey.withOpacity(0.3),
+                              dotColor: Colors.grey.withValues(alpha: 0.3),
                               dotHeight: 6.h,
                               dotWidth: 8.w,
                               expansionFactor: 4,
@@ -162,17 +158,16 @@ class _IntroPageState extends State<IntroPage> {
                         fontWeight: FontWeight.w600,
                         fontSize: 16.sp,
                         color: _currentPage > 0
-                            ? (isDark
-                                ? Colors.white
-                                : Colors.black)
+                            ? (isDark ? Colors.white : Colors.black)
                             : Colors.transparent,
                       ),
                     ),
                   ),
-            
+
                   CustomElevatedButton(
-                    text:
-                        _currentPage == introData.length - 1 ? 'Get Started' : 'Next',
+                    text: _currentPage == introData.length - 1
+                        ? 'Get Started'
+                        : 'Next',
                     width: 120.w,
                     height: 44.h,
                     onPressed: () {

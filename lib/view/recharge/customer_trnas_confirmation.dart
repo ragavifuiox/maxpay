@@ -1,8 +1,11 @@
+// ignore_for_file: unused_local_variable
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:maxpay/controllers/prepaid_controller.dart';
 import 'package:maxpay/core/constants/colors.dart';
+import 'package:maxpay/core/utils/logg_helper.dart';
 import 'package:maxpay/global_widget/commom_button.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
 import 'package:maxpay/view/recharge/success_recharge_page.dart';
@@ -20,7 +23,7 @@ class CustomerTransConfirmationScreen extends GetView<PrePaidController> {
   Widget build(BuildContext context) {
     final args = Get.arguments ?? {};
       final confirmData = controller.transConfirmData.value?.data;
-      final OperatorLogo = confirmData?.logo ?? '';
+      final operatorlogo = confirmData?.logo ?? '';
 
     final productName = args['productName'] ?? '';
     final paymentStatus = args['paymentStatus'] ?? '';
@@ -62,7 +65,7 @@ RotatedBox(
 
       boxShadow: [
         BoxShadow(
-          color: Colors.black.withOpacity(0.05),
+          color: Colors.black.withValues(alpha:0.05),
           blurRadius: 6,
           offset: const Offset(0, 2),
         ),
@@ -160,7 +163,7 @@ RotatedBox(
 
            
 
-            print("👉 FINAL PRODUCT ID: ${controller.productdetid}");
+            AppLogger.debugPrint("👉 FINAL PRODUCT ID: ${controller.productdetid}");
 
             final success = await controller.mobilerecharge(
               controller.productdetid,
@@ -168,7 +171,7 @@ RotatedBox(
              transactionAmount,
             );
 
-print("AFTER API CALL");
+AppLogger.debugPrint("AFTER API CALL");
             final rechargeData =
     controller.rechargeResponse.value;
 

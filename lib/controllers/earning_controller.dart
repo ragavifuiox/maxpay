@@ -3,12 +3,9 @@ import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:maxpay/core/data/model/earnings_mdoel.dart';
-import 'package:maxpay/core/data/model/get_profile_model.dart';
-import 'package:maxpay/core/data/model/product_type.dart';
 import 'package:maxpay/core/domain/usecase/earning_usecase.dart';
-import 'package:maxpay/core/domain/usecase/get_profile_usecase.dart';
-import 'package:maxpay/core/domain/usecase/product_type_usecase.dart';
 import 'package:maxpay/core/domain/usecase/search_earnings_usecase.dart';
+import 'package:maxpay/core/utils/logg_helper.dart';
 
 class EarningController extends GetxController {
   final GetEarningsUseCase getEarningsUseCase;
@@ -36,13 +33,13 @@ class EarningController extends GetxController {
 
   final result = await getEarningsUseCase();
 
-  print("API RESULT : $result");
+  AppLogger.logError("API RESULT : $result");
 
   result.fold(
 
     (failure) {
 
-      print("API ERROR : ${failure.message}");
+      AppLogger.logError("API ERROR : ${failure.message}");
 
       isLoading.value = false;
 
@@ -54,15 +51,15 @@ class EarningController extends GetxController {
 
     (data) {
 
-      print("FULL DATA : ${data.toJson()}");
+      AppLogger.logError("FULL DATA : ${data.toJson()}");
 
-      print("SUCCESS : ${data.success}");
+      AppLogger.logError("SUCCESS : ${data.success}");
 
-      print("MESSAGE : ${data.message}");
+      AppLogger.logError("MESSAGE : ${data.message}");
 
-      print("TOTAL EARNINGS : ${data.data?.totalEarnings}");
+      AppLogger.logError("TOTAL EARNINGS : ${data.data?.totalEarnings}");
 
-      print("TYPE : ${data.data?.totalEarnings.runtimeType}");
+      AppLogger.logError("TYPE : ${data.data?.totalEarnings.runtimeType}");
 
       earningsData.value = data;
 
@@ -88,10 +85,10 @@ Future<void> searchEarnings(String fromdate, String todate) async {
       },
       (response) async {
 
-        print("=========== SEARCH EARNINGS RESPONSE ===========");
-        print("SUCCESS : ${response.success}");
-        print("MESSAGE : ${response.message}");
-        print("===========================================");
+        AppLogger.logError("=========== SEARCH EARNINGS RESPONSE ===========");
+        AppLogger.logError("SUCCESS : ${response.success}");
+        AppLogger.logError("MESSAGE : ${response.message}");
+        AppLogger.logError("===========================================");
 
         if (response.success == true) {
 

@@ -57,42 +57,42 @@ class DisputeReportScreen extends StatelessWidget {
     );
   }
 
-  Widget _dateField(
-    BuildContext context, {
-    required String hint,
-  }) {
-    final theme = Theme.of(context);
+  // Widget _dateField(
+  //   BuildContext context, {
+  //   required String hint,
+  // }) {
+  //   final theme = Theme.of(context);
 
-    return TextFormField(
-      decoration: InputDecoration(
-        hintText: hint,
-        hintStyle: TextStyle(
-          color: Colors.grey,
-          fontSize: 12.sp,
-        ),
-        filled: true,
-        fillColor: theme.brightness == Brightness.dark
-            ? AppColors.darkplceholder
-            : AppColors.background,
-        contentPadding: EdgeInsets.symmetric(
-          horizontal: 10.w,
-          vertical: 12.h,
-        ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8.r),
-          borderSide: BorderSide.none,
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8.r),
-          borderSide: BorderSide.none,
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8.r),
-          borderSide: BorderSide.none,
-        ),
-      ),
-    );
-  }
+  //   return TextFormField(
+  //     decoration: InputDecoration(
+  //       hintText: hint,
+  //       hintStyle: TextStyle(
+  //         color: Colors.grey,
+  //         fontSize: 12.sp,
+  //       ),
+  //       filled: true,
+  //       fillColor: theme.brightness == Brightness.dark
+  //           ? AppColors.darkplceholder
+  //           : AppColors.background,
+  //       contentPadding: EdgeInsets.symmetric(
+  //         horizontal: 10.w,
+  //         vertical: 12.h,
+  //       ),
+  //       border: OutlineInputBorder(
+  //         borderRadius: BorderRadius.circular(8.r),
+  //         borderSide: BorderSide.none,
+  //       ),
+  //       enabledBorder: OutlineInputBorder(
+  //         borderRadius: BorderRadius.circular(8.r),
+  //         borderSide: BorderSide.none,
+  //       ),
+  //       focusedBorder: OutlineInputBorder(
+  //         borderRadius: BorderRadius.circular(8.r),
+  //         borderSide: BorderSide.none,
+  //       ),
+  //     ),
+  //   );
+  // }
 }
 
 /// ================= CARD =================

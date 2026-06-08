@@ -11,7 +11,7 @@ class Plan {
     if (json['data'] != null) {
       data = <Data>[];
       json['data'].forEach((v) {
-        data!.add(new Data.fromJson(v));
+        data!.add(Data.fromJson(v));
       });
     }
     message = json['message'];
@@ -19,20 +19,20 @@ class Plan {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['success'] = this.success;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['success'] = success;
     if (this.data != null) {
       data['data'] = this.data!.map((v) => v.toJson()).toList();
     }
-    data['message'] = this.message;
-    data['code'] = this.code;
+    data['message'] = message;
+    data['code'] = code;
     return data;
   }
 }
 
 class Data {
   int? id;
-  Null? category;
+  Null category;
   String? name;
   String? productCode;
   String? customerCare;
@@ -40,7 +40,7 @@ class Data {
   String? commissionType;
   String? logo;
   String? msgToNumber;
-  Null? messageToNumber;
+  Null messageToNumber;
   String? minRechargeAmount;
   String? maxRechargeAmount;
   String? customerBlockAmount;
@@ -125,36 +125,36 @@ class Data {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['category'] = this.category;
-    data['name'] = this.name;
-    data['product_code'] = this.productCode;
-    data['customer_care'] = this.customerCare;
-    data['admin_commission'] = this.adminCommission;
-    data['commission_type'] = this.commissionType;
-    data['logo'] = this.logo;
-    data['msg_to_number'] = this.msgToNumber;
-    data['message_to_number'] = this.messageToNumber;
-    data['min_recharge_amount'] = this.minRechargeAmount;
-    data['max_recharge_amount'] = this.maxRechargeAmount;
-    data['customer_block_amount'] = this.customerBlockAmount;
-    data['api_block_amount'] = this.apiBlockAmount;
-    data['special_customer_block_amount'] = this.specialCustomerBlockAmount;
-    data['digits_allowed'] = this.digitsAllowed;
-    data['starting_digits'] = this.startingDigits;
-    data['inactive_message'] = this.inactiveMessage;
-    data['description'] = this.description;
-    data['api_name'] = this.apiName;
-    data['amount_to_block'] = this.amountToBlock;
-    data['is_active'] = this.isActive;
-    data['need_live_menu'] = this.needLiveMenu;
-    data['product_limit'] = this.productLimit;
-    data['product_type'] = this.productType;
-    data['product_type_id'] = this.productTypeId;
-    data['is_enable'] = this.isEnable;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['category'] = category;
+    data['name'] = name;
+    data['product_code'] = productCode;
+    data['customer_care'] = customerCare;
+    data['admin_commission'] = adminCommission;
+    data['commission_type'] = commissionType;
+    data['logo'] = logo;
+    data['msg_to_number'] = msgToNumber;
+    data['message_to_number'] = messageToNumber;
+    data['min_recharge_amount'] = minRechargeAmount;
+    data['max_recharge_amount'] = maxRechargeAmount;
+    data['customer_block_amount'] = customerBlockAmount;
+    data['api_block_amount'] = apiBlockAmount;
+    data['special_customer_block_amount'] = specialCustomerBlockAmount;
+    data['digits_allowed'] = digitsAllowed;
+    data['starting_digits'] = startingDigits;
+    data['inactive_message'] = inactiveMessage;
+    data['description'] = description;
+    data['api_name'] = apiName;
+    data['amount_to_block'] = amountToBlock;
+    data['is_active'] = isActive;
+    data['need_live_menu'] = needLiveMenu;
+    data['product_limit'] = productLimit;
+    data['product_type'] = productType;
+    data['product_type_id'] = productTypeId;
+    data['is_enable'] = isEnable;
+    data['created_at'] = createdAt;
+    data['updated_at'] = updatedAt;
     return data;
   }
 }

@@ -12,19 +12,19 @@ class SearchStaff {
 
   SearchStaff.fromJson(Map<String, dynamic> json) {
     success = json['success'];
-    data = json['data'] != null ? new Data.fromJson(json['data']) : null;
+    data = json['data'] != null ? Data.fromJson(json['data']) : null;
     message = json['message'];
     code = json['code'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['success'] = this.success;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['success'] = success;
     if (this.data != null) {
       data['data'] = this.data!.toJson();
     }
-    data['message'] = this.message;
-    data['code'] = this.code;
+    data['message'] = message;
+    data['code'] = code;
     return data;
   }
 }
@@ -35,11 +35,11 @@ class Data {
   Data({this.data});
 
   Data.fromJson(Map<String, dynamic> json) {
-    data = json['data'] != null ? new SearchStaffData.fromJson(json['data']) : null;
+    data = json['data'] != null ? SearchStaffData.fromJson(json['data']) : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     if (this.data != null) {
       data['data'] = this.data!.toJson();
     }
@@ -52,7 +52,7 @@ class SearchStaffData {
   String? retailerName;
   String? regMobileNumber;
   String? commissionPackage;
-  Null? walletBalance;
+  Null walletBalance;
 
   SearchStaffData(
       {this.userId,
@@ -70,12 +70,12 @@ class SearchStaffData {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['user_id'] = this.userId;
-    data['retailer_name'] = this.retailerName;
-    data['reg_mobile_number'] = this.regMobileNumber;
-    data['commission_package'] = this.commissionPackage;
-    data['wallet_balance'] = this.walletBalance;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['user_id'] = userId;
+    data['retailer_name'] = retailerName;
+    data['reg_mobile_number'] = regMobileNumber;
+    data['commission_package'] = commissionPackage;
+    data['wallet_balance'] = walletBalance;
     return data;
   }
 }
