@@ -7,38 +7,44 @@ import 'package:maxpay/controllers/menu_controlller.dart';
 import 'package:maxpay/core/constants/asset_images.dart';
 import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
+import 'package:maxpay/core/di/service_locator.dart';
 import 'package:maxpay/view/home/widgets/home_header.dart';
+import 'package:maxpay/view/nav_page/navbar.dart';
 
 import '../../../core/data/model/product_type.dart';
 
-class MenuScreen extends GetView<ServiceController> {
-  const MenuScreen({super.key});
+class MenuScreen extends StatelessWidget {
+  MenuScreen({super.key});
+
+  final ServiceController controller = Get.put(ServiceController(productTypeUseCase: sl()));
+  final HomePageController homeController =
+      Get.find<HomePageController>();
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      homeController.fetchpopupmessage("Dashboard");
+    });
+
     final theme = Theme.of(context);
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
-
       body: SafeArea(
-        child: Obx(
-          () {
-            if (controller.isLoading.value) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
+        child: Obx(() {
+          if (controller.isLoading.value) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
 
-            final productList =
-                controller.productTypeData.value?.data ?? [];
+          final productList =
+              controller.productTypeData.value?.data ?? [];
 
-            return SingleChildScrollView(
-              child: Column(
-                children: [
-
-                  /// HEADER
-                  const HomeHeaderSection(),
+          return SingleChildScrollView(
+            child: Column(
+              children: [
+                const HomeHeaderSection(),
 
                   Padding(
                     padding: EdgeInsets.symmetric(
@@ -171,6 +177,7 @@ class MenuScreen extends GetView<ServiceController> {
                           crossAxisAlignment:
                               CrossAxisAlignment.start,
                           children: [
+                            
                        Column(
                               children: [
                                  if (productList.length > 4)
@@ -256,23 +263,22 @@ class MenuScreen extends GetView<ServiceController> {
                           children: [
 
                             /// LEFT BANNER
-                            Expanded(
-                              child: ClipRRect(
-                                borderRadius:
-                                    BorderRadius
-                                        .circular(
-                                  16.r,
-                                ),
-                                child: Image.asset(
-                                  AssetImages
-                                      .banner2,
-                                  height: 150.h,
-                                  width:
-                                      double.infinity,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                            ),
+                           Expanded(
+  child: InkWell(
+  onTap: () {
+    _showFullImage(context, AssetImages.banner2);
+  },
+  child: ClipRRect(
+    borderRadius: BorderRadius.circular(16.r),
+    child: Image.asset(
+      AssetImages.banner2,
+      height: 150.h,
+      width: double.infinity,
+      fit: BoxFit.cover,
+    ),
+  ),
+)
+),
 
                             SizedBox(width: 12.w),
 
@@ -308,7 +314,26 @@ class MenuScreen extends GetView<ServiceController> {
       ),
     );
   }
-
+void _showFullImage(BuildContext context, String imagePath) {
+  showDialog(
+    context: context,
+    barrierColor: Colors.black.withOpacity(0.9),
+    builder: (_) {
+      return GestureDetector(
+        onTap: () => Get.back(),
+        child: Center(
+          child: Hero(
+            tag: imagePath,
+            child: Image.asset(
+              imagePath, // ✅ FIX HERE
+              fit: BoxFit.contain,
+            ),
+          ),
+        ),
+      );
+    },
+  );
+}
   /// DYNAMIC ITEM
 Widget _dynamicServiceItem(
   BuildContext context,
@@ -504,7 +529,15 @@ void _handleNavigation(Data item) {
 
     case 'dth':
 
-      Get.toNamed(AppRoutes.dth);
+        Get.toNamed(
+        AppRoutes.dth,
+
+        arguments: {
+          "productId": item.id.toString(),
+          "productName": item.name ?? "",
+        },
+      );
+
 
       break;
 

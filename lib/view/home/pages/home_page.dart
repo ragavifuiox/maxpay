@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_instance/src/extension_instance.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:get/get_state_manager/src/simple/get_view.dart';
@@ -13,6 +14,7 @@ import 'package:maxpay/view/home/widgets/earnings_chart.dart';
 import 'package:maxpay/view/home/widgets/home_header.dart';
 import 'package:maxpay/view/home/widgets/news_ticker.dart';
 import 'package:maxpay/view/home/widgets/stat_card.dart';
+import 'package:maxpay/view/nav_page/navbar_provider.dart';
 import 'package:maxpay/view/transaction_screens/transaction_success_screen.dart';
 
 class HomePageScreen extends GetView<HomePageController> {
@@ -20,9 +22,9 @@ class HomePageScreen extends GetView<HomePageController> {
 
   @override
   Widget build(BuildContext context) {
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   controller.fetchpopupmessage("Home");
-    // });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.fetchpopupmessage("Home");
+    });
 
     final theme = Theme.of(context);
 
@@ -92,7 +94,7 @@ class HomePageScreen extends GetView<HomePageController> {
                         BlinkingZoomCard(
                           child: StatCard(
                             onTap: () {
-                              Get.toNamed(AppRoutes.menu);
+                             Get.find<NavbarController>().openMenu();
                             },
                             title: 'Transactions',
                             bgColor: AppColors.darkBlue.withValues(alpha: 0.04),

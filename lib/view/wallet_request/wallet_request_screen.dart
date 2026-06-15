@@ -62,20 +62,21 @@ class WalletRequestScreen extends StatelessWidget {
 
         elevation: 0,
         centerTitle: false,
+        
 
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back,
-            color:
-                Theme.of(context)
-                    .colorScheme
-                    .onSurface,
-          ),
+        // leading: IconButton(
+        //   icon: Icon(
+        //     Icons.arrow_back,
+        //     color:
+        //         Theme.of(context)
+        //             .colorScheme
+        //             .onSurface,
+        //   ),
 
-          onPressed: () {
-            Get.back();
-          },
-        ),
+        //   onPressed: () {
+        //     Get.back();
+        //   },
+        // ),
 
         title: Text(
           "Wallet Request",

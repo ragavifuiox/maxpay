@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
+import 'package:get/get_state_manager/src/simple/get_view.dart';
+import 'package:maxpay/controllers/dispute_controller.dart';
 import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/core/utils/texthelper.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
 import 'package:maxpay/view/dispute/widget/disput_search.dart';
 
-class DisputeReportScreen extends StatelessWidget {
+class DisputeReportScreen extends GetView<DisputeController> {
   const DisputeReportScreen({super.key});
 
   @override
@@ -14,87 +17,55 @@ class DisputeReportScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
-
       appBar: CommonAppBar(title: "Dispute Report"),
 
       body: Padding(
         padding: EdgeInsets.all(16.w),
         child: Column(
           children: [
-            /// FILTER BOX
-            Disputefilter(),
-              SizedBox(height: 18.h),
-            Divider(
-  color: Theme.of(context).brightness == Brightness.light
-      ? Colors.black12
-      : Colors.white24,
-),
+            const Disputefilter(),
 
             SizedBox(height: 18.h),
 
-            /// FAILED CARD
-           const DisputeCardWidget(
-              status: "Failed",
-              statusColor: Colors.red,
-              message:
-                  "Due to network error your recharge has been rejected",
-              messageColor: Colors.red,
+            Divider(
+              color: theme.brightness == Brightness.light
+                  ? Colors.black12
+                  : Colors.white24,
             ),
 
-            SizedBox(height: 14.h),
+            SizedBox(height: 18.h),
 
-            /// SUCCESS CARD
-            const DisputeCardWidget(
-              status: "Success",
-              statusColor: Colors.green,
-              message:
-                  "Recharge has been successfully completed",
-              messageColor: Colors.green,
+            Expanded(
+              child: Obx(() {
+  print("UI LENGTH: ${controller.disputeList.length}");
+
+  if (controller.disputeList.isEmpty) {
+    return const Center(
+      child: Text("No Data Found"),
+    );
+  }
+
+  return ListView.builder(
+    itemCount: controller.disputeList.length,
+    itemBuilder: (context, index) {
+      final item = controller.disputeList[index];
+
+      return Card(
+        child: ListTile(
+          title: Text(item.subject ?? ""),
+          subtitle: Text(item.status ?? ""),
+        ),
+      );
+    },
+  );
+})
             ),
           ],
         ),
       ),
     );
   }
-
-  // Widget _dateField(
-  //   BuildContext context, {
-  //   required String hint,
-  // }) {
-  //   final theme = Theme.of(context);
-
-  //   return TextFormField(
-  //     decoration: InputDecoration(
-  //       hintText: hint,
-  //       hintStyle: TextStyle(
-  //         color: Colors.grey,
-  //         fontSize: 12.sp,
-  //       ),
-  //       filled: true,
-  //       fillColor: theme.brightness == Brightness.dark
-  //           ? AppColors.darkplceholder
-  //           : AppColors.background,
-  //       contentPadding: EdgeInsets.symmetric(
-  //         horizontal: 10.w,
-  //         vertical: 12.h,
-  //       ),
-  //       border: OutlineInputBorder(
-  //         borderRadius: BorderRadius.circular(8.r),
-  //         borderSide: BorderSide.none,
-  //       ),
-  //       enabledBorder: OutlineInputBorder(
-  //         borderRadius: BorderRadius.circular(8.r),
-  //         borderSide: BorderSide.none,
-  //       ),
-  //       focusedBorder: OutlineInputBorder(
-  //         borderRadius: BorderRadius.circular(8.r),
-  //         borderSide: BorderSide.none,
-  //       ),
-  //     ),
-  //   );
-  // }
 }
-
 /// ================= CARD =================
 
 class DisputeCardWidget extends StatelessWidget {
@@ -102,6 +73,8 @@ class DisputeCardWidget extends StatelessWidget {
   final Color statusColor;
   final String message;
   final Color messageColor;
+  final String subject;
+  final String replyTime;
 
   const DisputeCardWidget({
     super.key,
@@ -109,6 +82,8 @@ class DisputeCardWidget extends StatelessWidget {
     required this.statusColor,
     required this.message,
     required this.messageColor,
+    required this.subject,
+    required this.replyTime,
   });
 
   @override

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:maxpay/controllers/support_controller.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SupportScreen extends StatelessWidget {
   SupportScreen({super.key});
@@ -171,15 +172,11 @@ class SupportScreen extends StatelessWidget {
                
                   SizedBox(
                     height: 36,
-
-                    child:
+                      child:
                         ElevatedButton.icon(
-
-                      onPressed: () {
-
-                        /// CALL FUNCTION
-                      },
-
+                           onPressed: () {
+                            makeCall(item.phoneNumber ?? "");
+                          },
                       style:
                           ElevatedButton
                               .styleFrom(
@@ -230,6 +227,21 @@ class SupportScreen extends StatelessWidget {
           },
         );
       }),
+    );
+  }
+}
+
+
+void makeCall(String phoneNumber) async {
+  final Uri url = Uri(scheme: 'tel', path: phoneNumber);
+
+  if (await canLaunchUrl(url)) {
+    await launchUrl(url, mode: LaunchMode.externalApplication);
+  } else {
+    Get.snackbar(
+      "Error",
+      "Cannot open dialer",
+      snackPosition: SnackPosition.BOTTOM,
     );
   }
 }

@@ -1,3 +1,5 @@
+import 'package:maxpay/core/data/model/dth_recharge_model.dart';
+
 class ApiRoutes {
   static const baseURL = "http://139.59.91.7/test_paylinkonline.in/public/api";
   static const login = "/retailer_login_sendotp";
@@ -12,6 +14,7 @@ class ApiRoutes {
   static const plans = "/get_product/";
   static const complaints = "/get_complaint";
   static const bank = "/get_bank";
+  static const grade = "/user_grades";
   static const walletrequest = "/create_wallet_request";
   static const addstaff = "/add_staff";
   static const stafflist = "/get_staff";
@@ -30,4 +33,11 @@ class ApiRoutes {
   static const logout = "/logout";
   static const addKyc = "/add_kyc";
   static const privacyPolicy = "/privacy_policy";
+  static const verifypin = "/verify_pin";
+  static const dthtab = "/get_dth_plan_type";
+  static const searchdth = "/search_dth_plan";
+  static const confirmdth = "/dth_confirm_transaction/";
+  static const Dthrecharge = "/dth_recharge";
+  static const getkyc = "/get_kyc";
+  static const dispute = "/dispute_report";
 }

@@ -249,10 +249,26 @@ class _BiometricsScanningPageState
                 children: [
                   Expanded(
                     child: TextButton(
-                      onPressed: () {
-                        cancelAuthentication();
-                        Get.back();
-                      },
+                     onPressed: () async {
+
+  cancelAuthentication();
+
+  if (controller.isNewUser.value == 1) {
+
+    await controller.fingerprint(0);
+
+    Get.offAllNamed(
+      AppRoutes.main,
+    );
+
+  } else {
+
+    Get.offAllNamed(
+      AppRoutes.enterPin,
+    );
+
+  }
+},
               
                       child: Text(
                         'Cancel',
@@ -270,7 +286,7 @@ class _BiometricsScanningPageState
                       ),
                     ),
                   ),
-              
+           
                   SizedBox(width: 20.w),
               
                   Expanded(

@@ -61,48 +61,55 @@ class _MobileRechargePageState extends State<MobileRechargePage>
     controller.getPlans(productid: widget.productId);
     controller.getPlanTabs();
 
-    searchController.addListener(() {
-      if (_debounce?.isActive ?? false) {
-        _debounce!.cancel();
-      }
-
-      _debounce = Timer(const Duration(milliseconds: 500), () {
-        final text = searchController.text.trim();
-
-        if (selectedProductId.isNotEmpty && text.isNotEmpty) {
-          controller.searchPlans(selectedProductId, text);
-        }
-      });
-    });
+  searchController.addListener(() {
+  if (_debounce?.isActive ?? false) {
+    _debounce!.cancel();
   }
 
-  Future<void> loadTabs() async {
-    await controller.getPlanTabs();
+  _debounce = Timer(
+    const Duration(milliseconds: 500),
+    () {
+      final text = searchController.text.trim();
 
-    if (controller.planTabs.isEmpty) return;
-
-    _tabController = TabController(
-      length: controller.planTabs.length,
-      vsync: this,
-    );
-
-    selectedTabId = controller.planTabs.first.id.toString();
-
-    await controller.getTabDetail(tabid: selectedTabId);
-
-    _tabController.addListener(() {
-      if (_tabController.indexIsChanging) return;
-
-      final tab = controller.planTabs[_tabController.index];
-
-      selectedTabId = tab.id.toString();
-
-      controller.getTabDetail(tabid: selectedTabId);
-    });
-
-    setState(() {});
+      controller.searchPlans(
+        selectedProductId,
+        text, // empty irundhaalum call aagum
+      );
+    },
+  );
+});
   }
 
+ Future<void> loadTabs() async {
+  await controller.getPlanTabs();
+
+  if (controller.planTabs.isEmpty) return;
+
+  _tabController = TabController(
+    length: controller.planTabs.length,
+    vsync: this,
+  );
+
+  selectedTabId = controller.planTabs.first.id.toString();
+
+  controller.selectedTabId = selectedTabId; // FIX
+
+  controller.applyTabFilter();
+
+  _tabController.addListener(() {
+    if (_tabController.indexIsChanging) return;
+
+    final tab = controller.planTabs[_tabController.index];
+
+    selectedTabId = tab.id.toString();
+
+    controller.selectedTabId = selectedTabId;
+
+    controller.applyTabFilter();
+  });
+
+  setState(() {});
+}
   @override
   void dispose() {
     _debounce?.cancel();
@@ -224,7 +231,7 @@ class _MobileRechargePageState extends State<MobileRechargePage>
                     color: isDark ? Colors.white : Colors.black,
                   ),
                   decoration: InputDecoration(
-                    hintText: 'Enter Customer ID',
+                    hintText: 'Enter Mobile No',
                     hintStyle: TextStyle(color: Colors.grey, fontSize: 12.sp),
                     border: InputBorder.none,
                     contentPadding: EdgeInsets.symmetric(
@@ -396,22 +403,24 @@ class _MobileRechargePageState extends State<MobileRechargePage>
                         );
                       }).toList(),
 
-                      onChanged: (Data? value) async {
-                        if (value == null) return;
+onChanged: (Data? value) async {
+  if (value == null) return;
 
-                        setState(() {
-                          selectedOperator = value.name ?? "";
-                          selectedProductId = value.id?.toString() ?? "";
-                          isPlanLoaded = true;
-                        });
+  setState(() {
+    selectedOperator = value.name ?? "";
+    selectedProductId = value.id?.toString() ?? "";
+    isPlanLoaded = true;
+  });
 
-                        searchController.clear();
-                        controller.searchPlansList.clear();
+  searchController.clear();
 
-                        await controller.getPlanDetail(
-                          planId: selectedProductId,
-                        );
-                      },
+  await controller.searchPlans(
+    selectedProductId,
+    "",
+  );
+
+  controller.applyTabFilter(); // add this
+}
                     ),
                   ),
                 );
@@ -548,68 +557,76 @@ class _MobileRechargePageState extends State<MobileRechargePage>
               SizedBox(height: 15.h),
 
               /// PLAN LIST
-              Obx(() {
-                final isSearching = searchController.text.trim().isNotEmpty;
+             Obx(() {
+  final isSearching = searchController.text.trim().isNotEmpty;
 
-                if (controller.isLoading.value) {
-                  return const Center(child: CircularProgressIndicator());
-                }
+  print("isSearching : $isSearching");
+  print("search text : ${searchController.text}");
+  print("filtered count : ${controller.filteredSearchPlans.length}");
 
-                // SEARCH RESULT
-                if (isSearching) {
-                  final list = controller.searchPlansList;
-                  final detailList = controller.planDetailList;
+  if (isSearching) {
+    final list = controller.filteredSearchPlans;
 
-                  if (list.isEmpty) {
-                    return const Center(child: Text("No Search Plans Found"));
-                  }
+    print("UI LIST COUNT : ${list.length}");
 
-                  return ListView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: detailList.length,
-                    itemBuilder: (context, index) {
-                      final plan = detailList[index];
+    if (list.isEmpty) {
+      return const Center(
+        child: Text("No Search Plans Found"),
+      );
+    }
 
-                      return _buildPlanCardCommon(
-                        amount: plan.amount?.toString() ?? "",
-                        validity: plan.validity?.toString() ?? "",
-                        details: plan.planDetails ?? "",
-                        onBuy: () async {
-                          String mobile = mobileController.text.trim();
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: list.length,
+      itemBuilder: (context, index) {
+        print("Building Item : $index");
 
-                          mobile = mobile.replaceAll(RegExp(r'[^0-9]'), '');
+        final plan = list[index];
 
-                          if (mobile.startsWith('91') && mobile.length == 12) {
-                            mobile = mobile.substring(2);
-                          }
+        return _buildPlanCardCommon(
+          amount: plan.amount?.toString() ?? "",
+          validity: plan.validity?.toString() ?? "",
+          details: plan.planDetails ?? "",
+        onBuy: () async {
+          String mobile = mobileController.text.trim();
 
-                          if (mobile.length != 10) {
-                            CustomToast.error(
-                              "Please enter valid 10 digit phone number",
-                            );
-                            return;
-                          }
+          mobile = mobile.replaceAll(RegExp(r'[^0-9]'), '');
 
-                          await controller.confirmtrans(
-                            plan.productId.toString(),
-                          );
+          if (mobile.startsWith('91') && mobile.length == 12) {
+            mobile = mobile.substring(2);
+          }
 
-                          Get.toNamed(
-                            AppRoutes.transconfirm,
-                            arguments: {
-                              "mobileNumber": mobile,
-                              "productdetid": plan.productId.toString(),
-                            },
-                          );
-                        },
-                      );
-                    },
-                  );
-                }
+          if (mobile.isEmpty) {
+            CustomToast.error("Please enter phone number");
+            return;
+          }
 
-                // PLAN DETAIL RESULT
-                final detailList = controller.planDetailList;
+          if (mobile.length != 10) {
+            CustomToast.error(
+              "Please enter valid 10 digit phone number",
+            );
+            return;
+          }
+
+          await controller.confirmtrans(
+            plan.productId.toString(),
+          );
+
+          Get.toNamed(
+            AppRoutes.transconfirm,
+            arguments: {
+              "type": "mobile",
+              "mobileNumber": mobile,
+              "productdetid": plan.productId.toString(),
+            },
+          );
+        },
+      );
+    },
+  );
+}
+  final list = controller.filteredSearchPlans;
 
                 if (!isPlanLoaded) {
                   return Container(
@@ -634,41 +651,23 @@ class _MobileRechargePageState extends State<MobileRechargePage>
                   );
                 }
 
-                if (detailList.isEmpty) {
-                  return Container(
-                    margin: EdgeInsets.symmetric(
-                      horizontal: 8.w,
-                      vertical: 6.h,
-                    ),
-                    padding: EdgeInsets.all(20.r),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(18.r),
-                      border: Border.all(color: Colors.grey.shade300),
-                    ),
-                    child: Center(
-                      child: Text(
-                        "No Plans Found",
-                        style: TextStyle(
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  );
-                }
+                if (list.isEmpty) {
+  return const Center(
+    child: Text("No Plans Found"),
+  );
+}
 
-                return ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: detailList.length,
-                  itemBuilder: (context, index) {
-                    final plan = detailList[index];
+return ListView.builder(
+  shrinkWrap: true,
+  physics: const NeverScrollableScrollPhysics(),
+  itemCount: list.length,
+  itemBuilder: (context, index) {
+    final plan = list[index];
 
-                    return _buildPlanCardCommon(
-                      amount: plan.amount?.toString() ?? "",
-                      validity: plan.validity?.toString() ?? "",
-                      // talkTime: plan.talkTime?.toString() ?? "",
-                      details: plan.planDetails ?? "",
+    return _buildPlanCardCommon(
+      amount: plan.amount?.toString() ?? "",
+      validity: plan.validity?.toString() ?? "",
+      details: plan.planDetails ?? "",
 
                       onBuy: () async {
                         String mobile = mobileController.text.trim();

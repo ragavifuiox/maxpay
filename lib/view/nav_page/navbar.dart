@@ -18,12 +18,12 @@ class CustomBottomNavBar extends GetView<NavbarController> {
     {"image": AssetImages.settings, "label": "Settings"},
   ];
 
-  @override
+ @override
   Widget build(BuildContext context) {
     final themeController = Get.find<ThemeController>();
 
     return Obx(() {
-      final selectedIndex = controller.selectedIndex;
+      final selectedIndex = controller.selectedIndex.value;
       final isDark = themeController.isDarkMode;
 
       return BottomNavigationBar(
@@ -45,13 +45,17 @@ class CustomBottomNavBar extends GetView<NavbarController> {
           fontFamily: 'Poppins',
         ),
         landscapeLayout: BottomNavigationBarLandscapeLayout.spread,
-        onTap: (value) {
-          controller.setIndex(value);
-        },
+      onTap: (value) {
+  print("Clicked => $value");
+
+  controller.closeMenu();
+  controller.setIndex(value);
+},
         items: _baseIcons.map((e) {
           final bool isSelected = selectedIndex == _baseIcons.indexOf(e);
           return BottomNavigationBarItem(
             icon: SvgPicture.asset(
+
               e["image"],
               colorFilter: ColorFilter.mode(
                 isSelected

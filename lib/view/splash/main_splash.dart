@@ -12,6 +12,7 @@ import 'package:maxpay/core/utils/logg_helper.dart';
 class MainSplashScreen extends StatefulWidget {
   const MainSplashScreen({super.key});
 
+  
   @override
   State<MainSplashScreen> createState() => _MainSplashScreenState();
 }
@@ -24,20 +25,40 @@ class _MainSplashScreenState extends State<MainSplashScreen> {
   }
 
   Future<void> _checkSession() async {
-    final storage = LocalStorageService();
-    await storage.init();
-    final token = storage.getString("auth_token");
-    AppLogger.logError("TOKEN : $token");
-    await Future.delayed(const Duration(seconds: 2));
+  final storage = LocalStorageService();
+  await storage.init();
 
-    if (mounted) {
-      if (token != null && token.isNotEmpty) {
-        Get.offAllNamed(AppRoutes.main);
-      } else {
-        Get.offAllNamed(AppRoutes.intro);
-      }
-    }
+  final token = storage.getString("auth_token");
+  final isPin = storage.getInt("is_pin") ?? 0;
+  final isFingerPrint = storage.getInt("is_fingerprint") ?? 0;
+
+  AppLogger.logError("TOKEN : $token");
+  AppLogger.logError("IS PIN : $isPin");
+  AppLogger.logError("IS FINGERPRINT : $isFingerPrint");
+
+  await Future.delayed(const Duration(seconds: 2));
+
+  if (!mounted) return;
+
+  /// Not Logged In
+  if (token == null || token.isEmpty) {
+    Get.offAllNamed(AppRoutes.intro);
+    return;
   }
+
+  /// Old User -> PIN Created
+  if (isPin == 1) {
+    if (isFingerPrint == 1) {
+      Get.offAllNamed(AppRoutes.veirfypin);
+    } else {
+      Get.offAllNamed(AppRoutes.enterPin);
+    }
+    return;
+  }
+
+  /// User Logged In But No PIN
+  Get.offAllNamed(AppRoutes.main);
+}
 
   @override
   Widget build(BuildContext context) {

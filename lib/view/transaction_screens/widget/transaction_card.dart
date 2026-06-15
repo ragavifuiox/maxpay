@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_navigation/src/extension_navigation.dart';
+import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/view/transaction_screens/transaction_success_screen.dart';
 
 
@@ -186,9 +189,14 @@ class TransactionCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 customButton(
-                  text: isSuccess ? "Dispute" : "View",
-                  color: isSuccess ? Colors.red : Colors.blue,
-                ),
+  text: isSuccess ? "Dispute" : "View",
+  color: isSuccess ? Colors.red : Colors.blue,
+  onTap: () {
+    if (isSuccess) {
+      Get.toNamed(AppRoutes.dispute);
+    }
+  },
+),
 
                 const SizedBox(width: 8),
 
@@ -212,11 +220,14 @@ class TransactionCard extends StatelessWidget {
     );
   }
 
-  Widget customButton({
-    required String text,
-    required Color color,
-  }) {
-    return Container(
+ Widget customButton({
+  required String text,
+  required Color color,
+  VoidCallback? onTap,
+}) {
+  return GestureDetector(
+    onTap: onTap,
+    child: Container(
       padding: const EdgeInsets.symmetric(
         horizontal: 12,
         vertical: 6,
@@ -233,6 +244,7 @@ class TransactionCard extends StatelessWidget {
           fontWeight: FontWeight.w500,
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }

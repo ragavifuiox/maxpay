@@ -1,5 +1,3 @@
-// ignore_for_file: must_be_immutable
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -20,8 +18,10 @@ class ConfirmTransactionPage extends GetView<PrePaidController> {
   TextEditingController amountController = TextEditingController();
   ConfirmTransactionPage({super.key});
 
-  final args = Get.arguments ?? {};
   late String productdetid;
+  final args = Get.arguments ?? {};
+String get type => args["type"] ?? "mobile";
+
 
   void setProductId(String id) {
     productdetid = id;
@@ -202,7 +202,7 @@ class ConfirmTransactionPage extends GetView<PrePaidController> {
                           AppRoutes.customertrans,
                           arguments: {
                             "mobileNumber": mobileNumber,
-                            "productdetid": args['productdetid'], // 👈 fix here
+                            "productdetid": args['productdetid'], 
                             "productName": confirmData.productName ?? '',
                             "paymentStatus": confirmData.paymentStatus ?? '',
                             "transactionNo": mobileNumber,
@@ -214,7 +214,7 @@ class ConfirmTransactionPage extends GetView<PrePaidController> {
                                 : '',
                             "operatorColor": Colors.red,
                             "operatorLogo": confirmData.logo ?? '',
-                          },
+                          }
                         );
                       },
                     ),

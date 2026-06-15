@@ -1,11 +1,11 @@
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart'
     show ExtensionSnackbar, GetNavigation;
+import 'package:get/get_navigation/src/root/parse_route.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:maxpay/core/constants/snackbar.dart';
-import 'package:maxpay/core/data/model/mobile_recharge.dart'
-    show MobileRecharge;
+import 'package:maxpay/core/data/model/mobile_recharge.dart' show MobileRecharge;
 import 'package:maxpay/core/data/model/plan_detail_model.dart';
 import 'package:maxpay/core/data/model/plan_model.dart';
 import 'package:maxpay/core/data/model/plan_tab_model.dart';
@@ -40,18 +40,22 @@ class PrePaidController extends GetxController {
     required this.plantabusecase,
     required this.tabdetailusecase,
   });
-
+RxBool isSearching = false.obs;
   RxBool isLoading = false.obs;
   Rx<MobileRecharge?> rechargeResponse = Rx<MobileRecharge?>(null);
   RxList<Data> plans = <Data>[].obs;
   RxList<PlanDetailData> plandetail = <PlanDetailData>[].obs;
-  RxList<PlanData> searchPlansList = <PlanData>[].obs;
-  RxList<PlanDetailData> planDetailList = <PlanDetailData>[].obs;
 
+  RxList<PlanData> searchPlansList = <PlanData>[].obs;
+
+  
+  RxList<PlanDetailData> planDetailList = <PlanDetailData>[].obs;
+  RxList<TabDetailData> filteredTabPlans = <TabDetailData>[].obs;
+RxList<PlanData> filteredSearchPlans = <PlanData>[].obs;
   RxString errorMessage = ''.obs;
   RxBool isRechargeLoading = false.obs;
   Rx<TransConfirm?> transConfirmData = Rx<TransConfirm?>(null);
-  RxList<TabDetailData> tabdetaillist = <TabDetailData>[].obs;
+
 
   RxList<PlantabData> planTabs = <PlantabData>[].obs;
   Rx<Data?> selectedPlan = Rx<Data?>(null);
@@ -80,128 +84,123 @@ class PrePaidController extends GetxController {
       isLoading.value = false;
     }
   }
+Future<void> searchPlans(
+  String planId,
+  String amount,
+) async {
 
-  Future<void> getPlanDetail({required String planId}) async {
-    try {
-      AppLogger.debugPrint("🔍 [GET PLAN DETAIL] Started");
-      AppLogger.debugPrint("📦 Plan ID: $planId");
+  print("========== SEARCH API ==========");
+  print("PlanId : $planId");
+  print("Amount : $amount");
 
-      isLoading.value = true;
-      AppLogger.debugPrint("⏳ Loading Started");
+  final result = await searchPlanUsecase(
+    planId,
+    amount,
+  );
 
-      final result = await planDetailUseCase(planId: planId);
+  result.fold(
+    (failure) {
+      print("SEARCH FAILED");
+      print("Message : ${failure.message}");
 
-      AppLogger.debugPrint("✅ API Response Received");
+      CustomToast.error(failure.message);
+    },
+    (response) {
 
-      result.fold(
-        (failure) {
-          AppLogger.logError("❌ API Failed");
-          AppLogger.logError("📝 Error: ${failure.message}");
+      print("SEARCH SUCCESS");
+      print("Response : $response");
+      print("Data Count : ${response.data?.length}");
 
-          CustomToast.error(failure.message);
-        },
-        (response) {
-          AppLogger.logError("🎉 API Success");
-          AppLogger.logError("📊 Total Plans: ${response.data?.length ?? 0}");
-          AppLogger.logError("📄 Response Data: ${response.data}");
+      searchPlansList.value = response.data ?? [];
 
-          planDetailList.value = response.data ?? [];
+      applyTabFilter();
+    },
+  );
+}
+  
+void applyTabFilter() {
+  print("============== FILTER START ==============");
 
-          AppLogger.debugPrint(
-            "✅ planDetailList Updated: ${planDetailList.length} items",
-          );
-        },
-      );
-    } catch (e, s) {
-      AppLogger.logError("💥 Exception Occurred");
-      AppLogger.logError("Error: $e");
-      AppLogger.logError("StackTrace: $s");
-    } finally {
-      isLoading.value = false;
-      AppLogger.debugPrint("🏁 Loading Finished");
-    }
+  print("Selected Tab ID : $selectedTabId");
+
+  final selectedTab = planTabs.firstWhereOrNull(
+    (e) => e.id.toString() == selectedTabId,
+  );
+
+  if (selectedTab == null) {
+    print("No matching tab found");
+
+    filteredSearchPlans.value = searchPlansList;
+    return;
   }
 
-  Future<void> getTabDetail({required String tabid}) async {
-    try {
-      AppLogger.debugPrint("🔍 [GET Tab DETAIL] Started");
-      AppLogger.debugPrint("📦 Tab ID: $tabid");
+  final tabName = (selectedTab.planType ?? "")
+      .toLowerCase()
+      .trim();
 
-      isLoading.value = true;
-      AppLogger.debugPrint("⏳ Loading Started");
+  print("Selected Tab Name : $tabName");
 
-      final result = await tabdetailusecase(tabid: tabid);
+  print("Search Plan Count : ${searchPlansList.length}");
 
-      AppLogger.debugPrint("✅ API Response Received");
-
-      result.fold(
-        (failure) {
-          AppLogger.logError("❌ API Failed");
-          AppLogger.logError("📝 Error: ${failure.message}");
-
-          CustomToast.error(failure.message);
-        },
-        (response) {
-          AppLogger.logError("🎉 API Success");
-          AppLogger.logError("📊 Total Plans: ${response.data?.length ?? 0}");
-          AppLogger.logError("📄 Response Data: ${response.data}");
-
-          tabdetaillist.value = response.data ?? [];
-
-          AppLogger.debugPrint(
-            "✅ planDetailList Updated: ${planDetailList.length} items",
-          );
-        },
-      );
-    } catch (e, s) {
-      AppLogger.logError("💥 Exception Occurred");
-      AppLogger.logError("Error: $e");
-      AppLogger.logError("StackTrace: $s");
-    } finally {
-      isLoading.value = false;
-      AppLogger.debugPrint("🏁 Loading Finished");
-    }
+  for (final p in searchPlansList) {
+    print(
+      "PlanType => ${p.planType}",
+    );
   }
 
-  Future<void> searchPlans(String planId, String amount) async {
-    try {
-      AppLogger.debugPrint("🔍 [SEARCH PLANS] Started");
-      AppLogger.debugPrint("📦 PlanId: $planId | 💰 Amount: $amount");
+  filteredSearchPlans.value =
+      searchPlansList.where((plan) {
+    return (plan.planType ?? "")
+            .toLowerCase()
+            .trim() ==
+        tabName;
+  }).toList();
 
-      isLoading.value = true;
-      AppLogger.debugPrint("⏳ Loading started...");
+  print(
+    "Filtered Count : ${filteredSearchPlans.length}",
+  );
 
-      final result = await searchPlanUsecase(planId, amount);
+  print("============== FILTER END ==============");
+}
+  // Future<void> searchPlans(String planId, String amount) async {
+  //   try {
+  //     AppLogger.debugPrint("🔍 [SEARCH PLANS] Started");
+  //     AppLogger.debugPrint("📦 PlanId: $planId | 💰 Amount: $amount");
 
-      result.fold(
-        (failure) {
-          AppLogger.logError("❌ API Failed");
-          AppLogger.logError("⚠️ Error: ${failure.message}");
+  //     isLoading.value = true;
+  //     AppLogger.debugPrint("⏳ Loading started...");
 
-          CustomToast.error(failure.message);
-        },
-        (response) {
-          AppLogger.logError("✅ API Success");
+  //     final result = await searchPlanUsecase(planId, amount);
 
-          if (response.success == true) {
-            AppLogger.logError("📊 Data received: ${response.data}");
+  //     result.fold(
+  //       (failure) {
+  //         AppLogger.logError("❌ API Failed");
+  //         AppLogger.logError("⚠️ Error: ${failure.message}");
 
-            searchPlansList.value = response.data ?? [];
+  //         CustomToast.error(failure.message);
+  //       },
+  //       (response) {
+  //         AppLogger.logError("✅ API Success");
 
-            AppLogger.debugPrint("📌 Plans count: ${searchPlansList.length}");
-          } else {
-            AppLogger.debugPrint("⚠️ Response success = false");
-            searchPlansList.clear();
-          }
-        },
-      );
-    } catch (e) {
-      AppLogger.logError("🔥 Exception occurred: $e");
-    } finally {
-      isLoading.value = false;
-      AppLogger.logError("🏁 Loading finished");
-    }
-  }
+  //         if (response.success == true) {
+  //           AppLogger.logError("📊 Data received: ${response.data}");
+
+  //           searchPlansList.value = response.data ?? [];
+
+  //           AppLogger.debugPrint("📌 Plans count: ${searchPlansList.length}");
+  //         } else {
+  //           AppLogger.debugPrint("⚠️ Response success = false");
+  //           searchPlansList.clear();
+  //         }
+  //       },
+  //     );
+  //   } catch (e) {
+  //     AppLogger.logError("🔥 Exception occurred: $e");
+  //   } finally {
+  //     isLoading.value = false;
+  //     AppLogger.logError("🏁 Loading finished");
+  //   }
+  // }
 
   Future<void> confirmtrans(String prodcutdetid) async {
     AppLogger.logError("🚀 [CONFIRM TRANS] Started");
