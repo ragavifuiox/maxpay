@@ -20,8 +20,9 @@ class OtpRepoImpl implements OtpRepository {
       final response = await apiService.post(
         ApiRoutes.verifyotp,
         data: {"phone_number": phoneNumber, "otp": otp},
+        
       );
-
+print("RAW OTP RESPONSE => $response");
       final model = OtpResponse.fromJson(response);
       return Right(model);
     } catch (e) {

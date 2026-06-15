@@ -1,10 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_instance/src/extension_instance.dart';
+import 'package:get/get_navigation/src/extension_navigation.dart';
+import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
+import 'package:maxpay/controllers/dth_controller.dart';
+import 'package:maxpay/controllers/homepage_controller.dart';
+import 'package:maxpay/controllers/prepaid_controller.dart';
 import 'package:maxpay/core/constants/colors.dart';
+import 'package:maxpay/core/constants/routes_path.dart';
+import 'package:maxpay/core/data/model/search_dth_model.dart';
+import 'package:maxpay/core/di/service_locator.dart';
 import 'package:maxpay/core/utils/logg_helper.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
-
+import 'package:maxpay/core/data/model/plan_model.dart';
 class DTHRechargePage extends StatefulWidget {
   const DTHRechargePage({super.key});
 
@@ -13,109 +23,75 @@ class DTHRechargePage extends StatefulWidget {
 }
 
 class _DTHRechargePageState extends State<DTHRechargePage>
-    with SingleTickerProviderStateMixin {
-  late TabController _tabController;
-  String _selectedOperator = 'Airtel TV';
-  Color _selectedOperatorColor = Colors.red;
+  with SingleTickerProviderStateMixin {
+ 
+ Data? selectedOperatorObj;
+String _selectedOperator = "";
   bool _showCustomerInfo = false;
-
-  final List<Map<String, dynamic>> _operators = [
-    {'name': 'Airtel TV', 'color': Colors.red},
-    {'name': 'Dish TV', 'color': Colors.orange},
-    {'name': 'Tata Play', 'color': Colors.blue},
-    {'name': 'Sun Direct', 'color': Colors.yellow},
-    {'name': 'Videocon d2h', 'color': Colors.green},
-  ];
+  final PrePaidController controller = Get.put(PrePaidController(planUseCase: sl(), searchPlanUsecase: sl(), planDetailUseCase: sl(), transConfirmUseCase: sl(), mobileRechargeUseCase: sl(), plantabusecase: sl(), tabdetailusecase: sl()));
+  final DthController dthcontroller = Get.put(DthController(dthtabUseCase: sl(),searchdthusecase: sl(), confirmdthUsecase: sl(),dthrechargeusecase: sl()) );
+  final TextEditingController customerIdController =
+    TextEditingController();
 
   final TextEditingController amountController =
     TextEditingController();
 
-bool showNextButton = false;
+  bool showNextButton = false;
 
-  @override
-  void initState() {
-    super.initState();
-    _tabController = TabController(length: 2, vsync: this);
-  }
+ TabController? _tabController;
 
-  void _showOperatorSelector(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+String productId = "";
 
-    showDialog(
-      context: context,
-      builder: (context) {
-        return Dialog(
-          backgroundColor: isDark ? AppColors.darkbgBlack : Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16.r),
-          ),
-          child: Container(
-            padding: EdgeInsets.all(20.r),
-            width: 300.w,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Select Operator',
-                      style: TextStyle(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w700,
-                        color: isDark ? Colors.white : Colors.black,
-                      ),
-                    ),
-                    IconButton(
-                      icon: Icon(
-                        Icons.close,
-                        color: Colors.orange,
-                        size: 20.sp,
-                      ),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                  ],
-                ),
-                Divider(color: Colors.grey.withValues(alpha: 0.1)),
-                ..._operators.map(
-                  (op) => ListTile(
-                    contentPadding: EdgeInsets.symmetric(horizontal: 8.w),
-                    leading: CircleAvatar(
-                      radius: 18.r,
-                      backgroundColor: op['color'],
-                      child: Text(
-                        op['name'][0],
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    title: Text(
-                      op['name'],
-                      style: TextStyle(
-                        color: isDark ? Colors.white : Colors.black,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    onTap: () {
-                      setState(() {
-                        _selectedOperator = op['name'];
-                        _selectedOperatorColor = op['color'];
-                      });
-                      Navigator.pop(context);
-                    },
-                  ),
-                ),
-                SizedBox(height: 10.h),
-              ],
-            ),
-          ),
-        );
-      },
+
+
+@override
+void initState() {
+  super.initState();
+
+  print("Arguments => ${Get.arguments}");
+
+  final args = Get.arguments;
+
+  productId = args["productId"]?.toString() ?? "";
+final String selectedAmount = args['amount'] ?? '';
+  print("ARGUMENT PRODUCT ID => $productId"); // ✅ ADD HERE
+
+  print("ProductId => $productId");
+
+  controller.getPlans(productid: productId);
+
+  dthcontroller.getPlanTabs().then((_) {
+    if (dthcontroller.planTabs.isNotEmpty) {
+      _tabController = TabController(
+        length: dthcontroller.planTabs.length,
+        vsync: this,
+      );
+
+      dthcontroller.selectedPlanType.value =
+          dthcontroller.planTabs.first.planType ?? "";
+
+      setState(() {});
+    }
+  });
+}
+Future<void> _triggerSearch() async {
+  if (selectedOperatorObj == null) return;
+
+  final amount = amountController.text.trim();
+
+  if (amount.isEmpty) {
+    // FLOW 1: only productId
+    await dthcontroller.searchDth(
+      selectedOperatorObj!.id.toString(),
+    );
+  } else {
+    // FLOW 2: productId + amount
+    await dthcontroller.searchDth(
+      selectedOperatorObj!.id.toString(),
+      amount: amount,
     );
   }
-
+}
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -131,20 +107,15 @@ bool showNextButton = false;
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               /// 🔹 WALLET BALANCE CARD
-              Container(
+             Container(
                 width: double.infinity,
 
-                padding: EdgeInsets.symmetric(
-                  vertical: 15.h,
-                ),
+                padding: EdgeInsets.symmetric(vertical: 15.h),
 
                 decoration: BoxDecoration(
                   color: AppColors.clrPrimary,
 
-                  borderRadius:
-                      BorderRadius.circular(
-                        12.r,
-                      ),
+                  borderRadius: BorderRadius.circular(12.r),
                 ),
 
                 child: Column(
@@ -155,23 +126,25 @@ bool showNextButton = false;
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 14.sp,
-                        fontWeight:
-                            FontWeight.w600,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
 
                     SizedBox(height: 5.h),
 
-                    Text(
-                      '₹ 245005.23',
+                    Obx(() {
+                      final balance =
+                          Get.find<HomePageController>().walletBalance.value;
 
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20.sp,
-                        fontWeight:
-                            FontWeight.w700,
-                      ),
-                    ),
+                      return Text(
+                        "₹ ${balance?.data?.balance ?? "0.00"}",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 24.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      );
+                    }),
                   ],
                 ),
               ),
@@ -187,20 +160,23 @@ bool showNextButton = false;
                   borderRadius: BorderRadius.circular(10.r),
                 ),
                 child: TextField(
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    color: isDark ? Colors.white : Colors.black,
-                  ),
-                  decoration: InputDecoration(
-                    hintText: 'Enter Customer ID',
-                    hintStyle: TextStyle(color: Colors.grey, fontSize: 14.sp),
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.symmetric(
-                      horizontal: 16.w,
-                      vertical: 12.h,
-                    ),
+  controller: customerIdController,
+  keyboardType: TextInputType.number,
+  inputFormatters: [
+    FilteringTextInputFormatter.digitsOnly,
+  ],
+  style: TextStyle(
+    fontSize: 14.sp,
+    color: isDark ? Colors.white : Colors.black,
+  ),
+  decoration: InputDecoration(
+    hintText: 'Enter Customer ID',
+    border: InputBorder.none,
+    contentPadding: EdgeInsets.symmetric(
+      horizontal: 16.w,
+      vertical: 12.h,
+    ),
+  
                     suffixIcon: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -210,7 +186,7 @@ bool showNextButton = false;
                           size: 20.sp,
                         ),
                         SizedBox(width: 10.w),
-                        Icon(Icons.person, color: Colors.orange, size: 20.sp),
+                        // Icon(Icons.person, color: Colors.orange, size: 20.sp),
                         SizedBox(width: 10.w),
                       ],
                     ),
@@ -220,51 +196,74 @@ bool showNextButton = false;
               SizedBox(height: 15.h),
 
               /// 🔹 OPERATOR SELECTION
-              GestureDetector(
-                onTap: () => _showOperatorSelector(context),
-                child: Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 16.w,
-                    vertical: 12.h,
-                  ),
-                  decoration: BoxDecoration(
-                    color: isDark
-                        ? AppColors.darkplceholder
-                        : AppColors.clrplceholder,
-                    borderRadius: BorderRadius.circular(10.r),
-                  ),
-                  child: Row(
-                    children: [
-                      CircleAvatar(
-                        radius: 12.r,
-                        backgroundColor: _selectedOperatorColor,
-                        child: Text(
-                          _selectedOperator[0],
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 12.sp,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: 10.w),
-                      Text(
-                        _selectedOperator,
-                        style: TextStyle(
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.w500,
-                          color: isDark ? Colors.white : Colors.black,
-                        ),
-                      ),
-                      const Spacer(),
-                      Icon(
-                        Icons.arrow_drop_down,
-                        color: isDark ? Colors.white : Colors.black,
-                      ),
-                    ],
+              Obx(() {
+  if (controller.isLoading.value) {
+    return const Center(
+      child: CircularProgressIndicator(),
+    );
+  }
+
+  return Container(
+    padding: EdgeInsets.symmetric(horizontal: 14.w),
+    decoration: BoxDecoration(
+      color: isDark
+          ? AppColors.darkplceholder
+          : AppColors.clrplceholder,
+      borderRadius: BorderRadius.circular(10.r),
+    ),
+    child: DropdownButtonHideUnderline(
+      child: DropdownButton<Data>(
+        isExpanded: true,
+        value: selectedOperatorObj,
+
+        hint: const Text("Select Operator"),
+
+        items: controller.plans.map((Data operator) {
+          return DropdownMenuItem<Data>(
+            value: operator,
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    operator.name ?? "",
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
-              ),
+
+                if ((operator.logo ?? "").isNotEmpty)
+                 Container(
+  width: 45.w,
+  height: 45.w,
+  padding: EdgeInsets.all(5.w),
+  // decoration: BoxDecoration(
+  //   color: Colors.white,
+  //   borderRadius: BorderRadius.circular(8.r),
+  //   border: Border.all(color: Colors.grey.shade300),
+  // ),
+  child: Image.network(
+    operator.logo!,
+    fit: BoxFit.contain,
+  ),
+),
+              ],
+            ),
+          );
+        }).toList(),
+
+       onChanged: (Data? value) async {
+  if (value == null) return;
+
+  setState(() {
+    selectedOperatorObj = value;
+    _selectedOperator = value.name ?? "";
+  });
+
+  await _triggerSearch();
+},
+      ),
+    ),
+  );
+}),
               SizedBox(height: 15.h),
 
               /// 🔹 AMOUNT INPUT
@@ -281,11 +280,11 @@ bool showNextButton = false;
     inputFormatters: [
       FilteringTextInputFormatter.digitsOnly,
     ],
-    onChanged: (value) {
-      setState(() {
-        showNextButton = value.trim().isNotEmpty;
-      });
-    },
+  onChanged: (value) async {
+  dthcontroller.enteredAmount.value = value;
+
+  await _triggerSearch();
+},
     decoration: InputDecoration(
       hintText: 'Enter Amount',
       border: InputBorder.none,
@@ -305,39 +304,52 @@ bool showNextButton = false;
 
 
 
-if (showNextButton) ...[
-  SizedBox(height: 10.h),
+// if (showNextButton) ...[
+//   SizedBox(height: 10.h),
 
-  Align(
-    alignment: Alignment.centerRight,
-    child: SizedBox(
-      height: 38.h,
-      width: 90.w,
-      child: ElevatedButton(
-        onPressed: () {
-          AppLogger.debugPrint(amountController.text);
-        },
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.clrPrimary,
-          padding: EdgeInsets.zero,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8.r),
-          ),
-        ),
-        child: Text(
-          "Next",
-          style: TextStyle(
-            fontSize: 13.sp,
-            fontWeight: FontWeight.w600,
-            color: Colors.white,
-          ),
-        ),
-      ),
-    ),
-  ),
+//   Align(
+//     alignment: Alignment.centerRight,
+//     child: SizedBox(
+//       height: 38.h,
+//       width: 90.w,
+//       child: ElevatedButton(
+//         onPressed: () async {
+//   if (selectedOperatorObj == null) {
+//     Get.snackbar("Error", "Please select operator");
+//     return;
+//   }
 
-  SizedBox(height: 15.h),
-],
+//   if (amountController.text.trim().isEmpty) {
+//     Get.snackbar("Error", "Please enter amount");
+//     return;
+//   }
+
+//   await dthcontroller.searchDth(
+//     selectedOperatorObj!.id.toString(),
+//     amountController.text.trim(),
+//   );
+// },
+//         style: ElevatedButton.styleFrom(
+//           backgroundColor: AppColors.clrPrimary,
+//           padding: EdgeInsets.zero,
+//           shape: RoundedRectangleBorder(
+//             borderRadius: BorderRadius.circular(8.r),
+//           ),
+//         ),
+//         child: Text(
+//           "Next",
+//           style: TextStyle(
+//             fontSize: 13.sp,
+//             fontWeight: FontWeight.w600,
+//             color: Colors.white,
+//           ),
+//         ),
+//       ),
+//     ),
+//   ),
+
+//   SizedBox(height: 15.h),
+// ],
 if (showNextButton) SizedBox(height: 15.h),
 
 /// 🔹 TOGGLE BUTTONS (Plan / Customer Info)
@@ -361,30 +373,117 @@ Row(
 
               if (!_showCustomerInfo) ...[
                 /// 🔹 TABS FOR PLANS
-                TabBar(
-                  controller: _tabController,
-                  isScrollable: true,
-                  indicatorColor: Colors.orange,
-                  labelColor: Colors.orange,
-                  unselectedLabelColor: Colors.grey,
-                  dividerColor: Colors.transparent,
-                  tabAlignment: TabAlignment.start,
-                  tabs: const [
-                    Tab(text: 'Entertainment Plan'),
-                    Tab(text: 'Combo'),
-                  ],
-                ),
+              Obx(() {
+  if (dthcontroller.isLoading.value) {
+    return const Center(
+      child: CircularProgressIndicator(),
+    );
+  }
+
+  if (_tabController == null ||
+      dthcontroller.planTabs.isEmpty) {
+    return const SizedBox();
+  }
+
+ return TabBar(
+  controller: _tabController,
+  isScrollable: true,
+  indicatorColor: Colors.orange,
+  labelColor: Colors.orange,
+  unselectedLabelColor: Colors.grey,
+  dividerColor: Colors.transparent,
+  tabAlignment: TabAlignment.start,
+  onTap: (index) {
+    final selected = dthcontroller.planTabs[index].planType ?? "";
+
+    dthcontroller.selectedPlanType.value = selected;
+  },
+  tabs: dthcontroller.planTabs.map((tab) {
+    return Tab(text: tab.planType ?? "");
+  }).toList(),
+);
+}),
                 SizedBox(height: 15.h),
 
                 /// 🔹 PLAN LIST
-                ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: 3,
-                  itemBuilder: (context, index) {
-                    return _buildPlanCard(isDark);
-                  },
-                ),
+      Obx(() {
+  final enteredAmount = dthcontroller.enteredAmount.value;
+
+  final filteredPlans = dthcontroller.searchdthList.where((plan) {
+    return plan.planType == dthcontroller.selectedPlanType.value;
+  }).toList();
+
+  final List<Map<String, dynamic>> allPlans = [];
+
+  for (var plan in filteredPlans) {
+
+    void addPlan(String? amt, String validity) {
+      if (amt != null && amt.isNotEmpty && amt != "0") {
+        allPlans.add({
+          "amount": amt,
+          "validity": validity,
+          "plan": plan,
+        });
+      }
+    }
+
+    if (enteredAmount.isEmpty) {
+      addPlan(plan.oneMonth, "1 Month");
+      addPlan(plan.threeMonth, "3 Months");
+      addPlan(plan.sixMonth, "6 Months");
+      addPlan(plan.twelveMonth, "12 Months");
+    } else {
+      if (plan.oneMonth == enteredAmount) addPlan(plan.oneMonth, "1 Month");
+      if (plan.threeMonth == enteredAmount) addPlan(plan.threeMonth, "3 Months");
+      if (plan.sixMonth == enteredAmount) addPlan(plan.sixMonth, "6 Months");
+      if (plan.twelveMonth == enteredAmount) addPlan(plan.twelveMonth, "12 Months");
+    }
+  }
+
+  if (allPlans.isEmpty) {
+    return const Center(child: Text("No matching plans"));
+  }
+
+  return ListView.builder(
+    shrinkWrap: true,
+    physics: const NeverScrollableScrollPhysics(),
+    itemCount: allPlans.length,
+    itemBuilder: (context, index) {
+      final item = allPlans[index];
+
+      return _buildPlanCard(
+        isDark,
+        item["plan"],
+        item["amount"],
+        item["validity"],
+        
+                    onBuy: () async {
+  if (customerIdController.text.trim().isEmpty) {
+    Get.snackbar(
+      "Error",
+      "Please enter Customer ID",
+    );
+    return;
+  }
+
+  await dthcontroller.getconfirmdth(
+  item["plan"].productId.toString(),
+);
+
+Get.toNamed(
+  AppRoutes.confirmdth,
+  arguments: {
+    "type": "dth",
+    "customerId": customerIdController.text.trim(),
+    "productdetid": item["plan"].productId.toString(),
+    "amount": item["amount"].toString(),
+  },
+);
+},
+      );
+    },
+  );
+})
               ] else ...[
                 /// 🔹 CUSTOMER INFO SECTION
                 _buildCustomerInfoSection(isDark),
@@ -436,98 +535,229 @@ Row(
     );
   }
 
-  Widget _buildPlanCard(bool isDark) {
-    return Container(
-      margin: EdgeInsets.only(bottom: 15.h),
-      padding: EdgeInsets.all(16.r),
-      decoration: BoxDecoration(
-        color: Theme.of(context).brightness == Brightness.dark
-            ? AppColors.darkplceholder.withValues(alpha: 0.5)
-            : Colors.white,
-        borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: Colors.grey.withValues(alpha: 0.1)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              RichText(
-                text: TextSpan(
-                  children: [
-                    TextSpan(
-                      text: '₹ ',
-                      style: TextStyle(
-                        fontSize: 18.sp,
-                        fontFamily: 'Poppins',
-                        fontWeight: FontWeight.w300,
-                        color: Theme.of(context).brightness == Brightness.dark
-                            ? Colors.white
-                            : Colors.black,
-                      ),
-                    ),
-                    TextSpan(
-                      text: "365",
-                      style: TextStyle(
-                        fontSize: 18.sp,
-                        fontFamily: 'Poppins',
-                        fontWeight: FontWeight.w600,
-                        color: Theme.of(context).brightness == Brightness.dark
-                            ? Colors.white
-                            : Colors.black,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Row(children: [_buildPlanStat("28", ' days', 'validity')]),
-              GestureDetector(
-                onTap: () {
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(
-                  //     builder: (context) => ConfirmTransactionPage(
-                  //       // productName: _selectedOperator,
-                  //       // operatorInitial: _selectedOperator[0],
-                  //       // operatorColor: _selectedOperatorColor,
+Widget _buildPlanCard(
+  bool isDark,
+  SearchDthData plan,
+  String amount,
+  String validity, {
+  required VoidCallback onBuy,
+}) {
+  return Container(
+    margin: EdgeInsets.only(bottom: 15.h),
+    padding: EdgeInsets.all(16.r),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(16.r),
+      border: Border.all(color: Colors.grey.shade300),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
 
-                  //       // amount: "365",
-                        
-                  //     ),
-                  //   ),
-                  // );
-                },
-                child: Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 16.w,
-                    vertical: 6.h,
+        /// PLAN NAME
+        Text(
+          plan.planName ?? "",
+          style: TextStyle(
+            fontSize: 15.sp,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+
+        SizedBox(height: 15.h),
+
+        /// AMOUNT | VALIDITY | BUY
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+
+            /// AMOUNT
+            Text(
+              "₹ $amount",
+              style: TextStyle(
+                fontSize: 20.sp,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+
+            /// VALIDITY
+            Column(
+              children: [
+                Text(
+                  validity,
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w600,
                   ),
-                  decoration: BoxDecoration(
-                    color: AppColors.clrPrimary,
-                    borderRadius: BorderRadius.circular(6.r),
+                ),
+                Text(
+                  "Validity",
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontSize: 12.sp,
+                  ),
+                ),
+              ],
+            ),
+
+              SizedBox(
+                height: 28.h,
+                child: ElevatedButton(
+  onPressed: onBuy,
+ 
+
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF1DA1B8),
+                    elevation: 0,
+                    padding: EdgeInsets.symmetric(horizontal: 20.w),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.r),
+                    ),
                   ),
                   child: Text(
-                    'buy',
+                    "Buy",
                     style: TextStyle(
+                      fontSize: 10.sp,
                       color: Colors.white,
-                      fontSize: 12.sp,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                 ),
               ),
-            ],
+
+            /// BUY BUTTON
+            // Container(
+            //   padding: EdgeInsets.symmetric(
+            //     horizontal: 18.w,
+            //     vertical: 8.h,
+            //   ),
+            //   decoration: BoxDecoration(
+            //     color: AppColors.clrPrimary,
+            //     borderRadius: BorderRadius.circular(10.r),
+            //   ),
+            //   child: Text(
+            //     "Buy",
+            //     style: TextStyle(
+            //       color: Colors.white,
+            //       fontSize: 14.sp,
+            //       fontWeight: FontWeight.w600,
+            //     ),
+            //   ),
+            // ),
+          ],
+        ),
+
+        SizedBox(height: 12.h),
+
+          Divider(color: Colors.grey.shade300, thickness: 1),
+
+        SizedBox(height: 12.h),
+
+        /// DESCRIPTION
+        Center(
+          child: Text(
+            plan.planDetails ?? "",
+            style: TextStyle(
+              fontSize: 13.sp,
+              color: Colors.grey,
+            ),
           ),
-          SizedBox(height: 15.h),
-          Text(
-            '• 12am-12pm Unlimited Data\n• Unlimited Calls\n• Weekend Data Rollover',
-            style: TextStyle(fontSize: 11.sp, color: Colors.grey, height: 1.5),
-          ),
-        ],
-      ),
-    );
-  }
+        ),
+      ],
+    ),
+  );
+}
+  // Widget _buildPlanCard(bool isDark) {
+  //   return Container(
+  //     margin: EdgeInsets.only(bottom: 15.h),
+  //     padding: EdgeInsets.all(16.r),
+  //     decoration: BoxDecoration(
+  //       color: Theme.of(context).brightness == Brightness.dark
+  //           ? AppColors.darkplceholder.withValues(alpha: 0.5)
+  //           : Colors.white,
+  //       borderRadius: BorderRadius.circular(12.r),
+  //       border: Border.all(color: Colors.grey.withValues(alpha: 0.1)),
+  //     ),
+  //     child: Column(
+  //       crossAxisAlignment: CrossAxisAlignment.start,
+  //       children: [
+  //         Row(
+  //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //           children: [
+  //             RichText(
+  //               text: TextSpan(
+  //                 children: [
+  //                   TextSpan(
+  //                     text: '₹ ',
+  //                     style: TextStyle(
+  //                       fontSize: 18.sp,
+  //                       fontFamily: 'Poppins',
+  //                       fontWeight: FontWeight.w300,
+  //                       color: Theme.of(context).brightness == Brightness.dark
+  //                           ? Colors.white
+  //                           : Colors.black,
+  //                     ),
+  //                   ),
+  //                   TextSpan(
+  //                     text: "365",
+  //                     style: TextStyle(
+  //                       fontSize: 18.sp,
+  //                       fontFamily: 'Poppins',
+  //                       fontWeight: FontWeight.w600,
+  //                       color: Theme.of(context).brightness == Brightness.dark
+  //                           ? Colors.white
+  //                           : Colors.black,
+  //                     ),
+  //                   ),
+  //                 ],
+  //               ),
+  //             ),
+  //             Row(children: [_buildPlanStat("28", ' days', 'validity')]),
+  //             GestureDetector(
+  //               onTap: () {
+  //                 // Navigator.push(
+  //                 //   context,
+  //                 //   MaterialPageRoute(
+  //                 //     builder: (context) => ConfirmTransactionPage(
+  //                 //       // productName: _selectedOperator,
+  //                 //       // operatorInitial: _selectedOperator[0],
+  //                 //       // operatorColor: _selectedOperatorColor,
+
+  //                 //       // amount: "365",
+                        
+  //                 //     ),
+  //                 //   ),
+  //                 // );
+  //               },
+  //               child: Container(
+  //                 padding: EdgeInsets.symmetric(
+  //                   horizontal: 16.w,
+  //                   vertical: 6.h,
+  //                 ),
+  //                 decoration: BoxDecoration(
+  //                   color: AppColors.clrPrimary,
+  //                   borderRadius: BorderRadius.circular(6.r),
+  //                 ),
+  //                 child: Text(
+  //                   'buy',
+  //                   style: TextStyle(
+  //                     color: Colors.white,
+  //                     fontSize: 12.sp,
+  //                     fontWeight: FontWeight.w600,
+  //                   ),
+  //                 ),
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //         SizedBox(height: 15.h),
+  //         Text(
+  //           '• 12am-12pm Unlimited Data\n• Unlimited Calls\n• Weekend Data Rollover',
+  //           style: TextStyle(fontSize: 11.sp, color: Colors.grey, height: 1.5),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
 
   Widget _buildPlanStat(String value, String subLabel, String label) {
     return Column(
@@ -708,4 +938,4 @@ Widget _buildInfoRow(
     ),
   );
 }
-}
+} 

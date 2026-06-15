@@ -29,7 +29,6 @@ class PlanTab {
     return data;
   }
 }
-
 class PlantabData {
   int? id;
   String? planType;

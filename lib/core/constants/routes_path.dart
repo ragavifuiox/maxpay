@@ -41,4 +41,6 @@ class AppRoutes {
   static const String transconfirm='/transconfirm';
   static const String pdf='/pdf';
   static const String statementReadMore='/statementReadMore';
+  static const String enterPin='/enterPin';
+  static const String confirmdth='/confirmdth';
 }

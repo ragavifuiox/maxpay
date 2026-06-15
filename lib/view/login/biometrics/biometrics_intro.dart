@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:maxpay/controllers/auth_controller.dart';
 import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/core/utils/theme.dart';
@@ -12,6 +13,7 @@ class BiometricsIntroPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeController = Get.find<ThemeController>();
+    final controller = Get.find<AuthController>();
 
     return Obx(() {
       final theme = Theme.of(context);
@@ -63,7 +65,7 @@ class BiometricsIntroPage extends StatelessWidget {
               SizedBox(height: 16.h),
 
               Text(
-                'Add an extra layer of security to your wise app.',
+                'Add an extra layer of security to your account.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontFamily: 'Poppins',
@@ -75,46 +77,34 @@ class BiometricsIntroPage extends StatelessWidget {
 
               const Spacer(),
 
-              /// Common Button
-              Center(
-                child: CommonButton(
-                  title: 'Set Fingerprint',
-                  onTap: () {
-                    Get.toNamed(AppRoutes.biometricsScanning);
-                  },
-                ),
+              /// Enable Fingerprint Button
+              CommonButton(
+                title: "Enable Fingerprint",
+                onTap: () {
+                  Get.toNamed(
+                    AppRoutes.biometricsScanning,
+                  );
+                },
               ),
 
-              
+              SizedBox(height: 15.h),
 
-              SafeArea(
-                child: GestureDetector(
-                  onTap: () {
-                    Get.toNamed(AppRoutes.pinCodeCreation);
-                  },
-                  child: Container(
-                    width: 222,
-                    height: 50.h,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: isDark
-                            ? AppColors.clrPrimary
-                            : AppColors.clrSecondary.withValues(alpha: 0.5),
-                      ),
-                      borderRadius: BorderRadius.circular(10.r),
-                    ),
-                    child: Text(
-                      'Set Pin',
-                      style: TextStyle(
-                        fontFamily: 'Poppins',
-                        fontWeight: FontWeight.w600,
-                        fontSize: 16.sp,
-                        color: isDark
-                            ? AppColors.clrPrimary
-                            : AppColors.clrSecondary.withValues(alpha: 0.5),
-                      ),
-                    ),
+              /// Skip Button
+              TextButton(
+                onPressed: () async {
+                  await controller.fingerprint(0);
+
+                  Get.offAllNamed(
+                    AppRoutes.successScreen,
+                  );
+                },
+                child: Text(
+                  "Skip For Now",
+                  style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16.sp,
+                    color: AppColors.clrPrimary,
                   ),
                 ),
               ),

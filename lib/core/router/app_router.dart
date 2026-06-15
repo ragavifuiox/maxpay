@@ -2,7 +2,10 @@ import 'package:get/get.dart';
 import 'package:maxpay/controllers/add_staff_controller.dart';
 import 'package:maxpay/controllers/auth_controller.dart';
 import 'package:maxpay/controllers/credit_controller.dart';
+import 'package:maxpay/controllers/dispute_controller.dart';
+import 'package:maxpay/controllers/dth_controller.dart';
 import 'package:maxpay/controllers/earning_controller.dart';
+import 'package:maxpay/controllers/grade_controller.dart';
 import 'package:maxpay/controllers/homepage_controller.dart';
 import 'package:maxpay/controllers/menu_controlller.dart';
 import 'package:maxpay/controllers/prepaid_controller.dart';
@@ -15,6 +18,7 @@ import 'package:maxpay/core/di/service_locator.dart';
 import 'package:maxpay/view/add_wallet/add_wallet_screen.dart';
 import 'package:maxpay/view/cashback/cash_back_screen.dart';
 import 'package:maxpay/view/dispute/dispute_screen.dart';
+import 'package:maxpay/view/dth_recharge/confirm_dth_page.dart';
 import 'package:maxpay/view/dth_recharge/dth_recharge_page.dart';
 import 'package:maxpay/view/grade/grade_screen.dart';
 import 'package:maxpay/view/home/pages/home_page.dart';
@@ -22,6 +26,7 @@ import 'package:maxpay/view/home/widgets/services_section.dart';
 import 'package:maxpay/view/kyc/kyc_screen.dart';
 import 'package:maxpay/view/login/biometrics/biometrics_intro.dart';
 import 'package:maxpay/view/login/biometrics/biometrics_scanning.dart';
+import 'package:maxpay/view/login/biometrics/enter_pin%20screen.dart';
 import 'package:maxpay/view/login/biometrics/pin_code_creation.dart';
 import 'package:maxpay/view/login/biometrics/success_screen.dart';
 import 'package:maxpay/view/login/otp_verification_screen.dart';
@@ -73,12 +78,15 @@ class AppPages {
             otpUsecase: sl(),
             createPinUsecase: sl(),
             fingerPrintUsecase: sl(),
+            verifyPinUsecase: sl(),
           ),
 
           fenix: true,
         );
       }),
     ),
+
+
 
     GetPage(
       transition: Transition.fade,
@@ -117,6 +125,7 @@ class AppPages {
             otpUsecase: sl(),
             createPinUsecase: sl(),
             fingerPrintUsecase: sl(),
+            verifyPinUsecase: sl(),
           ),
 
           fenix: true,
@@ -129,7 +138,7 @@ class AppPages {
     ),
     GetPage(
       name: AppRoutes.biometricsIntro,
-      page: () => const BiometricsIntroPage(),
+      page: () => const BiometricsIntroPage()
     ),
     GetPage(
       name: AppRoutes.biometricsScanning,
@@ -160,6 +169,7 @@ class AppPages {
       }),
     ),
     GetPage(name: AppRoutes.home, page: () => const HomePageScreen()),
+    GetPage(name: AppRoutes.enterPin, page: () =>  PinCodeEnterPage()),
 
     // GetPage(name: AppRoutes.main, page: () => const NavPageScreen()),
     // GetPage(name: AppRoutes.myearning, page: () => const MyEarningsScreen()),
@@ -250,6 +260,24 @@ class AppPages {
       }),
     ),
 
+
+ GetPage(
+      transition: Transition.fade,
+
+      name: AppRoutes.confirmdth,
+
+      page: () => ConfirmDthPage(),
+
+      binding: BindingsBuilder(() {
+        Get.lazyPut<DthController>(
+          () => DthController(dthtabUseCase: sl(), searchdthusecase: sl(), confirmdthUsecase: sl(), dthrechargeusecase: sl()
+           
+          ),
+
+          fenix: true,
+        );
+      }),
+    ),
     GetPage(
       transition: Transition.fade,
 
@@ -285,7 +313,25 @@ class AppPages {
       page: () => const WebSignupSuccessScreen(),
     ),
     GetPage(name: AppRoutes.setting, page: () => const SettingsPage()),
-    GetPage(name: AppRoutes.grade, page: () => const GradeScreen()),
+     GetPage(
+      transition: Transition.fade,
+
+      name: AppRoutes.grade,
+
+      page: () => GradeScreen(),
+
+      binding: BindingsBuilder(() {
+        Get.lazyPut<GradeController>(
+          () => GradeController(
+            gradeusecase: sl()
+           
+          ),
+
+          fenix: true,
+        );
+      }),
+    ),
+    // GetPage(name: AppRoutes.grade, page: () => const GradeScreen()),
     GetPage(
       transition: Transition.fade,
 
@@ -355,16 +401,29 @@ class AppPages {
     GetPage(name: AppRoutes.walletbal, page: () => const WalletBalanceScreen()),
     GetPage(name: AppRoutes.dth, page: () => const DTHRechargePage()),
     GetPage(name: AppRoutes.addwallet, page: () => const AddWalletScreen()),
-    GetPage(name: AppRoutes.veirfypin, page: () => const VerifyPinPage()),
+    GetPage(name: AppRoutes.veirfypin, page: () =>  PinCodeEnterPage()),
     GetPage(
       name: AppRoutes.statementReadMore,
       page: () => const StatementReadMoreScreen(),
     ),
     GetPage(name: AppRoutes.webloginqr, page: () => const WebLoginScreen()),
-    GetPage(name: AppRoutes.dispute, page: () => const DisputeReportScreen()),
+   
+
     GetPage(
-      name: AppRoutes.customertrans,
-      page: () => const DisputeReportScreen(),
+      transition: Transition.fade,
+      name: AppRoutes.dispute,
+
+      page: () => DisputeReportScreen(),
+
+      binding: BindingsBuilder(() {
+        Get.lazyPut<DisputeController>(
+          () => DisputeController(
+           disputeusecase: sl()
+          ),
+
+          fenix: true,
+        );
+      }),
     ),
     GetPage(
       transition: Transition.fade,

@@ -14,9 +14,9 @@ class KycScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final controller = Get.put(AddKycController(addKycUsecase: sl()));
-    controller.emailController.text =
-        Get.find<ProfileController>().profileData.value?.data?.email ?? '';
+    final controller = Get.put(AddKycController(addKycUsecase: sl(), getkycUsecase: sl()));
+    // controller.emailController.text =
+    //     Get.find<ProfileController>().profileData.value?.data?.email ?? '';
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -45,22 +45,23 @@ class KycScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(color: theme.colorScheme.outline),
                 ),
-                child: TextFormField(
-                  controller: controller.emailController,
-                  style: TextStyle(color: theme.colorScheme.onSurface),
-                  decoration: InputDecoration(
-                    hintText: "Enter Mail ID",
-                    hintStyle: TextStyle(
-                      color: theme.colorScheme.onSurfaceVariant,
-                      fontSize: 14,
-                    ),
-                    border: InputBorder.none,
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 14,
-                      vertical: 15,
-                    ),
-                  ),
-                ),
+                child: Obx(
+  () => TextFormField(
+    controller: controller.emailController,
+    readOnly: controller.isKycSubmitted.value,
+    style: TextStyle(
+      color: theme.colorScheme.onSurface,
+    ),
+    decoration: InputDecoration(
+      hintText: "Enter Mail ID",
+      border: InputBorder.none,
+      contentPadding: const EdgeInsets.symmetric(
+        horizontal: 14,
+        vertical: 15,
+      ),
+    ),
+  ),
+)
               ),
               const SizedBox(height: 22),
               Text(
@@ -72,12 +73,15 @@ class KycScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 10),
-              Obx(
-                () => UploadCard(
-                  onTap: () => controller.pickImage('idProof'),
-                  selectedFile: controller.idProof.value,
-                ),
-              ),
+          Obx(
+  () => UploadCard(
+    onTap: controller.isKycSubmitted.value
+        ? () {}
+        : () => controller.pickImage('idProof'),
+    selectedFile: controller.idProof.value,
+    fileName: controller.addressFileName.value,
+  ),
+),
               const SizedBox(height: 22),
               Text(
                 "GST No",
@@ -88,12 +92,15 @@ class KycScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 10),
-              Obx(
-                () => UploadCard(
-                  onTap: () => controller.pickImage('gstNo'),
-                  selectedFile: controller.gstNo.value,
-                ),
-              ),
+          Obx(
+  () => UploadCard(
+    onTap: controller.isKycSubmitted.value
+        ? () {}
+        : () => controller.pickImage('gstNo'),
+    selectedFile: controller.gstNo.value,
+    fileName: controller.gstFileName.value,
+  ),
+),
               const SizedBox(height: 22),
               Text(
                 "Pan Card",
@@ -104,21 +111,30 @@ class KycScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 10),
-              Obx(
-                () => UploadCard(
-                  onTap: () => controller.pickImage('pan'),
-                  selectedFile: controller.pan.value,
-                ),
-              ),
+            Obx(
+  () => UploadCard(
+    onTap: controller.isKycSubmitted.value
+        ? () {}
+        : () => controller.pickImage('pan'),
+    selectedFile: controller.pan.value,
+    fileName: controller.panFileName.value,
+  ),
+),
               const SizedBox(height: 35),
-              Center(
-                child: Obx(
-                  () => CommonButton(
-                    title: controller.isLoading.value ? "Loading..." : "Submit",
-                    onTap: () => controller.submitKyc(),
-                  ),
-                ),
-              ),
+             Obx(() {
+  if (controller.isKycSubmitted.value) {
+    return const SizedBox();
+  }
+
+  return Center(
+    child: CommonButton(
+      title: controller.isLoading.value
+          ? "Loading..."
+          : "Submit",
+      onTap: controller.submitKyc,
+    ),
+  );
+}),
               const SizedBox(height: 25),
             ],
           ),
@@ -131,67 +147,63 @@ class KycScreen extends StatelessWidget {
 class UploadCard extends StatelessWidget {
   final VoidCallback onTap;
   final File? selectedFile;
+  final String fileName;
 
-  const UploadCard({super.key, required this.onTap, this.selectedFile});
+  const UploadCard({
+    super.key,
+    required this.onTap,
+    this.selectedFile,
+    this.fileName = '',
+  });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
+    bool hasFile =
+        selectedFile != null || fileName.isNotEmpty;
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
         width: double.infinity,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-        decoration: BoxDecoration(
-          color: theme.brightness == Brightness.light
-              ? AppColors.background
-              : theme.colorScheme.surfaceContainer,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: theme.colorScheme.outline),
+        padding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 24,
         ),
-        child: selectedFile != null
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: theme.colorScheme.outline,
+          ),
+        ),
+        child: hasFile
             ? Column(
                 children: [
-                  const Icon(Icons.check_circle, color: Colors.green, size: 40),
-                  const SizedBox(height: 12),
+                  const Icon(
+                    Icons.check_circle,
+                    color: Colors.green,
+                    size: 40,
+                  ),
+                  const SizedBox(height: 10),
                   Text(
-                    selectedFile!.path.split('/').last,
+                    selectedFile != null
+                        ? selectedFile!.path.split('/').last
+                        : fileName,
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: theme.colorScheme.onSurface,
-                    ),
                   ),
                 ],
               )
             : Column(
-                spacing: 4,
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.cloud_upload_outlined,
                     size: 42,
-                    color: theme.colorScheme.onSurface,
-                  ),
-
-                  Text(
-                    "Browse and choose the files you want\nto upload from your Device",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 12,
-                      height: 1.5,
-                      color: theme.colorScheme.onSurface,
-                    ),
                   ),
                   const SizedBox(height: 10),
-                  Container(
-                    height: 34,
-                    width: 34,
-                    decoration: BoxDecoration(
-                      color: const Color(0xff0C8A5B),
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    child: const Icon(Icons.add, color: Colors.white, size: 20),
+                  const Text(
+                    "Browse and choose files",
+                    textAlign: TextAlign.center,
                   ),
                 ],
               ),
@@ -199,3 +211,4 @@ class UploadCard extends StatelessWidget {
     );
   }
 }
+

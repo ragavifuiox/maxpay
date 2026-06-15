@@ -33,10 +33,11 @@ class ConfirmData {
   String? planDetails;
   String? paymentStatus;
   String? transactionNo;
-  int? availableBalance;
+
   String? transactionAmount;
   String? commision;
-  int? remainingBalance;
+String? availableBalance;
+String? remainingBalance;
   String?logo;
 
   ConfirmData(
@@ -61,10 +62,11 @@ class ConfirmData {
     planDetails = json['plan_details'];
     paymentStatus = json['payment_status'];
     transactionNo = json['transaction_no'];
-    availableBalance = json['available_balance'];
+    availableBalance = json['available_balance']?.toString();
+remainingBalance = json['remaining_balance']?.toString();
     transactionAmount = json['transaction_amount'];
     commision = json['commision'];
-    remainingBalance = json['remaining_balance'];
+    // remainingBalance = json['remaining_balance'];
     logo = json['product_logp'];
   }
 

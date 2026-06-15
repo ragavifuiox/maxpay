@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:maxpay/core/utils/logg_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import 'package:maxpay/core/data/model/compalints_model.dart' hide Data;
 import 'package:maxpay/core/data/model/news_model.dart';
 import 'package:maxpay/core/data/model/popup_message_mode.dart' hide Data;
@@ -49,6 +48,7 @@ class HomePageController extends GetxController {
       await fetchWalletBalance();
       await fetchComplaints();
       await getTransactionSummary();
+      // await fetchpopupmessage();
     });
   }
 

@@ -4,7 +4,13 @@ import 'package:maxpay/core/constants/asset_images.dart';
 import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/core/utils/texthelper.dart';
 
-class Disputefilter extends StatelessWidget {
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:maxpay/controllers/dispute_controller.dart';
+import 'package:maxpay/core/constants/colors.dart';
+import 'package:maxpay/core/utils/texthelper.dart';
+
+class Disputefilter extends GetView<DisputeController> {
   const Disputefilter({super.key});
 
   @override
@@ -15,28 +21,32 @@ class Disputefilter extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: isDark ? AppColors.darkplceholder : AppColors.background,
-
+        color: isDark
+            ? AppColors.darkplceholder
+            : AppColors.background,
         borderRadius: BorderRadius.circular(10),
-
         border: Border.all(
           color: isDark
               ? AppColors.darkFilterBorder
               : AppColors.totalborde2.withValues(alpha: 0.1),
         ),
       ),
-
-      child: Column(
-        children: [
-          /// SELECT CREDIT TYPE
-          
-
-          const SizedBox(height: 8),
-
-          /// DATE FIELD
-          Row(
+      child: GetBuilder<DisputeController>(
+        builder: (controller) {
+          return Row(
             children: [
-              _DateField(hint: "DD.MM.YYYY", style: TextHelper.max1),
+              Expanded(
+                child: GestureDetector(
+                  onTap: () =>
+                      controller.selectFromDate(context),
+                  child: _DateField(
+                    hint: controller.fromDate.isEmpty
+                        ? "From Date"
+                        : controller.fromDate,
+                    style: TextHelper.max1,
+                  ),
+                ),
+              ),
 
               const SizedBox(width: 8),
 
@@ -48,69 +58,21 @@ class Disputefilter extends StatelessWidget {
 
               const SizedBox(width: 8),
 
-              _DateField(hint: "DD.MM.YYYY", style: TextHelper.max1),
-            ],
-          ),
-
-          const SizedBox(height: 8),
-
-          /// SEARCH FIELD
-          TextField(
-            style: TextStyle(color: theme.colorScheme.onSurface),
-
-            decoration: InputDecoration(
-              prefixIcon: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: SvgPicture.asset(
-                  AssetImages.search,
-                  colorFilter: ColorFilter.mode(
-                    isDark
-                        ? AppColors.textclr
-                        : theme.colorScheme.onSurfaceVariant,
-                    BlendMode.srcIn,
+              Expanded(
+                child: GestureDetector(
+                  onTap: () =>
+                      controller.selectToDate(context),
+                  child: _DateField(
+                    hint: controller.toDate.isEmpty
+                        ? "To Date"
+                        : controller.toDate,
+                    style: TextHelper.max1,
                   ),
                 ),
               ),
-
-              hintText: "Search",
-
-              hintStyle: TextHelper.max1.copyWith(
-                color: isDark ? AppColors.textclr : AppColors.clrTextgrey,
-              ),
-              filled: true,
-
-              fillColor: isDark ? AppColors.darkplceholder : Colors.white,
-
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(7),
-
-                borderSide: BorderSide(
-                  color: isDark
-                      ? AppColors.darkFilterBorder
-                      : AppColors.totalborde2,
-                ),
-              ),
-
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(7),
-
-                borderSide: BorderSide(
-                  color: isDark
-                      ? AppColors.darkFilterBorder
-                      : AppColors.totalborde2,
-                ),
-              ),
-
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(7),
-
-                borderSide: BorderSide(color: theme.colorScheme.primary),
-              ),
-
-              contentPadding: const EdgeInsets.symmetric(vertical: 0),
-            ),
-          ),
-        ],
+            ],
+          );
+        },
       ),
     );
   }
@@ -121,43 +83,45 @@ class _DateField extends StatelessWidget {
   final String hint;
   final TextStyle? style;
 
-  const _DateField({required this.hint, this.style});
+  const _DateField({
+    required this.hint,
+    this.style,
+  });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-
-        decoration: BoxDecoration(
-          color: isDark ? AppColors.darkplceholder : Colors.white,
-
-          borderRadius: BorderRadius.circular(7),
-
-          border: Border.all(
-            color: isDark ? AppColors.darkFilterBorder : AppColors.totalborde2,
-          ),
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 10,
+        vertical: 10,
+      ),
+      decoration: BoxDecoration(
+        color: isDark
+            ? AppColors.darkplceholder
+            : Colors.white,
+        borderRadius: BorderRadius.circular(7),
+        border: Border.all(
+          color: isDark
+              ? AppColors.darkFilterBorder
+              : AppColors.totalborde2,
         ),
-
-        child: Text(
-          hint,
-
-          style:
-              style?.copyWith(
-                color: isDark
-                    ? AppColors.textclr
-                    : theme.colorScheme.onSurfaceVariant,
-              ) ??
-              TextStyle(
-                fontSize: 12,
-                color: isDark
-                    ? AppColors.textclr
-                    : theme.colorScheme.onSurfaceVariant,
-              ),
-        ),
+      ),
+      child: Text(
+        hint,
+        style: style?.copyWith(
+              color: isDark
+                  ? AppColors.textclr
+                  : theme.colorScheme.onSurfaceVariant,
+            ) ??
+            TextStyle(
+              fontSize: 12,
+              color: isDark
+                  ? AppColors.textclr
+                  : theme.colorScheme.onSurfaceVariant,
+            ),
       ),
     );
   }

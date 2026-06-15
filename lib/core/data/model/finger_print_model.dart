@@ -1,6 +1,6 @@
 class FingerPrint {
   bool? success;
-  Data? data;
+  FingerData? data;
   String? message;
   int? code;
 
@@ -8,7 +8,7 @@ class FingerPrint {
 
   FingerPrint.fromJson(Map<String, dynamic> json) {
     success = json['success'];
-    data = json['data'] != null ? Data.fromJson(json['data']) : null;
+    data = json['data'] != null ? FingerData.fromJson(json['data']) : null;
     message = json['message'];
     code = json['code'];
   }
@@ -25,12 +25,12 @@ class FingerPrint {
   }
 }
 
-class Data {
+class FingerData {
   int? isFingerPrint;
 
-  Data({this.isFingerPrint});
+  FingerData({this.isFingerPrint});
 
-  Data.fromJson(Map<String, dynamic> json) {
+  FingerData.fromJson(Map<String, dynamic> json) {
     isFingerPrint = json['is_finger_print'];
   }
 
