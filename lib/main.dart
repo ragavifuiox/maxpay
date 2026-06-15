@@ -37,7 +37,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     final themeController = Get.find<ThemeController>();
 
     return ScreenUtilInit(
@@ -46,21 +45,14 @@ class MyApp extends StatelessWidget {
       splitScreenMode: true,
 
       builder: (_, child) {
-
         return GetMaterialApp(
-
           title: 'PayLink',
           debugShowCheckedModeBanner: false,
-
           theme: AppTheme.lightTheme,
           darkTheme: AppTheme.darkTheme,
-
           themeMode: themeController.themeMode,
-
           initialBinding: InitialBinding(),
-
           initialRoute: AppRoutes.splash,
-
           getPages: AppPages.pages,
         );
       },

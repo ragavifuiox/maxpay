@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/core/constants/snackbar.dart';
+import 'package:maxpay/core/extensions/currency.dart';
 import 'package:maxpay/core/utils/logg_helper.dart';
 import 'package:maxpay/global_widget/commom_button.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
@@ -20,8 +21,7 @@ class ConfirmTransactionPage extends GetView<PrePaidController> {
 
   late String productdetid;
   final args = Get.arguments ?? {};
-String get type => args["type"] ?? "mobile";
-
+  String get type => args["type"] ?? "mobile";
 
   void setProductId(String id) {
     productdetid = id;
@@ -123,7 +123,7 @@ String get type => args["type"] ?? "mobile";
                         _buildAmountBox(
                           context,
                           'Available Balance',
-                          '₹${confirmData.availableBalance ?? 0}',
+                          (confirmData.availableBalance ?? '0').currencyIndian,
                           Colors.blue,
                           const Color(0xffE8EEFF),
                           const Color(0xffE0E4FF),
@@ -132,7 +132,7 @@ String get type => args["type"] ?? "mobile";
                         _buildAmountBox(
                           context,
                           'Transaction Amount',
-                          '₹${confirmData.transactionAmount ?? "0"}',
+                          confirmData.transactionAmount?.currencyIndian ?? "0",
                           Colors.red,
                           const Color(0xffFFE5E5),
                           const Color(0xffFFE4E8),
@@ -141,7 +141,7 @@ String get type => args["type"] ?? "mobile";
                         _buildAmountBox(
                           context,
                           'Commission',
-                          '₹${confirmData.commision ?? "0"}',
+                          (confirmData.commision ?? '0').currencyIndian,
                           Colors.green,
                           const Color(0xffE4FFF1),
                           const Color(0xffE6FFF3),
@@ -150,7 +150,7 @@ String get type => args["type"] ?? "mobile";
                         _buildAmountBox(
                           context,
                           'Remaining Balance',
-                          '₹${confirmData.remainingBalance ?? 0}',
+                          (confirmData.remainingBalance ?? '0').currencyIndian,
                           Colors.blue,
                           const Color(0xffE8EEFF),
                           const Color(0xffE0E4FF),
@@ -202,7 +202,7 @@ String get type => args["type"] ?? "mobile";
                           AppRoutes.customertrans,
                           arguments: {
                             "mobileNumber": mobileNumber,
-                            "productdetid": args['productdetid'], 
+                            "productdetid": args['productdetid'],
                             "productName": confirmData.productName ?? '',
                             "paymentStatus": confirmData.paymentStatus ?? '',
                             "transactionNo": mobileNumber,
@@ -214,7 +214,7 @@ String get type => args["type"] ?? "mobile";
                                 : '',
                             "operatorColor": Colors.red,
                             "operatorLogo": confirmData.logo ?? '',
-                          }
+                          },
                         );
                       },
                     ),
@@ -285,7 +285,9 @@ String get type => args["type"] ?? "mobile";
                                           apiData?.mobileno ?? mobileNumber,
 
                                       rechargeAmount:
-                                          "₹${apiData?.amount ?? amountController.text}",
+                                          (apiData?.amount ??
+                                                  amountController.text)
+                                              .currencyIndian,
 
                                       transactionId: apiData?.txnid ?? "",
 

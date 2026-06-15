@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:maxpay/controllers/profile_controller.dart';
 import 'package:maxpay/core/constants/colors.dart';
+import 'package:maxpay/core/extensions/currency.dart';
 
 class PdfScreen extends StatelessWidget {
   final String transactionId;
@@ -62,12 +63,20 @@ class PdfScreen extends StatelessWidget {
 
             const Divider(),
 
-            _detailRow(context, "Transaction", "Success",
-                valueColor: Colors.green),
+            _detailRow(
+              context,
+              "Transaction",
+              "Success",
+              valueColor: Colors.green,
+            ),
 
             _detailRow(context, "Transaction No", transactionNo),
 
-            _detailRow(context, "Transaction Amount", rechargeAmount),
+            _detailRow(
+              context,
+              "Transaction Amount",
+              rechargeAmount.currencyIndian,
+            ),
 
             _detailRow(context, "Product Type", "Mobile Prepaid"),
 
@@ -86,11 +95,7 @@ class PdfScreen extends StatelessWidget {
               ),
               child: Column(
                 children: [
-                  _detailRow(
-                    context,
-                    "Retailer Name",
-                    profile?.name ?? "N/A",
-                  ),
+                  _detailRow(context, "Retailer Name", profile?.name ?? "N/A"),
                   _detailRow(
                     context,
                     "Contact No",
@@ -104,105 +109,104 @@ class PdfScreen extends StatelessWidget {
       ),
     );
   }
-Widget _logoRow(String title, String imageUrl, BuildContext context) {
-  return Padding(
-    padding: EdgeInsets.symmetric(vertical: 6.h),
-    child: Row(
-      children: [
-        Expanded(
-          flex: 4,
-          child: Text(
-            title,
-            style: TextStyle(
-              fontSize: 13.sp,
-              fontWeight: FontWeight.w400,
+
+  Widget _logoRow(String title, String imageUrl, BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 6.h),
+      child: Row(
+        children: [
+          Expanded(
+            flex: 4,
+            child: Text(
+              title,
+              style: TextStyle(fontSize: 13.sp, fontWeight: FontWeight.w400),
             ),
           ),
-        ),
 
-        Text(":"),
+          Text(":"),
 
-        SizedBox(width: 10.w),
+          SizedBox(width: 10.w),
 
-        Expanded(
-          flex: 5,
-          child: Align(
-            alignment: Alignment.centerRight,
-            child: Image.network(
-              imageUrl,
-              width: 45.w,
-              height: 25.h,
-              fit: BoxFit.contain,
-              errorBuilder: (c, e, s) {
-                return Icon(Icons.image_not_supported, size: 18.sp);
-              },
+          Expanded(
+            flex: 5,
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: Image.network(
+                imageUrl,
+                width: 45.w,
+                height: 25.h,
+                fit: BoxFit.contain,
+                errorBuilder: (c, e, s) {
+                  return Icon(Icons.image_not_supported, size: 18.sp);
+                },
+              ),
             ),
           ),
-        ),
-      ],
-    ),
-  );
-}
+        ],
+      ),
+    );
+  }
 
-   Widget _detailRow(
-  BuildContext context,
-  String title,
-  String value, {
-  Color? valueColor,
-  Color? textColor,
-
-}) {
-  return Padding(
-    padding: EdgeInsets.symmetric(vertical: 6.h),
-    child: Row(
-      children: [
-        Expanded(
-          flex: 4,
-          child:
+  Widget _detailRow(
+    BuildContext context,
+    String title,
+    String value, {
+    Color? valueColor,
+    Color? textColor,
+  }) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 6.h),
+      child: Row(
+        children: [
+          Expanded(
+            flex: 4,
+            child: Text(
+              title,
+              style: TextStyle(
+                color:
+                    textColor ??
+                    (Theme.of(context).brightness == Brightness.dark
+                        ? Colors.white
+                        : Colors.black87),
+                fontSize: 13.sp,
+                fontWeight: FontWeight.w400,
+                fontFamily: 'Poppins',
+              ),
+            ),
+          ),
           Text(
-  title,
-  style: TextStyle(
-    color: textColor ??
-        (Theme.of(context).brightness == Brightness.dark
-            ? Colors.white
-            : Colors.black87),
-    fontSize: 13.sp,
-    fontWeight: FontWeight.w400,
-    fontFamily: 'Poppins',
-  ),
-),
-        ),
-        Text(
-          ":",
-          style: TextStyle(
-            color: textColor ??
-        (Theme.of(context).brightness == Brightness.dark
-            ? Colors.white
-            : Colors.black87),
-            fontSize: 13.sp,
-            fontWeight: FontWeight.w700,
-            fontFamily: 'Poppins',
+            ":",
+            style: TextStyle(
+              color:
+                  textColor ??
+                  (Theme.of(context).brightness == Brightness.dark
+                      ? Colors.white
+                      : Colors.black87),
+              fontSize: 13.sp,
+              fontWeight: FontWeight.w700,
+              fontFamily: 'Poppins',
+            ),
           ),
-        ),
-        SizedBox(width: 10.w),
-        Expanded(
-          flex: 5,
-          child: Text(
-  value,
-  textAlign: TextAlign.end,
-  style: TextStyle(
-    color: valueColor ??
-        textColor ??
-        (Theme.of(context).brightness == Brightness.dark
-            ? Colors.white
-            : Colors.black),
-    fontWeight: FontWeight.w700,
-    fontSize: 13.sp,
-  ),
-),
-        ),
-      ],
-    ),
-  );
-}
+          SizedBox(width: 10.w),
+          Expanded(
+            flex: 5,
+            child: Text(
+              value,
+              textAlign: TextAlign.end,
+              style: TextStyle(
+                color:
+                    valueColor ??
+                    textColor ??
+                    (Theme.of(context).brightness == Brightness.dark
+                        ? Colors.white
+                        : Colors.black),
+                fontWeight: FontWeight.w700,
+                fontSize: 13.sp,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }

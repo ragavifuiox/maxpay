@@ -34,83 +34,85 @@ class BiometricsIntroPage extends StatelessWidget {
             ),
           ),
         ),
-        body: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 24.w),
-          child: Column(
-            children: [
-              SizedBox(height: 40.h),
+        body: SafeArea(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 24.w),
+            child: Column(
+              children: [
+                SizedBox(height: 40.h),
 
-              Center(
-                child: Icon(
-                  Icons.fingerprint,
-                  size: 120.r,
-                  color: AppColors.clrPrimary.withValues(alpha: 0.6),
+                Center(
+                  child: Icon(
+                    Icons.fingerprint,
+                    size: 120.r,
+                    color: AppColors.clrPrimary.withValues(alpha: 0.6),
+                  ),
                 ),
-              ),
 
-              SizedBox(height: 40.h),
+                SizedBox(height: 40.h),
 
-              Text(
-                'Protect your account\nwith biometrics',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontFamily: 'Poppins',
-                  fontWeight: FontWeight.w600,
-                  fontSize: 25.sp,
-                  color: colorScheme.onSurface,
-                  height: 1.2,
-                ),
-              ),
-
-              SizedBox(height: 16.h),
-
-              Text(
-                'Add an extra layer of security to your account.',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontFamily: 'Poppins',
-                  fontWeight: FontWeight.w400,
-                  fontSize: 12.sp,
-                  color: AppColors.darktextclr,
-                ),
-              ),
-
-              const Spacer(),
-
-              /// Enable Fingerprint Button
-              CommonButton(
-                title: "Enable Fingerprint",
-                onTap: () {
-                  Get.toNamed(
-                    AppRoutes.biometricsScanning,
-                  );
-                },
-              ),
-
-              SizedBox(height: 15.h),
-
-              /// Skip Button
-              TextButton(
-                onPressed: () async {
-                  await controller.fingerprint(0);
-
-                  Get.offAllNamed(
-                    AppRoutes.successScreen,
-                  );
-                },
-                child: Text(
-                  "Skip For Now",
+                Text(
+                  'Protect your account\nwith biometrics',
+                  textAlign: TextAlign.center,
                   style: TextStyle(
                     fontFamily: 'Poppins',
                     fontWeight: FontWeight.w600,
-                    fontSize: 16.sp,
-                    color: AppColors.clrPrimary,
+                    fontSize: 25.sp,
+                    color: colorScheme.onSurface,
+                    height: 1.2,
                   ),
                 ),
-              ),
 
-              SizedBox(height: 40.h),
-            ],
+                SizedBox(height: 16.h),
+
+                Text(
+                  'Add an extra layer of security to your account.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w400,
+                    fontSize: 12.sp,
+                    color: AppColors.darktextclr,
+                  ),
+                ),
+
+                const Spacer(),
+
+                /// Enable Fingerprint Button
+                Column(
+                  crossAxisAlignment: .center,
+                  mainAxisAlignment: .center,
+                  spacing: 20.h,
+                  children: [
+                    CommonButton(
+                      title: "Enable Fingerprint",
+                      onTap: () {
+                        Get.toNamed(AppRoutes.biometricsScanning);
+                      },
+                    ),
+
+                    GestureDetector(
+                      onTap: () async {
+                        await controller.fingerprint(0);
+
+                        Get.offAllNamed(AppRoutes.successScreen);
+                      },
+                      child: Text(
+                        "Skip For Now",
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16.sp,
+                          color: AppColors.clrPrimary,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+
+                SizedBox(height: 40.h),
+              ],
+            ),
           ),
         ),
       );
