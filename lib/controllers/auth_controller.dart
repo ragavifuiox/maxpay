@@ -304,8 +304,9 @@ class AuthController extends GetxController {
       } else {
         CustomToast.error("Fingerprint authentication failed");
       }
-    } catch (e) {
-      CustomToast.error(e.toString());
+    } on LocalAuthException catch (e) {
+      // CustomToast.error(e.toString());
+      AppLogger.logError("FINGERPRINT AUTHENTICATION ERROR : ${e.toString()}");
     }
   }
 

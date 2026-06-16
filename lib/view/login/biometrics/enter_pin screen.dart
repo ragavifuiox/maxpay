@@ -158,6 +158,7 @@ class _PinCodeEnterPageState extends State<PinCodeEnterPage> {
                     duration: const Duration(milliseconds: 300),
                     child: showVerifyButton.value
                         ? Row(
+                            mainAxisAlignment: .start,
                             key: const ValueKey('verify'),
                             children: [
                               // Expanded(
@@ -178,10 +179,11 @@ class _PinCodeEnterPageState extends State<PinCodeEnterPage> {
                               //     ),
                               //   ),
                               // ),
-                              SizedBox(width: 20.w),
+                              // SizedBox(width: 20.w),
                               Expanded(
                                 child: CommonButton(
                                   title: "Verify",
+                                  isLoading: controller.isLoading.value,
                                   onTap: () async {
                                     final success = await controller.verifyPin(
                                       pinController.text.trim(),

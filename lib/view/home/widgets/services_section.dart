@@ -209,6 +209,7 @@ class MenuScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           /// LEFT BANNER
+                          SizedBox(width: 2.w),
                           Expanded(
                             child: InkWell(
                               onTap: () {
