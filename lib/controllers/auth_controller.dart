@@ -298,6 +298,7 @@ class AuthController extends GetxController {
       );
 
       if (authenticated) {
+        await storage.saveString("last_active_time", DateTime.now().toIso8601String());
         Get.offAllNamed(AppRoutes.main);
       } else {
         CustomToast.error("Fingerprint authentication failed");
@@ -373,6 +374,7 @@ class AuthController extends GetxController {
 
           if (response.success == true) {
             await storage.saveInt("is_pin", 1);
+            await storage.saveString("last_active_time", DateTime.now().toIso8601String());
 
             AppLogger.logError("IS_PIN SAVED => ${storage.getInt("is_pin")}");
 
@@ -398,15 +400,15 @@ class AuthController extends GetxController {
 
       final result = await verifyPinUsecase(pin);
 
-      return result.fold(
-        (failure) {
+      return await result.fold(
+        (failure) async {
           AppLogger.logError("VERIFY PIN FAILURE:");
           AppLogger.logError(failure.message);
 
           CustomToast.error(failure.message);
           return false;
         },
-        (response) {
+        (response) async {
           AppLogger.logError("=========== RAW RESPONSE ===========");
           AppLogger.logError("SUCCESS: ${response.success}");
           AppLogger.logError("MESSAGE: ${response.message}");
@@ -420,6 +422,7 @@ class AuthController extends GetxController {
             CustomToast.success(response.message ?? "PIN Verified");
 
             AppLogger.logError("PIN VERIFIED SUCCESSFULLY");
+            await storage.saveString("last_active_time", DateTime.now().toIso8601String());
 
             Get.offAllNamed(AppRoutes.main);
 
@@ -515,6 +518,7 @@ class AuthController extends GetxController {
 
             await storage.remove("auth_token");
             await storage.remove("user_id");
+            await storage.remove("last_active_time");
 
             Get.offAllNamed(AppRoutes.loginPhoneName);
             Get.find<NavbarController>().setIndex(0);

@@ -4,6 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart'
     show GetNavigation;
+import 'package:maxpay/controllers/app_lifecycle_controller.dart';
 import 'package:maxpay/core/constants/asset_images.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/core/services/local_storage_service.dart';
@@ -48,6 +49,19 @@ class _MainSplashScreenState extends State<MainSplashScreen> {
 
   /// Old User -> PIN Created
   if (isPin == 1) {
+    final lastActiveStr = storage.getString("last_active_time");
+    if (lastActiveStr != null) {
+      final lastActive = DateTime.tryParse(lastActiveStr);
+      if (lastActive != null) {
+        final elapsed = DateTime.now().difference(lastActive);
+        if (elapsed < AppLifecycleController.inactivityThreshold) {
+          AppLogger.logError("Cold start: within threshold (${elapsed.inSeconds}s). Navigating straight to home.");
+          Get.offAllNamed(AppRoutes.main);
+          return;
+        }
+      }
+    }
+
     if (isFingerPrint == 1) {
       Get.offAllNamed(AppRoutes.veirfypin);
     } else {

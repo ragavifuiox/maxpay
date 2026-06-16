@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -36,7 +35,6 @@ void main() async {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
   @override
   Widget build(BuildContext context) {
     final themeController = Get.find<ThemeController>();
@@ -45,7 +43,6 @@ class MyApp extends StatelessWidget {
       designSize: const Size(375, 812),
       minTextAdapt: true,
       splitScreenMode: true,
-
       builder: (_, child) {
         return GetMaterialApp(
           title: 'PayLink',
@@ -56,6 +53,14 @@ class MyApp extends StatelessWidget {
           initialBinding: InitialBinding(),
           initialRoute: AppRoutes.splash,
           getPages: AppPages.pages,
+          builder: (context, child) {
+            return MediaQuery(
+              data: MediaQuery.of(
+                context,
+              ).copyWith(textScaler: const TextScaler.linear(1.0)),
+              child: child!,
+            );
+          },
         );
       },
     );
