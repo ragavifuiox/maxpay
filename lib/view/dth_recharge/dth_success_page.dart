@@ -13,6 +13,7 @@ import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/core/constants/snackbar.dart';
 import 'package:maxpay/core/di/service_locator.dart';
+import 'package:maxpay/core/extensions/currency.dart';
 import 'package:maxpay/global_widget/commom_button.dart';
 import 'package:screenshot/screenshot.dart';
 
@@ -281,7 +282,7 @@ class DthSuccessPage extends StatelessWidget {
               _detailRow(
                 context,
                 "Transaction Amount",
-                rechargeAmount,
+                (rechargeAmount ).currencyIndian,
               ),
 
               _detailRow(

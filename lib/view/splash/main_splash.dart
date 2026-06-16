@@ -57,7 +57,7 @@ class _MainSplashScreenState extends State<MainSplashScreen> {
   }
 
   /// User Logged In But No PIN
-  Get.offAllNamed(AppRoutes.main);
+  Get.offAllNamed(AppRoutes.pinCodeCreation);
 }
 
   @override

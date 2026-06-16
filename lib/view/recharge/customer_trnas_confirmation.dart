@@ -5,25 +5,24 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:maxpay/controllers/prepaid_controller.dart';
 import 'package:maxpay/core/constants/colors.dart';
+import 'package:maxpay/core/extensions/currency.dart';
 import 'package:maxpay/core/utils/logg_helper.dart';
 import 'package:maxpay/global_widget/commom_button.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
 import 'package:maxpay/view/recharge/success_recharge_page.dart';
 
 class CustomerTransConfirmationScreen extends GetView<PrePaidController> {
-   CustomerTransConfirmationScreen({super.key});
+  CustomerTransConfirmationScreen({super.key});
 
-  final TextEditingController whatsappController =
-      TextEditingController();
+  final TextEditingController whatsappController = TextEditingController();
 
-  final TextEditingController amountController =
-      TextEditingController();
+  final TextEditingController amountController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     final args = Get.arguments ?? {};
-      final confirmData = controller.transConfirmData.value?.data;
-      final operatorlogo = confirmData?.logo ?? '';
+    final confirmData = controller.transConfirmData.value?.data;
+    final operatorlogo = confirmData?.logo ?? '';
 
     final productName = args['productName'] ?? '';
     final paymentStatus = args['paymentStatus'] ?? '';
@@ -39,7 +38,6 @@ class CustomerTransConfirmationScreen extends GetView<PrePaidController> {
     final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
-
       appBar: CommonAppBar(title: ""),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.w),
@@ -50,164 +48,155 @@ class CustomerTransConfirmationScreen extends GetView<PrePaidController> {
 
             /// DETAILS CARD
             /// DETAILS CARD
-RotatedBox(
-  quarterTurns: 2,
-  child: Container(
-    width: double.infinity,
-    padding: EdgeInsets.all(16.w),
+            RotatedBox(
+              quarterTurns: 2,
+              child: Container(
+                width: double.infinity,
+                padding: EdgeInsets.all(16.w),
 
-    decoration: BoxDecoration(
-      color: isDark
-          ? AppColors.darkplceholder
-          : const Color(0xFFF5F5FA),
+                decoration: BoxDecoration(
+                  color: isDark
+                      ? AppColors.darkplceholder
+                      : const Color(0xFFF5F5FA),
 
-      borderRadius: BorderRadius.circular(12.r),
+                  borderRadius: BorderRadius.circular(12.r),
 
-      boxShadow: [
-        BoxShadow(
-          color: Colors.black.withValues(alpha:0.05),
-          blurRadius: 6,
-          offset: const Offset(0, 2),
-        ),
-      ],
-    ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.05),
+                      blurRadius: 6,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
 
-    child: Column(
-      children: [
-    _buildRow(context, "Operator", operatorLogo, isLogo: true),
+                child: Column(
+                  children: [
+                    _buildRow(context, "Operator", operatorLogo, isLogo: true),
 
-        SizedBox(height: 14.h),
+                    SizedBox(height: 14.h),
 
-        _buildRow(
-          context,
-          "Payment Status",
-          paymentStatus,
-          valueColor: Colors.green,
-        ),
+                    _buildRow(
+                      context,
+                      "Payment Status",
+                      paymentStatus,
+                      valueColor: Colors.green,
+                    ),
 
-        SizedBox(height: 14.h),
+                    SizedBox(height: 14.h),
 
-        _buildRow(
-  context,
-  "Transaction No",
-  transactionNo,
-),
+                    _buildRow(context, "Transaction No", transactionNo),
 
-        SizedBox(height: 14.h),
+                    SizedBox(height: 14.h),
 
-        _buildRow(
-          context,
-          "Transaction Amount",
-          transactionAmount,
-        ),
+                    _buildRow(
+                      context,
+                      "Transaction Amount",
+                      (transactionAmount as String).currencyIndian,
+                    ),
 
-        SizedBox(height: 14.h),
+                    SizedBox(height: 14.h),
 
-       
+                    SizedBox(height: 14.h),
 
-        SizedBox(height: 14.h),
-
-       _buildRow(
-  context,
-  "Whatsapp no",
-  whatsappNumber,
-),
-      ],
-    ),
-  ),
-),
+                    _buildRow(context, "Whatsapp no", whatsappNumber),
+                  ],
+                ),
+              ),
+            ),
 
             SizedBox(height: 30.h),
 
             /// CONFIRM BUTTON
-           RotatedBox(
-  quarterTurns: 2,
-  child: SizedBox(
-    width: 220.w,
-    child: ElevatedButton(
-      onPressed: () {},
+            RotatedBox(
+              quarterTurns: 2,
+              child: SizedBox(
+                width: 220.w,
+                child: ElevatedButton(
+                  onPressed: () {},
 
-      style: ElevatedButton.styleFrom(
-        backgroundColor: const Color(0xFF001B6B),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF001B6B),
 
-        padding: EdgeInsets.symmetric(vertical: 14.h),
+                    padding: EdgeInsets.symmetric(vertical: 14.h),
 
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10.r),
-        ),
-      ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.r),
+                    ),
+                  ),
 
-      child: Text(
-        "Please Confirm",
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 16.sp,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-    ),
-  ),
-),
+                  child: Text(
+                    "Please Confirm",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+            ),
             const Spacer(),
 
             /// PAY NOW
-            Obx(() => Center(
-  child: CommonButton(
-    title: controller.isRechargeLoading.value
-        ? "Processing..."
-        : "Pay Now",
+            Obx(
+              () => Center(
+                child: CommonButton(
+                  title: controller.isRechargeLoading.value
+                      ? "Processing..."
+                      : "Pay Now",
 
-    onTap: controller.isRechargeLoading.value
-        ? null
-        : () async {
+                  onTap: controller.isRechargeLoading.value
+                      ? null
+                      : () async {
+                          AppLogger.debugPrint(
+                            "👉 FINAL PRODUCT ID: ${controller.productdetid}",
+                          );
 
-           
+                          final success = await controller.mobilerecharge(
+                            controller.productdetid,
+                            mobileNumber,
+                            transactionAmount,
+                          );
 
-            AppLogger.debugPrint("👉 FINAL PRODUCT ID: ${controller.productdetid}");
+                          AppLogger.debugPrint("AFTER API CALL");
+                          final rechargeData =
+                              controller.rechargeResponse.value;
 
-            final success = await controller.mobilerecharge(
-              controller.productdetid,
-                mobileNumber,
-             transactionAmount,
-            );
+                          if (success && rechargeData != null) {
+                            final apiData = rechargeData.data?.apiResponse;
 
-AppLogger.debugPrint("AFTER API CALL");
-            final rechargeData =
-    controller.rechargeResponse.value;
+                            Get.to(
+                              () => SuccessRechargePage(
+                                productName:
+                                    apiData?.logo ??
+                                    confirmData?.productName ??
+                                    "",
+                                operatorLogo: apiData?.logo ?? "",
+                                operatorInitial:
+                                    (apiData?.operatorName?.isNotEmpty ?? false)
+                                    ? apiData!.operatorName![0]
+                                    : "J",
 
-if (success && rechargeData != null) {
-  final apiData = rechargeData.data?.apiResponse;
+                                operatorColor: Colors.red,
 
-  Get.to(
-    () => SuccessRechargePage(
-      productName: apiData?.logo ??
-          confirmData?.productName ??
-          "",
- operatorLogo: apiData?.logo ?? "",
-      operatorInitial:
-          (apiData?.operatorName?.isNotEmpty ?? false)
-              ? apiData!.operatorName![0]
-              : "J",
+                                transactionNo:
+                                    apiData?.mobileno ?? mobileNumber,
 
-      operatorColor: Colors.red,
+                                rechargeAmount:
+                                    (apiData?.amount ?? amountController.text)
+                                        .currencyIndian,
 
-      transactionNo:
-          apiData?.mobileno ?? mobileNumber,
+                                transactionId: apiData?.txnid ?? "",
 
-      rechargeAmount:
-          "₹${apiData?.amount ?? amountController.text}",
-
-      transactionId:
-          apiData?.txnid ?? "",
-
-      dateTime:
-          apiData?.requestDatetime ?? "",
-    ),
-  );
-}
-          },
-  ),
-)),
+                                dateTime: apiData?.requestDatetime ?? "",
+                              ),
+                            );
+                          }
+                        },
+                ),
+              ),
+            ),
 
             SizedBox(height: 30.h),
           ],
@@ -217,68 +206,70 @@ if (success && rechargeData != null) {
   }
 
   Widget _buildRow(
-  BuildContext context,
-  String title,
-  String value, {
-  bool isLogo = false,
-  Color? valueColor,
-}) {
-  final theme = Theme.of(context);
+    BuildContext context,
+    String title,
+    String value, {
+    bool isLogo = false,
+    Color? valueColor,
+  }) {
+    final theme = Theme.of(context);
 
-  return Row(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      /// LABEL
-      SizedBox(
-        width: 140.w, // fixed width = alignment fix
-        child: Text(
-          title,
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        /// LABEL
+        SizedBox(
+          width: 140.w, // fixed width = alignment fix
+          child: Text(
+            title,
+            style: TextStyle(
+              fontSize: 13.sp,
+              color: Colors.grey,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+        SizedBox(width: 15.w),
+
+        /// COLON
+        Text(
+          ":  ",
           style: TextStyle(
             fontSize: 13.sp,
             color: Colors.grey,
             fontWeight: FontWeight.w500,
           ),
         ),
-      ),
-      SizedBox(width: 15.w),
-      /// COLON
-      Text(
-        ":  ",
-        style: TextStyle(
-          fontSize: 13.sp,
-          color: Colors.grey,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
-      SizedBox(width: 10.w),
-      /// VALUE
-      Expanded(
-        child: Align(
-          alignment: Alignment.centerLeft,
-          child: isLogo
-              ? ClipRRect(
-                  borderRadius: BorderRadius.circular(6.r),
-                  child: Image.network(
+        SizedBox(width: 10.w),
+
+        /// VALUE
+        Expanded(
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: isLogo
+                ? ClipRRect(
+                    borderRadius: BorderRadius.circular(6.r),
+                    child: Image.network(
+                      value,
+                      width: 40.w,
+                      height: 20.h,
+                      fit: BoxFit.contain,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Icon(Icons.image_not_supported, size: 20.sp);
+                      },
+                    ),
+                  )
+                : Text(
                     value,
-                    width: 40.w,
-                    height: 20.h,
-                    fit: BoxFit.contain,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Icon(Icons.image_not_supported, size: 20.sp);
-                    },
+                    style: TextStyle(
+                      fontSize: 13.sp,
+                      fontWeight: FontWeight.w600,
+                      color: valueColor ?? theme.colorScheme.onSurface,
+                    ),
                   ),
-                )
-              : Text(
-                  value,
-                  style: TextStyle(
-                    fontSize: 13.sp,
-                    fontWeight: FontWeight.w600,
-                    color: valueColor ?? theme.colorScheme.onSurface,
-                  ),
-                ),
+          ),
         ),
-      ),
-    ],
-  );
-}
+      ],
+    );
+  }
 }

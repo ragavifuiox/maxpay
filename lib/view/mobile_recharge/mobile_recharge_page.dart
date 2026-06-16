@@ -11,6 +11,8 @@ import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/core/constants/snackbar.dart';
 import 'package:maxpay/core/data/model/plan_model.dart';
+import 'package:maxpay/core/extensions/currency.dart';
+import 'package:maxpay/core/extensions/string_ext.dart';
 import 'package:maxpay/core/utils/logg_helper.dart';
 import 'package:maxpay/view/mobile_recharge/contact_list_page.dart';
 import 'package:permission_handler/permission_handler.dart' as ph;
@@ -61,55 +63,53 @@ class _MobileRechargePageState extends State<MobileRechargePage>
     controller.getPlans(productid: widget.productId);
     controller.getPlanTabs();
 
-  searchController.addListener(() {
-  if (_debounce?.isActive ?? false) {
-    _debounce!.cancel();
+    searchController.addListener(() {
+      if (_debounce?.isActive ?? false) {
+        _debounce!.cancel();
+      }
+
+      _debounce = Timer(const Duration(milliseconds: 500), () {
+        final text = searchController.text.trim();
+
+        controller.searchPlans(
+          selectedProductId,
+          text, // empty irundhaalum call aagum
+        );
+      });
+    });
   }
 
-  _debounce = Timer(
-    const Duration(milliseconds: 500),
-    () {
-      final text = searchController.text.trim();
+  Future<void> loadTabs() async {
+    await controller.getPlanTabs();
 
-      controller.searchPlans(
-        selectedProductId,
-        text, // empty irundhaalum call aagum
-      );
-    },
-  );
-});
-  }
+    if (controller.planTabs.isEmpty) return;
 
- Future<void> loadTabs() async {
-  await controller.getPlanTabs();
+    _tabController = TabController(
+      length: controller.planTabs.length,
+      vsync: this,
+    );
 
-  if (controller.planTabs.isEmpty) return;
+    selectedTabId = controller.planTabs.first.id.toString();
 
-  _tabController = TabController(
-    length: controller.planTabs.length,
-    vsync: this,
-  );
-
-  selectedTabId = controller.planTabs.first.id.toString();
-
-  controller.selectedTabId = selectedTabId; // FIX
-
-  controller.applyTabFilter();
-
-  _tabController.addListener(() {
-    if (_tabController.indexIsChanging) return;
-
-    final tab = controller.planTabs[_tabController.index];
-
-    selectedTabId = tab.id.toString();
-
-    controller.selectedTabId = selectedTabId;
+    controller.selectedTabId = selectedTabId; // FIX
 
     controller.applyTabFilter();
-  });
 
-  setState(() {});
-}
+    _tabController.addListener(() {
+      if (_tabController.indexIsChanging) return;
+
+      final tab = controller.planTabs[_tabController.index];
+
+      selectedTabId = tab.id.toString();
+
+      controller.selectedTabId = selectedTabId;
+
+      controller.applyTabFilter();
+    });
+
+    setState(() {});
+  }
+
   @override
   void dispose() {
     _debounce?.cancel();
@@ -403,24 +403,21 @@ class _MobileRechargePageState extends State<MobileRechargePage>
                         );
                       }).toList(),
 
-onChanged: (Data? value) async {
-  if (value == null) return;
+                      onChanged: (Data? value) async {
+                        if (value == null) return;
 
-  setState(() {
-    selectedOperator = value.name ?? "";
-    selectedProductId = value.id?.toString() ?? "";
-    isPlanLoaded = true;
-  });
+                        setState(() {
+                          selectedOperator = value.name ?? "";
+                          selectedProductId = value.id?.toString() ?? "";
+                          isPlanLoaded = true;
+                        });
 
-  searchController.clear();
+                        searchController.clear();
 
-  await controller.searchPlans(
-    selectedProductId,
-    "",
-  );
+                        await controller.searchPlans(selectedProductId, "");
 
-  controller.applyTabFilter(); // add this
-}
+                        controller.applyTabFilter(); // add this
+                      },
                     ),
                   ),
                 );
@@ -557,76 +554,76 @@ onChanged: (Data? value) async {
               SizedBox(height: 15.h),
 
               /// PLAN LIST
-             Obx(() {
-  final isSearching = searchController.text.trim().isNotEmpty;
+              Obx(() {
+                final isSearching = searchController.text.trim().isNotEmpty;
 
-  print("isSearching : $isSearching");
-  print("search text : ${searchController.text}");
-  print("filtered count : ${controller.filteredSearchPlans.length}");
+                print("isSearching : $isSearching");
+                print("search text : ${searchController.text}");
+                print(
+                  "filtered count : ${controller.filteredSearchPlans.length}",
+                );
 
-  if (isSearching) {
-    final list = controller.filteredSearchPlans;
+                if (isSearching) {
+                  final list = controller.filteredSearchPlans;
 
-    print("UI LIST COUNT : ${list.length}");
+                  print("UI LIST COUNT : ${list.length}");
 
-    if (list.isEmpty) {
-      return const Center(
-        child: Text("No Search Plans Found"),
-      );
-    }
+                  if (list.isEmpty) {
+                    return const Center(child: Text("No Search Plans Found"));
+                  }
 
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: list.length,
-      itemBuilder: (context, index) {
-        print("Building Item : $index");
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: list.length,
+                    itemBuilder: (context, index) {
+                      print("Building Item : $index");
 
-        final plan = list[index];
+                      final plan = list[index];
 
-        return _buildPlanCardCommon(
-          amount: plan.amount?.toString() ?? "",
-          validity: plan.validity?.toString() ?? "",
-          details: plan.planDetails ?? "",
-        onBuy: () async {
-          String mobile = mobileController.text.trim();
+                      return _buildPlanCardCommon(
+                        amount: plan.amount?.toString() ?? "",
+                        validity: plan.validity?.toString() ?? "",
+                        details: plan.planDetails ?? "",
+                        onBuy: () async {
+                          String mobile = mobileController.text.trim();
 
-          mobile = mobile.replaceAll(RegExp(r'[^0-9]'), '');
+                          mobile = mobile.replaceAll(RegExp(r'[^0-9]'), '');
 
-          if (mobile.startsWith('91') && mobile.length == 12) {
-            mobile = mobile.substring(2);
-          }
+                          if (mobile.startsWith('91') && mobile.length == 12) {
+                            mobile = mobile.substring(2);
+                          }
 
-          if (mobile.isEmpty) {
-            CustomToast.error("Please enter phone number");
-            return;
-          }
+                          if (mobile.isEmpty) {
+                            CustomToast.error("Please enter phone number");
+                            return;
+                          }
 
-          if (mobile.length != 10) {
-            CustomToast.error(
-              "Please enter valid 10 digit phone number",
-            );
-            return;
-          }
+                          if (mobile.length != 10) {
+                            CustomToast.error(
+                              "Please enter valid 10 digit phone number",
+                            );
+                            return;
+                          }
 
-          await controller.confirmtrans(
-            plan.productId.toString(),
-          );
+                          await controller.confirmtrans(
+                            plan.productId.toString(),
+                          );
 
-          Get.toNamed(
-            AppRoutes.transconfirm,
-            arguments: {
-              "type": "mobile",
-              "mobileNumber": mobile,
-              "productdetid": plan.productId.toString(),
-            },
-          );
-        },
-      );
-    },
-  );
-}
-  final list = controller.filteredSearchPlans;
+                          Get.toNamed(
+                            AppRoutes.transconfirm,
+                            arguments: {
+                              "type": "mobile",
+                              "mobileNumber": mobile,
+                              "productdetid": plan.productId.toString(),
+                            },
+                          );
+                        },
+                      );
+                    },
+                  );
+                }
+                final list = controller.filteredSearchPlans;
 
                 if (!isPlanLoaded) {
                   return Container(
@@ -652,22 +649,20 @@ onChanged: (Data? value) async {
                 }
 
                 if (list.isEmpty) {
-  return const Center(
-    child: Text("No Plans Found"),
-  );
-}
+                  return const Center(child: Text("No Plans Found"));
+                }
 
-return ListView.builder(
-  shrinkWrap: true,
-  physics: const NeverScrollableScrollPhysics(),
-  itemCount: list.length,
-  itemBuilder: (context, index) {
-    final plan = list[index];
+                return ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: list.length,
+                  itemBuilder: (context, index) {
+                    final plan = list[index];
 
-    return _buildPlanCardCommon(
-      amount: plan.amount?.toString() ?? "",
-      validity: plan.validity?.toString() ?? "",
-      details: plan.planDetails ?? "",
+                    return _buildPlanCardCommon(
+                      amount: plan.amount?.toString() ?? "",
+                      validity: plan.validity?.toString() ?? "",
+                      details: plan.planDetails ?? "",
 
                       onBuy: () async {
                         String mobile = mobileController.text.trim();
@@ -752,7 +747,7 @@ return ListView.builder(
               Expanded(
                 flex: 2,
                 child: Text(
-                  "₹$amount",
+                  amount.currencyIndian,
                   style: TextStyle(
                     fontSize: 18.sp,
                     fontFamily: 'Poppins',
@@ -854,38 +849,16 @@ return ListView.builder(
                   .map(
                     (item) => Padding(
                       padding: EdgeInsets.only(bottom: 4.h),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "• ",
-                            style: TextStyle(
-                              fontSize: 12.sp,
-                              fontFamily: 'Poppins',
-                              fontWeight: FontWeight.w500,
-                              color:
-                                  Theme.of(context).brightness ==
-                                      Brightness.dark
-                                  ? Colors.white
-                                  : Colors.black,
-                            ),
-                          ),
-                          Expanded(
-                            child: Text(
-                              item.trim(),
-                              style: TextStyle(
-                                fontSize: 12.sp,
-                                fontFamily: 'Poppins',
-                                fontWeight: FontWeight.w500,
-                                color:
-                                    Theme.of(context).brightness ==
-                                        Brightness.dark
-                                    ? Colors.white
-                                    : Colors.black,
-                              ),
-                            ),
-                          ),
-                        ],
+                      child: Text(
+                        item.bulletText,
+                        style: TextStyle(
+                          fontSize: 12.sp,
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w500,
+                          color: Theme.of(context).brightness == Brightness.dark
+                              ? Colors.white
+                              : Colors.black,
+                        ),
                       ),
                     ),
                   )
