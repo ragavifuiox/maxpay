@@ -11,8 +11,6 @@ import 'package:maxpay/core/domain/usecase/verify_pin_usecase.dart';
 import 'package:maxpay/core/services/local_storage_service.dart';
 import 'package:maxpay/core/utils/logg_helper.dart';
 import 'package:maxpay/view/nav_page/navbar_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:sim_card_code/sim_card_code.dart';
 
 class AuthController extends GetxController {
   final LoginUseCase loginUseCase;

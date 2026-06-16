@@ -11,7 +11,7 @@ class Grade {
     if (json['data'] != null) {
       data = <Data>[];
       json['data'].forEach((v) {
-        data!.add(new Data.fromJson(v));
+        data!.add(Data.fromJson(v));
       });
     }
     message = json['message'];
@@ -19,13 +19,13 @@ class Grade {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['success'] = this.success;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['success'] = success;
     if (this.data != null) {
       data['data'] = this.data!.map((v) => v.toJson()).toList();
     }
-    data['message'] = this.message;
-    data['code'] = this.code;
+    data['message'] = message;
+    data['code'] = code;
     return data;
   }
 }
@@ -92,25 +92,25 @@ class Data {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['user_type'] = this.userType;
-    data['A'] = this.a;
-    data['B'] = this.b;
-    data['C'] = this.c;
-    data['D'] = this.d;
-    data['E'] = this.e;
-    data['A_daily_avg_balance'] = this.aDailyAvgBalance;
-    data['B_daily_avg_balance'] = this.bDailyAvgBalance;
-    data['C_daily_avg_balance'] = this.cDailyAvgBalance;
-    data['D_daily_avg_balance'] = this.dDailyAvgBalance;
-    data['E_daily_avg_balance'] = this.eDailyAvgBalance;
-    data['A_monthly_cashback'] = this.aMonthlyCashback;
-    data['B_monthly_cashback'] = this.bMonthlyCashback;
-    data['C_monthly_cashback'] = this.cMonthlyCashback;
-    data['D_monthly_cashback'] = this.dMonthlyCashback;
-    data['E_monthly_cashback'] = this.eMonthlyCashback;
-    data['created_date'] = this.createdDate;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['user_type'] = userType;
+    data['A'] = a;
+    data['B'] = b;
+    data['C'] = c;
+    data['D'] = d;
+    data['E'] = e;
+    data['A_daily_avg_balance'] = aDailyAvgBalance;
+    data['B_daily_avg_balance'] = bDailyAvgBalance;
+    data['C_daily_avg_balance'] = cDailyAvgBalance;
+    data['D_daily_avg_balance'] = dDailyAvgBalance;
+    data['E_daily_avg_balance'] = eDailyAvgBalance;
+    data['A_monthly_cashback'] = aMonthlyCashback;
+    data['B_monthly_cashback'] = bMonthlyCashback;
+    data['C_monthly_cashback'] = cMonthlyCashback;
+    data['D_monthly_cashback'] = dMonthlyCashback;
+    data['E_monthly_cashback'] = eMonthlyCashback;
+    data['created_date'] = createdDate;
     return data;
   }
 }

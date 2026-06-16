@@ -12,10 +12,8 @@ import 'package:maxpay/core/utils/logg_helper.dart';
 import 'package:maxpay/global_widget/commom_button.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
 import 'package:maxpay/view/dth_recharge/dth_success_page.dart';
-import 'package:maxpay/view/recharge/success_recharge_page.dart';
 
 import 'package:get/get.dart';
-import 'package:maxpay/controllers/prepaid_controller.dart';
 
 class ConfirmDthPage extends GetView<DthController> {
   TextEditingController whatsappController = TextEditingController();
@@ -31,6 +29,7 @@ class ConfirmDthPage extends GetView<DthController> {
     productdetid = id;
   }
 
+  @override
   Widget build(BuildContext context) {
     final args = Get.arguments ?? {};
 

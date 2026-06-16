@@ -8,19 +8,19 @@ class ConfirmDth {
 
   ConfirmDth.fromJson(Map<String, dynamic> json) {
     success = json['success'];
-    data = json['data'] != null ? new Data.fromJson(json['data']) : null;
+    data = json['data'] != null ? Data.fromJson(json['data']) : null;
     message = json['message'];
     code = json['code'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['success'] = this.success;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['success'] = success;
     if (this.data != null) {
       data['data'] = this.data!.toJson();
     }
-    data['message'] = this.message;
-    data['code'] = this.code;
+    data['message'] = message;
+    data['code'] = code;
     return data;
   }
 }
@@ -60,16 +60,16 @@ class Data {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['product_id'] = this.productId;
-    data['product_name'] = this.productName;
-    data['payment_status'] = this.paymentStatus;
-    data['transaction_no'] = this.transactionNo;
-    data['available_balance'] = this.availableBalance;
-    data['transaction_amount'] = this.transactionAmount;
-    data['commission'] = this.commission;
-    data['remaining_balance'] = this.remainingBalance;
-    data['product_logo'] = this.logo;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['product_id'] = productId;
+    data['product_name'] = productName;
+    data['payment_status'] = paymentStatus;
+    data['transaction_no'] = transactionNo;
+    data['available_balance'] = availableBalance;
+    data['transaction_amount'] = transactionAmount;
+    data['commission'] = commission;
+    data['remaining_balance'] = remainingBalance;
+    data['product_logo'] = logo;
     return data;
   }
 }

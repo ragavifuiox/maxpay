@@ -8,19 +8,19 @@ class GetKyc {
 
   GetKyc.fromJson(Map<String, dynamic> json) {
     success = json['success'];
-    data = json['data'] != null ? new Data.fromJson(json['data']) : null;
+    data = json['data'] != null ? Data.fromJson(json['data']) : null;
     message = json['message'];
     code = json['code'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['success'] = this.success;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['success'] = success;
     if (this.data != null) {
       data['data'] = this.data!.toJson();
     }
-    data['message'] = this.message;
-    data['code'] = this.code;
+    data['message'] = message;
+    data['code'] = code;
     return data;
   }
 }
@@ -57,15 +57,15 @@ class Data {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['kyc_id'] = this.kycId;
-    data['retailer_id'] = this.retailerId;
-    data['email'] = this.email;
-    data['address'] = this.address;
-    data['gst_no'] = this.gstNo;
-    data['pan'] = this.pan;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['kyc_id'] = kycId;
+    data['retailer_id'] = retailerId;
+    data['email'] = email;
+    data['address'] = address;
+    data['gst_no'] = gstNo;
+    data['pan'] = pan;
+    data['created_at'] = createdAt;
+    data['updated_at'] = updatedAt;
     return data;
   }
 }

@@ -1,9 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:maxpay/core/data/model/confirm_dth_model.dart';
 
-import 'package:maxpay/core/data/model/trans_confirm_model.dart';
 import 'package:maxpay/core/domain/repository/confirm_dth_repository.dart';
-import 'package:maxpay/core/domain/repository/trans_confirm_repository.dart';
 import 'package:maxpay/core/error/failure.dart';
 
 
