@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_navigation/src/extension_navigation.dart';
-import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/core/data/model/transaction_report_model.dart';
-import 'package:maxpay/view/transaction_screens/transaction_success_screen.dart';
 
 
 class TransactionCard extends StatelessWidget {
@@ -67,7 +63,7 @@ class TransactionCard extends StatelessWidget {
                   height: 40,
                   fit: BoxFit.contain,
                   errorBuilder:
-                      (_, __, ___) => const Icon(
+                      (_, _, _) => const Icon(
                     Icons.image,
                   ),
                 )

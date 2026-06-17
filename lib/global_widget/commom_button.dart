@@ -45,7 +45,8 @@ class CommonButton extends StatelessWidget {
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 16.sp,
-                    fontWeight: FontWeight.w600,
+                    fontFamily: 'Lufga',
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
         ),

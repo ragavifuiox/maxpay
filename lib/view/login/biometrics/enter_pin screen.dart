@@ -10,7 +10,8 @@ import 'package:maxpay/view/login/widgets/custom_numeric_keyboard.dart';
 import 'package:pinput/pinput.dart';
 
 class PinCodeEnterPage extends StatefulWidget {
-  const PinCodeEnterPage({super.key});
+  final bool isUpdatePin;
+  const PinCodeEnterPage({super.key, this.isUpdatePin = false});
   @override
   State<PinCodeEnterPage> createState() => _PinCodeEnterPageState();
 }
@@ -74,7 +75,7 @@ class _PinCodeEnterPageState extends State<PinCodeEnterPage> {
             if (showVerifyButton.value) {
               resetPin();
             } else {
-              Get.offAllNamed(AppRoutes.loginPhoneName);
+              Get.back();
             }
           },
           icon: Icon(Icons.arrow_back_ios_new, color: colorScheme.onSurface),
@@ -129,27 +130,26 @@ class _PinCodeEnterPageState extends State<PinCodeEnterPage> {
                 SizedBox(height: 25.h),
 
                 /// Fingerprint Icon
-                Obx(() {
-                  if (controller.isFingerPrint.value == 1) {
-                    return const SizedBox(); // Hide icon
-                  }
-
-                  return Align(
-                    alignment: Alignment.centerRight,
-                    child: GestureDetector(
-                      onTap: () async {
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: GestureDetector(
+                    onTap: () async {
+                      // Get.toNamed(AppRoutes.biometricsScanning);
+                      if (controller.isFingerPrint.value == 1) {
+                        await controller.authenticateWithFingerprint();
+                      } else {
                         Get.toNamed(AppRoutes.biometricsScanning);
-                      },
-                      child: Center(
-                        child: Icon(
-                          Icons.fingerprint,
-                          size: 50.sp,
-                          color: AppColors.clrPrimary,
-                        ),
+                      }
+                    },
+                    child: Center(
+                      child: Icon(
+                        Icons.fingerprint,
+                        size: 50.sp,
+                        color: AppColors.clrPrimary,
                       ),
                     ),
-                  );
-                }),
+                  ),
+                ),
 
                 const Spacer(),
 

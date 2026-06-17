@@ -6,7 +6,7 @@ import 'package:maxpay/core/utils/logg_helper.dart';
 
 class AppLifecycleController extends GetxController with WidgetsBindingObserver {
   static const String _keyLastActive = "last_active_time";
-  static const Duration inactivityThreshold = Duration(minutes: 5);
+  static const Duration inactivityThreshold = Duration(seconds: 5);
 
   @override
   void onInit() {

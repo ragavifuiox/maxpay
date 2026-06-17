@@ -15,7 +15,7 @@
 //   final GetKycUsecase getkycUsecase;
 
 //   AddKycController({
-    
+
 //     required this.addKycUsecase,
 //     required this.getkycUsecase
 //     });
@@ -70,9 +70,9 @@
 //     isLoading(true);
 
 //     final result = await addKycUsecase(
-//       emailController.text.trim(), 
-//       idProof.value!, 
-//       gstNo.value!, 
+//       emailController.text.trim(),
+//       idProof.value!,
+//       gstNo.value!,
 //       pan.value!
 //     );
 
@@ -120,7 +120,6 @@
 //   }
 // }
 
-
 import 'dart:io';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
@@ -136,10 +135,7 @@ class AddKycController extends GetxController {
   final AddKycUsecase addKycUsecase;
   final GetKycUsecase getkycUsecase;
 
-  AddKycController({
-    required this.addKycUsecase,
-    required this.getkycUsecase,
-  });
+  AddKycController({required this.addKycUsecase, required this.getkycUsecase});
 
   RxBool isLoading = false.obs;
   RxBool isKycSubmitted = false.obs;
@@ -168,77 +164,72 @@ class AddKycController extends GetxController {
     fetchkyc();
   }
 
-Future<void> pickImage(String type) async {
-  final XFile? image = await _picker.pickImage(
-    source: ImageSource.gallery,
-  );
+  Future<void> pickImage(String type) async {
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
 
-  if (image != null) {
-    AppLogger.debugPrint("Selected Image: ${image.path}");
+    if (image != null) {
+      AppLogger.debugPrint("Selected Image: ${image.path}");
 
-    if (type == 'idProof') {
-      idProof.value = File(image.path);
-    }
+      if (type == 'idProof') {
+        idProof.value = File(image.path);
+        addressFileName.value = image.name;
+      }
 
-    if (type == 'gstNo') {
-      gstNo.value = File(image.path);
-    }
+      if (type == 'gstNo') {
+        gstNo.value = File(image.path);
+        gstFileName.value = image.name;
+      }
 
-    if (type == 'pan') {
-      pan.value = File(image.path);
+      if (type == 'pan') {
+        pan.value = File(image.path);
+        panFileName.value = image.name;
+      }
     }
   }
-}
- Future<void> submitKyc() async {
-  AppLogger.debugPrint("===== KYC SUBMIT START =====");
 
-  AppLogger.debugPrint({
-    "email": emailController.text.trim(),
-    "addressProof": idProof.value?.path,
-    "gstFile": gstNo.value?.path,
-    "panFile": pan.value?.path,
-  });
+  Future<void> submitKyc() async {
+    AppLogger.debugPrint("===== KYC SUBMIT START =====");
 
-  isLoading.value = true;
+    AppLogger.debugPrint({
+      "email": emailController.text.trim(),
+      "addressProof": idProof.value?.path,
+      "gstFile": gstNo.value?.path,
+      "panFile": pan.value?.path,
+    });
 
-  final result = await addKycUsecase(
-    emailController.text.trim(),
-    idProof.value!,
-    gstNo.value!,
-    pan.value!,
-  );
+    isLoading.value = true;
 
-  isLoading.value = false;
+    final result = await addKycUsecase(
+      emailController.text.trim(),
+      idProof.value!,
+      gstNo.value!,
+      pan.value!,
+    );
 
-  result.fold(
-    (failure) {
-      AppLogger.logError({
-        "status": "FAILED",
-        "message": failure.message,
-      });
+    isLoading.value = false;
 
-      CustomToast.error(failure.message);
-    },
-    (response) {
-      AppLogger.debugPrint({
-        "success": response.success,
-        "message": response.message,
-      });
+    result.fold(
+      (failure) {
+        AppLogger.logError({"status": "FAILED", "message": failure.message});
 
-      if (response.success == true) {
-        CustomToast.success(
-          response.message ?? "KYC Submitted Successfully",
-        );
+        CustomToast.error(failure.message);
+      },
+      (response) {
+        AppLogger.debugPrint({
+          "success": response.success,
+          "message": response.message,
+        });
 
-        fetchkyc();
-      } else {
-        CustomToast.error(
-          response.message ?? "Failed to submit KYC",
-        );
-      }
-    },
-  );
-}
+        if (response.success == true) {
+          CustomToast.success(response.message ?? "KYC Submitted Successfully");
+
+          fetchkyc();
+        } else {
+          CustomToast.error(response.message ?? "Failed to submit KYC");
+        }
+      },
+    );
+  }
 
   Future<void> fetchkyc() async {
     try {
@@ -256,14 +247,11 @@ Future<void> pickImage(String type) async {
           if (data.success == true && data.data != null) {
             emailController.text = data.data?.email ?? '';
 
-            addressFileName.value =
-                data.data?.address?.split('/').last ?? '';
+            addressFileName.value = data.data?.address?.split('/').last ?? '';
 
-            gstFileName.value =
-                data.data?.gstNo?.split('/').last ?? '';
+            gstFileName.value = data.data?.gstNo?.split('/').last ?? '';
 
-            panFileName.value =
-                data.data?.pan?.split('/').last ?? '';
+            panFileName.value = data.data?.pan?.split('/').last ?? '';
 
             isKycSubmitted.value = true;
           }
