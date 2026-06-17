@@ -5,59 +5,41 @@ import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/global_widget/commom_button.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
 
-class WebSignupSuccessScreen
-    extends StatelessWidget {
-
-  const WebSignupSuccessScreen({
-    super.key,
-  });
+class WebSignupSuccessScreen extends StatelessWidget {
+  const WebSignupSuccessScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-
     final theme = Theme.of(context);
 
     return Scaffold(
-
       /// ✅ Dark Theme Support
-      backgroundColor:
-          theme.scaffoldBackgroundColor,
+      backgroundColor: theme.scaffoldBackgroundColor,
 
-      appBar: const CommonAppBar(
-        title: "",
-      ),
+      appBar: const CommonAppBar(title: ""),
 
       body: SafeArea(
         child: Padding(
-          padding:
-              const EdgeInsets.symmetric(
-            horizontal: 24,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 24),
 
           child: Column(
             children: [
-
               const SizedBox(height: 60),
 
               /// SUCCESS TITLE
               Center(
                 child: Row(
-                  mainAxisSize:
-                      MainAxisSize.min,
+                  mainAxisSize: MainAxisSize.min,
 
                   children: [
-
                     Text(
                       "Success",
 
                       style: TextStyle(
                         fontSize: 24,
-                        fontWeight:
-                            FontWeight.bold,
+                        fontWeight: FontWeight.bold,
 
-                        color: theme
-                            .colorScheme
-                            .onSurface,
+                        color: theme.colorScheme.onSurface,
                       ),
                     ),
 
@@ -75,10 +57,7 @@ class WebSignupSuccessScreen
               const SizedBox(height: 40),
 
               /// IMAGE
-              Image.asset(
-                AssetImages.websuccess,
-                height: 220,
-              ),
+              Image.asset(AssetImages.websuccess, height: 220),
 
               const SizedBox(height: 30),
 
@@ -89,9 +68,7 @@ class WebSignupSuccessScreen
                 textAlign: TextAlign.center,
 
                 style: TextStyle(
-                  color: theme
-                              .brightness ==
-                          Brightness.dark
+                  color: theme.brightness == Brightness.dark
                       ? Colors.greenAccent
                       : Colors.green,
 
@@ -107,9 +84,7 @@ class WebSignupSuccessScreen
                   title: "Submit",
 
                   onTap: () {
-                    Get.offAllNamed(
-                      AppRoutes.setting,
-                    );
+                    Get.offAllNamed(AppRoutes.main);
                   },
                 ),
               ),
