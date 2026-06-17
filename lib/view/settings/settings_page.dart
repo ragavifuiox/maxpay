@@ -101,6 +101,16 @@ class SettingsPage extends StatelessWidget {
                     },
                     SvgPicture.asset(AssetImages.privacyPolicy, width: 24.w),
                   ),
+
+                  _buildMenuTile(
+                    context,
+                    'Rating Review',
+                    () {
+                      Get.toNamed(AppRoutes.weblogin);
+                    },
+                    SvgPicture.asset(AssetImages.review, width: 24.w),
+                  ),
+                  
                   _buildMenuTile(
                     context,
                     'Login History',

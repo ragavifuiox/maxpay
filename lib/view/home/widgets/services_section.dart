@@ -540,6 +540,17 @@ void _handleNavigation(Data item) {
 
 
       break;
+       case 'payment status':
+
+        Get.toNamed(
+        AppRoutes.paymentstatus,
+
+        arguments: {
+          "productId": item.id.toString(),
+          "productName": item.name ?? "",
+        },
+      );
+
 
     default:
       break;

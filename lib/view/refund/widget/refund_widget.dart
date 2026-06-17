@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:maxpay/core/constants/colors.dart';
+import 'package:maxpay/core/data/model/refund_model.dart';
 
 class EarningsCard1 extends StatelessWidget {
-  const EarningsCard1({super.key});
+  final RefundData data;
+
+  const EarningsCard1({
+    super.key,
+    required this.data,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -46,8 +53,8 @@ class EarningsCard1 extends StatelessWidget {
                 ),
               ),
 
-              Text(
-                "2026-11-29 14:38:43",
+              
+               Text(data.dateTime ?? "",
 
                 style: TextStyle(
                   fontSize: 12,
@@ -79,24 +86,23 @@ class EarningsCard1 extends StatelessWidget {
 
             children: [
               /// Avatar
-              Row(
-                children: const [
-                  CircleAvatar(
-                    radius: 18,
-                    backgroundColor: Colors.red,
-
-                    child: Text(
-                      "J",
-                      style: TextStyle(
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-
-                  SizedBox(width: 10),
-                ],
-              ),
-
+              Container(
+  width: 40.w,
+  height: 40.h,
+  decoration: BoxDecoration(
+    borderRadius: BorderRadius.circular(6.r),
+  ),
+  child: Image.network(
+    data.operatorLogo??'',
+    fit: BoxFit.contain,
+    errorBuilder: (context, error, stackTrace) {
+      return const Icon(
+        Icons.image_not_supported,
+      );
+    },
+  ),
+),
+ const SizedBox(width: 18,),
               /// Name + Amount
               Expanded(
                 child: Column(
@@ -105,7 +111,7 @@ class EarningsCard1 extends StatelessWidget {
 
                   children: [
                     Text(
-                      "Jio",
+                      data.operatorName ?? "",
 
                       style: TextStyle(
                         fontSize: 14,
@@ -119,7 +125,9 @@ class EarningsCard1 extends StatelessWidget {
                     const SizedBox(height: 4),
 
                     Text(
-                      "Transaction No: 9865647823",
+                    
+  "Transaction No: ${data.transactionNo ?? ''}",
+
 
                       style: TextStyle(
                         fontWeight: FontWeight.w500,
@@ -139,7 +147,9 @@ class EarningsCard1 extends StatelessWidget {
 
                 children: [
                   Text(
-                    "₹ 365",
+                    
+  "₹ ${data.amount ?? '0'}",
+
 
                     style: TextStyle(
                       color:

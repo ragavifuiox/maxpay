@@ -40,4 +40,6 @@ class ApiRoutes {
   static const Dthrecharge = "/dth_recharge";
   static const getkyc = "/get_kyc";
   static const dispute = "/dispute_report";
+  static const paymentstatus = "/payment_status_search";
+  static const refund = "/get_refund";
 }

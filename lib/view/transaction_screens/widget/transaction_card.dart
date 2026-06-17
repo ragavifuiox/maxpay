@@ -2,178 +2,142 @@ import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
+import 'package:maxpay/core/data/model/transaction_report_model.dart';
 import 'package:maxpay/view/transaction_screens/transaction_success_screen.dart';
 
 
 class TransactionCard extends StatelessWidget {
-  final Color bgColor;
-  final TransactionStatus status;
+  final TransrepData data;
 
   const TransactionCard({
     super.key,
-    required this.bgColor,
-    required this.status,
+    required this.data,
   });
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final status =
+        (data.status ?? "").toLowerCase();
 
-    final bool isSuccess = status == TransactionStatus.success;
-    final bool isPending = status == TransactionStatus.pending;
+    Color statusColor;
+
+    if (status == "success") {
+      statusColor = Colors.green;
+    } else if (status == "pending") {
+      statusColor = Colors.orange;
+    } else {
+      statusColor = Colors.red;
+    }
 
     return Container(
       margin: const EdgeInsets.only(bottom: 14),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: bgColor,
+        color: statusColor.withValues(alpha: .10),
         borderRadius: BorderRadius.circular(14),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment:
+                MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                "Transaction ID: TXN6453564",
-                style: TextStyle(
-                  fontSize: 11,
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
+                "Transaction ID : ${data.transactionId ?? '-'}",
               ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(
-                    "Date & Time:",
-                    style: TextStyle(
-                      fontSize: 10,
-                      color: theme.colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                  Text(
-                    "29-11-2026 07:38:43 PM",
-                    style: TextStyle(
-                      fontSize: 10,
-                      color: theme.colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                ],
+              Text(
+                data.dateTime ?? '',
               ),
             ],
           ),
 
-          const SizedBox(height: 12),
-           Divider(
-  color: Theme.of(context).brightness == Brightness.light
-      ? Colors.black12
-      : Colors.white24,
-),
-              const SizedBox(height: 12),
+          const SizedBox(height: 10),
+
+          Divider(),
+
+          const SizedBox(height: 10),
+
           Row(
             children: [
-              Container(
-                width: 38,
-                height: 38,
-                decoration: const BoxDecoration(
-                  color: Colors.red,
-                  shape: BoxShape.circle,
-                ),
-                alignment: Alignment.center,
-                child: Text(
-                  "Jio",
-                  style: TextStyle(
-                   color:
-            Theme.of(context).brightness ==
-                    Brightness.dark
-                ? Colors.black
-                : Colors.black,
-                    
-                
-                    fontWeight: FontWeight.bold,
-                    fontSize: 11,
+              /// Logo
+              if ((data.logo ?? '').isNotEmpty)
+                Image.network(
+                  data.logo!,
+                  width: 40,
+                  height: 40,
+                  fit: BoxFit.contain,
+                  errorBuilder:
+                      (_, __, ___) => const Icon(
+                    Icons.image,
+                  ),
+                )
+              else
+                Container(
+                  width: 40,
+                  height: 40,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: Colors.red,
+                    borderRadius:
+                        BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    data.operator
+                                ?.substring(0, 1)
+                                .toUpperCase() ??
+                            "P",
                   ),
                 ),
-              ),
 
               const SizedBox(width: 10),
 
               Expanded(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment:
+                      CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Jio",
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 14,
-                        color:
-            Theme.of(context).brightness ==
-                    Brightness.dark
-                ? Colors.black
-                : Colors.black,
-                      ),
+                      data.amount ?? '',
                     ),
-                    const SizedBox(height: 3),
                     Text(
-                      "Number: 9865647823",
-                      style: TextStyle(
-                        fontSize: 11,
-                        color:
-            Theme.of(context).brightness ==
-                    Brightness.dark
-                ? Colors.black
-                : Colors.black,
-                      ),
+                      "Number : ${data.mobile ?? ''}",
                     ),
                   ],
                 ),
               ),
-             const Divider(
-              color: Colors.black12,
-             ),
 
               Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
+                crossAxisAlignment:
+                    CrossAxisAlignment.end,
                 children: [
                   Text(
-                    "₹ 365.00",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                      color:
-            Theme.of(context).brightness ==
-                    Brightness.dark
-                ? Colors.black
-                : Colors.black,
+                    "₹${data.amount ?? '0'}",
+                    style: const TextStyle(
+                      fontWeight:
+                          FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(height: 4),
+
+                  const SizedBox(height: 5),
 
                   Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 4,
+                    padding:
+                        const EdgeInsets.symmetric(
+                      horizontal: 8,
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: isSuccess
-                          ? Colors.green
-                          : isPending
-                              ? Colors.orange
-                              : Colors.red,
-                      borderRadius: BorderRadius.circular(6),
+                      color: statusColor,
+                      borderRadius:
+                          BorderRadius.circular(
+                        6,
+                      ),
                     ),
                     child: Text(
-                      isSuccess
-                          ? "Success"
-                          : isPending
-                              ? "Processing"
-                              : "Failed",
+                      data.status ?? '',
                       style: const TextStyle(
                         color: Colors.white,
-                        fontSize: 8,
-                        fontWeight: FontWeight.w600,
+                        fontSize: 10,
                       ),
                     ),
                   ),
@@ -181,70 +145,8 @@ class TransactionCard extends StatelessWidget {
               ),
             ],
           ),
-
-          const SizedBox(height: 12),
-
-          if (!isPending)
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                customButton(
-  text: isSuccess ? "Dispute" : "View",
-  color: isSuccess ? Colors.red : Colors.blue,
-  onTap: () {
-    if (isSuccess) {
-      Get.toNamed(AppRoutes.dispute);
-    }
-  },
-),
-
-                const SizedBox(width: 8),
-
-                customButton(
-                  text: isSuccess ? "View" : "Resend",
-                  color: isSuccess ? Colors.blue : Colors.green,
-                ),
-
-                if (isSuccess) ...[
-                  const SizedBox(width: 8),
-
-                  customButton(
-                    text: "Share",
-                    color: Colors.green,
-                  ),
-                ],
-              ],
-            ),
         ],
       ),
     );
   }
-
- Widget customButton({
-  required String text,
-  required Color color,
-  VoidCallback? onTap,
-}) {
-  return GestureDetector(
-    onTap: onTap,
-    child: Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 12,
-        vertical: 6,
-      ),
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(6),
-      ),
-      child: Text(
-        text,
-        style: const TextStyle(
-          color: Colors.white,
-          fontSize: 11,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
-    ),
-  );
-}
 }

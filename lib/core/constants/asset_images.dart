@@ -68,6 +68,9 @@ class AssetImages {
   static const search= "assets/images/search.svg";
   static const shareSvg= "assets/images/share_icon.svg";
   static const dispute= "assets/images/dispute.svg";
+  static const edit= "assets/images/edit.svg";
+  static const edit1= "assets/images/edit1.svg";
+  static const review= "assets/images/review.svg";
 
 }
 SizedBox adjustWidth(double width) {

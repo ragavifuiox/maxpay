@@ -170,7 +170,7 @@ Future<void> _triggerSearch() async {
     color: isDark ? Colors.white : Colors.black,
   ),
   decoration: InputDecoration(
-    hintText: 'Enter Customer ID',
+    hintText: 'Enter Customer ID',hintStyle: TextStyle(fontSize: 15, fontWeight: FontWeight.w400),
     border: InputBorder.none,
     contentPadding: EdgeInsets.symmetric(
       horizontal: 16.w,
@@ -216,7 +216,7 @@ Future<void> _triggerSearch() async {
         isExpanded: true,
         value: selectedOperatorObj,
 
-        hint: const Text("Select Operator"),
+        hint: const Text("Select Operator",style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400),),
 
         items: controller.plans.map((Data operator) {
           return DropdownMenuItem<Data>(
@@ -286,7 +286,7 @@ Future<void> _triggerSearch() async {
   await _triggerSearch();
 },
     decoration: InputDecoration(
-      hintText: 'Enter Amount',
+      hintText: 'Enter Amount',hintStyle: TextStyle(fontSize: 15, fontWeight: FontWeight.w400),
       border: InputBorder.none,
       contentPadding: EdgeInsets.symmetric(
         horizontal: 16.w,
@@ -542,14 +542,26 @@ Widget _buildPlanCard(
   String validity, {
   required VoidCallback onBuy,
 }) {
+  final cardColor =
+      isDark ? AppColors.darkplceholder : AppColors.background;
+
+  final primaryText =
+      isDark ? Colors.white : Colors.black;
+
   return Container(
     margin: EdgeInsets.only(bottom: 15.h),
     padding: EdgeInsets.all(16.r),
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(16.r),
-      border: Border.all(color: Colors.grey.shade300),
-    ),
+      decoration: BoxDecoration(
+  color: isDark
+      ? const Color(0xFF2F3349)
+      : AppColors.background,
+  borderRadius: BorderRadius.circular(12),
+  border: isDark
+      ? Border.all(
+          color: const Color(0xFF3C3F52),
+        )
+      : null,
+),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -558,7 +570,7 @@ Widget _buildPlanCard(
         Text(
           plan.planName ?? "",
           style: TextStyle(
-            fontSize: 15.sp,
+            fontSize: 13.sp,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -573,10 +585,14 @@ Widget _buildPlanCard(
             /// AMOUNT
             Text(
               "₹ $amount",
-              style: TextStyle(
-                fontSize: 20.sp,
-                fontWeight: FontWeight.bold,
-              ),
+             style: TextStyle(
+                    fontSize: 18.sp,
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w600,
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? Colors.white
+                        : Colors.black,
+                  ),
             ),
 
             /// VALIDITY
@@ -584,17 +600,20 @@ Widget _buildPlanCard(
               children: [
                 Text(
                   validity,
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style:TextStyle(
+                              fontSize: 12.sp,
+                              fontFamily: 'Poppins',
+                              fontWeight: FontWeight.w500,
+                              color:
+                                  Theme.of(context).brightness ==
+                                      Brightness.dark
+                                  ? Colors.white
+                                  : Colors.black,
+                            ),
                 ),
                 Text(
                   "Validity",
-                  style: TextStyle(
-                    color: Colors.grey,
-                    fontSize: 12.sp,
-                  ),
+                  style: TextStyle(fontSize: 13.sp, color: Colors.grey),
                 ),
               ],
             ),
@@ -648,7 +667,12 @@ Widget _buildPlanCard(
 
         SizedBox(height: 12.h),
 
-          Divider(color: Colors.grey.shade300, thickness: 1),
+         Divider(
+  color: Theme.of(context).brightness == Brightness.light
+      ? Colors.black12
+      : Colors.white24,
+),
+
 
         SizedBox(height: 12.h),
 

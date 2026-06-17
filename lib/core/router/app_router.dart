@@ -8,9 +8,11 @@ import 'package:maxpay/controllers/earning_controller.dart';
 import 'package:maxpay/controllers/grade_controller.dart';
 import 'package:maxpay/controllers/homepage_controller.dart';
 import 'package:maxpay/controllers/menu_controlller.dart';
+import 'package:maxpay/controllers/payment_status_controller.dart';
 import 'package:maxpay/controllers/prepaid_controller.dart';
 
 import 'package:maxpay/controllers/profile_controller.dart';
+import 'package:maxpay/controllers/refund_controller.dart';
 import 'package:maxpay/controllers/support_controller.dart';
 import 'package:maxpay/controllers/wallet_request_controller.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
@@ -37,6 +39,7 @@ import 'package:maxpay/view/login_history/login_history_screen.dart';
 import 'package:maxpay/view/mobile_recharge/mobile_recharge_page.dart';
 import 'package:maxpay/view/my_earning/my_earning_screen.dart';
 import 'package:maxpay/view/nav_page/nav_page.dart';
+import 'package:maxpay/view/paymentstatus/payment_status.dart';
 import 'package:maxpay/view/profile/profile_screen.dart';
 import 'package:maxpay/view/recharge/confirm_transaction_page.dart';
 import 'package:maxpay/view/recharge/customer_trnas_confirmation.dart';
@@ -208,7 +211,23 @@ class AppPages {
       }),
     ),
 
-    GetPage(name: AppRoutes.refund, page: () => const RefundScreen()),
+
+ GetPage(
+      transition: Transition.fade,
+
+      name: AppRoutes.refund,
+
+      page: () => const RefundScreen(),
+
+      binding: BindingsBuilder(() {
+        Get.lazyPut<RefundController>(
+          () => RefundController(refundUsecase: sl()),
+
+          fenix: true,
+        );
+      }),
+    ),
+    
     GetPage(name: AppRoutes.cashback, page: () => const CashbackScreen()),
 
     GetPage(
@@ -407,6 +426,24 @@ class AppPages {
       page: () => const StatementReadMoreScreen(),
     ),
     GetPage(name: AppRoutes.webloginqr, page: () => const WebLoginScreen()),
+     GetPage(
+      transition: Transition.fade,
+
+      name: AppRoutes.paymentstatus,
+
+      page: () => PaymentStatusScreen(),
+
+      binding: BindingsBuilder(() {
+        Get.lazyPut<PaymentStatusController>(
+          () => PaymentStatusController(
+            paymentStatusUsecase: sl()
+           
+          ),
+
+          fenix: true,
+        );
+      }),
+    ),
    
 
     GetPage(

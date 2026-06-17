@@ -177,23 +177,36 @@ class UploadCard extends StatelessWidget {
             color: theme.colorScheme.outline,
           ),
         ),
-        child: hasFile
-            ? Column(
-                children: [
-                  const Icon(
-                    Icons.check_circle,
-                    color: Colors.green,
-                    size: 40,
+       child: hasFile
+    ? Column(
+        children: [
+          SizedBox(
+            height: 120,
+            width: 120,
+            child: selectedFile != null
+                ? Image.file(
+                    selectedFile!,
+                    fit: BoxFit.cover,
+                  )
+                : Image.network(
+                    fileName, // full image URL
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return const Icon(
+                        Icons.broken_image,
+                        size: 50,
+                      );
+                    },
                   ),
-                  const SizedBox(height: 10),
-                  Text(
-                    selectedFile != null
-                        ? selectedFile!.path.split('/').last
-                        : fileName,
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              )
+          ),
+          const SizedBox(height: 10),
+          Text(
+            selectedFile != null
+                ? selectedFile!.path.split('/').last
+                : fileName.split('/').last,
+          ),
+        ],
+      )
             : Column(
                 children: [
                   const Icon(
