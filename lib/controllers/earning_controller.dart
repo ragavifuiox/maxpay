@@ -70,13 +70,14 @@ class EarningController extends GetxController {
 
 
 
-Future<void> searchEarnings(String fromdate, String todate) async {
+Future<void> searchEarnings(String fromdate, String todate,String search) async {
   try {
     isLoading.value = true;
 
     final result = await searchEarningsUseCase(
       fromdate: fromdate,
       todate: todate,
+      search: search
     );
 
     result.fold(

@@ -1,6 +1,6 @@
 class PaymentStatus {
   bool? success;
-  List<Data>? data;
+  List<PaymentStatusData>? data;
   String? message;
   int? code;
 
@@ -9,9 +9,9 @@ class PaymentStatus {
   PaymentStatus.fromJson(Map<String, dynamic> json) {
     success = json['success'];
     if (json['data'] != null) {
-      data = <Data>[];
+      data = <PaymentStatusData>[];
       json['data'].forEach((v) {
-        data!.add(Data.fromJson(v));
+        data!.add(new PaymentStatusData.fromJson(v));
       });
     }
     message = json['message'];
@@ -19,98 +19,58 @@ class PaymentStatus {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['success'] = success;
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['success'] = this.success;
     if (this.data != null) {
       data['data'] = this.data!.map((v) => v.toJson()).toList();
     }
-    data['message'] = message;
-    data['code'] = code;
+    data['message'] = this.message;
+    data['code'] = this.code;
     return data;
   }
 }
 
-class Data {
+class PaymentStatusData {
   int? id;
-  int? retailerId;
-  String? retailerUserId;
-  int? bankId;
-  String? userType;
-  String? paymentFor;
-  String? outstandingAmount;
-  String? requestAmount;
-  String? paymentType;
-  Null bankName;
-  String? refNumber;
-  String? receipt;
-  String? description;
-  String? remark;
-  String? txnId;
-  String? status;
-  String? createdAt;
-  String? updatedAt;
+  String? dateTime;
+  String? productName;
+  String? productLogo;
+  Null? transactionNo;
+  String? mobile;
+  String? amount;
+  String? paymentStatus;
 
-  Data(
+  PaymentStatusData(
       {this.id,
-      this.retailerId,
-      this.retailerUserId,
-      this.bankId,
-      this.userType,
-      this.paymentFor,
-      this.outstandingAmount,
-      this.requestAmount,
-      this.paymentType,
-      this.bankName,
-      this.refNumber,
-      this.receipt,
-      this.description,
-      this.remark,
-      this.txnId,
-      this.status,
-      this.createdAt,
-      this.updatedAt});
+      this.dateTime,
+      this.productName,
+      this.productLogo,
+      this.transactionNo,
+      this.mobile,
+      this.amount,
+      this.paymentStatus});
 
-  Data.fromJson(Map<String, dynamic> json) {
+  PaymentStatusData.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    retailerId = json['retailer_id'];
-    retailerUserId = json['retailer_user_id'];
-    bankId = json['bank_id'];
-    userType = json['user_type'];
-    paymentFor = json['payment_for'];
-    outstandingAmount = json['outstanding_amount'];
-    requestAmount = json['request_amount'];
-    paymentType = json['payment_type'];
-    bankName = json['bank_name'];
-    refNumber = json['ref_number'];
-    receipt = json['receipt'];
-    description = json['description'];
-    remark = json['remark'];
-    txnId = json['txn_id'];
-    status = json['status'];
-    createdAt = json['created_at'];
-    updatedAt = json['updated_at'];
+    dateTime = json['date_time'];
+    productName = json['product_name'];
+    productLogo = json['product_logo'];
+    transactionNo = json['transaction_no'];
+    mobile = json['mobile'];
+    amount = json['amount'];
+    paymentStatus = json['payment_status'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['id'] = id;
-    data['retailer_id'] = retailerId;
-    data['retailer_user_id'] = retailerUserId;
-    data['bank_id'] = bankId;
-    data['user_type'] = userType;
-    data['payment_for'] = paymentFor;
-    data['outstanding_amount'] = outstandingAmount;
-    data['request_amount'] = requestAmount;
-    data['payment_type'] = paymentType;
-    data['bank_name'] = bankName;
-    data['ref_number'] = refNumber;
-    data['receipt'] = receipt;
-    data['description'] = description;
-    data['remark'] = remark;
-    data['txn_id'] = txnId;
-    data['status'] = status;
-    data['created_at'] = createdAt;
-    data['updated_at'] = updatedAt;
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['date_time'] = this.dateTime;
+    data['product_name'] = this.productName;
+    data['product_logo'] = this.productLogo;
+    data['transaction_no'] = this.transactionNo;
+    data['mobile'] = this.mobile;
+    data['amount'] = this.amount;
+    data['payment_status'] = this.paymentStatus;
     return data;
   }
 }

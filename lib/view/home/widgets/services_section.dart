@@ -495,13 +495,25 @@ class MenuScreen extends StatelessWidget {
         Get.toNamed(
           AppRoutes.dth,
 
-          arguments: {
-            "productId": item.id.toString(),
-            "productName": item.name ?? "",
-          },
-        );
+        arguments: {
+          "productId": item.id.toString(),
+          "productName": item.name ?? "",
+        },
+      );
 
-        break;
+
+      break;
+       case 'payment status':
+
+        Get.toNamed(
+        AppRoutes.paymentstatus,
+
+        arguments: {
+          "productId": item.id.toString(),
+          "productName": item.name ?? "",
+        },
+      );
+
 
       default:
         break;

@@ -125,40 +125,40 @@ class _NewsTickerState extends State<NewsTicker> {
               ),
 
               /// SCROLLING NEWS
-              Expanded(
-                child: SingleChildScrollView(
-                  controller: scrollController,
-                  scrollDirection: Axis.horizontal,
-                  physics: const NeverScrollableScrollPhysics(),
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 12.w),
-                    child: Row(
-                      children: [
-                        Text(
-                          newsText,
-                          style: TextStyle(
-                            fontSize: 14.sp,
-                            fontWeight: FontWeight.w500,
-                            color: colorScheme.onSurface,
-                          ),
-                        ),
-
-                        SizedBox(width: 50.w),
-
-                        /// Duplicate text for seamless loop
-                        Text(
-                          newsText,
-                          style: TextStyle(
-                            fontSize: 14.sp,
-                            fontWeight: FontWeight.w500,
-                            color: colorScheme.onSurface,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+             Expanded(
+  child: GestureDetector(
+    onTap: () => showNewsPopup(newsText),
+    child: SingleChildScrollView(
+      controller: scrollController,
+      scrollDirection: Axis.horizontal,
+      physics: const NeverScrollableScrollPhysics(),
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 12.w),
+        child: Row(
+          children: [
+            Text(
+              newsText,
+              style: TextStyle(
+                fontSize: 14.sp,
+                fontWeight: FontWeight.w500,
+                color: colorScheme.onSurface,
               ),
+            ),
+            SizedBox(width: 50.w),
+            Text(
+              newsText,
+              style: TextStyle(
+                fontSize: 14.sp,
+                fontWeight: FontWeight.w500,
+                color: colorScheme.onSurface,
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+  ),
+),
             ],
           ),
         ),
@@ -167,6 +167,30 @@ class _NewsTickerState extends State<NewsTicker> {
   }
 }
 
+void showNewsPopup(String newsText) {
+  Get.dialog(
+    AlertDialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12.r),
+      ),
+      title: const Text("Latest News"),
+      content: SingleChildScrollView(
+        child: Text(
+          newsText,
+          style: TextStyle(
+            fontSize: 14.sp,
+          ),
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Get.back(),
+          child: const Text("Close"),
+        ),
+      ],
+    ),
+  );
+}
 class NewsClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {

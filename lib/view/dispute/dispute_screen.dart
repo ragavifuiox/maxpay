@@ -35,32 +35,45 @@ class DisputeReportScreen extends GetView<DisputeController> {
 
             SizedBox(height: 18.h),
 
-            Expanded(
-              child: Obx(() {
-  print("UI LENGTH: ${controller.disputeList.length}");
-
-  if (controller.disputeList.isEmpty) {
-    return const Center(
-      child: Text("No Data Found"),
-    );
-  }
-
-  return ListView.builder(
-    itemCount: controller.disputeList.length,
-    itemBuilder: (context, index) {
-      final item = controller.disputeList[index];
-
-      return Card(
-        child: ListTile(
-          title: Text(item.subject ?? ""),
-          subtitle: Text(item.status ?? ""),
-        ),
+           Expanded(
+  child: Obx(() {
+    if (controller.disputeList.isEmpty) {
+      return const Center(
+        child: Text("No Data Found"),
       );
-    },
-  );
-})
-            ),
-          ],
+    }
+
+    return ListView.separated(
+      itemCount: controller.disputeList.length,
+      separatorBuilder: (_, __) => SizedBox(height: 12.h),
+      itemBuilder: (context, index) {
+        final item = controller.disputeList[index];
+
+        final bool isSuccess =
+            (item.status ?? "").toLowerCase() == "success";
+
+        return DisputeCardWidget(
+          status: item.status ?? "Pending",
+          statusColor: isSuccess
+              ? Colors.green
+              : Colors.red,
+
+          message: item.adminReply?.isNotEmpty == true
+              ? item.adminReply!
+              : (item.description ?? ""),
+
+          messageColor: isSuccess
+              ? Colors.green
+              : Colors.red,
+
+          subject: item.subject ?? "-",
+
+          replyTime: item.updatedAt ?? "",
+        );
+      },
+    );
+  }),
+)        ],
         ),
       ),
     );
@@ -89,32 +102,43 @@ class DisputeCardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    
 
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.all(14.w),
+      padding: EdgeInsets.all(12.w),
       decoration: BoxDecoration(
         color: theme.brightness == Brightness.light
-      ? AppColors.background
-      : AppColors.darkplceholder,
+            ? const Color(0xffF6F6FB)
+            : AppColors.darkplceholder,
         borderRadius: BorderRadius.circular(10.r),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+
           /// TOP ROW
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                "Replay Time: 07:38:43PM",
-                style: TextHelper.max18,
+              Expanded(
+                child: Text(
+                  "Replay Time: $replyTime",
+                   style: TextStyle(
+                  fontSize: 12,
+                  color: isDark
+                      ? const Color(0xFFFFFFFF).withValues(alpha: 0.7)
+                      : AppColors.darktextclr,
+                  fontWeight: FontWeight.w500,
+                ),
+                ),
               ),
 
               Container(
                 padding: EdgeInsets.symmetric(
                   horizontal: 10.w,
-                  vertical: 4.h,
+                  vertical: 3.h,
                 ),
                 decoration: BoxDecoration(
                   color: statusColor,
@@ -124,35 +148,46 @@ class DisputeCardWidget extends StatelessWidget {
                   status,
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 10.sp,
+                    fontSize: 9.sp,
                     fontWeight: FontWeight.w600,
-                    fontFamily: "Poppins",
                   ),
                 ),
               ),
             ],
           ),
 
-          SizedBox(height: 14.h),
- Divider(
-  color: Theme.of(context).brightness == Brightness.light
-      ? Colors.black12
-      : Colors.white24,
-),
- SizedBox(height: 10.h),
+          SizedBox(height: 10.h),
+
+          Divider(
+            color: theme.brightness == Brightness.light
+                ? Colors.black12
+                : Colors.white24,
+          ),
+
+          SizedBox(height: 8.h),
+
           /// SUBJECT
           RichText(
             text: TextSpan(
               children: [
                 TextSpan(
                   text: "Subject: ",
-                  style: TextHelper.max19(context)
+                  style: TextStyle(
+                    fontSize: 13.sp,
+                    color: theme.textTheme.bodyLarge?.color,
+                    fontWeight: FontWeight.w600,
+                    fontFamily: 'poppins'
+                   
+                  ),
                 ),
-
-
                 TextSpan(
-                  text: "Pre Paid Recharge",
-                  style: TextHelper.max19(context),
+                  text: subject,
+                  style: TextStyle(
+                    fontSize: 13.sp,
+                    color: theme.textTheme.bodyLarge?.color,
+                    fontWeight: FontWeight.w500,
+                      fontFamily: 'poppins'
+                  ),
                 ),
               ],
             ),
@@ -165,8 +200,9 @@ class DisputeCardWidget extends StatelessWidget {
             message,
             style: TextStyle(
               color: messageColor,
-              fontSize: 12.sp,
+              fontSize: 14.sp,
               fontWeight: FontWeight.w500,
+              fontFamily: 'poppins'
             ),
           ),
         ],

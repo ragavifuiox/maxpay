@@ -19,11 +19,13 @@ import 'package:maxpay/core/data/repsoitory/login_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/mobile_rehcarge_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/news_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/otp_repo_impl.dart';
+import 'package:maxpay/core/data/repsoitory/payment_status_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/plan_detail_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/plan_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/plan_tab_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/popup_message_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/product_type_repo_impl.dart';
+import 'package:maxpay/core/data/repsoitory/refund_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/seach_dth_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/search_earning_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/search_plan_repo_impl.dart';
@@ -55,13 +57,15 @@ import 'package:maxpay/core/domain/repository/login_repository.dart';
 import 'package:maxpay/core/domain/repository/mobile_recharge_repository.dart';
 import 'package:maxpay/core/domain/repository/news_repository.dart';
 import 'package:maxpay/core/domain/repository/otp_repository.dart';
+import 'package:maxpay/core/domain/repository/paymnet_status_repository.dart';
 import 'package:maxpay/core/domain/repository/plan_detail_repository.dart';
 import 'package:maxpay/core/domain/repository/plan_repository.dart';
 import 'package:maxpay/core/domain/repository/plan_tab_repository.dart';
 import 'package:maxpay/core/domain/repository/popup_message_repository.dart';
 import 'package:maxpay/core/domain/repository/product_type_repository.dart';
+import 'package:maxpay/core/domain/repository/refund_repository.dart';
 import 'package:maxpay/core/domain/repository/search_dth_repository.dart';
-import 'package:maxpay/core/domain/repository/search_earnings_repository.dart';
+import 'package:maxpay/core/domain/repository/search_earning_repository.dart';
 import 'package:maxpay/core/domain/repository/search_plan_repository.dart';
 import 'package:maxpay/core/domain/repository/search_staff_repository.dart';
 import 'package:maxpay/core/domain/repository/staff_list_repository.dart';
@@ -93,12 +97,13 @@ import 'package:maxpay/core/domain/usecase/login_usecase.dart';
 import 'package:maxpay/core/domain/usecase/mobile_recharge_usecase.dart';
 import 'package:maxpay/core/domain/usecase/news_usecase.dart';
 import 'package:maxpay/core/domain/usecase/otp_usecase.dart';
+import 'package:maxpay/core/domain/usecase/payment_status_usecase.dart';
 import 'package:maxpay/core/domain/usecase/plan_detail_usecase.dart';
 import 'package:maxpay/core/domain/usecase/plan_tab_usecase.dart';
 import 'package:maxpay/core/domain/usecase/plan_usecase.dart';
 import 'package:maxpay/core/domain/usecase/popup_message_usecase.dart';
-
 import 'package:maxpay/core/domain/usecase/product_type_usecase.dart';
+import 'package:maxpay/core/domain/usecase/refund_usecase.dart';
 import 'package:maxpay/core/domain/usecase/search_dth_usecase.dart';
 import 'package:maxpay/core/domain/usecase/search_earnings_usecase.dart';
 import 'package:maxpay/core/domain/usecase/search_plan_usecase.dart';
@@ -196,6 +201,8 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton<TransReportRepository>(() =>  TransReportRepoImpl(sl()));
   sl.registerLazySingleton<GradeRepository>(() =>  GradeRepoImpl(sl()));
   sl.registerLazySingleton<DisputeRepository>(() =>  DisputeRepoImpl(sl()));
+  sl.registerLazySingleton<PaymnetStatusRepository>(() =>  PaymentStatusRepoImpl(sl()));
+  sl.registerLazySingleton<RefundRepository>(() =>  RefundRepoImpl(sl()));
 
   /*-------------------       USECASE    ---------------------------------*/
   sl.registerLazySingleton<LoginUseCase>(() => LoginUseCase(sl()));
@@ -249,6 +256,8 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton<TransReportUsecase>(() => TransReportUsecase(sl()));
   sl.registerLazySingleton<GradeUsecase>(() => GradeUsecase(sl()));
   sl.registerLazySingleton<DisputeUsecase>(() => DisputeUsecase(sl()));
+  sl.registerLazySingleton<PaymentStatusUsecase>(() => PaymentStatusUsecase(sl()));
+  sl.registerLazySingleton<RefundUsecase>(() => RefundUsecase(sl()));
   // sl.registerLazySingleton<GetPrivacyPolicyUseCase>(
   //   () => GetPrivacyPolicyUseCase(sl()),
   // );

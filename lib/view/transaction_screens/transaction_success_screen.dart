@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:maxpay/controllers/transaction_report_controller.dart';
 import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/core/utils/texthelper.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
@@ -10,7 +12,7 @@ enum TransactionStatus {
  failed,
 }
 
-class TransactionScreen extends StatelessWidget {
+class TransactionScreen extends GetView<TransReportController> {
   final TransactionStatus status;
 
   const TransactionScreen({
@@ -165,17 +167,30 @@ class TransactionScreen extends StatelessWidget {
 ),
               const SizedBox(height: 15),
             /// TRANSACTION LIST
-            Expanded(
-              child: ListView.builder(
-                itemCount: 5,
-                itemBuilder: (context, index) {
-                  return TransactionCard(
-                    bgColor: bgColor,
-                    status: status,
-                  );
-                },
-              ),
-            ),
+           Expanded(
+  child: Obx(() {
+    if (controller.isLoading.value) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+
+    if (controller.transreportList.isEmpty) {
+      return const Center(
+        child: Text("No Data Found"),
+      );
+    }
+
+    return ListView.builder(
+      itemCount: controller.transreportList.length,
+      itemBuilder: (context, index) {
+        return TransactionCard(
+          data: controller.transreportList[index],
+        );
+      },
+    );
+  }),
+),
           ],
         ),
       ),
