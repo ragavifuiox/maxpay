@@ -7,6 +7,7 @@ import 'package:maxpay/controllers/dth_controller.dart';
 import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/core/constants/snackbar.dart';
+import 'package:maxpay/core/extensions/currency.dart';
 import 'package:maxpay/core/utils/logg_helper.dart';
 import 'package:maxpay/global_widget/commom_button.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
@@ -24,30 +25,24 @@ class ConfirmDthPage extends GetView<DthController> {
 
   late String productdetid;
   final args = Get.arguments ?? {};
-String get type => args["type"] ?? "mobile";
-
+  String get type => args["type"] ?? "mobile";
 
   void setProductId(String id) {
     productdetid = id;
   }
 
-  
-Widget build(BuildContext context) {
-  final args = Get.arguments ?? {};
+  Widget build(BuildContext context) {
+    final args = Get.arguments ?? {};
 
-  final String customerId = args['customerId'] ?? '';
- 
-  final String selectedAmount = args['amount']?.toString() ?? '';
+    final String customerId = args['customerId'] ?? '';
 
-print("SELECTED AMOUNT => $selectedAmount");
+    final String selectedAmount = args['amount']?.toString() ?? '';
 
-  final theme = Theme.of(context);
-  final isDark = theme.brightness == Brightness.dark;
+    print("SELECTED AMOUNT => $selectedAmount");
 
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
-
-    
-   
     // final String productId = args['productId'] ?? '';
 
     return Obx(() {
@@ -126,36 +121,32 @@ print("SELECTED AMOUNT => $selectedAmount");
                           valueColor: Colors.green,
                         ),
 
-                       _buildDetailRow(
-  context,
-  'Transaction No',
-  customerId,
-),
+                        _buildDetailRow(context, 'Transaction No', customerId),
 
                         SizedBox(height: 10.h),
 
                         _buildAmountBox(
                           context,
                           'Available Balance',
-                          '₹${confirmData.availableBalance ?? 0}',
+                          (confirmData.availableBalance ?? '0').currencyIndian,
                           Colors.blue,
                           const Color(0xffE8EEFF),
                           const Color(0xffE0E4FF),
                         ),
 
-                       _buildAmountBox(
-  context,
-  'Transaction Amount',
-  '₹$selectedAmount',
-  Colors.red,
-  const Color(0xffFFE5E5),
-  const Color(0xffFFE4E8),
-),
+                        _buildAmountBox(
+                          context,
+                          'Transaction Amount',
+                          selectedAmount.currencyIndian,
+                          Colors.red,
+                          const Color(0xffFFE5E5),
+                          const Color(0xffFFE4E8),
+                        ),
 
                         _buildAmountBox(
                           context,
                           'Commission',
-                          '₹${confirmData.commission ?? "0"}',
+                          (confirmData.commission ?? '0').currencyIndian,
                           Colors.green,
                           const Color(0xffE4FFF1),
                           const Color(0xffE6FFF3),
@@ -216,7 +207,7 @@ print("SELECTED AMOUNT => $selectedAmount");
                           AppRoutes.customertrans,
                           arguments: {
                             "mobileNumber": customerId,
-                            "productdetid": args['productdetid'], 
+                            "productdetid": args['productdetid'],
                             "productName": confirmData.productName ?? '',
                             "paymentStatus": confirmData.paymentStatus ?? '',
                             "transactionNo": customerId,
@@ -228,7 +219,7 @@ print("SELECTED AMOUNT => $selectedAmount");
                                 : '',
                             "operatorColor": Colors.red,
                             "operatorLogo": confirmData.logo ?? '',
-                          }
+                          },
                         );
                       },
                     ),
@@ -262,32 +253,35 @@ print("SELECTED AMOUNT => $selectedAmount");
                                   return;
                                 }
 
-                                 print("ARGS PRODUCT ID => ${args['productdetid']}");
-        print("CONTROLLER PRODUCT ID => ${controller.productdetid}");
+                                print(
+                                  "ARGS PRODUCT ID => ${args['productdetid']}",
+                                );
+                                print(
+                                  "CONTROLLER PRODUCT ID => ${controller.productdetid}",
+                                );
 
-        AppLogger.debugPrint(
-          "👉 FINAL PRODUCT ID: ${controller.productdetid}",
-        );
+                                AppLogger.debugPrint(
+                                  "👉 FINAL PRODUCT ID: ${controller.productdetid}",
+                                );
 
-                              final success = await controller.dthrecharge(
-  args['productdetid'].toString(),
-  customerId,
-  amountController.text.trim(),
-);
+                                final success = await controller.dthrecharge(
+                                  args['productdetid'].toString(),
+                                  customerId,
+                                  amountController.text.trim(),
+                                );
 
                                 AppLogger.debugPrint("AFTER API CALL");
                                 final rechargeData =
                                     controller.rechargeResponse.value;
 
                                 if (success && rechargeData != null) {
-                                 final apiData = rechargeData.data?.data;
+                                  final apiData = rechargeData.data?.data;
 
                                   Get.to(
                                     () => DthSuccessPage(
                                       productName:
                                           // apiData?.logo ??
-                                          confirmData.productName ??
-                                          "",
+                                          confirmData.productName ?? "",
                                       // operatorLogo: apiData?.customerid ?? "",
                                       operatorInitial:
                                           (apiData?.operatorName?.isNotEmpty ??
@@ -301,7 +295,9 @@ print("SELECTED AMOUNT => $selectedAmount");
                                           apiData?.mobileno ?? customerId,
 
                                       rechargeAmount:
-                                          "₹${apiData?.amount ?? amountController.text}",
+                                          (apiData?.amount ??
+                                                  amountController.text)
+                                              .currencyIndian,
 
                                       transactionId: apiData?.txnid ?? "",
 

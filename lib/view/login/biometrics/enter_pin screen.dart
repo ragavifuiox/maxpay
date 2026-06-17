@@ -11,7 +11,7 @@ import 'package:pinput/pinput.dart';
 
 class PinCodeEnterPage extends StatefulWidget {
   const PinCodeEnterPage({super.key});
- @override
+  @override
   State<PinCodeEnterPage> createState() => _PinCodeEnterPageState();
 }
 
@@ -21,36 +21,36 @@ class _PinCodeEnterPageState extends State<PinCodeEnterPage> {
   final TextEditingController pinController = TextEditingController();
 
   final RxBool showVerifyButton = false.obs;
-@override
-void initState() {
-  super.initState();
+  @override
+  void initState() {
+    super.initState();
 
-  WidgetsBinding.instance.addPostFrameCallback((_) async {
-    if (controller.isFingerPrint.value == 1) {
-      await controller.authenticateWithFingerprint();
-    }
-  });
-}
-
-void handleKeyPress(String key) {
-  String current = pinController.text;
-
-  if (key == 'backspace') {
-    if (current.isNotEmpty) {
-      current = current.substring(0, current.length - 1);
-    }
-  } else {
-    if (current.length < 4) {
-      current = current + key;
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (controller.isFingerPrint.value == 1) {
+        await controller.authenticateWithFingerprint();
+      }
+    });
   }
 
-  pinController.value = TextEditingValue(
-    text: current,
-    selection: TextSelection.collapsed(offset: current.length),
-  );
-  showVerifyButton.value = current.length == 4;
-}
+  void handleKeyPress(String key) {
+    String current = pinController.text;
+
+    if (key == 'backspace') {
+      if (current.isNotEmpty) {
+        current = current.substring(0, current.length - 1);
+      }
+    } else {
+      if (current.length < 4) {
+        current = current + key;
+      }
+    }
+
+    pinController.value = TextEditingValue(
+      text: current,
+      selection: TextSelection.collapsed(offset: current.length),
+    );
+    showVerifyButton.value = current.length == 4;
+  }
 
   void resetPin() {
     pinController.clear();
@@ -69,19 +69,16 @@ void handleKeyPress(String key) {
       appBar: AppBar(
         backgroundColor: theme.scaffoldBackgroundColor,
         elevation: 0,
-      leading: IconButton(
-  onPressed: () {
-    if (showVerifyButton.value) {
-      resetPin();
-    } else {
-      Get.offAllNamed(AppRoutes.loginPhoneName);
-    }
-  },
-  icon: Icon(
-    Icons.arrow_back_ios_new,
-    color: colorScheme.onSurface,
-  ),
-),
+        leading: IconButton(
+          onPressed: () {
+            if (showVerifyButton.value) {
+              resetPin();
+            } else {
+              Get.offAllNamed(AppRoutes.loginPhoneName);
+            }
+          },
+          icon: Icon(Icons.arrow_back_ios_new, color: colorScheme.onSurface),
+        ),
       ),
       body: Center(
         child: ConstrainedBox(
@@ -99,8 +96,8 @@ void handleKeyPress(String key) {
                   'Enter your Pin code',
                   style: TextStyle(
                     fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w700,
-                    fontSize: isTablet ? 32.sp : 24.sp,
+                    fontWeight: FontWeight.w600,
+                    fontSize: isTablet ? 30.sp : 20.sp,
                     color: colorScheme.onSurface,
                   ),
                 ),
@@ -133,26 +130,26 @@ void handleKeyPress(String key) {
 
                 /// Fingerprint Icon
                 Obx(() {
-  if (controller.isFingerPrint.value == 1) {
-    return const SizedBox(); // Hide icon
-  }
+                  if (controller.isFingerPrint.value == 1) {
+                    return const SizedBox(); // Hide icon
+                  }
 
-  return Align(
-    alignment: Alignment.centerRight,
-    child: GestureDetector(
-      onTap: () async {
-        Get.toNamed(AppRoutes.biometricsScanning);
-      },
-      child: Center(
-        child: Icon(
-          Icons.fingerprint,
-          size: 50.sp,
-          color: AppColors.clrPrimary,
-        ),
-      ),
-    ),
-  );
-}),
+                  return Align(
+                    alignment: Alignment.centerRight,
+                    child: GestureDetector(
+                      onTap: () async {
+                        Get.toNamed(AppRoutes.biometricsScanning);
+                      },
+                      child: Center(
+                        child: Icon(
+                          Icons.fingerprint,
+                          size: 50.sp,
+                          color: AppColors.clrPrimary,
+                        ),
+                      ),
+                    ),
+                  );
+                }),
 
                 const Spacer(),
 
@@ -161,9 +158,9 @@ void handleKeyPress(String key) {
                     duration: const Duration(milliseconds: 300),
                     child: showVerifyButton.value
                         ? Row(
+                            mainAxisAlignment: .start,
                             key: const ValueKey('verify'),
                             children: [
-
                               // Expanded(
                               //   child: SafeArea(
                               //     child: TextButton(
@@ -182,14 +179,13 @@ void handleKeyPress(String key) {
                               //     ),
                               //   ),
                               // ),
-                                      
-                              SizedBox(width: 20.w),
+                              // SizedBox(width: 20.w),
                               Expanded(
                                 child: CommonButton(
                                   title: "Verify",
+                                  isLoading: controller.isLoading.value,
                                   onTap: () async {
-                                    final success =
-                                        await controller.VerifyPin(
+                                    final success = await controller.verifyPin(
                                       pinController.text.trim(),
                                     );
 

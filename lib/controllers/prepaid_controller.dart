@@ -5,7 +5,8 @@ import 'package:get/get_navigation/src/root/parse_route.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:maxpay/core/constants/snackbar.dart';
-import 'package:maxpay/core/data/model/mobile_recharge.dart' show MobileRecharge;
+import 'package:maxpay/core/data/model/mobile_recharge.dart'
+    show MobileRecharge;
 import 'package:maxpay/core/data/model/plan_detail_model.dart';
 import 'package:maxpay/core/data/model/plan_model.dart';
 import 'package:maxpay/core/data/model/plan_tab_model.dart';
@@ -40,7 +41,7 @@ class PrePaidController extends GetxController {
     required this.plantabusecase,
     required this.tabdetailusecase,
   });
-RxBool isSearching = false.obs;
+  RxBool isSearching = false.obs;
   RxBool isLoading = false.obs;
   Rx<MobileRecharge?> rechargeResponse = Rx<MobileRecharge?>(null);
   RxList<Data> plans = <Data>[].obs;
@@ -48,14 +49,12 @@ RxBool isSearching = false.obs;
 
   RxList<PlanData> searchPlansList = <PlanData>[].obs;
 
-  
   RxList<PlanDetailData> planDetailList = <PlanDetailData>[].obs;
   RxList<TabDetailData> filteredTabPlans = <TabDetailData>[].obs;
-RxList<PlanData> filteredSearchPlans = <PlanData>[].obs;
+  RxList<PlanData> filteredSearchPlans = <PlanData>[].obs;
   RxString errorMessage = ''.obs;
   RxBool isRechargeLoading = false.obs;
   Rx<TransConfirm?> transConfirmData = Rx<TransConfirm?>(null);
-
 
   RxList<PlantabData> planTabs = <PlantabData>[].obs;
   Rx<Data?> selectedPlan = Rx<Data?>(null);
@@ -84,84 +83,69 @@ RxList<PlanData> filteredSearchPlans = <PlanData>[].obs;
       isLoading.value = false;
     }
   }
-Future<void> searchPlans(
-  String planId,
-  String amount,
-) async {
 
-  print("========== SEARCH API ==========");
-  print("PlanId : $planId");
-  print("Amount : $amount");
+  Future<void> searchPlans(String planId, String amount) async {
+    print("========== SEARCH API ==========");
+    print("PlanId : $planId");
+    print("Amount : $amount");
 
-  final result = await searchPlanUsecase(
-    planId,
-    amount,
-  );
+    final result = await searchPlanUsecase(planId, amount);
 
-  result.fold(
-    (failure) {
-      print("SEARCH FAILED");
-      print("Message : ${failure.message}");
+    result.fold(
+      (failure) {
+        print("SEARCH FAILED");
+        print("Message : ${failure.message}");
 
-      CustomToast.error(failure.message);
-    },
-    (response) {
+        CustomToast.error(failure.message);
+      },
+      (response) {
+        print("SEARCH SUCCESS");
+        print("Response : $response");
+        print("Data Count : ${response.data?.length}");
 
-      print("SEARCH SUCCESS");
-      print("Response : $response");
-      print("Data Count : ${response.data?.length}");
+        searchPlansList.value = response.data ?? [];
 
-      searchPlansList.value = response.data ?? [];
-
-      applyTabFilter();
-    },
-  );
-}
-  
-void applyTabFilter() {
-  print("============== FILTER START ==============");
-
-  print("Selected Tab ID : $selectedTabId");
-
-  final selectedTab = planTabs.firstWhereOrNull(
-    (e) => e.id.toString() == selectedTabId,
-  );
-
-  if (selectedTab == null) {
-    print("No matching tab found");
-
-    filteredSearchPlans.value = searchPlansList;
-    return;
-  }
-
-  final tabName = (selectedTab.planType ?? "")
-      .toLowerCase()
-      .trim();
-
-  print("Selected Tab Name : $tabName");
-
-  print("Search Plan Count : ${searchPlansList.length}");
-
-  for (final p in searchPlansList) {
-    print(
-      "PlanType => ${p.planType}",
+        applyTabFilter();
+      },
     );
   }
 
-  filteredSearchPlans.value =
-      searchPlansList.where((plan) {
-    return (plan.planType ?? "")
-            .toLowerCase()
-            .trim() ==
-        tabName;
-  }).toList();
+  void applyTabFilter() {
+    print("============== FILTER START ==============");
 
-  print(
-    "Filtered Count : ${filteredSearchPlans.length}",
-  );
+    print("Selected Tab ID : $selectedTabId");
 
-  print("============== FILTER END ==============");
-}
+    final selectedTab = planTabs.firstWhereOrNull(
+      (e) => e.id.toString() == selectedTabId,
+    );
+
+    if (selectedTab == null) {
+      print("No matching tab found");
+
+      filteredSearchPlans.value = searchPlansList;
+      return;
+    }
+
+    final tabName = (selectedTab.planType ?? "").toLowerCase().trim();
+
+    print("Selected Tab Name : $tabName");
+
+    print("Search Plan Count : ${searchPlansList.length}");
+
+    for (final p in searchPlansList) {
+      print("PlanType => ${p.planType}");
+    }
+
+    filteredSearchPlans.value = searchPlansList.where((plan) {
+      return (plan.planType ?? "").toLowerCase().trim() == tabName;
+    }).toList();
+
+    print(
+      "Filtered Count : ${filteredSearchPlans.length} ${filteredSearchPlans.value.map((e) => e.toJson())}",
+    );
+
+    print("============== FILTER END ==============");
+  }
   // Future<void> searchPlans(String planId, String amount) async {
   //   try {
   //     AppLogger.debugPrint("🔍 [SEARCH PLANS] Started");
@@ -223,7 +207,7 @@ void applyTabFilter() {
       },
       (data) {
         AppLogger.logError("✅ [CONFIRM TRANS SUCCESS]");
-        AppLogger.logError("📦 Response Data: $data");
+        AppLogger.logError("📦 Response Data: ${data.toJson()}");
 
         transConfirmData.value = data;
 
@@ -277,7 +261,9 @@ void applyTabFilter() {
 
       final result = await mobileRechargeUseCase(productdetid, mobile, amount);
 
-      AppLogger.logError("✅ API RESPONSE RECEIVED in ${stopwatch.elapsedMilliseconds} ms");
+      AppLogger.logError(
+        "✅ API RESPONSE RECEIVED in ${stopwatch.elapsedMilliseconds} ms",
+      );
 
       AppLogger.logError("👉 API RESPONSE RECEIVED");
 

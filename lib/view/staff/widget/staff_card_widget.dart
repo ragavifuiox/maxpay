@@ -2,27 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
+import 'package:maxpay/core/extensions/currency.dart';
 import 'package:maxpay/core/utils/texthelper.dart';
 import 'package:maxpay/core/data/model/staff_lsit_model.dart';
 import 'package:maxpay/view/add_wallet/add_wallet_screen.dart';
 import 'package:maxpay/view/staff/transaction_report.dart';
 import 'package:maxpay/view/staff/wallet_report_screen.dart';
-class StaffCardWidget extends StatelessWidget {
 
+class StaffCardWidget extends StatelessWidget {
   final Data data;
 
-  const StaffCardWidget({
-    super.key,
-    required this.data,
-  });
+  const StaffCardWidget({super.key, required this.data});
 
   @override
   Widget build(BuildContext context) {
-
     final theme = Theme.of(context);
 
     return Container(
-
       margin: EdgeInsets.only(bottom: 18.h),
       padding: EdgeInsets.all(14.w),
       decoration: BoxDecoration(
@@ -34,98 +30,71 @@ class StaffCardWidget extends StatelessWidget {
       ),
       child: Column(
         children: [
-
-          _rowWidget(
-            context,
-            "Staff Name",
-            data.name ?? "",
-          ),
+          _rowWidget(context, "Staff Name", data.name ?? ""),
 
           SizedBox(height: 10.h),
-          _rowWidget(
-            context,
-            "UserId",
-            data.userId ?? "",
-          ),
-  SizedBox(height: 10.h),
+          _rowWidget(context, "UserId", data.userId ?? ""),
+          SizedBox(height: 10.h),
 
-          _rowWidget(
-            context,
-            "Reg.Mob No",
-            data.mobile ?? "",
-          ),
+          _rowWidget(context, "Reg.Mob No", data.mobile ?? ""),
 
           SizedBox(height: 10.h),
 
-          _rowWidget(
-            context,
-            "Package Name",
-            data.packageName ?? "",
-          ),
+          _rowWidget(context, "Package Name", data.packageName ?? ""),
 
           SizedBox(height: 10.h),
 
           _rowWidget(
             context,
             "Wallet Balance",
-            "₹${data.walletBalance ?? "0"}",
+            (data.walletBalance ?? '0').currencyIndian,
           ),
 
           SizedBox(height: 14.h),
 
           Row(
-  children: [
-    _buttonWidget(
-      title: "Transaction Report",
-      color: Colors.blue,
-      onTap: () {
-        Get.to(() => TransactionReportScreen());
-      },
-    ),
+            children: [
+              _buttonWidget(
+                title: "Transaction Report",
+                color: Colors.blue,
+                onTap: () {
+                  Get.to(() => TransactionReportScreen());
+                },
+              ),
 
-    SizedBox(width: 8.w), // Gap
+              SizedBox(width: 8.w), // Gap
 
-    _buttonWidget(
-      title: "Wallet Report",
-      color: Colors.red,
-      onTap: () {
-        Get.to(() => WalletReportScreen());
-      },
-    ),
+              _buttonWidget(
+                title: "Wallet Report",
+                color: Colors.red,
+                onTap: () {
+                  Get.to(() => WalletReportScreen());
+                },
+              ),
 
-    SizedBox(width: 8.w), // Gap
+              SizedBox(width: 8.w), // Gap
 
-    _buttonWidget(
-      title: "Add Wallet",
-      color: Colors.green,
-      onTap: () {
-        Get.to(() => AddWalletScreen());
-      },
-    ),
-  ],
-)
+              _buttonWidget(
+                title: "Add Wallet",
+                color: Colors.green,
+                onTap: () {
+                  Get.to(() => AddWalletScreen());
+                },
+              ),
+            ],
+          ),
         ],
       ),
     );
   }
 
-  Widget _rowWidget(
-    BuildContext context,
-    String title,
-    String value,
-  ) {
-
+  Widget _rowWidget(BuildContext context, String title, String value) {
     final theme = Theme.of(context);
 
     return Row(
-      mainAxisAlignment:
-          MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-
-        Text(
-          title,
-          style: TextHelper.max16(context),
-        ),
+        Text(title, style: TextHelper.max16(context)),
 
         Text(
           value,
@@ -141,31 +110,28 @@ class StaffCardWidget extends StatelessWidget {
     );
   }
 
- Widget _buttonWidget({
-  required String title,
-  required Color color,
-  VoidCallback? onTap,
-}) {
-  return InkWell(
-    onTap: onTap,
-    child: Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: 8.w,
-        vertical: 5.h,
-      ),
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(4.r),
-      ),
-      child: Text(
-        title,
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 8.sp,
-          fontWeight: FontWeight.w500,
+  Widget _buttonWidget({
+    required String title,
+    required Color color,
+    VoidCallback? onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 5.h),
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(4.r),
+        ),
+        child: Text(
+          title,
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 8.sp,
+            fontWeight: FontWeight.w500,
+          ),
         ),
       ),
-    ),
-  );
-}
+    );
+  }
 }

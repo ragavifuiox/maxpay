@@ -13,10 +13,12 @@ import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/core/constants/snackbar.dart';
 import 'package:maxpay/core/di/service_locator.dart';
+import 'package:maxpay/core/extensions/currency.dart';
 import 'package:maxpay/global_widget/commom_button.dart';
 import 'package:screenshot/screenshot.dart';
 
 import 'package:pdf/widgets.dart' as pw;
+
 class SuccessRechargePage extends StatelessWidget {
   final String productName;
   final String operatorInitial;
@@ -26,8 +28,8 @@ class SuccessRechargePage extends StatelessWidget {
   final String transactionId;
   final String dateTime;
   final String operatorLogo; // image URL
- final ScreenshotController screenshotController = ScreenshotController();
-   SuccessRechargePage({
+  final ScreenshotController screenshotController = ScreenshotController();
+  SuccessRechargePage({
     super.key,
     required this.productName,
     required this.operatorInitial,
@@ -43,8 +45,10 @@ class SuccessRechargePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-      final ProfileController profileController = Get.put(ProfileController(getProfileUseCase: sl(),));
-      final ScreenshotController screenshotController = ScreenshotController();
+    final ProfileController profileController = Get.put(
+      ProfileController(getProfileUseCase: sl()),
+    );
+    final ScreenshotController screenshotController = ScreenshotController();
 
     final bool isMobileOrDTH =
         productName.toLowerCase().contains('jio') ||
@@ -118,13 +122,13 @@ class SuccessRechargePage extends StatelessWidget {
                 ),
                 child: Column(
                   children: [
-                   _buildSummaryRow(
-  'Product',
-  '',
-  isIcon: true,
-  imageUrl: operatorLogo,
-  context: context,
-),
+                    _buildSummaryRow(
+                      'Product',
+                      '',
+                      isIcon: true,
+                      imageUrl: operatorLogo,
+                      context: context,
+                    ),
                     _buildSummaryRow(
                       'Transaction No',
                       transactionNo,
@@ -140,16 +144,13 @@ class SuccessRechargePage extends StatelessWidget {
                       transactionId,
                       context: context,
                     ),
-                    _buildSummaryRow(
-                      'Date & Time',
-                      dateTime,
-                      context: context,
-                    ),
+                    _buildSummaryRow('Date & Time', dateTime, context: context),
 
                     SizedBox(height: 10.h),
 
                     GestureDetector(
-                      onTap: () => _showTransactionDetails(context, profileController),
+                      onTap: () =>
+                          _showTransactionDetails(context, profileController),
                       child: Text(
                         'View Detail',
                         style: TextStyle(
@@ -184,442 +185,419 @@ class SuccessRechargePage extends StatelessWidget {
   /// ---------------- DETAILS POPUP ----------------
 
   void _showTransactionDetails(
-  BuildContext context,
-  ProfileController profileController,
-) {
-  final isDark = Theme.of(context).brightness == Brightness.dark;
+    BuildContext context,
+    ProfileController profileController,
+  ) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
-  showDialog(
-    context: context,
-    builder: (context) {
-      final profile = profileController.profileData.value?.data;
+    showDialog(
+      context: context,
+      builder: (context) {
+        final profile = profileController.profileData.value?.data;
 
-      return Screenshot(
-  controller: screenshotController,
-  child: Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15.r),
-        ),
-        child: Container(
-          padding: EdgeInsets.all(16.r),
-          decoration: BoxDecoration(
-            color: isDark
-                ? AppColors.darkplceholder
-                : Colors.white,
-            borderRadius: BorderRadius.circular(15.r),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: double.infinity,
-                padding: EdgeInsets.symmetric(vertical: 10.h),
-                decoration: BoxDecoration(
-                  color: AppColors.clrPrimary,
-                  borderRadius: BorderRadius.circular(6.r),
-                ),
-                child: Center(
-                  child: Text(
-                    "Transaction Details",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w600,
-                      fontFamily: 'Poppins',
-                    ),
-                  ),
-                ),
+        return Screenshot(
+          controller: screenshotController,
+          child: Dialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15.r),
+            ),
+            child: Container(
+              padding: EdgeInsets.all(16.r),
+              decoration: BoxDecoration(
+                color: isDark ? AppColors.darkplceholder : Colors.white,
+                borderRadius: BorderRadius.circular(15.r),
               ),
-
-              SizedBox(height: 15.h),
-
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  "Transaction ID : $transactionId",
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.w500,
-                    fontFamily: 'Poppins',
-                    color: AppColors.totalborder1,
-                  ),
-                ),
-              ),
-
-              SizedBox(height: 4.h),
-
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  "Date & Time : $dateTime",
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.w500,
-                    fontFamily: 'Poppins',
-                    color: AppColors.totalborder1,
-                  ),
-                ),
-              ),
-
-              SizedBox(height: 12.h),
-
-              const Divider(),
-
-              _detailRow(
-                context,
-                "Transaction",
-                "Success",
-                valueColor: Colors.green,
-              ),
-
-              _detailRow(
-                context,
-                "Transaction No",
-                transactionNo,
-              ),
-
-              _detailRow(
-                context,
-                "Transaction Amount",
-                rechargeAmount,
-              ),
-
-              _detailRow(
-                context,
-                "Product Type",
-                "Mobile Prepaid",
-              ),
-
-              _logoRow("Product", operatorLogo, context),
-
-              _detailRow(
-                context,
-                "Product Ref Id",
-                transactionId,
-              ),
-
-              SizedBox(height: 10.h),
-
-              Container(
-                width: double.infinity,
-                padding: EdgeInsets.all(12.r),
-                decoration: BoxDecoration(
-                  color: AppColors.clrPrimary,
-                  borderRadius: BorderRadius.circular(8.r),
-                ),
-                child: Column(
-                  children: [
-                    _detailRow(
-                      context,
-                      "Retailer Name",
-                      profile?.name ?? "N/A",
-                    ),
-                    _detailRow(
-                      context,
-                      "Contact No",
-                      profile?.phoneNumber ?? "N/A",
-                    ),
-                  ],
-                ),
-              ),
-
-              SizedBox(height: 10.h),
-
-              Text(
-                "T & C Apply",
-                style: TextStyle(
-                  color: Colors.blue,
-                  fontSize: 12.sp,
-                ),
-              ),
-
-              SizedBox(height: 15.h),
-
-              Row(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Expanded(
-                    child: SizedBox(
-                      height: 42.h,
-                      child: ElevatedButton(
-                    onPressed: () async {
-  await Future.delayed(const Duration(milliseconds: 300));
-
-  final image = await screenshotController.capture();
-
-  if (image == null) {
-    CustomToast.error("Failed to capture screen");
-    return;
-  }
-
-  final pdf = pw.Document();
-  final pdfImage = pw.MemoryImage(image);
-
-  pdf.addPage(
-    pw.Page(
-      build: (pw.Context context) {
-        return pw.Center(
-          child: pw.Image(pdfImage),
-        );
-      },
-    ),
-  );
-
-  final dir = Directory('/storage/emulated/0/Download');
-
-  if (!await dir.exists()) {
-    await dir.create(recursive: true);
-  }
-
-  final file = File(
-    "${dir.path}/transaction_${DateTime.now().millisecondsSinceEpoch}.pdf",
-  );
-
-  await file.writeAsBytes(await pdf.save());
-
-  Get.back();
-
-  CustomToast.success("PDF saved in Downloads");
-},
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.red,
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(6.r),
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              "Download",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 13.sp,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            SizedBox(width: 6.w),
-                            Icon(
-                              Icons.download,
-                              color: Colors.white,
-                              size: 18.sp,
-                            ),
-                          ],
-                        ),
-                      ),
+                  Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.symmetric(vertical: 10.h),
+                    decoration: BoxDecoration(
+                      color: AppColors.clrPrimary,
+                      borderRadius: BorderRadius.circular(6.r),
                     ),
-                  ),
-
-                  SizedBox(width: 10.w),
-
-                  SizedBox(
-                    width: 80.w,
-                    height: 42.h,
-                    child: ElevatedButton(
-                      onPressed: () => Get.back(),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue.shade900,
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(6.r),
-                        ),
-                      ),
+                    child: Center(
                       child: Text(
-                        "Ok",
+                        "Transaction Details",
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 13.sp,
-                          fontWeight: FontWeight.w500,
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w600,
+                          fontFamily: 'Poppins',
                         ),
                       ),
                     ),
+                  ),
+
+                  SizedBox(height: 15.h),
+
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      "Transaction ID : $transactionId",
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.w500,
+                        fontFamily: 'Poppins',
+                        color: AppColors.totalborder1,
+                      ),
+                    ),
+                  ),
+
+                  SizedBox(height: 4.h),
+
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      "Date & Time : $dateTime",
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.w500,
+                        fontFamily: 'Poppins',
+                        color: AppColors.totalborder1,
+                      ),
+                    ),
+                  ),
+
+                  SizedBox(height: 12.h),
+
+                  const Divider(),
+
+                  _detailRow(
+                    context,
+                    "Transaction",
+                    "Success",
+                    valueColor: Colors.green,
+                  ),
+
+                  _detailRow(context, "Transaction No", transactionNo),
+
+                  _detailRow(
+                    context,
+                    "Transaction Amount",
+                    rechargeAmount.currencyIndian,
+                  ),
+
+                  _detailRow(context, "Product Type", "Mobile Prepaid"),
+
+                  _logoRow("Product", operatorLogo, context),
+
+                  _detailRow(context, "Product Ref Id", transactionId),
+
+                  SizedBox(height: 10.h),
+
+                  Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.all(12.r),
+                    decoration: BoxDecoration(
+                      color: AppColors.clrPrimary,
+                      borderRadius: BorderRadius.circular(8.r),
+                    ),
+                    child: Column(
+                      children: [
+                        _detailRow(
+                          context,
+                          "Retailer Name",
+                          profile?.name ?? "N/A",
+                        ),
+                        _detailRow(
+                          context,
+                          "Contact No",
+                          profile?.phoneNumber ?? "N/A",
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  SizedBox(height: 10.h),
+
+                  Text(
+                    "T & C Apply",
+                    style: TextStyle(color: Colors.blue, fontSize: 12.sp),
+                  ),
+
+                  SizedBox(height: 15.h),
+
+                  Row(
+                    children: [
+                      Expanded(
+                        child: SizedBox(
+                          height: 42.h,
+                          child: ElevatedButton(
+                            onPressed: () async {
+                              await Future.delayed(
+                                const Duration(milliseconds: 300),
+                              );
+
+                              final image = await screenshotController
+                                  .capture();
+
+                              if (image == null) {
+                                CustomToast.error("Failed to capture screen");
+                                return;
+                              }
+
+                              final pdf = pw.Document();
+                              final pdfImage = pw.MemoryImage(image);
+
+                              pdf.addPage(
+                                pw.Page(
+                                  build: (pw.Context context) {
+                                    return pw.Center(child: pw.Image(pdfImage));
+                                  },
+                                ),
+                              );
+
+                              final dir = Directory(
+                                '/storage/emulated/0/Download',
+                              );
+
+                              if (!await dir.exists()) {
+                                await dir.create(recursive: true);
+                              }
+
+                              final file = File(
+                                "${dir.path}/transaction_${DateTime.now().millisecondsSinceEpoch}.pdf",
+                              );
+
+                              await file.writeAsBytes(await pdf.save());
+
+                              Get.back();
+
+                              CustomToast.success("PDF saved in Downloads");
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red,
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(6.r),
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "Download",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 13.sp,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                SizedBox(width: 6.w),
+                                Icon(
+                                  Icons.download,
+                                  color: Colors.white,
+                                  size: 18.sp,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      SizedBox(width: 10.w),
+
+                      SizedBox(
+                        width: 80.w,
+                        height: 42.h,
+                        child: ElevatedButton(
+                          onPressed: () => Get.back(),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blue.shade900,
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(6.r),
+                            ),
+                          ),
+                          child: Text(
+                            "Ok",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 13.sp,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ],
-          ),
-        ),
-  ),
-      );
-    },
-  );
-}
-Widget _logoRow(String title, String imageUrl, BuildContext context) {
-  return Padding(
-    padding: EdgeInsets.symmetric(vertical: 6.h),
-    child: Row(
-      children: [
-        Expanded(
-          flex: 4,
-          child: Text(
-            title,
-            style: TextStyle(
-              fontSize: 13.sp,
-              fontWeight: FontWeight.w400,
             ),
           ),
-        ),
+        );
+      },
+    );
+  }
 
-        Text(":"),
-
-        SizedBox(width: 10.w),
-
-        Expanded(
-          flex: 5,
-          child: Align(
-            alignment: Alignment.centerRight,
-            child: Image.network(
-              imageUrl,
-              width: 45.w,
-              height: 25.h,
-              fit: BoxFit.contain,
-              errorBuilder: (c, e, s) {
-                return Icon(Icons.image_not_supported, size: 18.sp);
-              },
+  Widget _logoRow(String title, String imageUrl, BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 6.h),
+      child: Row(
+        children: [
+          Expanded(
+            flex: 4,
+            child: Text(
+              title,
+              style: TextStyle(fontSize: 13.sp, fontWeight: FontWeight.w400),
             ),
           ),
-        ),
-      ],
-    ),
-  );
-}
-Widget _buildSummaryRow(
-  String label,
-  String value, {
-  bool isIcon = false,
-  String? imageUrl,
-  required BuildContext context,
-}) {
-  return Padding(
-    padding: EdgeInsets.only(bottom: 14.h),
-    child: Row(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        /// LEFT LABEL (fixed width = alignment fix)
-        SizedBox(
-          width: 130.w,
-          child: Text(
-            label,
-            style: TextStyle(
-              fontSize: 13.sp,
-              color: Colors.grey,
+
+          Text(":"),
+
+          SizedBox(width: 10.w),
+
+          Expanded(
+            flex: 5,
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: Image.network(
+                imageUrl,
+                width: 45.w,
+                height: 25.h,
+                fit: BoxFit.contain,
+                errorBuilder: (c, e, s) {
+                  return Icon(Icons.image_not_supported, size: 18.sp);
+                },
+              ),
             ),
           ),
-        ),
+        ],
+      ),
+    );
+  }
 
-        /// COLON (fixed position)
-        SizedBox(
-          width: 15.w,
-          child: Text(
-            ":",
-            style: TextStyle(
-              fontSize: 13.sp,
-              fontWeight: FontWeight.w600,
+  Widget _buildSummaryRow(
+    String label,
+    String value, {
+    bool isIcon = false,
+    String? imageUrl,
+    required BuildContext context,
+  }) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: 14.h),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          /// LEFT LABEL (fixed width = alignment fix)
+          SizedBox(
+            width: 130.w,
+            child: Text(
+              label,
+              style: TextStyle(fontSize: 13.sp, color: Colors.grey),
             ),
           ),
-        ),
 
-        /// RIGHT VALUE AREA (ALWAYS SAME START POSITION)
-        Expanded(
-          child: Align(
-            alignment: Alignment.centerLeft,
-            child: isIcon
-                ? (imageUrl != null && imageUrl.isNotEmpty)
-                    ? ClipRRect(
-                        borderRadius: BorderRadius.circular(6.r),
-                        child: Image.network(
-                          imageUrl,
-                          width: 45.w,
-                          height: 25.h,
-                          fit: BoxFit.contain,
-                        ),
-                      )
-                    : CircleAvatar(
-                        radius: 12.r,
-                        backgroundColor: Colors.grey.shade300,
-                        child: Text(
-                          operatorInitial,
-                          style: TextStyle(fontSize: 10.sp),
-                        ),
-                      )
-                : Text(
-                    value,
-                    style: TextStyle(
-                      fontSize: 13.sp,
-                      fontWeight: FontWeight.w600,
+          /// COLON (fixed position)
+          SizedBox(
+            width: 15.w,
+            child: Text(
+              ":",
+              style: TextStyle(fontSize: 13.sp, fontWeight: FontWeight.w600),
+            ),
+          ),
+
+          /// RIGHT VALUE AREA (ALWAYS SAME START POSITION)
+          Expanded(
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: isIcon
+                  ? (imageUrl != null && imageUrl.isNotEmpty)
+                        ? ClipRRect(
+                            borderRadius: BorderRadius.circular(6.r),
+                            child: Image.network(
+                              imageUrl,
+                              width: 45.w,
+                              height: 25.h,
+                              fit: BoxFit.contain,
+                            ),
+                          )
+                        : CircleAvatar(
+                            radius: 12.r,
+                            backgroundColor: Colors.grey.shade300,
+                            child: Text(
+                              operatorInitial,
+                              style: TextStyle(fontSize: 10.sp),
+                            ),
+                          )
+                  : Text(
+                      value,
+                      style: TextStyle(
+                        fontSize: 13.sp,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
-                  ),
+            ),
           ),
-        ),
-      ],
-    ),
-  );
-}
+        ],
+      ),
+    );
+  }
 
   /// ---------------- DETAIL ROW ----------------
 
   Widget _detailRow(
-  BuildContext context,
-  String title,
-  String value, {
-  Color? valueColor,
-  Color? textColor,
-
-}) {
-  return Padding(
-    padding: EdgeInsets.symmetric(vertical: 6.h),
-    child: Row(
-      children: [
-        Expanded(
-          flex: 4,
-          child:
-          Text(
-  title,
-  style: TextStyle(
-    color: textColor ??
-        (Theme.of(context).brightness == Brightness.dark
-            ? Colors.white
-            : Colors.black87),
-    fontSize: 13.sp,
-    fontWeight: FontWeight.w400,
-    fontFamily: 'Poppins',
-  ),
-),
-        ),
-        Text(
-          ":",
-          style: TextStyle(
-            color: textColor ??
-        (Theme.of(context).brightness == Brightness.dark
-            ? Colors.white
-            : Colors.black87),
-            fontSize: 13.sp,
-            fontWeight: FontWeight.w700,
-            fontFamily: 'Poppins',
+    BuildContext context,
+    String title,
+    String value, {
+    Color? valueColor,
+    Color? textColor,
+  }) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 6.h),
+      child: Row(
+        children: [
+          Expanded(
+            flex: 4,
+            child: Text(
+              title,
+              style: TextStyle(
+                color:
+                    textColor ??
+                    (Theme.of(context).brightness == Brightness.dark
+                        ? Colors.white
+                        : Colors.black87),
+                fontSize: 13.sp,
+                fontWeight: FontWeight.w400,
+                fontFamily: 'Poppins',
+              ),
+            ),
           ),
-        ),
-        SizedBox(width: 10.w),
-        Expanded(
-          flex: 5,
-          child: Text(
-  value,
-  textAlign: TextAlign.end,
-  style: TextStyle(
-    color: valueColor ??
-        textColor ??
-        (Theme.of(context).brightness == Brightness.dark
-            ? Colors.white
-            : Colors.black),
-    fontWeight: FontWeight.w700,
-    fontSize: 13.sp,
-  ),
-),
-        ),
-      ],
-    ),
-  );
-}
-
-
-
+          Text(
+            ":",
+            style: TextStyle(
+              color:
+                  textColor ??
+                  (Theme.of(context).brightness == Brightness.dark
+                      ? Colors.white
+                      : Colors.black87),
+              fontSize: 13.sp,
+              fontWeight: FontWeight.w700,
+              fontFamily: 'Poppins',
+            ),
+          ),
+          SizedBox(width: 10.w),
+          Expanded(
+            flex: 5,
+            child: Text(
+              value,
+              textAlign: TextAlign.end,
+              style: TextStyle(
+                color:
+                    valueColor ??
+                    textColor ??
+                    (Theme.of(context).brightness == Brightness.dark
+                        ? Colors.white
+                        : Colors.black),
+                fontWeight: FontWeight.w700,
+                fontSize: 13.sp,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 }

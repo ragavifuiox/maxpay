@@ -11,9 +11,10 @@ import 'package:maxpay/core/domain/usecase/verify_pin_usecase.dart';
 import 'package:maxpay/core/services/local_storage_service.dart';
 import 'package:maxpay/core/utils/logg_helper.dart';
 import 'package:maxpay/view/nav_page/navbar_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:sim_card_code/sim_card_code.dart';
 
 class AuthController extends GetxController {
-
   final LoginUseCase loginUseCase;
   final OtpUsecase otpUsecase;
   final CreatePinUsecase createPinUsecase;
@@ -39,34 +40,107 @@ class AuthController extends GetxController {
   RxString otp = ''.obs;
   RxString phoneNumber = ''.obs;
   RxInt isNewUser = 0.obs;
-RxInt isPin = 0.obs;
-RxInt isFingerPrint = 0.obs;
-RxBool isNewUserFlow = false.obs;
+  RxInt isPin = 0.obs;
+  RxInt isFingerPrint = 0.obs;
+  RxBool isNewUserFlow = false.obs;
   final LocalStorageService storage = LocalStorageService();
-@override
-void onInit() {
-  super.onInit();
-  loadLocalSession();
-}
+  @override
+  void onInit() {
+    super.onInit();
+    loadLocalSession();
+  }
 
   Future<void> loadLocalSession() async {
-  await storage.init();
+    await storage.init();
 
-  isPin.value = storage.getInt("is_pin") ?? 0;
-  isFingerPrint.value =
-      storage.getInt("is_fingerprint") ?? 0;
+    isPin.value = storage.getInt("is_pin") ?? 0;
+    isFingerPrint.value = storage.getInt("is_fingerprint") ?? 0;
 
-  AppLogger.logError(
-    "LOADED FINGERPRINT => ${isFingerPrint.value}",
-  );
-}
+    AppLogger.logError("LOADED FINGERPRINT => ${isFingerPrint.value}");
+  }
+
   // Login API Call
   Future<void> login() async {
     try {
       isLoading.value = true;
 
+      final enteredPhone = phoneController.text.trim();
+
+      /*
+      // 1. Request phone permission
+      var status = await Permission.phone.status;
+      if (!status.isGranted) {
+        status = await Permission.phone.request();
+      }
+
+      if (!status.isGranted) {
+        CustomToast.error(
+          "Phone permission is required to verify the SIM card",
+        );
+        return;
+      }
+
+      // 2. Fetch SIM info
+      final sims = await SimCardManager.allSimInfo;
+      AppLogger.logError("Detected SIM cards: ${sims.length}");
+
+      if (sims.isEmpty) {
+        CustomToast.error("No SIM card detected in this device");
+        return;
+      }
+
+      bool numberExists = false;
+      bool hasAnyStoredNumber = false;
+
+      // Helper function to normalize and match
+      bool matches(String entered, String? sim) {
+        if (sim == null || sim.isEmpty) return false;
+        final cleanEntered = entered.replaceAll(RegExp(r'\D'), '');
+        final cleanSim = sim.replaceAll(RegExp(r'\D'), '');
+        if (cleanEntered.isEmpty || cleanSim.isEmpty) return false;
+
+        // Match last 10 digits
+        if (cleanEntered.length >= 10 && cleanSim.length >= 10) {
+          return cleanEntered.substring(cleanEntered.length - 10) ==
+              cleanSim.substring(cleanSim.length - 10);
+        }
+        return cleanEntered == cleanSim;
+      }
+
+      for (var sim in sims) {
+        AppLogger.logError(
+          "SIM slot=${sim.slotIndex}, carrier=${sim.carrierName}, number=${sim.phoneNumber}",
+        );
+        if (sim.phoneNumber != null && sim.phoneNumber!.isNotEmpty) {
+          hasAnyStoredNumber = true;
+          if (matches(enteredPhone, sim.phoneNumber)) {
+            numberExists = true;
+            break;
+          }
+        }
+      }
+
+      // Also check the default phoneNumber getter
+      final defaultNumber = await SimCardManager.phoneNumber;
+      AppLogger.logError("Default SIM phone number: $defaultNumber");
+      if (defaultNumber != null && defaultNumber.isNotEmpty) {
+        hasAnyStoredNumber = true;
+        if (matches(enteredPhone, defaultNumber)) {
+          numberExists = true;
+        }
+      }
+
+      // If we found some phone numbers but none of them matched, block the login
+      if (hasAnyStoredNumber && !numberExists) {
+        CustomToast.error(
+          "The entered mobile number does not exist on this device",
+        );
+        return;
+      }
+      */
+
       final result = await loginUseCase(
-        phoneController.text.trim(),
+        enteredPhone,
         countryCode.value,
         nameController.text.trim(),
         pincodeController.text.trim(),
@@ -126,165 +200,115 @@ void onInit() {
       isLoading.value = false;
     }
   }
-Future<void> verifyOtp(String enteredOtp) async {
-  try {
-    isLoading.value = true;
 
-    final result = await otpUsecase(
-      phoneNumber.value,
-      enteredOtp,
-    );
+  Future<void> verifyOtp(String enteredOtp) async {
+    try {
+      isLoading.value = true;
 
-   result.fold(
-  (failure) {
-    CustomToast.error(failure.message);
-  },
-  (response) async {
+      final result = await otpUsecase(phoneNumber.value, enteredOtp);
 
-    AppLogger.logError("========== OTP RESPONSE ==========");
-    AppLogger.logError("SUCCESS => ${response.success}");
-    AppLogger.logError("MESSAGE => ${response.message}");
+      result.fold(
+        (failure) {
+          CustomToast.error(failure.message);
+        },
+        (response) async {
+          AppLogger.logError("========== OTP RESPONSE ==========");
+          AppLogger.logError("SUCCESS => ${response.success}");
+          AppLogger.logError("MESSAGE => ${response.message}");
 
-    AppLogger.logError("USER_ID => ${response.data?.userId}");
-    AppLogger.logError("IS_NEW_USER => ${response.data?.isNewUser}");
-    AppLogger.logError("IS_PIN => ${response.data?.isPin}");
-    AppLogger.logError("IS_FINGER_PRINT => ${response.data?.isFingerPrint}");
-    AppLogger.logError("TOKEN => ${response.data?.token}");
-    AppLogger.logError("================================");
-
-    if (response.success == true) {
-
-          await storage.saveString(
-            "auth_token",
-            response.data?.token ?? "",
+          AppLogger.logError("USER_ID => ${response.data?.userId}");
+          AppLogger.logError("IS_NEW_USER => ${response.data?.isNewUser}");
+          AppLogger.logError("IS_PIN => ${response.data?.isPin}");
+          AppLogger.logError(
+            "IS_FINGER_PRINT => ${response.data?.isFingerPrint}",
           );
+          AppLogger.logError("TOKEN => ${response.data?.token}");
+          AppLogger.logError("================================");
 
-          await storage.saveInt(
-            "user_id",
-            response.data?.userId ?? 0,
-          );
+          if (response.success == true) {
+            await storage.saveString("auth_token", response.data?.token ?? "");
 
-final newUser = response.data?.isNewUser ?? 0;
-final pin = response.data?.isPin ?? 0;
-final fp = response.data?.isFingerPrint ?? 0;
+            await storage.saveInt("user_id", response.data?.userId ?? 0);
 
-isNewUser.value = newUser;
-isPin.value = pin;
-isFingerPrint.value = fp;
+            final newUser = response.data?.isNewUser ?? 0;
+            final pin = response.data?.isPin ?? 0;
+            final fp = response.data?.isFingerPrint ?? 0;
 
-await storage.saveInt("is_new_user", newUser);
-await storage.saveInt("is_pin", pin);
-await storage.saveInt("is_fingerprint", fp);
-              AppLogger.logError(
-  "isNewUser : ${response.data?.isNewUser}",
-);
+            isNewUser.value = newUser;
+            isPin.value = pin;
+            isFingerPrint.value = fp;
 
-AppLogger.logError(
-  "isPin : ${response.data?.isPin}",
-);
+            await storage.saveInt("is_new_user", newUser);
+            await storage.saveInt("is_pin", pin);
+            await storage.saveInt("is_fingerprint", fp);
+            AppLogger.logError("isNewUser : ${response.data?.isNewUser}");
 
-AppLogger.logError(
-  "isFingerPrint : ${response.data?.isFingerPrint}",
-);
-await storage.saveString(
-  "auth_token",
-  response.data?.token ?? "",
-);
+            AppLogger.logError("isPin : ${response.data?.isPin}");
 
-await storage.saveInt(
-  "user_id",
-  response.data?.userId ?? 0,
-);
+            AppLogger.logError(
+              "isFingerPrint : ${response.data?.isFingerPrint}",
+            );
+            await storage.saveString("auth_token", response.data?.token ?? "");
 
-await storage.saveInt(
-  "is_pin",
-  response.data?.isPin ?? 0,
-);
+            await storage.saveInt("user_id", response.data?.userId ?? 0);
 
-await storage.saveInt(
-  "is_fingerprint",
-  response.data?.isFingerPrint ?? 0,
-);
+            await storage.saveInt("is_pin", response.data?.isPin ?? 0);
 
-AppLogger.logError(
-  "TOKEN => ${storage.getString("auth_token")}",
-);
+            await storage.saveInt(
+              "is_fingerprint",
+              response.data?.isFingerPrint ?? 0,
+            );
 
-AppLogger.logError(
-  "IS_PIN => ${storage.getInt("is_pin")}",
-);
+            AppLogger.logError("TOKEN => ${storage.getString("auth_token")}");
 
-AppLogger.logError(
-  "IS_FINGERPRINT => ${storage.getInt("is_fingerprint")}",
-);
-          /// NEW USER
-         if (isNewUser.value == 1) {
+            AppLogger.logError("IS_PIN => ${storage.getInt("is_pin")}");
 
-  isNewUserFlow.value = true;
+            AppLogger.logError(
+              "IS_FINGERPRINT => ${storage.getInt("is_fingerprint")}",
+            );
 
-  Get.offAllNamed(
-    AppRoutes.pinCodeCreation,
-  );
-
-  return;
-}
-
-          /// OLD USER
-
-          /// OLD USER
-
-/// OLD USER
-
-// final pin = storage.getInt("is_pin") ?? 0;
-// final fp = storage.getInt("is_fingerprint") ?? 0;
-// final newUser = storage.getInt("is_new_user") ?? 0;
-
-if (newUser == 1 && pin == 0) {
-  Get.offAllNamed(AppRoutes.pinCodeCreation);
-} else if (pin == 1) {
-  if (fp == 1) {
-    Get.offAllNamed(AppRoutes.veirfypin);
-  } else {
-    Get.offAllNamed(AppRoutes.enterPin);
-  }
-}
-        } else {
-          CustomToast.error(
-            response.message ?? "OTP Failed",
-          );
-        }
-      },
-    );
-  } catch (e) {
-    CustomToast.error(e.toString());
-  } finally {
-    isLoading.value = false;
-  }
-}
-
-
-
-Future<void> authenticateWithFingerprint() async {
-  try {
-    final LocalAuthentication auth = LocalAuthentication();
-
-    bool authenticated = await auth.authenticate(
-      localizedReason: 'Scan your fingerprint to continue',
-      biometricOnly: true,
-      persistAcrossBackgrounding: true,
-    );
-
-    if (authenticated) {
-      Get.offAllNamed(AppRoutes.main);
-    } else {
-      CustomToast.error(
-        "Fingerprint authentication failed",
+            if (pin == 1) {
+              if (fp == 1) {
+                Get.offAllNamed(AppRoutes.veirfypin);
+              } else {
+                Get.offAllNamed(AppRoutes.enterPin);
+              }
+            } else {
+              isNewUserFlow.value = true;
+              Get.offAllNamed(AppRoutes.pinCodeCreation);
+            }
+          } else {
+            CustomToast.error(response.message ?? "OTP Failed");
+          }
+        },
       );
+    } catch (e) {
+      CustomToast.error(e.toString());
+    } finally {
+      isLoading.value = false;
     }
-  } catch (e) {
-    CustomToast.error(e.toString());
   }
-}
+
+  Future<void> authenticateWithFingerprint() async {
+    try {
+      final LocalAuthentication auth = LocalAuthentication();
+
+      bool authenticated = await auth.authenticate(
+        localizedReason: 'Scan your fingerprint to continue',
+        biometricOnly: true,
+        persistAcrossBackgrounding: true,
+      );
+
+      if (authenticated) {
+        Get.offAllNamed(AppRoutes.main);
+      } else {
+        CustomToast.error("Fingerprint authentication failed");
+      }
+    } on LocalAuthException catch (e) {
+      // CustomToast.error(e.toString());
+      AppLogger.logError("FINGERPRINT AUTHENTICATION ERROR : ${e.toString()}");
+    }
+  }
 
   Future<void> resendOtp() async {
     try {
@@ -323,135 +347,106 @@ Future<void> authenticateWithFingerprint() async {
     }
   }
 
- Future<void> createPin(String pin) async {
-  try {
-    isLoading.value = true;
+  Future<void> createPin(String pin) async {
+    try {
+      isLoading.value = true;
 
-    AppLogger.logError("=========== CREATE PIN REQUEST ===========");
-    AppLogger.logError("PIN => $pin");
-    AppLogger.logError(
-      "USER_ID => ${storage.getInt("user_id")}",
-    );
-    AppLogger.logError(
-      "IS_PIN BEFORE API => ${storage.getInt("is_pin")}",
-    );
-    AppLogger.logError("=========================================");
+      AppLogger.logError("=========== CREATE PIN REQUEST ===========");
+      AppLogger.logError("PIN => $pin");
+      AppLogger.logError("USER_ID => ${storage.getInt("user_id")}");
+      AppLogger.logError("IS_PIN BEFORE API => ${storage.getInt("is_pin")}");
+      AppLogger.logError("=========================================");
 
-    final result = await createPinUsecase(pin);
+      final result = await createPinUsecase(pin);
 
-    result.fold(
-      (failure) {
-        AppLogger.logError("CREATE PIN FAILURE");
-        AppLogger.logError(failure.message);
+      result.fold(
+        (failure) {
+          AppLogger.logError("CREATE PIN FAILURE");
+          AppLogger.logError(failure.message);
 
-        CustomToast.error(failure.message);
-      },
-      (response) async {
-        AppLogger.logError(
-          "=========== CREATE PIN RESPONSE ===========",
-        );
-        AppLogger.logError(
-          "SUCCESS : ${response.success}",
-        );
-        AppLogger.logError(
-          "MESSAGE : ${response.message}",
-        );
-        AppLogger.logError(
-          "IS_PIN STORAGE : ${storage.getInt("is_pin")}",
-        );
-        AppLogger.logError(
-          "===========================================",
-        );
+          CustomToast.error(failure.message);
+        },
+        (response) async {
+          AppLogger.logError("=========== CREATE PIN RESPONSE ===========");
+          AppLogger.logError("SUCCESS : ${response.success}");
+          AppLogger.logError("MESSAGE : ${response.message}");
+          AppLogger.logError("IS_PIN STORAGE : ${storage.getInt("is_pin")}");
+          AppLogger.logError("===========================================");
 
-        if (response.success == true) {
-          await storage.saveInt("is_pin", 1);
+          if (response.success == true) {
+            await storage.saveInt("is_pin", 1);
 
-          AppLogger.logError(
-            "IS_PIN SAVED => ${storage.getInt("is_pin")}",
-          );
+            AppLogger.logError("IS_PIN SAVED => ${storage.getInt("is_pin")}");
 
-          Get.offAllNamed(
-            AppRoutes.biometricsIntro,
-          );
-        } else {
-          AppLogger.logError(
-            "PIN CREATION FAILED => ${response.message}",
-          );
+            Get.offAllNamed(AppRoutes.biometricsIntro);
+          } else {
+            AppLogger.logError("PIN CREATION FAILED => ${response.message}");
 
-          CustomToast.error(
-            response.message ?? "Failed",
-          );
-        }
-      },
-    );
-  } finally {
-    isLoading.value = false;
+            CustomToast.error(response.message ?? "Failed");
+          }
+        },
+      );
+    } finally {
+      isLoading.value = false;
+    }
   }
-}
 
+  Future<bool> verifyPin(String pin) async {
+    try {
+      isLoading.value = true;
 
+      AppLogger.logError("=========== VERIFY PIN REQUEST ===========");
+      AppLogger.logError("PIN ENTERED: $pin");
 
-Future<bool> VerifyPin(String pin) async {
-  try {
-    isLoading.value = true;
+      final result = await verifyPinUsecase(pin);
 
-    AppLogger.logError("=========== VERIFY PIN REQUEST ===========");
-    AppLogger.logError("PIN ENTERED: $pin");
+      return result.fold(
+        (failure) {
+          AppLogger.logError("VERIFY PIN FAILURE:");
+          AppLogger.logError(failure.message);
 
-    final result = await verifyPinUsecase(pin);
-
-    return result.fold(
-      (failure) {
-        AppLogger.logError("VERIFY PIN FAILURE:");
-        AppLogger.logError(failure.message);
-
-        CustomToast.error(failure.message);
-        return false;
-      },
-      (response) {
-        
-        
-  AppLogger.logError("=========== RAW RESPONSE ===========");
-  AppLogger.logError("SUCCESS: ${response.success}");
-  AppLogger.logError("MESSAGE: ${response.message}");
-  AppLogger.logError("DATA: ${response.data}");
-  AppLogger.logError("====================================");
-        AppLogger.logError("=========== VERIFY PIN RESPONSE ===========");
-        AppLogger.logError("SUCCESS: ${response.success}");
-        AppLogger.logError("MESSAGE: ${response.message}");
-
-        if (response.success == true) {
-          CustomToast.success(
-            response.message ?? "PIN Verified",
-          );
-
-          AppLogger.logError("PIN VERIFIED SUCCESSFULLY");
-
-          Get.offAllNamed(AppRoutes.main);
-
-          return true;
-        } else {
-          CustomToast.error(
-            response.message ?? "Invalid PIN",
-          );
-
-          AppLogger.logError("INVALID PIN ENTERED");
-
+          CustomToast.error(failure.message);
           return false;
-        }
-      },
-    );
-  } catch (e) {
-    AppLogger.logError("VERIFY PIN EXCEPTION:");
-    AppLogger.logError(e.toString());
+        },
+        (response) {
+          AppLogger.logError("=========== RAW RESPONSE ===========");
+          AppLogger.logError("SUCCESS: ${response.success}");
+          AppLogger.logError("MESSAGE: ${response.message}");
+          AppLogger.logError("DATA: ${response.data}");
+          AppLogger.logError("====================================");
+          AppLogger.logError("=========== VERIFY PIN RESPONSE ===========");
+          AppLogger.logError("SUCCESS: ${response.success}");
+          AppLogger.logError("MESSAGE: ${response.message}");
 
-    CustomToast.error(e.toString());
-    return false;
-  } finally {
-    isLoading.value = false;
-    AppLogger.logError("VERIFY PIN LOADING STOPPED");
+          if (response.success == true) {
+            CustomToast.success(response.message ?? "PIN Verified");
+
+            AppLogger.logError("PIN VERIFIED SUCCESSFULLY");
+
+            Get.offAllNamed(AppRoutes.main);
+
+            return true;
+          } else {
+            CustomToast.error(response.message ?? "Invalid PIN");
+
+            AppLogger.logError("INVALID PIN ENTERED");
+
+            return false;
+          }
+        },
+      );
+    } catch (e) {
+      AppLogger.logError("VERIFY PIN EXCEPTION:");
+      AppLogger.logError(e.toString());
+
+      CustomToast.error(e.toString());
+      return false;
+    } finally {
+      isLoading.value = false;
+      AppLogger.logError("VERIFY PIN LOADING STOPPED");
+    }
   }
-}
+
   Future<void> fingerprint(int fingerprint) async {
     try {
       isLoading.value = true;
@@ -475,12 +470,9 @@ Future<bool> VerifyPin(String pin) async {
           AppLogger.logError("===========================================");
 
           if (response.success == true) {
-             await storage.saveInt(
-  "is_fingerprint",
-  1,
-);    
+            await storage.saveInt("is_fingerprint", 1);
 
-isFingerPrint.value = 1;
+            isFingerPrint.value = 1;
             CustomToast.success(
               response.message ?? "Fingerprint Updated Successfully",
             );

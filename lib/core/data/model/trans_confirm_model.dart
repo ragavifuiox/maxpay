@@ -36,23 +36,24 @@ class ConfirmData {
 
   String? transactionAmount;
   String? commision;
-String? availableBalance;
-String? remainingBalance;
-  String?logo;
+  String? availableBalance;
+  String? remainingBalance;
+  String? logo;
 
-  ConfirmData(
-      {this.planId,
-      this.productId,
-      this.productName,
-      this.amount,
-      this.planDetails,
-      this.paymentStatus,
-      this.transactionNo,
-      this.availableBalance,
-      this.transactionAmount,
-      this.commision,
-      this.remainingBalance,
-      this.logo});
+  ConfirmData({
+    this.planId,
+    this.productId,
+    this.productName,
+    this.amount,
+    this.planDetails,
+    this.paymentStatus,
+    this.transactionNo,
+    this.availableBalance,
+    this.transactionAmount,
+    this.commision,
+    this.remainingBalance,
+    this.logo,
+  });
 
   ConfirmData.fromJson(Map<String, dynamic> json) {
     planId = json['plan_id'];
@@ -63,7 +64,7 @@ String? remainingBalance;
     paymentStatus = json['payment_status'];
     transactionNo = json['transaction_no'];
     availableBalance = json['available_balance']?.toString();
-remainingBalance = json['remaining_balance']?.toString();
+    remainingBalance = json['remaining_balance']?.toString();
     transactionAmount = json['transaction_amount'];
     commision = json['commision'];
     // remainingBalance = json['remaining_balance'];

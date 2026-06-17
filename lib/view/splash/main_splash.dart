@@ -85,11 +85,19 @@ class _MainSplashScreenState extends State<MainSplashScreen>
     });
   }
 
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
+  /// Old User -> PIN Created
+  if (isPin == 1) {
+    if (isFingerPrint == 1) {
+      Get.offAllNamed(AppRoutes.veirfypin);
+    } else {
+      Get.offAllNamed(AppRoutes.enterPin);
+    }
+    return;
   }
+
+  /// User Logged In But No PIN
+  Get.offAllNamed(AppRoutes.main);
+}
 
   @override
   Widget build(BuildContext context) {

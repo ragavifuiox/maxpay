@@ -253,7 +253,7 @@ class _BiometricsScanningPageState
 
   cancelAuthentication();
 
-  if (controller.isNewUser.value == 1) {
+  if (controller.isNewUser.value == 1 || controller.isNewUserFlow.value) {
 
     await controller.fingerprint(0);
 

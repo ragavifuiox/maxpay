@@ -18,7 +18,8 @@ class CommonButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isTablet = MediaQuery.of(context).size.width > 600;
+    final width = MediaQuery.of(context).size.width;
+    final isTablet = width > 600;
 
     return SafeArea(
       child: SizedBox(
