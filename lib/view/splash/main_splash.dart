@@ -188,56 +188,55 @@ class _MainSplashScreenState extends State<MainSplashScreen>
     });
   }
 
-  Future<void> _checkSession() async {
-    final storage = LocalStorageService();
-    await storage.init();
+   Future<void> _checkSession() async {
+  final storage = LocalStorageService();
+  await storage.init();
 
-    final token = storage.getString("auth_token");
-    final isPin = storage.getInt("is_pin") ?? 0;
-    final isFingerPrint = storage.getInt("is_fingerprint") ?? 0;
+  final token = storage.getString("auth_token");
+  final isPin = storage.getInt("is_pin") ?? 0;
+  final isFingerPrint = storage.getInt("is_fingerprint") ?? 0;
 
-    AppLogger.logError("TOKEN : $token");
-    AppLogger.logError("IS PIN : $isPin");
-    AppLogger.logError("IS FINGERPRINT : $isFingerPrint");
+  AppLogger.logError("TOKEN : $token");
+  AppLogger.logError("IS PIN : $isPin");
+  AppLogger.logError("IS FINGERPRINT : $isFingerPrint");
 
-    if (!mounted) return;
+  await Future.delayed(const Duration(seconds: 2));
 
-    /// Not Logged In
-    if (token == null || token.isEmpty) {
-      Get.offAllNamed(AppRoutes.intro);
-      return;
-    }
+  if (!mounted) return;
 
-    /// PIN Already Created
-    if (isPin == 1) {
-      final lastActiveStr = storage.getString("last_active_time");
+  /// Not Logged In
+  if (token == null || token.isEmpty) {
+    Get.offAllNamed(AppRoutes.intro);
+    return;
+  }
 
-      if (lastActiveStr != null) {
-        final lastActive = DateTime.tryParse(lastActiveStr);
-
-        if (lastActive != null) {
-          final elapsed = DateTime.now().difference(lastActive);
-
-          if (elapsed <
-              AppLifecycleController.inactivityThreshold) {
-            Get.offAllNamed(AppRoutes.main);
-            return;
-          }
+  /// Old User -> PIN Created
+  if (isPin == 1) {
+    final lastActiveStr = storage.getString("last_active_time");
+    if (lastActiveStr != null) {
+      final lastActive = DateTime.tryParse(lastActiveStr);
+      if (lastActive != null) {
+        final elapsed = DateTime.now().difference(lastActive);
+        if (elapsed < AppLifecycleController.inactivityThreshold) {
+          AppLogger.logError("Cold start: within threshold (${elapsed.inSeconds}s). Navigating straight to home.");
+          Get.offAllNamed(AppRoutes.main);
+          return;
         }
       }
-
-      if (isFingerPrint == 1) {
-        Get.offAllNamed(AppRoutes.veirfypin);
-      } else {
-        Get.offAllNamed(AppRoutes.enterPin);
-      }
-
-      return;
     }
 
-    /// Logged In But No PIN
-    Get.offAllNamed(AppRoutes.pinCodeCreation);
+    if (isFingerPrint == 1) {
+      Get.offAllNamed(AppRoutes.veirfypin);
+    } else {
+      Get.offAllNamed(AppRoutes.enterPin);
+    }
+    return;
   }
+
+  /// User Logged In But No PIN
+  Get.offAllNamed(AppRoutes.pinCodeCreation);
+}
+
 
   @override
   void dispose() {
