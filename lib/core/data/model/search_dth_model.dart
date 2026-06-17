@@ -11,7 +11,7 @@ class SearchDth {
     if (json['data'] != null) {
       data = <SearchDthData>[];
       json['data'].forEach((v) {
-        data!.add(new SearchDthData.fromJson(v));
+        data!.add(SearchDthData.fromJson(v));
       });
     }
     message = json['message'];
@@ -19,13 +19,13 @@ class SearchDth {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['success'] = this.success;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['success'] = success;
     if (this.data != null) {
       data['data'] = this.data!.map((v) => v.toJson()).toList();
     }
-    data['message'] = this.message;
-    data['code'] = this.code;
+    data['message'] = message;
+    data['code'] = code;
     return data;
   }
 }
@@ -77,20 +77,20 @@ class SearchDthData {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['product_id'] = this.productId;
-    data['product_name'] = this.productName;
-    data['plantype_id'] = this.plantypeId;
-    data['plan_type'] = this.planType;
-    data['plan_name'] = this.planName;
-    data['one_month'] = this.oneMonth;
-    data['three_month'] = this.threeMonth;
-    data['six_month'] = this.sixMonth;
-    data['twelve_month'] = this.twelveMonth;
-    data['plan_details'] = this.planDetails;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['product_id'] = productId;
+    data['product_name'] = productName;
+    data['plantype_id'] = plantypeId;
+    data['plan_type'] = planType;
+    data['plan_name'] = planName;
+    data['one_month'] = oneMonth;
+    data['three_month'] = threeMonth;
+    data['six_month'] = sixMonth;
+    data['twelve_month'] = twelveMonth;
+    data['plan_details'] = planDetails;
+    data['created_at'] = createdAt;
+    data['updated_at'] = updatedAt;
     return data;
   }
 }

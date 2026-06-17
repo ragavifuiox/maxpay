@@ -52,7 +52,6 @@ import 'package:maxpay/view/staff/staff_list_screen.dart';
 import 'package:maxpay/view/statement/state_readmore.dart';
 import 'package:maxpay/view/support/supoort_screen.dart';
 import 'package:maxpay/view/transaction_screens/transaction_success_screen.dart';
-import 'package:maxpay/view/update_pin/verify_pin_screen.dart';
 import 'package:maxpay/view/wallet%20balance/wallet_balance.dart';
 import 'package:maxpay/view/wallet-credit/wallet_credit_screen.dart';
 import 'package:maxpay/view/wallet_request/wallet_request_screen.dart';

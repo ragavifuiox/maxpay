@@ -128,7 +128,6 @@ import 'package:maxpay/controllers/profile_controller.dart';
 import 'package:maxpay/core/data/model/get_kyc_model.dart';
 import 'package:maxpay/core/domain/usecase/get_kyc_usecase.dart';
 import 'package:maxpay/core/domain/usecase/kyc_usecase.dart';
-import 'package:maxpay/core/error/failure.dart';
 import 'package:maxpay/core/constants/snackbar.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:maxpay/core/utils/logg_helper.dart';

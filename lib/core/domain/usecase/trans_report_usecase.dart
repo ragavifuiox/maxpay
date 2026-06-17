@@ -2,9 +2,7 @@
 
 import 'package:dartz/dartz.dart';
 import 'package:maxpay/core/data/model/transaction_report_model.dart';
-import 'package:maxpay/core/data/model/wallet_request_model.dart';
 import 'package:maxpay/core/domain/repository/trans_report_repository.dart';
-import 'package:maxpay/core/domain/repository/wallet_request_repository.dart';
 import 'package:maxpay/core/error/failure.dart';
 
 class TransReportUsecase {

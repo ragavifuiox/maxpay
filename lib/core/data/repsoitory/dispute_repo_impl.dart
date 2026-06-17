@@ -1,8 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:maxpay/core/constants/api_routes.dart';
-import 'package:maxpay/core/data/model/add_staff_model.dart';
 import 'package:maxpay/core/data/model/dispute_model.dart';
-import 'package:maxpay/core/domain/repository/add_staff_repository.dart';
 import 'package:maxpay/core/domain/repository/dispute_repository.dart';
 import 'package:maxpay/core/error/failure.dart';
 import 'package:maxpay/core/services/api_services.dart';

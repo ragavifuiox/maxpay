@@ -1,4 +1,3 @@
-import 'package:maxpay/core/data/model/dth_recharge_model.dart';
 
 class ApiRoutes {
   static const baseURL = "http://139.59.91.7/test_paylinkonline.in/public/api";

@@ -11,7 +11,7 @@ class Dispute {
     if (json['data'] != String) {
       data = <Data>[];
       json['data'].forEach((v) {
-        data!.add(new Data.fromJson(v));
+        data!.add(Data.fromJson(v));
       });
     }
     message = json['message'];
@@ -19,13 +19,13 @@ class Dispute {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['success'] = this.success;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['success'] = success;
     if (this.data != String) {
       data['data'] = this.data!.map((v) => v.toJson()).toList();
     }
-    data['message'] = this.message;
-    data['code'] = this.code;
+    data['message'] = message;
+    data['code'] = code;
     return data;
   }
 }
@@ -176,53 +176,53 @@ class Data {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['user_id'] = this.userId;
-    data['recharge_id'] = this.rechargeId;
-    data['subject'] = this.subject;
-    data['description'] = this.description;
-    data['status'] = this.status;
-    data['admin_reply'] = this.adminReply;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
-    data['retailer_name'] = this.retailerName;
-    data['reg_mobile_number'] = this.regMobileNumber;
-    data['email'] = this.email;
-    data['password'] = this.password;
-    data['pwd_hint'] = this.pwdHint;
-    data['otp'] = this.otp;
-    data['otp_verified'] = this.otpVerified;
-    data['otp_expires_at'] = this.otpExpiresAt;
-    data['billing_address'] = this.billingAddress;
-    data['state'] = this.state;
-    data['pincode'] = this.pincode;
-    data['commission_package'] = this.commissionPackage;
-    data['distributor_id'] = this.distributorId;
-    data['distributor'] = this.distributor;
-    data['registration_charge'] = this.registrationCharge;
-    data['whatsapp_number'] = this.whatsappNumber;
-    data['special_user'] = this.specialUser;
-    data['credit_availability'] = this.creditAvailability;
-    data['monthly_limit_transaction'] = this.monthlyLimitTransaction;
-    data['daily_limit_transaction'] = this.dailyLimitTransaction;
-    data['wallet_limit'] = this.walletLimit;
-    data['minimum_purchase'] = this.minimumPurchase;
-    data['online_minimum_purchase'] = this.onlineMinimumPurchase;
-    data['web_transaction'] = this.webTransaction;
-    data['app_transaction'] = this.appTransaction;
-    data['online_transaction'] = this.onlineTransaction;
-    data['due_amount_popup'] = this.dueAmountPopup;
-    data['wallet_transfer'] = this.walletTransfer;
-    data['low_balance_alert'] = this.lowBalanceAlert;
-    data['wallet_balance'] = this.walletBalance;
-    data['is_active'] = this.isActive;
-    data['created_by'] = this.createdBy;
-    data['web_otp'] = this.webOtp;
-    data['pin'] = this.pin;
-    data['is_finger_print'] = this.isFingerPrint;
-    data['is_new_user'] = this.isNewUser;
-    data['profile_img'] = this.profileImg;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['user_id'] = userId;
+    data['recharge_id'] = rechargeId;
+    data['subject'] = subject;
+    data['description'] = description;
+    data['status'] = status;
+    data['admin_reply'] = adminReply;
+    data['created_at'] = createdAt;
+    data['updated_at'] = updatedAt;
+    data['retailer_name'] = retailerName;
+    data['reg_mobile_number'] = regMobileNumber;
+    data['email'] = email;
+    data['password'] = password;
+    data['pwd_hint'] = pwdHint;
+    data['otp'] = otp;
+    data['otp_verified'] = otpVerified;
+    data['otp_expires_at'] = otpExpiresAt;
+    data['billing_address'] = billingAddress;
+    data['state'] = state;
+    data['pincode'] = pincode;
+    data['commission_package'] = commissionPackage;
+    data['distributor_id'] = distributorId;
+    data['distributor'] = distributor;
+    data['registration_charge'] = registrationCharge;
+    data['whatsapp_number'] = whatsappNumber;
+    data['special_user'] = specialUser;
+    data['credit_availability'] = creditAvailability;
+    data['monthly_limit_transaction'] = monthlyLimitTransaction;
+    data['daily_limit_transaction'] = dailyLimitTransaction;
+    data['wallet_limit'] = walletLimit;
+    data['minimum_purchase'] = minimumPurchase;
+    data['online_minimum_purchase'] = onlineMinimumPurchase;
+    data['web_transaction'] = webTransaction;
+    data['app_transaction'] = appTransaction;
+    data['online_transaction'] = onlineTransaction;
+    data['due_amount_popup'] = dueAmountPopup;
+    data['wallet_transfer'] = walletTransfer;
+    data['low_balance_alert'] = lowBalanceAlert;
+    data['wallet_balance'] = walletBalance;
+    data['is_active'] = isActive;
+    data['created_by'] = createdBy;
+    data['web_otp'] = webOtp;
+    data['pin'] = pin;
+    data['is_finger_print'] = isFingerPrint;
+    data['is_new_user'] = isNewUser;
+    data['profile_img'] = profileImg;
     return data;
   }
 }

@@ -11,7 +11,7 @@ class DthTab {
     if (json['data'] != null) {
       data = <DthtabData>[];
       json['data'].forEach((v) {
-        data!.add(new DthtabData.fromJson(v));
+        data!.add(DthtabData.fromJson(v));
       });
     }
     message = json['message'];
@@ -19,13 +19,13 @@ class DthTab {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['success'] = this.success;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['success'] = success;
     if (this.data != null) {
       data['data'] = this.data!.map((v) => v.toJson()).toList();
     }
-    data['message'] = this.message;
-    data['code'] = this.code;
+    data['message'] = message;
+    data['code'] = code;
     return data;
   }
 }
@@ -44,10 +44,10 @@ class DthtabData {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['plan_type'] = this.planType;
-    data['plan_type_priority'] = this.planTypePriority;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['plan_type'] = planType;
+    data['plan_type_priority'] = planTypePriority;
     return data;
   }
 }

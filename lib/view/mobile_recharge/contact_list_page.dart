@@ -117,7 +117,7 @@ class _ContactListPageState extends State<ContactListPage> {
               style: TextStyle(
                 color: isDark ? Colors.white : Colors.black,
                 fontSize: 20.sp,
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w500,
               ),
             ),
           ),
@@ -128,6 +128,7 @@ class _ContactListPageState extends State<ContactListPage> {
 
               itemBuilder: (context, index) {
                 final contact = filteredContacts[index];
+                AppLogger.debugPrint(contact.toJson());
                 final name = (contact.displayName ?? '').trim();
 
                 final phone = contact.phones.isNotEmpty
@@ -162,7 +163,7 @@ class _ContactListPageState extends State<ContactListPage> {
                     child: Row(
                       children: [
                         CircleAvatar(
-                          radius: 28.r,
+                          radius: 22.r,
 
                           backgroundColor:
                               Colors.primaries[index % Colors.primaries.length],
@@ -171,8 +172,8 @@ class _ContactListPageState extends State<ContactListPage> {
                             name.isNotEmpty ? name[0].toUpperCase() : "?",
                             style: TextStyle(
                               color: Colors.white,
-                              fontSize: 22.sp,
-                              fontWeight: FontWeight.bold,
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                         ),
@@ -189,12 +190,10 @@ class _ContactListPageState extends State<ContactListPage> {
 
                                 style: TextStyle(
                                   color: isDark ? Colors.white : Colors.black,
-                                  fontSize: 16.sp,
-                                  fontWeight: FontWeight.w500,
+                                  fontSize: 14.sp,
+                                  fontWeight: FontWeight.w600,
                                 ),
                               ),
-
-                              SizedBox(height: 4.h),
 
                               Text(
                                 phone,

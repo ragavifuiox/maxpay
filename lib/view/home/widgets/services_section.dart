@@ -10,7 +10,6 @@ import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/core/di/service_locator.dart';
 import 'package:maxpay/view/home/widgets/home_header.dart';
-import 'package:maxpay/view/nav_page/navbar.dart';
 
 import '../../../core/data/model/product_type.dart';
 
