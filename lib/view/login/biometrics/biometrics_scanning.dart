@@ -13,18 +13,14 @@ class BiometricsScanningPage extends StatefulWidget {
   const BiometricsScanningPage({super.key});
 
   @override
-  State<BiometricsScanningPage> createState() =>
-      _BiometricsScanningPageState();
+  State<BiometricsScanningPage> createState() => _BiometricsScanningPageState();
 }
 
-class _BiometricsScanningPageState
-    extends State<BiometricsScanningPage> {
-  final LocalAuthentication auth =
-      LocalAuthentication();
+class _BiometricsScanningPageState extends State<BiometricsScanningPage> {
+  final LocalAuthentication auth = LocalAuthentication();
 
   /// GETX CONTROLLER
-  final AuthController controller =
-      Get.find<AuthController>();
+  final AuthController controller = Get.find<AuthController>();
 
   bool isAuthenticating = false;
   bool isAuthenticated = false;
@@ -33,29 +29,22 @@ class _BiometricsScanningPageState
   void initState() {
     super.initState();
 
-    Future.delayed(
-      Duration.zero,
-      () {
-        authenticate();
-      },
-    );
+    Future.delayed(Duration.zero, () {
+      authenticate();
+    });
   }
 
   Future<void> authenticate() async {
     try {
-      bool canCheckBiometrics =
-          await auth.canCheckBiometrics;
+      bool canCheckBiometrics = await auth.canCheckBiometrics;
 
-      bool isDeviceSupported =
-          await auth.isDeviceSupported();
+      bool isDeviceSupported = await auth.isDeviceSupported();
 
-      if (!canCheckBiometrics ||
-          !isDeviceSupported) {
+      if (!canCheckBiometrics || !isDeviceSupported) {
         Get.snackbar(
           "Not Supported",
           "Fingerprint is not available on this device",
-          snackPosition:
-              SnackPosition.BOTTOM,
+          snackPosition: SnackPosition.BOTTOM,
         );
 
         return;
@@ -65,10 +54,8 @@ class _BiometricsScanningPageState
         isAuthenticating = true;
       });
 
-      bool authenticated =
-          await auth.authenticate(
-        localizedReason:
-            'Scan your fingerprint to continue',
+      bool authenticated = await auth.authenticate(
+        localizedReason: 'Scan your fingerprint to continue',
 
         biometricOnly: true,
 
@@ -81,31 +68,26 @@ class _BiometricsScanningPageState
       });
 
       /// SEND STATUS TO BACKEND
-      await controller.fingerprint(
-        authenticated ? 1 : 0,
-      );
+      await controller.fingerprint(authenticated ? 1 : 0);
 
       if (authenticated) {
-        CustomToast.success(
-          "Fingerprint verified successfully",
-        );
+        CustomToast.success("Fingerprint verified successfully");
 
-        Future.delayed(
-          const Duration(
-            milliseconds: 500,
-          ),
-          () {
-            Get.toNamed(
-              AppRoutes.successScreen,
-            );
-          },
-        );
+        Future.delayed(const Duration(milliseconds: 500), () {
+          Get.toNamed(
+            AppRoutes.successScreen,
+            arguments: {
+              "title": "FingerPrint Added Successfully",
+              "message": "Your fingerprint has been added successfully",
+            
+            },
+          );
+        });
       } else {
         Get.snackbar(
           "Failed",
           "Fingerprint authentication failed",
-          snackPosition:
-              SnackPosition.BOTTOM,
+          snackPosition: SnackPosition.BOTTOM,
         );
       }
     } on PlatformException catch (e) {
@@ -113,23 +95,23 @@ class _BiometricsScanningPageState
         isAuthenticating = false;
       });
 
-      Get.snackbar(
-        "Error",
-        e.message ?? "Platform Error",
-        snackPosition:
-            SnackPosition.BOTTOM,
-      );
+      // Get.snackbar(
+      //   "Error",
+      //   e.message ?? "Platform Error",
+      //   snackPosition:
+      //       SnackPosition.BOTTOM,
+      // );
     } catch (e) {
       setState(() {
         isAuthenticating = false;
       });
 
-      Get.snackbar(
-        "Error",
-        e.toString(),
-        snackPosition:
-            SnackPosition.BOTTOM,
-      );
+      // Get.snackbar(
+      //   "Error",
+      //   e.toString(),
+      //   snackPosition:
+      //       SnackPosition.BOTTOM,
+      // );
     }
   }
 
@@ -146,12 +128,10 @@ class _BiometricsScanningPageState
     final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor:
-          theme.scaffoldBackgroundColor,
+      backgroundColor: theme.scaffoldBackgroundColor,
 
       appBar: AppBar(
-        backgroundColor:
-            theme.scaffoldBackgroundColor,
+        backgroundColor: theme.scaffoldBackgroundColor,
 
         elevation: 0,
 
@@ -164,16 +144,13 @@ class _BiometricsScanningPageState
           icon: Icon(
             Icons.arrow_back_ios_new,
             size: 20.sp,
-            color:
-                theme.colorScheme.onSurface,
+            color: theme.colorScheme.onSurface,
           ),
         ),
       ),
 
       body: Padding(
-        padding: EdgeInsets.symmetric(
-          horizontal: 24.w,
-        ),
+        padding: EdgeInsets.symmetric(horizontal: 24.w),
 
         child: Column(
           children: [
@@ -185,11 +162,9 @@ class _BiometricsScanningPageState
 
               style: TextStyle(
                 fontFamily: 'Poppins',
-                fontWeight:
-                    FontWeight.w700,
+                fontWeight: FontWeight.w700,
                 fontSize: 24.sp,
-                color: theme
-                    .colorScheme.onSurface,
+                color: theme.colorScheme.onSurface,
               ),
             ),
 
@@ -203,11 +178,9 @@ class _BiometricsScanningPageState
 
               style: TextStyle(
                 fontFamily: 'Poppins',
-                fontWeight:
-                    FontWeight.w400,
+                fontWeight: FontWeight.w400,
                 fontSize: 13.sp,
-                color: theme.colorScheme
-                    .onSurfaceVariant,
+                color: theme.colorScheme.onSurfaceVariant,
               ),
             ),
 
@@ -215,21 +188,14 @@ class _BiometricsScanningPageState
 
             /// FINGERPRINT ICON
             AnimatedContainer(
-              duration: const Duration(
-                milliseconds: 300,
-              ),
+              duration: const Duration(milliseconds: 300),
 
               child: Icon(
-                isAuthenticated
-                    ? Icons
-                        .verified_rounded
-                    : Icons.fingerprint,
+                isAuthenticated ? Icons.verified_rounded : Icons.fingerprint,
 
                 size: 150.r,
 
-                color: isAuthenticated
-                    ? Colors.green
-                    : AppColors.green,
+                color: isAuthenticated ? Colors.green : AppColors.green,
               ),
             ),
 
@@ -237,9 +203,7 @@ class _BiometricsScanningPageState
 
             /// LOADING
             if (isAuthenticating)
-              CircularProgressIndicator(
-                color: AppColors.green,
-              ),
+              CircularProgressIndicator(color: AppColors.green),
 
             const Spacer(),
 
@@ -249,50 +213,31 @@ class _BiometricsScanningPageState
                 children: [
                   Expanded(
                     child: TextButton(
-                     onPressed: () async {
+                      onPressed: () async {
+                        cancelAuthentication();
 
-  cancelAuthentication();
+                        Get.offAllNamed(AppRoutes.main);
+                      },
 
-  if (controller.isNewUser.value == 1 || controller.isNewUserFlow.value) {
-
-    await controller.fingerprint(0);
-
-    Get.offAllNamed(
-      AppRoutes.main,
-    );
-
-  } else {
-
-    Get.offAllNamed(
-      AppRoutes.enterPin,
-    );
-
-  }
-},
-              
                       child: Text(
                         'Cancel',
-              
+
                         style: TextStyle(
-                          fontFamily:
-                              'Poppins',
-                          fontWeight:
-                              FontWeight.w700,
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w700,
                           fontSize: 16.sp,
-                          color: theme
-                              .colorScheme
-                              .onSurface,
+                          color: theme.colorScheme.onSurface,
                         ),
                       ),
                     ),
                   ),
-           
+
                   SizedBox(width: 20.w),
-              
+
                   Expanded(
                     child: CommonButton(
                       title: 'Scan Again',
-              
+
                       onTap: () {
                         authenticate();
                       },

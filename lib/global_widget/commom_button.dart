@@ -7,6 +7,12 @@ class CommonButton extends StatelessWidget {
   final VoidCallback? onTap; // ✅ make nullable
   final Color? backgroundColor;
   final bool isLoading;
+  final double? height;
+  final double? width;
+  final double? fontSize;
+  final FontWeight? fontWeight;
+  final Color? textColor;
+  final BorderRadius? borderRadius;
 
   const CommonButton({
     super.key,
@@ -14,17 +20,23 @@ class CommonButton extends StatelessWidget {
     required this.onTap,
     this.backgroundColor,
     this.isLoading = false,
+    this.height,
+    this.width,
+    this.fontSize,
+    this.fontWeight,
+    this.textColor,
+    this.borderRadius,
   });
 
   @override
   Widget build(BuildContext context) {
-    final width = MediaQuery.of(context).size.width;
-    final isTablet = width > 600;
+    final dWidth = MediaQuery.of(context).size.width;
+    final isTablet = dWidth > 600;
 
     return SafeArea(
       child: SizedBox(
-        width: isTablet ? 220.w : 222.w,
-        height: isTablet ? 55.h : 50.h,
+        width: width ?? (isTablet ? 220.w : 222.w),
+        height: height ?? (isTablet ? 55.h : 50.h),
         child: ElevatedButton(
           onPressed: isLoading ? null : onTap, // ✅ disable safely
           style: ElevatedButton.styleFrom(

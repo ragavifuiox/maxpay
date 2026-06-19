@@ -36,6 +36,13 @@ class AddWalletScreen extends StatelessWidget {
                   color: Colors.white,
 
                   borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.shade300,
+                      offset: .zero,
+                      blurRadius: 1,
+                    ),
+                  ],
                 ),
                 child: Center(
                   child: Image.asset(AssetImages.addwallet, fit: .fitHeight),

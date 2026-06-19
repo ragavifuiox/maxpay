@@ -15,6 +15,9 @@ class SuccessScreen extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final isTablet = Responsive.isTablet(context);
+    final args = Get.arguments as Map<String, String>;
+    final title = args['title'];
+    final message = args['message'];
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -41,7 +44,7 @@ class SuccessScreen extends StatelessWidget {
               children: [
                 SizedBox(height: isTablet ? 60.h : 40.h),
                 Text(
-                  'Congratulations!',
+                  title ?? 'Congratulations!',
                   style: TextStyle(
                     fontFamily: 'Poppins',
                     fontWeight: FontWeight.w700,
@@ -59,7 +62,7 @@ class SuccessScreen extends StatelessWidget {
                 ),
                 SizedBox(height: isTablet ? 80.h : 60.h),
                 Text(
-                  'Your account has been created\nsuccessful!',
+                  message ?? 'Your account has been created\nsuccessful!',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontFamily: 'Poppins',
@@ -71,10 +74,13 @@ class SuccessScreen extends StatelessWidget {
                 ),
                 const Spacer(),
 
-                CommonButton(title: "Go to Home", onTap: (){
-                  Get.toNamed(AppRoutes.main);
-                }),
-               
+                CommonButton(
+                  title: "Go to Home",
+                  onTap: () {
+                    Get.toNamed(AppRoutes.main);
+                  },
+                ),
+
                 SizedBox(height: 40.h),
               ],
             ),

@@ -82,7 +82,7 @@ class HomeHeaderSection extends StatelessWidget {
 
                               Obx(() {
                                 final controller = Get.put(
-                                  ProfileController(getProfileUseCase: sl(),),
+                                  ProfileController(getProfileUseCase: sl()),
                                 );
                                 return Text(
                                   controller

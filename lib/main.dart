@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -55,13 +57,18 @@ class MyApp extends StatelessWidget {
           getPages: AppPages.pages,
 
           builder: (context, child) {
-            return child!;
-            // return MediaQuery(
-            //   data: MediaQuery.of(
-            //     context,
-            //   ).copyWith(textScaler: const TextScaler.linear(1.0)),
-            //   child: child!,
-            // );
+            // return child!;
+            return MediaQuery(
+              data: MediaQuery.of(
+                context,
+              ).copyWith(textScaler: const TextScaler.linear(1.0)),
+              child: AnimatedTheme(
+                data: Theme.of(context),
+                duration: const Duration(milliseconds: 500),
+                curve: Curves.easeInOut,
+                child: child!,
+              ),
+            );
           },
         );
       },
@@ -69,5 +76,43 @@ class MyApp extends StatelessWidget {
   }
 }
 
-
 //100.98.153.235
+
+class CircularRevealClipper extends CustomClipper<Path> {
+  final Offset center;
+  final double fraction; // Goes from 0.0 to 1.0
+
+  CircularRevealClipper({required this.center, required this.fraction});
+
+  @override
+  Path getClip(Size size) {
+    // 1. Calculate the distance from center to the furthest screen corner (hypotenuse)
+    final double maxRadius = _calcMaxRadius(size, center);
+    final double currentRadius = maxRadius * fraction;
+
+    // 2. Draw a circular path
+    return Path()
+      ..addOval(Rect.fromCircle(center: center, radius: currentRadius));
+  }
+
+  double _calcMaxRadius(Size size, Offset center) {
+    // Find distances to all 4 corners and pick the maximum
+    final double dx1 = center.dx;
+    final double dx2 = size.width - center.dx;
+    final double dy1 = center.dy;
+    final double dy2 = size.height - center.dy;
+
+    // Using Pythagoras theorem to find the diagonal length
+    return [
+      math.sqrt(dx1 * dx1 + dy1 * dy1),
+      math.sqrt(dx2 * dx2 + dy1 * dy1),
+      math.sqrt(dx1 * dx1 + dy2 * dy2),
+      math.sqrt(dx2 * dx2 + dy2 * dy2),
+    ].reduce(math.max);
+  }
+
+  @override
+  bool shouldReclip(covariant CircularRevealClipper oldClipper) {
+    return oldClipper.fraction != fraction || oldClipper.center != center;
+  }
+}

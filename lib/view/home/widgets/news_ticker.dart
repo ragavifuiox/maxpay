@@ -72,94 +72,96 @@ class _NewsTickerState extends State<NewsTicker> {
     AppLogger.debugPrint("🔥 Controller Hash: ${controller.hashCode}");
 
     return Obx(() {
-  final newsResponse = controller.news.value;
+      final newsResponse = controller.news.value;
 
-  String newsText = "No News Available";
+      String newsText = "No News Available";
 
-  if (newsResponse != null &&
-      newsResponse.data != null &&
-      newsResponse.data!.isNotEmpty) {
-    newsText = newsResponse.data!.first.message ?? "";
-  }
+      if (newsResponse != null &&
+          newsResponse.data != null &&
+          newsResponse.data!.isNotEmpty) {
+        newsText = newsResponse.data!.first.message ?? "";
+      }
 
-  WidgetsBinding.instance.addPostFrameCallback((_) {
-   if (!scrollController.hasClients) return;
-  });
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!scrollController.hasClients) return;
+      });
 
-  return Container(
-        height: 50.h,
-        margin: EdgeInsets.symmetric(vertical: 16.h),
-        decoration: BoxDecoration(
-          color: isDark ? colorScheme.surface : Colors.white,
-          border: Border.all(
-            color: theme.brightness == Brightness.light
-                ? AppColors.clrPrimary
-                : AppColors.green,
-            width: 1.5,
+      return RepaintBoundary(
+        child: Container(
+          height: 50.h,
+          margin: EdgeInsets.symmetric(vertical: 16.h),
+          decoration: BoxDecoration(
+            color: isDark ? colorScheme.surface : Colors.white,
+            border: Border.all(
+              color: theme.brightness == Brightness.light
+                  ? AppColors.clrPrimary
+                  : AppColors.green,
+              width: 1.5,
+            ),
+            borderRadius: BorderRadius.circular(4.r),
           ),
-          borderRadius: BorderRadius.circular(4.r),
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(3.r),
-          child: Row(
-            children: [
-              /// NEWS LABEL
-              ClipPath(
-                clipper: NewsClipper(),
-                child: Container(
-                  width: 100.w,
-                  alignment: Alignment.center,
-                  padding: EdgeInsets.only(right: 15.w),
-                  color: theme.brightness == Brightness.light
-                      ? AppColors.clrPrimary
-                      : AppColors.green,
-                  child: Text(
-                    'NEWS',
-                    style: TextStyle(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white,
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(3.r),
+            child: Row(
+              children: [
+                /// NEWS LABEL
+                ClipPath(
+                  clipper: NewsClipper(),
+                  child: Container(
+                    width: 100.w,
+                    alignment: Alignment.center,
+                    padding: EdgeInsets.only(right: 15.w),
+                    color: theme.brightness == Brightness.light
+                        ? AppColors.clrPrimary
+                        : AppColors.green,
+                    child: Text(
+                      'NEWS',
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ),
-              ),
 
-              /// SCROLLING NEWS
-             Expanded(
-  child: GestureDetector(
-    onTap: () => showNewsPopup(newsText),
-    child: SingleChildScrollView(
-      controller: scrollController,
-      scrollDirection: Axis.horizontal,
-      physics: const NeverScrollableScrollPhysics(),
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 12.w),
-        child: Row(
-          children: [
-            Text(
-              newsText,
-              style: TextStyle(
-                fontSize: 14.sp,
-                fontWeight: FontWeight.w500,
-                color: colorScheme.onSurface,
-              ),
+                /// SCROLLING NEWS
+                Expanded(
+                  child: GestureDetector(
+                    onTap: () => showNewsPopup(newsText),
+                    child: SingleChildScrollView(
+                      controller: scrollController,
+                      scrollDirection: Axis.horizontal,
+                      physics: const NeverScrollableScrollPhysics(),
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 12.w),
+                        child: Row(
+                          children: [
+                            Text(
+                              newsText,
+                              style: TextStyle(
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w500,
+                                color: colorScheme.onSurface,
+                              ),
+                            ),
+                            SizedBox(width: 50.w),
+                            Text(
+                              newsText,
+                              style: TextStyle(
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w500,
+                                color: colorScheme.onSurface,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-            SizedBox(width: 50.w),
-            Text(
-              newsText,
-              style: TextStyle(
-                fontSize: 14.sp,
-                fontWeight: FontWeight.w500,
-                color: colorScheme.onSurface,
-              ),
-            ),
-          ],
-        ),
-      ),
-    ),
-  ),
-),
-            ],
           ),
         ),
       );
@@ -170,27 +172,18 @@ class _NewsTickerState extends State<NewsTicker> {
 void showNewsPopup(String newsText) {
   Get.dialog(
     AlertDialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12.r),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
       title: const Text("Latest News"),
       content: SingleChildScrollView(
-        child: Text(
-          newsText,
-          style: TextStyle(
-            fontSize: 14.sp,
-          ),
-        ),
+        child: Text(newsText, style: TextStyle(fontSize: 14.sp)),
       ),
       actions: [
-        TextButton(
-          onPressed: () => Get.back(),
-          child: const Text("Close"),
-        ),
+        TextButton(onPressed: () => Get.back(), child: const Text("Close")),
       ],
     ),
   );
 }
+
 class NewsClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {

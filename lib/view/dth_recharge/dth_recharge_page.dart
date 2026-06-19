@@ -473,7 +473,25 @@ class _DTHRechargePageState extends State<DTHRechargePage>
                             Get.snackbar("Error", "Please enter Customer ID");
                             return;
                           }
-
+                          final requiredAmount =
+                              double.tryParse(item["amount"].toString()) ?? 0.0;
+                          final currentBalance =
+                              Get.find<HomePageController>()
+                                  .walletBalance
+                                  .value
+                                  ?.data
+                                  ?.balance ??
+                              0.0;
+                          if (requiredAmount > currentBalance) {
+                            Get.toNamed(
+                              AppRoutes.insufficientBalance,
+                              arguments: {
+                                'currentBalance': currentBalance,
+                                'requiredAmount': requiredAmount,
+                              },
+                            );
+                            return;
+                          }
                           await dthcontroller.getconfirmdth(
                             item["plan"].productId.toString(),
                           );

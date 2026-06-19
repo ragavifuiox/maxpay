@@ -18,6 +18,7 @@ Widget transactionCard({
           ? AppColors.darkplceholder
           : AppColors.background,
       borderRadius: BorderRadius.circular(10),
+      border: .all(color: Colors.grey.shade300),
     ),
     child: Column(
       children: [
@@ -51,10 +52,7 @@ Widget transactionCard({
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  "Status",
-                  style: TextHelper.max12(context),
-                ),
+                Text("Status", style: TextHelper.max12(context)),
                 const SizedBox(height: 5),
                 Container(
                   padding: const EdgeInsets.symmetric(
@@ -79,15 +77,9 @@ Widget transactionCard({
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text(
-                  "Amount",
-                  style: TextHelper.max12(context),
-                ),
+                Text("Amount", style: TextHelper.max12(context)),
                 const SizedBox(height: 5),
-                Text(
-                  amount,
-                  style: TextHelper.max10(context),
-                ),
+                Text(amount, style: TextHelper.max10(context)),
               ],
             ),
           ],

@@ -60,6 +60,7 @@ import 'package:maxpay/view/web_sign_up/web_signup_otp_screen.dart';
 import 'package:maxpay/view/web_sign_up/web_signup_screen.dart';
 import 'package:maxpay/view/web_sign_up/web_signup_success_screen.dart';
 import 'package:maxpay/view/weblogin/web_login_screen.dart';
+import 'package:maxpay/global_widget/insufficient_balance_page.dart';
 
 class AppPages {
   static final pages = [
@@ -170,7 +171,7 @@ class AppPages {
       }),
     ),
     GetPage(name: AppRoutes.home, page: () => const HomePageScreen()),
-    GetPage(name: AppRoutes.enterPin, page: () => PinCodeEnterPage(),),
+    GetPage(name: AppRoutes.enterPin, page: () => PinCodeEnterPage()),
 
     // GetPage(name: AppRoutes.main, page: () => const NavPageScreen()),
     // GetPage(name: AppRoutes.myearning, page: () => const MyEarningsScreen()),
@@ -485,6 +486,10 @@ class AppPages {
 
         return TransactionScreen(status: status ?? TransactionStatus.success);
       },
+    ),
+    GetPage(
+      name: AppRoutes.insufficientBalance,
+      page: () => const InsufficientBalancePage(),
     ),
   ];
 }
