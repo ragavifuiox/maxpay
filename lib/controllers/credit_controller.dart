@@ -1,48 +1,48 @@
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_navigation/src/extension_navigation.dart';
-import 'package:get/get_rx/src/rx_types/rx_types.dart';
-import 'package:get/get_state_manager/src/simple/get_controllers.dart';
-import 'package:maxpay/core/data/model/gredit_model.dart';
-import 'package:maxpay/core/domain/usecase/credit_usecase.dart';
+// import 'package:get/get_core/src/get_main.dart';
+// import 'package:get/get_navigation/src/extension_navigation.dart';
+// import 'package:get/get_rx/src/rx_types/rx_types.dart';
+// import 'package:get/get_state_manager/src/simple/get_controllers.dart';
+// import 'package:maxpay/core/data/model/gredit_model.dart';
+// import 'package:maxpay/core/domain/usecase/credit_usecase.dart';
 
-class CreditController extends GetxController {
-  final GetCreditUseCase getCreditUseCase;
+// class CreditController extends GetxController {
+//   final GetCreditUseCase getCreditUseCase;
 
-  CreditController({
-    required this.getCreditUseCase,
-  });
+//   CreditController({
+//     required this.getCreditUseCase,
+//   });
 
-  RxBool isLoading = false.obs;
+//   RxBool isLoading = false.obs;
 
-  Rx<Credit?> creditData =
-      Rx<Credit?>(null);
+//   Rx<Credit?> creditData =
+//       Rx<Credit?>(null);
 
-  @override
-  void onInit() {
-    fetchCredit();
-    super.onInit();
-  }
+//   @override
+//   void onInit() {
+//     fetchCredit();
+//     super.onInit();
+//   }
 
-  Future<void> fetchCredit() async {
-    isLoading.value = true;
+//   Future<void> fetchCredit() async {
+//     isLoading.value = true;
 
-    final result =
-        await getCreditUseCase();
+//     final result =
+//         await getCreditUseCase();
 
-    result.fold(
-      (failure) {
-        isLoading.value = false;
+//     result.fold(
+//       (failure) {
+//         isLoading.value = false;
 
-        Get.snackbar(
-          'Error',
-          failure.message,
-        );
-      },
-      (data) {
-        creditData.value = data;
+//         Get.snackbar(
+//           'Error',
+//           failure.message,
+//         );
+//       },
+//       (data) {
+//         creditData.value = data;
 
-        isLoading.value = false;
-      },
-    );
-  }
-}
+//         isLoading.value = false;
+//       },
+//     );
+//   }
+// }

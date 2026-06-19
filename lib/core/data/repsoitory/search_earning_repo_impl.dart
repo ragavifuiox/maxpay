@@ -11,7 +11,7 @@ class SearchEarningsRepoImpl implements SearchEarningsRepository {
   SearchEarningsRepoImpl(this.apiService);
 
   @override
-  Future<Either<Failure, MyEarning>> searchEarnings({
+  Future<Either<Failure, SearchEarning>> searchEarnings({
     required String fromdate,
     required String todate,
     required String search,
@@ -26,7 +26,7 @@ class SearchEarningsRepoImpl implements SearchEarningsRepository {
         },
       );
 
-      final model = MyEarning.fromJson(response);
+      final model = SearchEarning.fromJson(response);
       return Right(model);
     } catch (e) {
       return Left(ServerFailure(message: e.toString()));

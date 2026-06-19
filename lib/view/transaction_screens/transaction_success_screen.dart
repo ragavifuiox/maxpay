@@ -15,6 +15,7 @@ class TransactionScreen extends GetView<TransReportController> {
 
   @override
   Widget build(BuildContext context) {
+    controller.currentStatus = status.name;
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
@@ -49,81 +50,140 @@ class TransactionScreen extends GetView<TransReportController> {
         child: Column(
           children: [
             /// FILTER CONTAINER
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: theme.brightness == Brightness.light
-                    ? const Color(0xFFE3F0FB)
-                    : AppColors.darkplceholder,
-                borderRadius: BorderRadius.circular(10),
-                border: theme.brightness == Brightness.light
-                    ? Border.all(color: const Color(0xFFB5D4F4))
-                    : null,
-              ),
-              child: Column(
-                children: [
-                  /// SELECT CREDIT TYPE
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 14,
-                    ),
-                    decoration: BoxDecoration(
-                      color: theme.brightness == Brightness.light
-                          ? Colors.white
-                          : AppColors.darkplceholder,
-                      borderRadius: BorderRadius.circular(8),
-
-                      /// INNER FIELD BORDER
-                      border: Border.all(
-                        color: theme.brightness == Brightness.light
-                            ? const Color(0xFFD6D6D6)
-                            : const Color.fromARGB(255, 159, 159, 159),
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Select Credit Type",
-                          style: TextHelper.max1.copyWith(
-                            color: theme.colorScheme.onSurface,
-                          ),
-                        ),
-                        Icon(
-                          Icons.chevron_right,
-                          color: theme.colorScheme.onSurfaceVariant,
-                          size: 18,
-                        ),
-                      ],
+           Container(
+  padding: const EdgeInsets.all(12),
+ decoration: BoxDecoration(
+  color: theme.brightness == Brightness.light
+      ? const Color(0xFFE3F0FB)
+      : AppColors.darkplceholder,
+  borderRadius: BorderRadius.circular(10),
+  border: theme.brightness == Brightness.light
+      ? Border.all(
+          color: const Color(0xFFB5D4F4),
+        )
+      : null,
+),
+  child: Column(
+    children: [
+      /// SELECT CREDIT TYPE
+     Obx(
+  () => Container(
+    padding: const EdgeInsets.symmetric(
+      horizontal: 12,
+    ),
+    decoration: BoxDecoration(
+      color: theme.brightness == Brightness.light
+          ? Colors.white
+          : AppColors.darkplceholder,
+      borderRadius: BorderRadius.circular(8),
+      border: Border.all(
+        color: theme.brightness == Brightness.light
+            ? const Color(0xFFD6D6D6)
+            : const Color.fromARGB(255, 159, 159, 159),
+      ),
+    ),
+    child: DropdownButtonHideUnderline(
+      child: DropdownButton<String>(
+        isExpanded: true,
+        value: controller.selectedProductId.value.isEmpty
+            ? null
+            : controller.selectedProductId.value,
+        hint: const Text("Select Product"),
+        items: controller
+                .allplan
+                .value
+                ?.data
+                ?.map(
+                  (item) => DropdownMenuItem<String>(
+                    value: item.id.toString(),
+                    child: Text(
+                      "${item.name} (${item.productType})",
                     ),
                   ),
+                )
+                .toList() ??
+            [],
+        onChanged: (value) {
+          if (value == null) return;
 
-                  const SizedBox(height: 10),
+          controller.selectedProductId.value =
+              value;
 
-                  /// DATE FIELD
-                  Row(
-                    children: [
-                      Expanded(child: customField(context, hint: "DD/MM/YYYY")),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        child: Icon(
-                          Icons.arrow_forward,
-                          color: theme.colorScheme.onSurface,
-                        ),
-                      ),
-                      Expanded(child: customField(context, hint: "DD/MM/YYYY")),
-                    ],
-                  ),
+          controller.transactionreport(
+  search: controller.search,
+  status: status.name,
+  productid: value,
+  fromdate: controller.fromDate,
+  todate: controller.toDate,
+);
+        },
+      ),
+    ),
+  ),
+),
 
-                  const SizedBox(height: 10),
+      const SizedBox(height: 10),
 
-                  /// SEARCH FIELD
-                  customField(context, hint: "Search", prefix: Icons.search),
-                ],
-              ),
+      /// DATE FIELD
+      Row(
+        children: [
+          Expanded(
+  child: GestureDetector(
+    onTap: () {
+      controller.selectFromDate(context);
+    },
+    child: GetBuilder<TransReportController>(
+      builder: (_) {
+        return customField(
+          context,
+          hint: controller.fromDate.isEmpty
+              ? "Start Date"
+              : controller.fromDate,
+        );
+      },
+    ),
+  ),
+),
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 8,
             ),
+            child: Icon(
+              Icons.arrow_forward,
+              color: theme.colorScheme.onSurface,
+            ),
+          ),
+         Expanded(
+  child: GestureDetector(
+    onTap: () {
+      controller.selectToDate(context);
+    },
+    child: GetBuilder<TransReportController>(
+      builder: (_) {
+        return customField(
+          context,
+          hint: controller.toDate.isEmpty
+              ? "End Date"
+              : controller.toDate,
+        );
+      },
+    ),
+  ),
+),
+        ],
+      ),
+
+      const SizedBox(height: 10),
+
+      /// SEARCH FIELD
+      customField(
+        context,
+        hint: "Search",
+        prefix: Icons.search,
+      ),
+    ],
+  ),
+),
 
             const SizedBox(height: 15),
             Divider(

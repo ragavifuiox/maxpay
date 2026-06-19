@@ -45,4 +45,7 @@ class AppRoutes {
   static const String confirmdth='/confirmdth';
   static const String insufficientBalance='/insufficientBalance';
   static const String paymentstatus='/paymentstatus';
+  static const String verify='/verify';
+  static const String wallettrnsfer='/wallettransfer';
+  static const String walletreport='/walletreport';
 }

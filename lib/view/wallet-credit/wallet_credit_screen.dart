@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:maxpay/controllers/credit_controller.dart';
+import 'package:maxpay/controllers/wallet_credit_controller.dart';
 import 'package:maxpay/core/constants/colors.dart';
+import 'package:maxpay/core/data/model/wallet_credit_model.dart';
 import 'package:maxpay/core/utils/texthelper.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
 import 'package:maxpay/view/wallet-credit/widget/wallet_credit_filter.dart';
 
-class WalletCreditScreen extends GetView<CreditController> {
+class WalletCreditScreen extends GetView<WalletCreditController> {
   const WalletCreditScreen({super.key});
 
   @override
@@ -28,7 +30,7 @@ class WalletCreditScreen extends GetView<CreditController> {
         child: Column(
           children: [
 
-            const WalletCreditFilterWidget(),
+            const WalletCreditFilter(),
 
             const SizedBox(height: 16),
 
@@ -82,22 +84,32 @@ const SizedBox(height: 16),
             const SizedBox(height: 16),
 
             /// List
-            Expanded(
-              child: ListView(
-                children: const [
+           Expanded(
+  child: Obx(() {
+    if (controller.isLoading.value) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
 
-                  _WalletCreditCard(
-                    isDashed: false,
-                  ),
+    if (controller.Searchcredit.isEmpty) {
+      return const Center(
+        child: Text("No Data Found"),
+      );
+    }
 
-                  SizedBox(height: 10),
+    return ListView.builder(
+      itemCount: controller.Searchcredit.length,
+      itemBuilder: (context, index) {
+        final item = controller.Searchcredit[index];
 
-                  _WalletCreditCard(
-                    isDashed: true,
-                  ),
-                ],
-              ),
-            ),
+        return _WalletCreditCard(
+          data: item,
+        );
+      },
+    );
+  }),
+)
           ],
         ),
       ),
@@ -106,85 +118,68 @@ const SizedBox(height: 16),
 }
 
 /// Wallet Credit Card
+
+
 class _WalletCreditCard extends StatelessWidget {
-  final bool isDashed;
+  final CreditData data;
 
   const _WalletCreditCard({
-    required this.isDashed,
+    super.key,
+    required this.data,
   });
 
   @override
   Widget build(BuildContext context) {
-
     final theme = Theme.of(context);
-
-    final isDark =
-        theme.brightness == Brightness.dark;
+    final isDark = theme.brightness == Brightness.dark;
 
     return Container(
+      margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(12),
-
       decoration: BoxDecoration(
         color: theme.brightness == Brightness.light
             ? AppColors.background
             : const Color(0xFF2F3349),
-
         borderRadius: BorderRadius.circular(12),
-
-        border: theme.brightness == Brightness.dark
+        border: isDark
             ? Border.all(
                 color: const Color(0xFF3C3F52),
               )
             : null,
       ),
-
       child: Column(
         children: [
-
           /// Top Row
           Row(
-            mainAxisAlignment:
-                MainAxisAlignment.spaceBetween,
-
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-
-              Text(
-                "Transaction ID: TXN6453564",
-
-                style: TextHelper.max1.copyWith(
-                  color: isDark
-                      ? const Color(0xFFFFFFFF)
-                          .withValues(alpha: 0.7)
-                      : AppColors.darktextclr,
+              Expanded(
+                child: Text(
+                  "Transaction ID: ${data.transactionId ?? '-'}",
+                  style: TextHelper.max1.copyWith(
+                    color: isDark
+                        ? const Color(0xFFFFFFFF).withValues(alpha: 0.7)
+                        : AppColors.darktextclr,
+                  ),
                 ),
               ),
-
               Column(
-                crossAxisAlignment:
-                    CrossAxisAlignment.end,
-
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-
                   Text(
-                    "Date & Time:",
-
+                    "Date & Time",
                     style: TextHelper.max1.copyWith(
                       color: isDark
-                          ? const Color(0xFFFFFFFF)
-                              .withValues(alpha: 0.7)
+                          ? const Color(0xFFFFFFFF).withValues(alpha: 0.7)
                           : AppColors.darktextclr,
                     ),
                   ),
-
                   const SizedBox(height: 5),
-
                   Text(
-                    "2026-11-29 14:38:43",
-
+                    data.createdAt ?? "-",
                     style: TextHelper.max1.copyWith(
                       color: isDark
-                          ? const Color(0xFFFFFFFF)
-                              .withValues(alpha: 0.7)
+                          ? const Color(0xFFFFFFFF).withValues(alpha: 0.7)
                           : AppColors.darktextclr,
                     ),
                   ),
@@ -195,76 +190,56 @@ class _WalletCreditCard extends StatelessWidget {
 
           const SizedBox(height: 8),
 
-           Divider(
-  color: Theme.of(context).brightness == Brightness.light
-      ? Colors.black12
-      : Colors.white24,
-),
+          Divider(
+            color: theme.brightness == Brightness.light
+                ? Colors.black12
+                : Colors.white24,
+          ),
 
           const SizedBox(height: 8),
 
           /// Bottom Row
           Row(
-            mainAxisAlignment:
-                MainAxisAlignment.spaceBetween,
-
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-
               Column(
-                crossAxisAlignment:
-                    CrossAxisAlignment.start,
-
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-
                   Text(
                     "Credit Type",
-
                     style: TextHelper.max1.copyWith(
                       color: isDark
-                          ? const Color(0xFFFFFFFF)
-                              .withValues(alpha: 0.7)
+                          ? const Color(0xFFFFFFFF).withValues(alpha: 0.7)
                           : AppColors.darktextclr,
                     ),
                   ),
-
                   Text(
-                    "Type",
-
+                    data.walletType ?? "-",
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,
-                      color:
-                          theme.colorScheme.onSurface,
+                      color: theme.colorScheme.onSurface,
                     ),
                   ),
                 ],
               ),
-
               Column(
-                crossAxisAlignment:
-                    CrossAxisAlignment.end,
-
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-
                   Text(
                     "Amount",
-
                     style: TextHelper.max1.copyWith(
                       color: isDark
-                          ? const Color(0xFFFFFFFF)
-                              .withValues(alpha: 0.7)
+                          ? const Color(0xFFFFFFFF).withValues(alpha: 0.7)
                           : AppColors.darktextclr,
                     ),
                   ),
-
                   Text(
-                    "₹ 500.00",
-
+                    "₹ ${data.amount ?? '0.00'}",
                     style: TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
-                      color:
-                          theme.colorScheme.onSurface,
+                      color: theme.colorScheme.onSurface,
                     ),
                   ),
                 ],

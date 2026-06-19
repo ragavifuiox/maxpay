@@ -135,14 +135,14 @@ class SettingsPage extends StatelessWidget {
                     },
                     SvgPicture.asset(AssetImages.history, width: 24.w),
                   ),
-                  _buildMenuTile(
-                    context,
-                    'Web Signup',
-                    () {
-                      Get.toNamed(AppRoutes.weblogin);
-                    },
-                    SvgPicture.asset(AssetImages.webSignup, width: 24.w),
-                  ),
+                  // _buildMenuTile(
+                  //   context,
+                  //   'Web Signup',
+                  //   () {
+                  //     Get.toNamed(AppRoutes.weblogin);
+                  //   },
+                  //   SvgPicture.asset(AssetImages.webSignup, width: 24.w),
+                  // ),
                   _buildMenuTile(
                     context,
                     'Web Login',

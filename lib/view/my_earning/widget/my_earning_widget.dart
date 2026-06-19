@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:maxpay/core/constants/colors.dart';
+import 'package:maxpay/core/data/model/my_earnings_model.dart';
 
 class EarningsCard extends StatelessWidget {
-  const EarningsCard({super.key});
+  final EarningItem item;
+
+  const EarningsCard({
+    super.key,
+    required this.item,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -15,19 +21,13 @@ class EarningsCard extends StatelessWidget {
         color: theme.brightness == Brightness.light
             ? AppColors.background
             : const Color(0xFF2F3349),
-
         borderRadius: BorderRadius.circular(12),
-
         border: theme.brightness == Brightness.dark
-            ? Border.all(
-                color: const Color(0xFF3C3F52),
-              )
+            ? Border.all(color: const Color(0xFF3C3F52))
             : null,
       ),
-
       child: Column(
         children: [
-       
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -35,16 +35,15 @@ class EarningsCard extends StatelessWidget {
                 "Date & Time:",
                 style: TextStyle(
                   fontSize: 12,
-                 color: theme.colorScheme.onSurface,
+                  color: theme.colorScheme.onSurface,
                   fontWeight: FontWeight.w500,
                 ),
               ),
-
               Text(
-                "2026-11-29 14:38:43",
+                item.commissionDate ?? "-",
                 style: TextStyle(
                   fontSize: 12,
-                 color: theme.colorScheme.onSurface,
+                  color: theme.colorScheme.onSurface,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -53,42 +52,39 @@ class EarningsCard extends StatelessWidget {
 
           const SizedBox(height: 8),
 
-          /// 🔹 Divider
-        Divider(
-  color: Theme.of(context).brightness == Brightness.light
-      ? Colors.black12
-      : Colors.white24,
-),
+          Divider(
+            color: theme.brightness == Brightness.light
+                ? Colors.black12
+                : Colors.white24,
+          ),
 
           const SizedBox(height: 8),
 
-          /// 🔹 Bottom Row
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              /// Avatar
-              Row(
-                children: const [
-                  CircleAvatar(
-                    radius: 18,
-                    backgroundColor: Colors.red,
-                    child: Text(
-                      "J",
-                      style: TextStyle(color: Colors.white),
-                    ),
+              CircleAvatar(
+                radius: 18,
+                backgroundColor: Colors.red,
+                child: Text(
+                  (item.productName?.isNotEmpty ?? false)
+                      ? item.productName![0].toUpperCase()
+                      : "J",
+                  style: const TextStyle(
+                    color: Colors.white,
                   ),
-
-                  SizedBox(width: 10),
-                ],
+                ),
               ),
 
-              /// Name + Amount
+              const SizedBox(width: 10),
+
               Expanded(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment:
+                      CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Jio",
+                      item.productName ?? "",
                       style: TextStyle(
                         fontSize: 14,
                         fontFamily: 'Poppins',
@@ -100,9 +96,19 @@ class EarningsCard extends StatelessWidget {
                     const SizedBox(height: 4),
 
                     Text(
-                      "Total Amount : ₹100",
+                      "Total Amount : ₹${item.amount ?? "0"}",
                       style: TextStyle(
                         fontWeight: FontWeight.w500,
+                        color: theme.colorScheme.onSurface,
+                      ),
+                    ),
+
+                    const SizedBox(height: 2),
+
+                    Text(
+                      item.mobile ?? "",
+                      style: TextStyle(
+                        fontSize: 12,
                         color: theme.colorScheme.onSurface,
                       ),
                     ),
@@ -110,23 +116,23 @@ class EarningsCard extends StatelessWidget {
                 ),
               ),
 
-              /// Earnings
               Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
+                crossAxisAlignment:
+                    CrossAxisAlignment.end,
                 children: [
                   Text(
                     "My Earnings",
                     style: TextStyle(
                       fontSize: 11,
-                       color: theme.colorScheme.onSurface,
+                      color: theme.colorScheme.onSurface,
                     ),
                   ),
 
                   const SizedBox(height: 4),
 
-                  const Text(
-                    "₹ 5",
-                    style: TextStyle(
+                  Text(
+                    "₹ ${item.commissionAmount ?? "0"}",
+                    style: const TextStyle(
                       color: Colors.green,
                       fontWeight: FontWeight.bold,
                       fontSize: 16,

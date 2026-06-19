@@ -492,7 +492,10 @@ class MenuScreen extends StatelessWidget {
       //   break;
 
       case 'dth':
+       print("MENU SCREEN ID = ${item.id}");
+
         Get.toNamed(
+          
           AppRoutes.dth,
 
         arguments: {

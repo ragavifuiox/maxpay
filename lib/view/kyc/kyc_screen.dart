@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:maxpay/core/constants/colors.dart';
+import 'package:maxpay/core/constants/extension.dart';
 import 'package:maxpay/global_widget/commom_button.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
 import 'package:maxpay/controllers/add_kyc_controller.dart';
@@ -158,6 +159,9 @@ class UploadCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final imageUrl = fileName.addToBase(fileName);
+
+print("Image URL => $imageUrl");
 
     bool hasFile =
         selectedFile != null || fileName.isNotEmpty;
@@ -183,20 +187,31 @@ class UploadCard extends StatelessWidget {
             height: 120,
             width: 120,
             child: selectedFile != null
-                ? Image.file(
-                    selectedFile!,
-                    fit: BoxFit.cover,
-                  )
-                : Image.network(
-                    fileName, // full image URL
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return const Icon(
-                        Icons.broken_image,
-                        size: 50,
-                      );
-                    },
-                  ),
+    ? Image.file(
+        selectedFile!,
+        fit: BoxFit.cover,
+      )
+    : 
+   
+
+Image.network(
+  fileName,
+  fit: BoxFit.cover,
+  loadingBuilder: (context, child, progress) {
+    if (progress == null) return child;
+    return const Center(
+      child: CircularProgressIndicator(),
+    );
+  },
+  errorBuilder: (context, error, stackTrace) {
+    debugPrint("Image Error: $error");
+    debugPrint("Image URL: $fileName");
+    return const Icon(
+      Icons.broken_image,
+      size: 50,
+    );
+  },
+)
           ),
           const SizedBox(height: 10),
           Text(

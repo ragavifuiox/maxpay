@@ -1,4 +1,7 @@
 
+import 'package:maxpay/core/data/model/submit_dispute_model.dart';
+import 'package:maxpay/core/data/model/wallet_credit_type_model..dart';
+
 class ApiRoutes {
   static const baseURL = "http://139.59.91.7/test_paylinkonline.in/public/api";
   static const login = "/retailer_login_sendotp";
@@ -41,4 +44,12 @@ class ApiRoutes {
   static const dispute = "/dispute_report";
   static const paymentstatus = "/payment_status_search";
   static const refund = "/get_refund";
+  static const allplan = "/all_product";
+  static const transreport = "/get_transaction_report";
+  static const updatepin = "/update_pin";
+  static const Credittype = "/get_wallet_credit_types";
+  static const searchcredit = "/get_credit";
+  static const SubmitDispute = "/submit_dispute";
+  static const walletreport = "/staff_wallet_report";
+  static const wallettransfer = "/staff_wallet_transfer";
 }

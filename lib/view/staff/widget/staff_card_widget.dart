@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
+import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/core/extensions/currency.dart';
 import 'package:maxpay/core/utils/texthelper.dart';
 import 'package:maxpay/core/data/model/staff_lsit_model.dart';
 import 'package:maxpay/view/add_wallet/add_wallet_screen.dart';
 import 'package:maxpay/view/staff/transaction_report.dart';
 import 'package:maxpay/view/staff/wallet_report_screen.dart';
+import 'package:maxpay/view/staff/wallet_transfer.dart';
 
 class StaffCardWidget extends StatelessWidget {
   final Data data;
@@ -68,19 +70,22 @@ class StaffCardWidget extends StatelessWidget {
                 title: "Wallet Report",
                 color: Colors.red,
                 onTap: () {
-                  Get.to(() => WalletReportScreen());
+                Get.toNamed(AppRoutes.walletreport);
                 },
               ),
 
               SizedBox(width: 8.w), // Gap
 
               _buttonWidget(
-                title: "Add Wallet",
-                color: Colors.green,
-                onTap: () {
-                  Get.to(() => AddWalletScreen());
-                },
-              ),
+  title: "Add Wallet",
+  color: Colors.green,
+  onTap: () {
+    Get.toNamed(
+      AppRoutes.wallettrnsfer,
+      arguments: data,
+    );
+  },
+),
             ],
           ),
         ],
