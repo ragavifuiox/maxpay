@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:maxpay/controllers/add_kyc_controller.dart';
 import 'package:maxpay/controllers/add_staff_controller.dart';
 import 'package:maxpay/controllers/auth_controller.dart';
 import 'package:maxpay/controllers/credit_controller.dart';
@@ -64,6 +65,7 @@ import 'package:maxpay/view/web_sign_up/web_signup_otp_screen.dart';
 import 'package:maxpay/view/web_sign_up/web_signup_screen.dart';
 import 'package:maxpay/view/web_sign_up/web_signup_success_screen.dart';
 import 'package:maxpay/view/weblogin/web_login_screen.dart';
+import 'package:maxpay/global_widget/insufficient_balance_page.dart';
 
 class AppPages {
   static final pages = [
@@ -92,8 +94,6 @@ class AppPages {
         );
       }),
     ),
-
-
 
     GetPage(
       transition: Transition.fade,
@@ -145,7 +145,7 @@ class AppPages {
     ),
     GetPage(
       name: AppRoutes.biometricsIntro,
-      page: () => const BiometricsIntroPage()
+      page: () => const BiometricsIntroPage(),
     ),
     GetPage(
       name: AppRoutes.biometricsScanning,
@@ -217,8 +217,7 @@ class AppPages {
       }),
     ),
 
-
- GetPage(
+    GetPage(
       transition: Transition.fade,
 
       name: AppRoutes.refund,
@@ -233,7 +232,7 @@ class AppPages {
         );
       }),
     ),
-    
+
     GetPage(name: AppRoutes.cashback, page: () => const CashbackScreen()),
 
     GetPage(
@@ -262,7 +261,7 @@ class AppPages {
 
       binding: BindingsBuilder(() {
         Get.lazyPut<ProfileController>(
-          () => ProfileController(getProfileUseCase: sl(),),
+          () => ProfileController(getProfileUseCase: sl()),
 
           fenix: true,
         );
@@ -285,8 +284,7 @@ class AppPages {
       }),
     ),
 
-
- GetPage(
+    GetPage(
       transition: Transition.fade,
 
       name: AppRoutes.confirmdth,
@@ -295,8 +293,11 @@ class AppPages {
 
       binding: BindingsBuilder(() {
         Get.lazyPut<DthController>(
-          () => DthController(dthtabUseCase: sl(), searchdthusecase: sl(), confirmdthUsecase: sl(), dthrechargeusecase: sl()
-           
+          () => DthController(
+            dthtabUseCase: sl(),
+            searchdthusecase: sl(),
+            confirmdthUsecase: sl(),
+            dthrechargeusecase: sl(),
           ),
 
           fenix: true,
@@ -326,7 +327,15 @@ class AppPages {
         );
       }),
     ),
-    GetPage(name: AppRoutes.kyc, page: () => const KycScreen()),
+    GetPage(
+      name: AppRoutes.kyc,
+      page: () => const KycScreen(),
+      binding: BindingsBuilder(
+        () => Get.lazyPut(
+          () => AddKycController(addKycUsecase: sl(), getkycUsecase: sl()),
+        ),
+      ),
+    ),
     GetPage(
       name: AppRoutes.loginhistory,
       page: () => const LoginHistoryScreen(),
@@ -338,7 +347,7 @@ class AppPages {
       page: () => const WebSignupSuccessScreen(),
     ),
     GetPage(name: AppRoutes.setting, page: () => const SettingsPage()),
-     GetPage(
+    GetPage(
       transition: Transition.fade,
 
       name: AppRoutes.grade,
@@ -347,10 +356,7 @@ class AppPages {
 
       binding: BindingsBuilder(() {
         Get.lazyPut<GradeController>(
-          () => GradeController(
-            gradeusecase: sl()
-           
-          ),
+          () => GradeController(gradeusecase: sl()),
 
           fenix: true,
         );
@@ -459,7 +465,7 @@ class AppPages {
       page: () => const StatementReadMoreScreen(),
     ),
     GetPage(name: AppRoutes.webloginqr, page: () => const WebLoginScreen()),
-     GetPage(
+    GetPage(
       transition: Transition.fade,
 
       name: AppRoutes.paymentstatus,
@@ -468,16 +474,12 @@ class AppPages {
 
       binding: BindingsBuilder(() {
         Get.lazyPut<PaymentStatusController>(
-          () => PaymentStatusController(
-            paymentStatusUsecase: sl()
-           
-          ),
+          () => PaymentStatusController(paymentStatusUsecase: sl()),
 
           fenix: true,
         );
       }),
     ),
-   
 
     GetPage(
       transition: Transition.fade,
@@ -487,9 +489,7 @@ class AppPages {
 
       binding: BindingsBuilder(() {
         Get.lazyPut<DisputeController>(
-          () => DisputeController(
-           disputeusecase: sl()
-          ),
+          () => DisputeController(disputeusecase: sl()),
 
           fenix: true,
         );

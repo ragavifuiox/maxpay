@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:maxpay/core/constants/colors.dart';
 
@@ -51,7 +52,6 @@ class TextHelper {
     );
   }
 
-
   static TextStyle get max7 {
     return GoogleFonts.poppins(
       fontSize: 13,
@@ -70,46 +70,46 @@ class TextHelper {
 
   static TextStyle max9(BuildContext context) {
     return GoogleFonts.poppins(
-      fontSize: 14,
+      fontSize: 14.sp,
       fontWeight: FontWeight.w400,
       color: Theme.of(context).colorScheme.onSurface,
     );
   }
-   static TextStyle max10(BuildContext context) {
+
+  static TextStyle max10(BuildContext context) {
     return GoogleFonts.poppins(
       fontSize: 16,
       fontWeight: FontWeight.w600,
       color: Theme.of(context).colorScheme.onSurface,
     );
   }
-   static TextStyle max11(BuildContext context) {
+
+  static TextStyle max11(BuildContext context) {
     return GoogleFonts.poppins(
       fontSize: 12,
       fontWeight: FontWeight.w500,
       color: Theme.of(context).colorScheme.onTertiaryFixedVariant,
     );
-    
-  
-}
+  }
 
-static TextStyle max12(BuildContext context) {
-  final theme = Theme.of(context);
+  static TextStyle max12(BuildContext context) {
+    final theme = Theme.of(context);
 
-  return GoogleFonts.poppins(
-    fontSize: 12,
-    fontWeight: FontWeight.w500,
-    color: theme.brightness == Brightness.light
-        ? AppColors.darktextclr
-        : AppColors.textclr,
-  );
-}
+    return GoogleFonts.poppins(
+      fontSize: 12,
+      fontWeight: FontWeight.w500,
+      color: theme.brightness == Brightness.light
+          ? AppColors.darktextclr
+          : AppColors.textclr,
+    );
+  }
+
   static TextStyle max13(BuildContext context) {
     return GoogleFonts.poppins(
       fontSize: 24,
       fontWeight: FontWeight.w700,
       color: Theme.of(context).colorScheme.onSurface,
     );
-    
   }
 
   static TextStyle max14(BuildContext context) {
@@ -118,52 +118,50 @@ static TextStyle max12(BuildContext context) {
       fontWeight: FontWeight.w600,
       color: Theme.of(context).colorScheme.onSurface,
     );
-    
   }
-   static TextStyle max15(BuildContext context) {
+
+  static TextStyle max15(BuildContext context) {
     return GoogleFonts.poppins(
       fontSize: 10,
       fontWeight: FontWeight.w400,
       color: Theme.of(context).colorScheme.onSurface,
     );
-    
   }
+
   static TextStyle max16(BuildContext context) {
     return GoogleFonts.poppins(
       fontSize: 14,
       fontWeight: FontWeight.w400,
       color: Theme.of(context).colorScheme.onSurface,
     );
-    
   }
 
+  static TextStyle max17(BuildContext context) {
+    final theme = Theme.of(context);
 
-static TextStyle max17(BuildContext context) {
-  final theme = Theme.of(context);
+    return GoogleFonts.poppins(
+      fontSize: 16,
+      fontWeight: FontWeight.w500,
+      color: theme.brightness == Brightness.light
+          ? AppColors.clrTextblack
+          : AppColors.darktextclr,
+    );
+  }
 
-  return GoogleFonts.poppins(
-    fontSize: 16,
-    fontWeight: FontWeight.w500,
-    color: theme.brightness == Brightness.light
-        ? AppColors.clrTextblack
-        : AppColors.darktextclr,
-  );
-}
-
-static TextStyle get max18 {
+  static TextStyle get max18 {
     return GoogleFonts.poppins(
       fontSize: 13,
       fontWeight: FontWeight.w500,
       color: AppColors.darktextclr,
     );
   }
-    static TextStyle max19(BuildContext context) {
+
+  static TextStyle max19(BuildContext context) {
     return GoogleFonts.poppins(
       fontSize: 14,
       fontWeight: FontWeight.w500,
       color: Theme.of(context).colorScheme.onSurface,
     );
-    
   }
 
   static TextStyle get max20 {

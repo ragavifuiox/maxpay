@@ -11,7 +11,7 @@ class PaymentStatus {
     if (json['data'] != null) {
       data = <PaymentStatusData>[];
       json['data'].forEach((v) {
-        data!.add(new PaymentStatusData.fromJson(v));
+        data!.add(PaymentStatusData.fromJson(v));
       });
     }
     message = json['message'];
@@ -19,13 +19,13 @@ class PaymentStatus {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['success'] = this.success;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['success'] = success;
     if (this.data != null) {
       data['data'] = this.data!.map((v) => v.toJson()).toList();
     }
-    data['message'] = this.message;
-    data['code'] = this.code;
+    data['message'] = message;
+    data['code'] = code;
     return data;
   }
 }
@@ -35,7 +35,7 @@ class PaymentStatusData {
   String? dateTime;
   String? productName;
   String? productLogo;
-  Null? transactionNo;
+  Null transactionNo;
   String? mobile;
   String? amount;
   String? paymentStatus;
@@ -62,15 +62,15 @@ class PaymentStatusData {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['date_time'] = this.dateTime;
-    data['product_name'] = this.productName;
-    data['product_logo'] = this.productLogo;
-    data['transaction_no'] = this.transactionNo;
-    data['mobile'] = this.mobile;
-    data['amount'] = this.amount;
-    data['payment_status'] = this.paymentStatus;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['date_time'] = dateTime;
+    data['product_name'] = productName;
+    data['product_logo'] = productLogo;
+    data['transaction_no'] = transactionNo;
+    data['mobile'] = mobile;
+    data['amount'] = amount;
+    data['payment_status'] = paymentStatus;
     return data;
   }
 }

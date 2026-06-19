@@ -57,22 +57,23 @@ class AssetImages {
   static const grade = "assets/images/grade.svg";
   static const updatePin = "assets/images/update_pin.svg";
   static const support = "assets/images/support.svg";
-  static const  websuccess= "assets/images/success_image.png";
-  static const  banner1= "assets/images/banner1.png";
-  static const  banner2= "assets/images/banner2.png";
-  static const  addwallet= "assets/images/add_wallet1.png";
-  static const  qrCode= "assets/images/qr_code.png";
-  static const  profileImage= "assets/images/profile.jpg";
-  static const  qrcode= "assets/images/qrcode 1.png";
-  static const stafflist= "assets/images/stafflist_page.svg";
-  static const search= "assets/images/search.svg";
-  static const shareSvg= "assets/images/share_icon.svg";
-  static const dispute= "assets/images/dispute.svg";
-  static const edit= "assets/images/edit.svg";
-  static const edit1= "assets/images/edit1.svg";
-  static const review= "assets/images/review.svg";
-
+  static const websuccess = "assets/images/success_image.png";
+  static const banner1 = "assets/images/banner1.png";
+  static const banner2 = "assets/images/banner2.png";
+  static const addwallet = "assets/images/add_wallet1.png";
+  static const qrCode = "assets/images/qr_code.png";
+  static const profileImage = "assets/images/profile.jpg";
+  static const qrcode = "assets/images/qrcode 1.png";
+  static const stafflist = "assets/images/stafflist_page.svg";
+  static const search = "assets/images/search.svg";
+  static const shareSvg = "assets/images/share_icon.svg";
+  static const dispute = "assets/images/dispute.svg";
+  static const edit = "assets/images/edit.svg";
+  static const edit1 = "assets/images/edit1.svg";
+  static const review = "assets/images/review.svg";
+  static const whatsapp = "assets/images/whatsapp.svg";
 }
+
 SizedBox adjustWidth(double width) {
   return SizedBox(width: width);
 }

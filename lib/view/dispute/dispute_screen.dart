@@ -4,7 +4,6 @@ import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:get/get_state_manager/src/simple/get_view.dart';
 import 'package:maxpay/controllers/dispute_controller.dart';
 import 'package:maxpay/core/constants/colors.dart';
-import 'package:maxpay/core/utils/texthelper.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
 import 'package:maxpay/view/dispute/widget/disput_search.dart';
 
@@ -45,7 +44,7 @@ class DisputeReportScreen extends GetView<DisputeController> {
 
     return ListView.separated(
       itemCount: controller.disputeList.length,
-      separatorBuilder: (_, __) => SizedBox(height: 12.h),
+      separatorBuilder: (_, _) => SizedBox(height: 12.h),
       itemBuilder: (context, index) {
         final item = controller.disputeList[index];
 

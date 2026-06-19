@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:maxpay/core/constants/asset_images.dart';
 import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/core/utils/texthelper.dart';
@@ -20,22 +21,31 @@ class AddWalletScreen extends StatelessWidget {
       appBar: const CommonAppBar(title: "Add Wallet"),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               /// QR IMAGE CONTAINER
               Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(20),
+                height: 240.h,
+                width: MediaQuery.of(context).size.width.w,
+                margin: .zero,
+                padding: .zero,
+
                 decoration: BoxDecoration(
-                  color: colorScheme.surface,
+                  color: Colors.white,
+
                   borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.shade300,
+                      offset: .zero,
+                      blurRadius: 1,
+                    ),
+                  ],
                 ),
-                child: Image.asset(
-                  AssetImages.addwallet,
-                  height: 220,
-                  fit: BoxFit.contain,
+                child: Center(
+                  child: Image.asset(AssetImages.addwallet, fit: .fitHeight),
                 ),
               ),
 
@@ -44,7 +54,7 @@ class AddWalletScreen extends StatelessWidget {
               /// AMOUNT TITLE
               Text(
                 "Amount",
-                style: TextHelper.max9(context),
+                style: TextHelper.max9(context).copyWith(fontFamily: 'Poppins'),
               ),
 
               const SizedBox(height: 8),
@@ -52,13 +62,13 @@ class AddWalletScreen extends StatelessWidget {
               /// AMOUNT FIELD
               TextFormField(
                 keyboardType: TextInputType.number,
-                style: TextStyle(
-                  color: colorScheme.onSurface,
-                ),
+                style: TextStyle(color: colorScheme.onSurface),
                 decoration: InputDecoration(
                   hintText: "Enter Amount",
                   hintStyle: TextStyle(
                     color: theme.colorScheme.onTertiaryFixedVariant,
+                    fontFamily: 'Poppins',
+                    fontSize: 14.sp,
                   ),
                   filled: true,
                   fillColor: theme.brightness == Brightness.dark
@@ -103,10 +113,12 @@ class AddWalletScreen extends StatelessWidget {
               /// RECENT TRANSACTIONS
               Text(
                 "Recent Transactions",
-                style: TextHelper.max10(context),
+                style: TextHelper.max10(
+                  context,
+                ).copyWith(fontFamily: 'Poppins'),
               ),
 
-              const SizedBox(height: 12),
+              const SizedBox(height: 20),
 
               transactionCard(
                 context: context,

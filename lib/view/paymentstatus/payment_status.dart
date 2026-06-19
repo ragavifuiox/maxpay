@@ -5,12 +5,8 @@ import 'package:maxpay/global_widget/custom_app.dart';
 import 'package:maxpay/view/paymentstatus/widget/search_filter_.dart';
 
 
-import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:maxpay/controllers/payment_status_controller.dart';
-import 'package:maxpay/global_widget/custom_app.dart';
-import 'package:maxpay/view/paymentstatus/widget/search_filter_.dart';
 
 class PaymentStatusScreen extends GetView<PaymentStatusController> {
   const PaymentStatusScreen({super.key});
@@ -48,7 +44,7 @@ class PaymentStatusScreen extends GetView<PaymentStatusController> {
                 return ListView.separated(
                   itemCount:
                       controller.paymentstatus.length,
-                  separatorBuilder: (_, __) =>
+                  separatorBuilder: (_, _) =>
                       SizedBox(height: 12.h),
                   itemBuilder: (context, index) {
                     final item =

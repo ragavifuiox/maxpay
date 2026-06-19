@@ -3,7 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:maxpay/controllers/auth_controller.dart';
 import 'package:maxpay/core/constants/colors.dart';
-import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/core/utils/responsive.dart';
 import 'package:maxpay/global_widget/commom_button.dart';
 import 'package:maxpay/view/login/widgets/custom_numeric_keyboard.dart';
@@ -19,15 +18,18 @@ class _PinCodeEnterPageState extends State<PinCodeEnterPage> {
   final AuthController controller = Get.find<AuthController>();
 
   final TextEditingController pinController = TextEditingController();
-
+  bool isUpdatePin = false;
   final RxBool showVerifyButton = false.obs;
   @override
   void initState() {
     super.initState();
+    isUpdatePin = (Get.arguments as bool?) ?? false;
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if (controller.isFingerPrint.value == 1) {
-        await controller.authenticateWithFingerprint();
+      if (!isUpdatePin) {
+        if (controller.isFingerPrint.value == 1) {
+          await controller.authenticateWithFingerprint();
+        }
       }
     });
   }
@@ -74,7 +76,7 @@ class _PinCodeEnterPageState extends State<PinCodeEnterPage> {
             if (showVerifyButton.value) {
               resetPin();
             } else {
-              Get.offAllNamed(AppRoutes.loginPhoneName);
+              Get.back();
             }
           },
           icon: Icon(Icons.arrow_back_ios_new, color: colorScheme.onSurface),
@@ -90,19 +92,29 @@ class _PinCodeEnterPageState extends State<PinCodeEnterPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: isTablet ? 40.h : 20.h),
+                SizedBox(height: isTablet ? 48.h : 24.h),
 
                 Text(
-                  'Enter your Pin code',
+                  'Enter your MPIN',
                   style: TextStyle(
                     fontFamily: 'Poppins',
                     fontWeight: FontWeight.w600,
-                    fontSize: isTablet ? 30.sp : 20.sp,
+                    fontSize: isTablet ? 30.sp : 22.sp,
                     color: colorScheme.onSurface,
                   ),
                 ),
+                SizedBox(height: 8.h),
+                Text(
+                  'Please enter your 4-digit security PIN to access your account.',
+                  style: TextStyle(
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w400,
+                    fontSize: isTablet ? 18.sp : 13.sp,
+                    color: colorScheme.onSurface.withOpacity(0.6),
+                  ),
+                ),
 
-                SizedBox(height: 40.h),
+                SizedBox(height: isTablet ? 56.h : 40.h),
 
                 Center(
                   child: Pinput(
@@ -110,8 +122,8 @@ class _PinCodeEnterPageState extends State<PinCodeEnterPage> {
                     controller: pinController,
                     readOnly: true,
                     defaultPinTheme: PinTheme(
-                      width: isTablet ? 70.w : 56.w,
-                      height: isTablet ? 70.w : 56.w,
+                      width: isTablet ? 72.w : 58.w,
+                      height: isTablet ? 72.w : 58.w,
                       textStyle: TextStyle(
                         fontFamily: 'Poppins',
                         fontSize: isTablet ? 28.sp : 22.sp,
@@ -120,36 +132,73 @@ class _PinCodeEnterPageState extends State<PinCodeEnterPage> {
                       ),
                       decoration: BoxDecoration(
                         color: AppColors.clrPrimary,
-                        borderRadius: BorderRadius.circular(10.r),
+                        borderRadius: BorderRadius.circular(12.r),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.clrPrimary.withOpacity(0.15),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                    ),
+                    focusedPinTheme: PinTheme(
+                      width: isTablet ? 72.w : 58.w,
+                      height: isTablet ? 72.w : 58.w,
+                      textStyle: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontSize: isTablet ? 28.sp : 22.sp,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.clrPrimary,
+                        borderRadius: BorderRadius.circular(12.r),
+                        border: Border.all(
+                          color: colorScheme.primary.withOpacity(0.5),
+                          width: 2,
+                        ),
                       ),
                     ),
                   ),
                 ),
 
-                SizedBox(height: 25.h),
+                SizedBox(height: isTablet ? 40.h : 32.h),
 
                 /// Fingerprint Icon
-                Obx(() {
-                  if (controller.isFingerPrint.value == 1) {
-                    return const SizedBox(); // Hide icon
-                  }
-
-                  return Align(
-                    alignment: Alignment.centerRight,
-                    child: GestureDetector(
-                      onTap: () async {
-                        Get.toNamed(AppRoutes.biometricsScanning);
-                      },
-                      child: Center(
-                        child: Icon(
-                          Icons.fingerprint,
-                          size: 50.sp,
-                          color: AppColors.clrPrimary,
+                if (!isUpdatePin)
+                  Obx(() {
+                    if (controller.isFingerPrint.value == 1) {
+                      return Center(
+                        child: GestureDetector(
+                          onTap: () async {
+                            await controller.authenticateWithFingerprint();
+                          },
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.fingerprint_rounded,
+                                size: isTablet ? 72.sp : 56.sp,
+                                color: AppColors.clrPrimary,
+                              ),
+                              SizedBox(height: 8.h),
+                              Text(
+                                'Use Fingerprint',
+                                style: TextStyle(
+                                  fontFamily: 'Poppins',
+                                  fontSize: isTablet ? 16.sp : 12.sp,
+                                  fontWeight: FontWeight.w500,
+                                  color: AppColors.clrPrimary,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    ),
-                  );
-                }),
+                      );
+                    }
+                    return const SizedBox();
+                  }),
 
                 const Spacer(),
 
@@ -158,28 +207,9 @@ class _PinCodeEnterPageState extends State<PinCodeEnterPage> {
                     duration: const Duration(milliseconds: 300),
                     child: showVerifyButton.value
                         ? Row(
-                            mainAxisAlignment: .start,
+                            mainAxisAlignment: MainAxisAlignment.start,
                             key: const ValueKey('verify'),
                             children: [
-                              // Expanded(
-                              //   child: SafeArea(
-                              //     child: TextButton(
-                              //       onPressed: () {
-                              //         Get.back();
-                              //       },
-                              //       child: Text(
-                              //         'Cancel',
-                              //         style: TextStyle(
-                              //           fontFamily: 'Poppins',
-                              //           fontWeight: FontWeight.w700,
-                              //           fontSize: 16.sp,
-                              //           color: colorScheme.onSurface,
-                              //         ),
-                              //       ),
-                              //     ),
-                              //   ),
-                              // ),
-                              // SizedBox(width: 20.w),
                               Expanded(
                                 child: CommonButton(
                                   title: "Verify",
@@ -199,7 +229,7 @@ class _PinCodeEnterPageState extends State<PinCodeEnterPage> {
                           )
                         : Padding(
                             key: const ValueKey('keyboard'),
-                            padding: EdgeInsets.only(bottom: 20.h),
+                            padding: EdgeInsets.only(bottom: 24.h, top: 16.h),
                             child: CustomNumericKeyboard(
                               onKeyPressed: handleKeyPress,
                             ),

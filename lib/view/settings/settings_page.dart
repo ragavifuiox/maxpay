@@ -5,6 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:maxpay/controllers/auth_controller.dart';
 import 'package:maxpay/controllers/profile_controller.dart';
 import 'package:maxpay/core/constants/asset_images.dart';
+import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/core/utils/responsive.dart';
 import 'package:maxpay/core/utils/theme.dart';
@@ -15,6 +16,7 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeController = Get.find<ThemeController>();
+    final authController = Get.find<AuthController>();
     final isTablet = Responsive.isTablet(context);
 
     return Obx(() {
@@ -79,9 +81,23 @@ class SettingsPage extends StatelessWidget {
                     context,
                     'Update Pin',
                     () {
-                      Get.toNamed(AppRoutes.verify);
+                      Get.toNamed(AppRoutes.veirfypin, arguments: true);
                     },
                     SvgPicture.asset(AssetImages.updatePin, width: 24.w),
+                  ),
+                  _buildMenuTile(
+                    context,
+                    authController.isFingerPrint.value == 1
+                        ? 'Update Fingerprint'
+                        : 'Add Fingerprint',
+                    () {
+                      Get.toNamed(AppRoutes.biometricsIntro);
+                    },
+                    Icon(
+                      Icons.fingerprint,
+                      size: 24.w,
+                      color: AppColors.clrPrimary,
+                    ),
                   ),
 
                   _buildMenuTile(
@@ -110,7 +126,7 @@ class SettingsPage extends StatelessWidget {
                     },
                     SvgPicture.asset(AssetImages.review, width: 24.w),
                   ),
-                  
+
                   _buildMenuTile(
                     context,
                     'Login History',

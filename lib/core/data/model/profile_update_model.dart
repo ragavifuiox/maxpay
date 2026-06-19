@@ -8,19 +8,19 @@ class ProfileUpdate {
 
   ProfileUpdate.fromJson(Map<String, dynamic> json) {
     success = json['success'];
-    data = json['data'] != null ? new Data.fromJson(json['data']) : null;
+    data = json['data'] != null ? Data.fromJson(json['data']) : null;
     message = json['message'];
     code = json['code'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['success'] = this.success;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['success'] = success;
     if (this.data != null) {
       data['data'] = this.data!.toJson();
     }
-    data['message'] = this.message;
-    data['code'] = this.code;
+    data['message'] = message;
+    data['code'] = code;
     return data;
   }
 }
@@ -30,7 +30,7 @@ class Data {
   String? email;
   String? regMobileNumber;
   String? whatsappNumber;
-  Null? profileImg;
+  Null profileImg;
 
   Data(
       {this.retailerName,
@@ -48,12 +48,12 @@ class Data {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['retailer_name'] = this.retailerName;
-    data['email'] = this.email;
-    data['reg_mobile_number'] = this.regMobileNumber;
-    data['whatsapp_number'] = this.whatsappNumber;
-    data['profile_img'] = this.profileImg;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['retailer_name'] = retailerName;
+    data['email'] = email;
+    data['reg_mobile_number'] = regMobileNumber;
+    data['whatsapp_number'] = whatsappNumber;
+    data['profile_img'] = profileImg;
     return data;
   }
 }

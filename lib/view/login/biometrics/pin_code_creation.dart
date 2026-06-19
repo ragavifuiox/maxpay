@@ -12,38 +12,29 @@ import 'package:pinput/pinput.dart';
 class PinCodeCreationPage extends GetView<AuthController> {
   PinCodeCreationPage({super.key});
 
-  final TextEditingController pinController =
-      TextEditingController();
+  final TextEditingController pinController = TextEditingController();
 
   final RxBool showAddButton = false.obs;
 
   void handleKeyPress(String key) {
-
     if (key == 'backspace') {
-
       if (pinController.text.isNotEmpty) {
-
         pinController.text = pinController.text.substring(
           0,
           pinController.text.length - 1,
         );
       }
-
     } else {
-
       if (pinController.text.length < 4) {
-
         pinController.text += key;
       }
     }
 
-    showAddButton.value =
-        pinController.text.length == 4;
+    showAddButton.value = pinController.text.length == 4;
   }
 
   @override
   Widget build(BuildContext context) {
-
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final isTablet = Responsive.isTablet(context);
@@ -68,34 +59,26 @@ class PinCodeCreationPage extends GetView<AuthController> {
 
       body: Center(
         child: ConstrainedBox(
-
           constraints: BoxConstraints(
             maxWidth: isTablet ? 500 : double.infinity,
           ),
 
           child: Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: 24.w,
-            ),
+            padding: EdgeInsets.symmetric(horizontal: 24.w),
 
             child: Column(
-              crossAxisAlignment:
-                  CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
 
               children: [
-
-                SizedBox(
-                  height: isTablet ? 40.h : 20.h,
-                ),
+                SizedBox(height: isTablet ? 40.h : 20.h),
 
                 Text(
-                  'Create your Pin code',
+                  'Create your MPIN',
 
                   style: TextStyle(
                     fontFamily: 'Poppins',
                     fontWeight: FontWeight.w700,
-                    fontSize:
-                        isTablet ? 32.sp : 24.sp,
+                    fontSize: isTablet ? 32.sp : 24.sp,
                     color: colorScheme.onSurface,
                   ),
                 ),
@@ -105,26 +88,20 @@ class PinCodeCreationPage extends GetView<AuthController> {
                 /// PIN INPUT
                 Center(
                   child: Pinput(
-
                     length: 4,
                     controller: pinController,
                     readOnly: true,
 
-                    mainAxisAlignment:
-                        MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
 
                     defaultPinTheme: PinTheme(
+                      width: isTablet ? 70.w : 56.w,
 
-                      width:
-                          isTablet ? 70.w : 56.w,
-
-                      height:
-                          isTablet ? 70.w : 56.w,
+                      height: isTablet ? 70.w : 56.w,
 
                       textStyle: TextStyle(
                         fontFamily: 'Poppins',
-                        fontSize:
-                            isTablet ? 28.sp : 22.sp,
+                        fontSize: isTablet ? 28.sp : 22.sp,
                         fontWeight: FontWeight.w600,
                         color: Colors.white,
                       ),
@@ -132,23 +109,18 @@ class PinCodeCreationPage extends GetView<AuthController> {
                       decoration: BoxDecoration(
                         color: AppColors.clrPrimary,
 
-                        borderRadius:
-                            BorderRadius.circular(10.r),
+                        borderRadius: BorderRadius.circular(10.r),
                       ),
                     ),
 
                     focusedPinTheme: PinTheme(
+                      width: isTablet ? 70.w : 56.w,
 
-                      width:
-                          isTablet ? 70.w : 56.w,
-
-                      height:
-                          isTablet ? 70.w : 56.w,
+                      height: isTablet ? 70.w : 56.w,
 
                       textStyle: TextStyle(
                         fontFamily: 'Poppins',
-                        fontSize:
-                            isTablet ? 28.sp : 22.sp,
+                        fontSize: isTablet ? 28.sp : 22.sp,
                         fontWeight: FontWeight.w600,
                         color: Colors.white,
                       ),
@@ -156,8 +128,7 @@ class PinCodeCreationPage extends GetView<AuthController> {
                       decoration: BoxDecoration(
                         color: AppColors.clrPrimary,
 
-                        borderRadius:
-                            BorderRadius.circular(10.r),
+                        borderRadius: BorderRadius.circular(10.r),
 
                         border: Border.all(
                           color: colorScheme.onSurface,
@@ -173,23 +144,16 @@ class PinCodeCreationPage extends GetView<AuthController> {
                 /// BUTTON / KEYBOARD
                 Obx(
                   () => AnimatedSwitcher(
-
-                    duration:
-                        const Duration(milliseconds: 300),
+                    duration: const Duration(milliseconds: 300),
 
                     child: showAddButton.value
-
                         ? Row(
-                            key: const ValueKey(
-                              'action_buttons',
-                            ),
+                            key: const ValueKey('action_buttons'),
 
                             children: [
-
                               Expanded(
                                 child: SafeArea(
                                   child: TextButton(
-
                                     onPressed: () {
                                       Get.back();
                                     },
@@ -199,11 +163,9 @@ class PinCodeCreationPage extends GetView<AuthController> {
 
                                       style: TextStyle(
                                         fontFamily: 'Poppins',
-                                        fontWeight:
-                                            FontWeight.w700,
+                                        fontWeight: FontWeight.w700,
                                         fontSize: 16.sp,
-                                        color: colorScheme
-                                            .onSurface,
+                                        color: colorScheme.onSurface,
                                       ),
                                     ),
                                   ),
@@ -214,11 +176,9 @@ class PinCodeCreationPage extends GetView<AuthController> {
 
                               Expanded(
                                 child: CommonButton(
-
                                   title: "Add",
 
                                   onTap: () {
-
                                     controller.createPin(
                                       pinController.text.trim(),
                                     );
@@ -227,21 +187,13 @@ class PinCodeCreationPage extends GetView<AuthController> {
                               ),
                             ],
                           )
-
                         : Padding(
+                            key: const ValueKey('keyboard'),
 
-                            key: const ValueKey(
-                              'keyboard',
-                            ),
-
-                            padding: EdgeInsets.only(
-                              bottom: 20.h,
-                            ),
+                            padding: EdgeInsets.only(bottom: 20.h),
 
                             child: CustomNumericKeyboard(
-
-                              onKeyPressed:
-                                  handleKeyPress,
+                              onKeyPressed: handleKeyPress,
                             ),
                           ),
                   ),

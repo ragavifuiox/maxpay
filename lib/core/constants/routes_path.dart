@@ -43,6 +43,7 @@ class AppRoutes {
   static const String statementReadMore='/statementReadMore';
   static const String enterPin='/enterPin';
   static const String confirmdth='/confirmdth';
+  static const String insufficientBalance='/insufficientBalance';
   static const String paymentstatus='/paymentstatus';
   static const String verify='/verify';
   static const String wallettrnsfer='/wallettransfer';

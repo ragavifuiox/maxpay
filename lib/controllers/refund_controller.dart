@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:maxpay/core/constants/snackbar.dart';
-import 'package:maxpay/core/data/model/payment_status_model.dart';
 import 'package:maxpay/core/data/model/refund_model.dart';
-import 'package:maxpay/core/domain/usecase/payment_status_usecase.dart';
 import 'package:maxpay/core/domain/usecase/refund_usecase.dart';
 
 class RefundController extends GetxController {

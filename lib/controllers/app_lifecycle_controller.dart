@@ -4,9 +4,10 @@ import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/core/services/local_storage_service.dart';
 import 'package:maxpay/core/utils/logg_helper.dart';
 
-class AppLifecycleController extends GetxController with WidgetsBindingObserver {
+class AppLifecycleController extends GetxController
+    with WidgetsBindingObserver {
   static const String _keyLastActive = "last_active_time";
-  static const Duration inactivityThreshold = Duration(minutes: 5);
+  static const Duration inactivityThreshold = Duration(minutes: 3);
 
   @override
   void onInit() {
@@ -28,10 +29,16 @@ class AppLifecycleController extends GetxController with WidgetsBindingObserver 
     final storage = LocalStorageService();
     await storage.init();
 
-    if (state == AppLifecycleState.paused || state == AppLifecycleState.inactive) {
+    if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.inactive) {
       // Save last active time when the app goes into the background
-      await storage.saveString(_keyLastActive, DateTime.now().toIso8601String());
-      AppLogger.logError("Saved last active time: ${DateTime.now().toIso8601String()}");
+      await storage.saveString(
+        _keyLastActive,
+        DateTime.now().toIso8601String(),
+      );
+      AppLogger.logError(
+        "Saved last active time: ${DateTime.now().toIso8601String()}",
+      );
     } else if (state == AppLifecycleState.resumed) {
       // Check if threshold is exceeded when resuming
       final token = storage.getString("auth_token");
@@ -44,7 +51,9 @@ class AppLifecycleController extends GetxController with WidgetsBindingObserver 
           final lastActive = DateTime.tryParse(lastActiveStr);
           if (lastActive != null) {
             final elapsed = DateTime.now().difference(lastActive);
-            AppLogger.logError("Elapsed time since last active: ${elapsed.inSeconds}s (Threshold: ${inactivityThreshold.inSeconds}s)");
+            AppLogger.logError(
+              "Elapsed time since last active: ${elapsed.inSeconds}s (Threshold: ${inactivityThreshold.inSeconds}s)",
+            );
 
             if (elapsed >= inactivityThreshold) {
               final currentRoute = Get.currentRoute;
@@ -62,7 +71,9 @@ class AppLifecycleController extends GetxController with WidgetsBindingObserver 
               ];
 
               if (!authRoutes.contains(currentRoute)) {
-                AppLogger.logError("Threshold exceeded. Navigating to PIN/Biometric verification screen.");
+                AppLogger.logError(
+                  "Threshold exceeded. Navigating to PIN/Biometric verification screen.",
+                );
                 if (isFingerPrint == 1) {
                   Get.offAllNamed(AppRoutes.veirfypin);
                 } else {
