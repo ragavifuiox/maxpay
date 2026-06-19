@@ -6,10 +6,7 @@ import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/core/extensions/currency.dart';
 import 'package:maxpay/core/utils/texthelper.dart';
 import 'package:maxpay/core/data/model/staff_lsit_model.dart';
-import 'package:maxpay/view/add_wallet/add_wallet_screen.dart';
 import 'package:maxpay/view/staff/transaction_report.dart';
-import 'package:maxpay/view/staff/wallet_report_screen.dart';
-import 'package:maxpay/view/staff/wallet_transfer.dart';
 
 class StaffCardWidget extends StatelessWidget {
   final Data data;

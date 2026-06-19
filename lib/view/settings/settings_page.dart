@@ -122,7 +122,8 @@ class SettingsPage extends StatelessWidget {
                     context,
                     'Rating Review',
                     () {
-                      Get.toNamed(AppRoutes.weblogin);
+                      // Get.toNamed(AppRoutes.weblogin);
+                      
                     },
                     SvgPicture.asset(AssetImages.review, width: 24.w),
                   ),

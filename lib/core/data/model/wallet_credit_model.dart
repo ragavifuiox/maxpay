@@ -11,7 +11,7 @@ class CreditList {
     if (json['data'] != null) {
       data = <CreditData>[];
       json['data'].forEach((v) {
-        data!.add(new CreditData.fromJson(v));
+        data!.add(CreditData.fromJson(v));
       });
     }
     message = json['message'];
@@ -19,13 +19,13 @@ class CreditList {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['success'] = this.success;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['success'] = success;
     if (this.data != null) {
       data['data'] = this.data!.map((v) => v.toJson()).toList();
     }
-    data['message'] = this.message;
-    data['code'] = this.code;
+    data['message'] = message;
+    data['code'] = code;
     return data;
   }
 }
@@ -56,13 +56,13 @@ class CreditData {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['transaction_id'] = this.transactionId;
-    data['amount'] = this.amount;
-    data['description'] = this.description;
-    data['payment_mode'] = this.paymentMode;
-    data['created_at'] = this.createdAt;
-    data['wallet_type'] = this.walletType;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['transaction_id'] = transactionId;
+    data['amount'] = amount;
+    data['description'] = description;
+    data['payment_mode'] = paymentMode;
+    data['created_at'] = createdAt;
+    data['wallet_type'] = walletType;
     return data;
   }
 }

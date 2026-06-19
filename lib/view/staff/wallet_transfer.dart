@@ -101,7 +101,7 @@ class WalletTransferScreen extends StatelessWidget {
                   const SizedBox(height: 8),
 
                   DropdownButtonFormField<String>(
-                    value: "Wallet Transfer",
+                    initialValue: "Wallet Transfer",
                     decoration: InputDecoration(
                       filled: true,
                       fillColor: const Color(0xffF4F4F4),

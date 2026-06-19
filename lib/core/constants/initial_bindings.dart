@@ -20,6 +20,12 @@ class InitialBinding extends Bindings {
     );
 
     Get.put<AppLifecycleController>(AppLifecycleController(), permanent: true);
-    Get.put(TransReportController(transreportUsecase: sl()));
+    Get.put(
+      TransReportController(
+        transreportUsecase: sl(),
+        allPlanUsecase: sl(),
+        submitDisputeUsecase: sl(),
+      ),
+    );
   }
 }

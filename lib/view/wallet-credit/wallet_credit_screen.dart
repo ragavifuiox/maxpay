@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:maxpay/controllers/credit_controller.dart';
 import 'package:maxpay/controllers/wallet_credit_controller.dart';
 import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/core/data/model/wallet_credit_model.dart';
@@ -124,7 +123,6 @@ class _WalletCreditCard extends StatelessWidget {
   final CreditData data;
 
   const _WalletCreditCard({
-    super.key,
     required this.data,
   });
 

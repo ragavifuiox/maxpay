@@ -365,7 +365,6 @@ Widget _buildDetailRow(
   BuildContext context,
   String label,
   String value, {
-  bool isIcon = false,
   Color? valueColor,
 }) {
   final isDark = Theme.of(context).brightness == Brightness.dark;
