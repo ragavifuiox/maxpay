@@ -119,7 +119,7 @@ class _DTHRechargePageState extends State<DTHRechargePage>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              /// 🔹 WALLET BALANCE CARD
+            /// 🔹 WALLET BALANCE CARD
               Container(
                 width: double.infinity,
 
@@ -258,16 +258,19 @@ class _DTHRechargePageState extends State<DTHRechargePage>
                         );
                       }).toList(),
 
-                      onChanged: (Data? value) async {
-                        if (value == null) return;
 
-                        setState(() {
-                          selectedOperatorObj = value;
-                          _selectedOperator = value.name ?? "";
-                        });
+onChanged: (Data? value) async {
+  if (value == null) return;
 
-                        await _triggerSearch();
-                      },
+  print("Selected Name: ${value.name}");
+  print("Selected ID: ${value.id}");
+
+  setState(() {
+    selectedOperatorObj = value;
+  });
+
+  await _triggerSearch();
+}
                     ),
                   ),
                 );
@@ -306,52 +309,7 @@ class _DTHRechargePageState extends State<DTHRechargePage>
               /// 🔹 TOGGLE BUTTONS (Plan / Customer Info)
               SizedBox(height: 15.h),
 
-              // if (showNextButton) ...[
-              //   SizedBox(height: 10.h),
-
-              //   Align(
-              //     alignment: Alignment.centerRight,
-              //     child: SizedBox(
-              //       height: 38.h,
-              //       width: 90.w,
-              //       child: ElevatedButton(
-              //         onPressed: () async {
-              //   if (selectedOperatorObj == null) {
-              //     Get.snackbar("Error", "Please select operator");
-              //     return;
-              //   }
-
-              //   if (amountController.text.trim().isEmpty) {
-              //     Get.snackbar("Error", "Please enter amount");
-              //     return;
-              //   }
-
-              //   await dthcontroller.searchDth(
-              //     selectedOperatorObj!.id.toString(),
-              //     amountController.text.trim(),
-              //   );
-              // },
-              //         style: ElevatedButton.styleFrom(
-              //           backgroundColor: AppColors.clrPrimary,
-              //           padding: EdgeInsets.zero,
-              //           shape: RoundedRectangleBorder(
-              //             borderRadius: BorderRadius.circular(8.r),
-              //           ),
-              //         ),
-              //         child: Text(
-              //           "Next",
-              //           style: TextStyle(
-              //             fontSize: 13.sp,
-              //             fontWeight: FontWeight.w600,
-              //             color: Colors.white,
-              //           ),
-              //         ),
-              //       ),
-              //     ),
-              //   ),
-
-              //   SizedBox(height: 15.h),
-              // ],
+            
               if (showNextButton) SizedBox(height: 15.h),
 
               /// 🔹 TOGGLE BUTTONS (Plan / Customer Info)
@@ -637,25 +595,7 @@ class _DTHRechargePageState extends State<DTHRechargePage>
                 ),
               ),
 
-              /// BUY BUTTON
-              // Container(
-              //   padding: EdgeInsets.symmetric(
-              //     horizontal: 18.w,
-              //     vertical: 8.h,
-              //   ),
-              //   decoration: BoxDecoration(
-              //     color: AppColors.clrPrimary,
-              //     borderRadius: BorderRadius.circular(10.r),
-              //   ),
-              //   child: Text(
-              //     "Buy",
-              //     style: TextStyle(
-              //       color: Colors.white,
-              //       fontSize: 14.sp,
-              //       fontWeight: FontWeight.w600,
-              //     ),
-              //   ),
-              // ),
+             
             ],
           ),
 
@@ -702,99 +642,7 @@ class _DTHRechargePageState extends State<DTHRechargePage>
       ),
     );
   }
-  // Widget _buildPlanCard(bool isDark) {
-  //   return Container(
-  //     margin: EdgeInsets.only(bottom: 15.h),
-  //     padding: EdgeInsets.all(16.r),
-  //     decoration: BoxDecoration(
-  //       color: Theme.of(context).brightness == Brightness.dark
-  //           ? AppColors.darkplceholder.withValues(alpha: 0.5)
-  //           : Colors.white,
-  //       borderRadius: BorderRadius.circular(12.r),
-  //       border: Border.all(color: Colors.grey.withValues(alpha: 0.1)),
-  //     ),
-  //     child: Column(
-  //       crossAxisAlignment: CrossAxisAlignment.start,
-  //       children: [
-  //         Row(
-  //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //           children: [
-  //             RichText(
-  //               text: TextSpan(
-  //                 children: [
-  //                   TextSpan(
-  //                     text: '₹ ',
-  //                     style: TextStyle(
-  //                       fontSize: 18.sp,
-  //                       fontFamily: 'Poppins',
-  //                       fontWeight: FontWeight.w300,
-  //                       color: Theme.of(context).brightness == Brightness.dark
-  //                           ? Colors.white
-  //                           : Colors.black,
-  //                     ),
-  //                   ),
-  //                   TextSpan(
-  //                     text: "365",
-  //                     style: TextStyle(
-  //                       fontSize: 18.sp,
-  //                       fontFamily: 'Poppins',
-  //                       fontWeight: FontWeight.w600,
-  //                       color: Theme.of(context).brightness == Brightness.dark
-  //                           ? Colors.white
-  //                           : Colors.black,
-  //                     ),
-  //                   ),
-  //                 ],
-  //               ),
-  //             ),
-  //             Row(children: [_buildPlanStat("28", ' days', 'validity')]),
-  //             GestureDetector(
-  //               onTap: () {
-  //                 // Navigator.push(
-  //                 //   context,
-  //                 //   MaterialPageRoute(
-  //                 //     builder: (context) => ConfirmTransactionPage(
-  //                 //       // productName: _selectedOperator,
-  //                 //       // operatorInitial: _selectedOperator[0],
-  //                 //       // operatorColor: _selectedOperatorColor,
-
-  //                 //       // amount: "365",
-
-  //                 //     ),
-  //                 //   ),
-  //                 // );
-  //               },
-  //               child: Container(
-  //                 padding: EdgeInsets.symmetric(
-  //                   horizontal: 16.w,
-  //                   vertical: 6.h,
-  //                 ),
-  //                 decoration: BoxDecoration(
-  //                   color: AppColors.clrPrimary,
-  //                   borderRadius: BorderRadius.circular(6.r),
-  //                 ),
-  //                 child: Text(
-  //                   'buy',
-  //                   style: TextStyle(
-  //                     color: Colors.white,
-  //                     fontSize: 12.sp,
-  //                     fontWeight: FontWeight.w600,
-  //                   ),
-  //                 ),
-  //               ),
-  //             ),
-  //           ],
-  //         ),
-  //         SizedBox(height: 15.h),
-  //         Text(
-  //           '• 12am-12pm Unlimited Data\n• Unlimited Calls\n• Weekend Data Rollover',
-  //           style: TextStyle(fontSize: 11.sp, color: Colors.grey, height: 1.5),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
-
+ 
   Widget _buildPlanStat(String value, String subLabel, String label) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

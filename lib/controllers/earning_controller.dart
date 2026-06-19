@@ -1,8 +1,10 @@
+import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:maxpay/core/data/model/earnings_mdoel.dart';
+import 'package:maxpay/core/data/model/my_earnings_model.dart';
 import 'package:maxpay/core/domain/usecase/earning_usecase.dart';
 import 'package:maxpay/core/domain/usecase/search_earnings_usecase.dart';
 import 'package:maxpay/core/utils/logg_helper.dart';
@@ -17,9 +19,13 @@ class EarningController extends GetxController {
   });
 
   RxBool isLoading = false.obs;
-
+  Rx<SearchEarning?> searchData =
+      Rx<SearchEarning?>(null);
   Rx<Earnings?> earningsData =
       Rx<Earnings?>(null);
+       String fromDate = '';
+  String toDate = '';
+  String search = '';
 
   @override
   void onInit() {
@@ -92,7 +98,7 @@ Future<void> searchEarnings(String fromdate, String todate,String search) async 
         AppLogger.logError("===========================================");
 
         if (response.success == true) {
-
+searchData.value = response;
           // CustomToast.success(
           //   response.message ?? "PIN Created Successfully",
           // );
@@ -111,4 +117,69 @@ Future<void> searchEarnings(String fromdate, String todate,String search) async 
   }
 }
 
+
+
+Future<void> selectFromDate(
+      BuildContext context) async {
+    DateTime? pickedDate =
+        await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2024),
+      lastDate: DateTime(2030),
+    );
+
+    if (pickedDate != null) {
+      fromDate =
+          "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+if (toDate.isNotEmpty) {
+  await searchEarnings(
+    fromDate,
+    toDate,
+    search,
+  );
+}
+
+      update();
+    }
+  }
+
+  Future<void> selectToDate(
+      BuildContext context) async {
+    DateTime? pickedDate =
+        await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2024),
+      lastDate: DateTime(2030),
+    );
+
+    if (pickedDate != null) {
+      toDate =
+          "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+
+    if (fromDate.isNotEmpty) {
+  await searchEarnings(
+    fromDate,
+    toDate,
+    search,
+  );
+}
+
+      update();
+    }
+  }
+
+  void onSearch(String value) {
+  search = value;
+
+  if (fromDate.isNotEmpty &&
+      toDate.isNotEmpty) {
+    searchEarnings(
+      fromDate,
+      toDate,
+      search,
+    );
+  }
+}
 }

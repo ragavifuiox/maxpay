@@ -7,7 +7,7 @@ import 'package:maxpay/core/data/model/search_plan_model.dart';
 import 'package:maxpay/core/error/failure.dart';
 
 abstract class SearchEarningsRepository {
-  Future<Either<Failure, MyEarning>> searchEarnings({
+  Future<Either<Failure, SearchEarning>> searchEarnings({
     required String fromdate,
     required String todate,
     required String search,

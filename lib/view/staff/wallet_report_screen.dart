@@ -1,35 +1,62 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:maxpay/controllers/add_staff_controller.dart';
 import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
 import 'package:maxpay/view/staff/widget/wallet_report_filter.dart';
 
-class WalletReportScreen extends StatelessWidget {
+class WalletReportScreen extends GetView<AddStaffController> {
   const WalletReportScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    //  final theme = Theme.of(context);
     return Scaffold(
       appBar: CommonAppBar(title: "Wallet Report"),
       body: Padding(
         padding: const EdgeInsets.all(15),
         child: Column(
           children: [
-            /// Filter Section
-            WalletReportFilterWidget(),
+            const WalletReportFilterWidget(),
             const SizedBox(height: 15),
 
             Expanded(
-              child: ListView.builder(
-                itemCount: 10,
-                itemBuilder: (_, index) {
-                  return walletCard(
-                    context: context,
-                    transferType: index.isEven
-                        ? "Wallet Transfer"
-                        : "Wallet Reverse",
-                    amount: "500.00",
-                    color: index.isEven ? Colors.green : Colors.red,
+              child: GetBuilder<AddStaffController>(
+                builder: (controller) {
+                  if (controller.isLoading) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+
+                  if (controller.walletreport.isEmpty) {
+                    return const Center(
+                      child: Text("No Data Found"),
+                    );
+                  }
+
+                  return ListView.builder(
+                    itemCount: controller.walletreport.length,
+                    itemBuilder: (_, index) {
+                      final item =
+                          controller.walletreport[index];
+
+                      return walletCard(
+                        context: context,
+                        txnId:
+                            item.id?.toString() ?? "-",
+                        transferType:
+                            item.paymentType ?? "-",
+                        amount:
+                            item.amount ?? "0",
+                        dateTime:
+                            item.createdAt ?? "-",
+                        color: (item.paymentType ?? "")
+                                .toLowerCase()
+                                .contains("reverse")
+                            ? Colors.red
+                            : Colors.green,
+                      );
+                    },
                   );
                 },
               ),
@@ -42,8 +69,10 @@ class WalletReportScreen extends StatelessWidget {
 
   Widget walletCard({
     required BuildContext context,
+    required String txnId,
     required String transferType,
     required String amount,
+    required String dateTime,
     required Color color,
   }) {
     final theme = Theme.of(context);
@@ -63,28 +92,34 @@ class WalletReportScreen extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  "Transaction ID: 97851212TGV",
+                  "Transaction ID : $txnId",
                   style: TextStyle(
                     fontSize: 11,
-                    color: theme.colorScheme.onSurfaceVariant,
+                    color:
+                        theme.colorScheme.onSurfaceVariant,
                   ),
                 ),
               ),
               Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
+                crossAxisAlignment:
+                    CrossAxisAlignment.end,
                 children: [
                   Text(
                     "Date & Time",
                     style: TextStyle(
                       fontSize: 10,
-                      color: theme.colorScheme.onSurfaceVariant,
+                      color: theme
+                          .colorScheme
+                          .onSurfaceVariant,
                     ),
                   ),
                   Text(
-                    "29-11-2026 07:38:43PM",
+                    dateTime,
                     style: TextStyle(
                       fontSize: 10,
-                      color: theme.colorScheme.onSurfaceVariant,
+                      color: theme
+                          .colorScheme
+                          .onSurfaceVariant,
                     ),
                   ),
                 ],
@@ -93,57 +128,73 @@ class WalletReportScreen extends StatelessWidget {
           ),
 
           Divider(
-            color: Theme.of(context).brightness == Brightness.light
+            color: theme.brightness ==
+                    Brightness.light
                 ? Colors.black12
                 : Colors.white24,
           ),
 
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment:
+                MainAxisAlignment.spaceBetween,
             children: [
               Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment:
+                    CrossAxisAlignment.start,
                 children: [
                   Text(
                     "Transaction Type",
                     style: TextStyle(
                       fontSize: 10,
-                      color: theme.colorScheme.onSurfaceVariant,
+                      color: theme
+                          .colorScheme
+                          .onSurfaceVariant,
                     ),
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(
+                    padding:
+                        const EdgeInsets.symmetric(
                       horizontal: 10,
                       vertical: 3,
                     ),
                     decoration: BoxDecoration(
                       color: color,
-                      borderRadius: BorderRadius.circular(5),
+                      borderRadius:
+                          BorderRadius.circular(5),
                     ),
                     child: Text(
                       transferType,
-                      style: const TextStyle(color: Colors.white, fontSize: 11),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 11,
+                      ),
                     ),
                   ),
                 ],
               ),
               Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
+                crossAxisAlignment:
+                    CrossAxisAlignment.end,
                 children: [
                   Text(
                     "Amount",
                     style: TextStyle(
-                      fontWeight: FontWeight.w300,
+                      fontWeight:
+                          FontWeight.w300,
                       fontSize: 12,
-                      color: theme.colorScheme.onSurfaceVariant,
+                      color: theme
+                          .colorScheme
+                          .onSurfaceVariant,
                     ),
                   ),
                   Text(
                     "₹ $amount",
                     style: TextStyle(
-                      fontWeight: FontWeight.bold,
+                      fontWeight:
+                          FontWeight.bold,
                       fontSize: 16,
-                      color: Theme.of(context).brightness == Brightness.dark
+                      color: theme.brightness ==
+                              Brightness.dark
                           ? Colors.white
                           : Colors.black,
                     ),

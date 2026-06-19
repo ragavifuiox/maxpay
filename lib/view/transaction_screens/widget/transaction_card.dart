@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_navigation/src/extension_navigation.dart';
-import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/core/data/model/transaction_report_model.dart';
-import 'package:maxpay/view/transaction_screens/transaction_success_screen.dart';
-
+import 'package:maxpay/view/transaction_screens/widget/daispute_dialogue..dart';
 
 class TransactionCard extends StatelessWidget {
   final TransrepData data;
@@ -20,74 +16,78 @@ class TransactionCard extends StatelessWidget {
         (data.status ?? "").toLowerCase();
 
     Color statusColor;
+    Color bgColor;
 
     if (status == "success") {
       statusColor = Colors.green;
+      bgColor = const Color(0xFFE2F8E9);
     } else if (status == "pending") {
       statusColor = Colors.orange;
+      bgColor = const Color(0xFFFFF1DD);
     } else {
       statusColor = Colors.red;
+      bgColor = const Color(0xFFFFE4E6);
     }
 
     return Container(
       margin: const EdgeInsets.only(bottom: 14),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: statusColor.withValues(alpha: .10),
+        color: bgColor,
         borderRadius: BorderRadius.circular(14),
       ),
       child: Column(
         children: [
+          /// Header
           Row(
             mainAxisAlignment:
                 MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                "Transaction ID : ${data.transactionId ?? '-'}",
+              Expanded(
+                child: Text(
+                  "Transaction ID: ${data.transactionId ?? '-'}",
+                  style: const TextStyle(
+                    fontSize: 12,
+                  ),
+                ),
               ),
               Text(
-                data.dateTime ?? '',
+                data.dateTime ?? "",
+                style: const TextStyle(
+                  fontSize: 11,
+                ),
               ),
             ],
           ),
 
           const SizedBox(height: 10),
 
-          Divider(),
+          Divider(
+            color: Colors.grey.shade300,
+          ),
 
           const SizedBox(height: 10),
 
+          /// Content
           Row(
             children: [
               /// Logo
               if ((data.logo ?? '').isNotEmpty)
-                Image.network(
-                  data.logo!,
-                  width: 40,
-                  height: 40,
-                  fit: BoxFit.contain,
-                  errorBuilder:
-                      (_, __, ___) => const Icon(
-                    Icons.image,
+                ClipRRect(
+                  borderRadius:
+                      BorderRadius.circular(0),
+                  child: Image.network(
+                    data.logo!,
+                    width: 30,
+                    height: 30,
+                    fit: BoxFit.cover,
+                    errorBuilder:
+                        (_, __, ___) =>
+                            _defaultLogo(),
                   ),
                 )
               else
-                Container(
-                  width: 40,
-                  height: 40,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: Colors.red,
-                    borderRadius:
-                        BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    data.operator
-                                ?.substring(0, 1)
-                                .toUpperCase() ??
-                            "P",
-                  ),
-                ),
+                _defaultLogo(),
 
               const SizedBox(width: 10),
 
@@ -97,10 +97,18 @@ class TransactionCard extends StatelessWidget {
                       CrossAxisAlignment.start,
                   children: [
                     Text(
-                      data.amount ?? '',
+                      data.operator ?? "",
+                      style: const TextStyle(
+                        fontWeight:
+                            FontWeight.w600,
+                      ),
                     ),
+                    const SizedBox(height: 3),
                     Text(
                       "Number : ${data.mobile ?? ''}",
+                      style: const TextStyle(
+                        fontSize: 12,
+                      ),
                     ),
                   ],
                 ),
@@ -111,8 +119,9 @@ class TransactionCard extends StatelessWidget {
                     CrossAxisAlignment.end,
                 children: [
                   Text(
-                    "₹${data.amount ?? '0'}",
+                    "${data.amount ?? '0'}",
                     style: const TextStyle(
+                      fontSize: 20,
                       fontWeight:
                           FontWeight.bold,
                     ),
@@ -123,21 +132,23 @@ class TransactionCard extends StatelessWidget {
                   Container(
                     padding:
                         const EdgeInsets.symmetric(
-                      horizontal: 8,
+                      horizontal: 10,
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
                       color: statusColor,
                       borderRadius:
                           BorderRadius.circular(
-                        6,
+                        5,
                       ),
                     ),
                     child: Text(
-                      data.status ?? '',
+                      data.status ?? "",
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 10,
+                        fontWeight:
+                            FontWeight.w600,
                       ),
                     ),
                   ),
@@ -145,7 +156,117 @@ class TransactionCard extends StatelessWidget {
               ),
             ],
           ),
+
+          const SizedBox(height: 12),
+
+          /// Bottom Buttons
+          Row(
+            mainAxisAlignment:
+                MainAxisAlignment.end,
+            children: [
+              if (status == "success") ...[
+                _button(
+  "Dispute",
+  Colors.red,
+  () {
+    showDialog(
+      context: context,
+      builder: (_) => DisputeDialog(
+        rechargeId:(data.id ?? 0).toString(),
+      ),
+    );
+  },
+),
+                const SizedBox(width: 6),
+                _button(
+                  "View",
+                  Colors.blue,
+                  () {},
+                ),
+                const SizedBox(width: 6),
+                _button(
+                  "Share",
+                  Colors.green,
+                  () {},
+                ),
+              ],
+
+              if (status == "pending")
+                _button(
+                  "Processing",
+                  Colors.orange,
+                  () {},
+                ),
+
+              if (status == "failed") ...[
+                _button(
+                  "View",
+                  Colors.blue,
+                  () {},
+                ),
+                const SizedBox(width: 6),
+                _button(
+                  "Resend",
+                  Colors.green,
+                  () {},
+                ),
+              ],
+            ],
+          ),
         ],
+      ),
+    );
+  }
+
+  Widget _defaultLogo() {
+    return Container(
+      width: 40,
+      height: 40,
+      decoration: const BoxDecoration(
+        color: Colors.red,
+        shape: BoxShape.circle,
+      ),
+      alignment: Alignment.center,
+      child: const Text(
+        "J",
+        style: TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+
+  Widget _button(
+    String title,
+    Color color,
+    VoidCallback onTap,
+  ) {
+    return SizedBox(
+      height: 28,
+      child: ElevatedButton(
+        onPressed: onTap,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: color,
+          padding:
+              const EdgeInsets.symmetric(
+            horizontal: 12,
+          ),
+          minimumSize: Size.zero,
+          tapTargetSize:
+              MaterialTapTargetSize.shrinkWrap,
+          shape: RoundedRectangleBorder(
+            borderRadius:
+                BorderRadius.circular(6),
+          ),
+        ),
+        child: Text(
+          title,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 10,
+          ),
+        ),
       ),
     );
   }

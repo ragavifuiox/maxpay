@@ -1,20 +1,19 @@
-class MyEarning {
+class SearchEarning {
   bool? success;
-  EarningsData? data;
+  Data? data;
   String? message;
   int? code;
 
-  MyEarning({
+  SearchEarning({
     this.success,
     this.data,
     this.message,
     this.code,
   });
 
-  MyEarning.fromJson(Map<String, dynamic> json) {
+  SearchEarning.fromJson(Map<String, dynamic> json) {
     success = json['success'];
-    data =
-        json['data'] != null ? EarningsData.fromJson(json['data']) : null;
+    data = json['data'] != null ? Data.fromJson(json['data']) : null;
     message = json['message'];
     code = json['code'];
   }
@@ -29,16 +28,16 @@ class MyEarning {
   }
 }
 
-class EarningsData {
-  String? totalEarnings;
+class Data {
+  int? totalEarnings;
   List<EarningItem>? list;
 
-  EarningsData({
+  Data({
     this.totalEarnings,
     this.list,
   });
 
-  EarningsData.fromJson(Map<String, dynamic> json) {
+  Data.fromJson(Map<String, dynamic> json) {
     totalEarnings = json['total_earnings'];
 
     if (json['list'] != null) {
@@ -61,6 +60,8 @@ class EarningItem {
   String? userName;
   String? mobile;
   int? productId;
+  String? productName;
+  String? productLogo;
   String? amount;
   String? status;
   String? rechargeDate;
@@ -73,6 +74,8 @@ class EarningItem {
     this.userName,
     this.mobile,
     this.productId,
+    this.productName,
+    this.productLogo,
     this.amount,
     this.status,
     this.rechargeDate,
@@ -86,6 +89,8 @@ class EarningItem {
     userName = json['user_name'];
     mobile = json['mobile'];
     productId = json['product_id'];
+    productName = json['product_name'];
+    productLogo = json['product_logo'];
     amount = json['amount'];
     status = json['status'];
     rechargeDate = json['recharge_date'];
@@ -100,6 +105,8 @@ class EarningItem {
       'user_name': userName,
       'mobile': mobile,
       'product_id': productId,
+      'product_name': productName,
+      'product_logo': productLogo,
       'amount': amount,
       'status': status,
       'recharge_date': rechargeDate,

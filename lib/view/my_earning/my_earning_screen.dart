@@ -4,6 +4,7 @@ import 'package:maxpay/controllers/earning_controller.dart';
 import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/global_widget/common_filter_box.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
+import 'package:maxpay/view/my_earning/widget/earning_filter.dart';
 
 import 'package:maxpay/view/my_earning/widget/my_earning_widget.dart';
 
@@ -38,7 +39,7 @@ class MyEarningsScreen extends GetView<EarningController> {
             return Column(
               children: [
 
-                const CommonFilterBox(),
+                const EarningFilter(),
 
                 const SizedBox(height: 16),
                Divider(
@@ -88,22 +89,27 @@ class MyEarningsScreen extends GetView<EarningController> {
                 const SizedBox(height: 16),
 
                 // Dummy List
-                Expanded(
-                  child: ListView(
-                    children: const [
+               Expanded(
+  child: Obx(() {
+    final list =
+        controller.searchData.value?.data?.list ?? [];
 
-                      EarningsCard(),
+    if (list.isEmpty) {
+      return const Center(
+        child: Text("No Earnings Found"),
+      );
+    }
 
-                      SizedBox(height: 10),
-
-                      EarningsCard(),
-
-                      SizedBox(height: 10),
-
-                      EarningsCard(),
-                    ],
-                  ),
-                ),
+    return ListView.builder(
+      itemCount: list.length,
+      itemBuilder: (context, index) {
+        return EarningsCard(
+          item: list[index],
+        );
+      },
+    );
+  }),
+),
               ],
             );
           },

@@ -10,7 +10,7 @@ import 'package:maxpay/core/error/failure.dart';
 class SearchEarningsUsecase {
   final SearchEarningsRepository repository;
   SearchEarningsUsecase(this.repository);
-  Future<Either<Failure, MyEarning>> call({
+  Future<Either<Failure, SearchEarning>> call({
   required String fromdate,
   required String todate,
   required String search,

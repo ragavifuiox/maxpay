@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:maxpay/controllers/auth_controller.dart';
+import 'package:maxpay/core/di/service_locator.dart';
 import 'package:maxpay/core/utils/texthelper.dart';
 import 'package:maxpay/global_widget/commom_button.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
@@ -18,12 +20,14 @@ class VerifyPinPage extends StatefulWidget {
 class _VerifyPinPageState extends State<VerifyPinPage> {
   final TextEditingController pinController = TextEditingController();
 
+  final AuthController authController = Get.put(AuthController(loginUseCase: sl(), otpUsecase: sl(), createPinUsecase: sl(), fingerPrintUsecase: sl(), verifyPinUsecase: sl()));
+
   @override
   Widget build(BuildContext context) {
     String pin = pinController.text;
 
     return Scaffold(
-     backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: CommonAppBar(title: ""),
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 24.w),
@@ -34,12 +38,11 @@ class _VerifyPinPageState extends State<VerifyPinPage> {
 
             Text(
               "Verify Pin",
-              style: TextHelper.max13(context)
+              style: TextHelper.max13(context),
             ),
 
             SizedBox(height: 40.h),
 
-            /// PIN BOXES
             Row(
               children: List.generate(
                 4,
@@ -49,7 +52,6 @@ class _VerifyPinPageState extends State<VerifyPinPage> {
               ),
             ),
 
-            /// HIDDEN TEXTFIELD
             Opacity(
               opacity: 0,
               child: TextField(
@@ -68,14 +70,26 @@ class _VerifyPinPageState extends State<VerifyPinPage> {
 
             const Spacer(),
 
-            Center(
-              child: CommonButton(
-                title: "Continue",
-                onTap: () {
-                  if (pin.length == 4) {
-                    Get.to(() => const UpdatePinPage());
+            Obx(
+              () => Center(
+                child: CommonButton(
+                  title: authController.isLoading.value
+                      ? "Verifying..."
+                      : "Continue",
+                 onTap: () async {
+                  if (pin.length != 4) return;
+                
+                  bool success = await authController.verifyPin(pin);
+                
+                  if (success) {
+                    Get.to(() =>  UpdatePinPage());
+                  } else {
+                    pinController.clear();
+                
+                    setState(() {});
                   }
                 },
+                ),
               ),
             ),
 

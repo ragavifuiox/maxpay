@@ -14,6 +14,8 @@ import 'package:maxpay/controllers/prepaid_controller.dart';
 import 'package:maxpay/controllers/profile_controller.dart';
 import 'package:maxpay/controllers/refund_controller.dart';
 import 'package:maxpay/controllers/support_controller.dart';
+import 'package:maxpay/controllers/transaction_report_controller.dart';
+import 'package:maxpay/controllers/wallet_credit_controller.dart';
 import 'package:maxpay/controllers/wallet_request_controller.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/core/di/service_locator.dart';
@@ -49,9 +51,12 @@ import 'package:maxpay/view/splash/intro_page.dart';
 import 'package:maxpay/view/splash/main_splash.dart';
 import 'package:maxpay/view/staff/add_staff.dart';
 import 'package:maxpay/view/staff/staff_list_screen.dart';
+import 'package:maxpay/view/staff/wallet_report_screen.dart';
+import 'package:maxpay/view/staff/wallet_transfer.dart';
 import 'package:maxpay/view/statement/state_readmore.dart';
 import 'package:maxpay/view/support/supoort_screen.dart';
 import 'package:maxpay/view/transaction_screens/transaction_success_screen.dart';
+import 'package:maxpay/view/update_pin/verify_pin_screen.dart';
 import 'package:maxpay/view/wallet%20balance/wallet_balance.dart';
 import 'package:maxpay/view/wallet-credit/wallet_credit_screen.dart';
 import 'package:maxpay/view/wallet_request/wallet_request_screen.dart';
@@ -171,6 +176,7 @@ class AppPages {
       }),
     ),
     GetPage(name: AppRoutes.home, page: () => const HomePageScreen()),
+    GetPage(name: AppRoutes.verify, page: () => const VerifyPinPage()),
     GetPage(name: AppRoutes.enterPin, page: () =>  PinCodeEnterPage()),
 
     // GetPage(name: AppRoutes.main, page: () => const NavPageScreen()),
@@ -202,8 +208,9 @@ class AppPages {
       page: () => const WalletCreditScreen(),
 
       binding: BindingsBuilder(() {
-        Get.lazyPut<CreditController>(
-          () => CreditController(getCreditUseCase: sl()),
+        Get.lazyPut<WalletCreditController>(
+          () => WalletCreditController(
+            getCreditUseCase: sl(), walletcredittypeusecase: sl(), walletcreditsearchsecase: sl(),),
 
           fenix: true,
         );
@@ -381,6 +388,30 @@ class AppPages {
       }),
     ),
 
+
+
+
+    GetPage(
+      transition: Transition.fade,
+
+      name: AppRoutes.walletreport,
+
+      page: () => WalletReportScreen(),
+
+      binding: BindingsBuilder(() {
+        Get.lazyPut<AddStaffController>(
+          () => AddStaffController(
+            addStaffUsecase: sl(),
+            staffListUseCase: sl(),
+            searchStaffUsecase: sl(),
+            walletTransferUsecase: sl(),
+            walletReportUsecase: sl()
+          ),
+
+          fenix: true,
+        );
+      }),
+    ),
     GetPage(
       transition: Transition.fade,
 
@@ -410,6 +441,8 @@ class AppPages {
             addStaffUsecase: sl(),
             staffListUseCase: sl(),
             searchStaffUsecase: sl(),
+            walletTransferUsecase: sl(),
+            walletReportUsecase: sl()
           ),
 
           fenix: true,
@@ -420,6 +453,7 @@ class AppPages {
     GetPage(name: AppRoutes.dth, page: () => const DTHRechargePage()),
     GetPage(name: AppRoutes.addwallet, page: () => const AddWalletScreen()),
     GetPage(name: AppRoutes.veirfypin, page: () =>  PinCodeEnterPage()),
+    GetPage(name: AppRoutes.wallettrnsfer, page: () =>  WalletTransferScreen()),
     GetPage(
       name: AppRoutes.statementReadMore,
       page: () => const StatementReadMoreScreen(),
@@ -473,19 +507,42 @@ class AppPages {
             staffListUseCase: sl(),
             addStaffUsecase: sl(),
             searchStaffUsecase: sl(),
+            walletTransferUsecase: sl(),
+            walletReportUsecase: sl()
           ),
 
           fenix: true,
         );
       }),
     ),
-    GetPage(
-      name: AppRoutes.transaction,
-      page: () {
-        final status = Get.arguments as TransactionStatus?;
 
-        return TransactionScreen(status: status ?? TransactionStatus.success);
-      },
-    ),
+
+
+   GetPage(
+  name: AppRoutes.transaction,
+  transition: Transition.fade,
+
+  page: () {
+    final status =
+        Get.arguments as TransactionStatus?;
+
+    return TransactionScreen(
+      status:
+          status ?? TransactionStatus.success,
+    );
+  },
+
+  binding: BindingsBuilder(() {
+    Get.lazyPut<TransReportController>(
+      () => TransReportController(
+        transreportUsecase: sl(),
+        allPlanUsecase: sl(),
+        submitDisputeUsecase: sl()
+      ),
+      fenix: true,
+    );
+  }),
+),
+    
   ];
 }

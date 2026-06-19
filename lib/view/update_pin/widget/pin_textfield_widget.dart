@@ -4,15 +4,18 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class PinTextFieldWidget extends StatelessWidget {
   final String hintText;
+  final TextEditingController controller;
 
   const PinTextFieldWidget({
     super.key,
     required this.hintText,
+    required this.controller,
   });
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      controller: controller,
       keyboardType: TextInputType.number,
       maxLength: 4,
       inputFormatters: [
