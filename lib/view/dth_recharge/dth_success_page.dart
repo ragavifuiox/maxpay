@@ -6,12 +6,12 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:maxpay/controllers/credit_controller.dart';
 import 'package:maxpay/controllers/earning_controller.dart';
 import 'package:maxpay/controllers/homepage_controller.dart';
 import 'package:maxpay/controllers/profile_controller.dart';
 import 'package:maxpay/controllers/refund_controller.dart';
 import 'package:maxpay/controllers/transaction_report_controller.dart';
+import 'package:maxpay/controllers/wallet_credit_controller.dart';
 import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/core/constants/snackbar.dart';
@@ -182,8 +182,8 @@ class DthSuccessPage extends StatelessWidget {
                     if (Get.isRegistered<EarningController>()) {
                       Get.find<EarningController>().fetchEarnings();
                     }
-                    if (Get.isRegistered<CreditController>()) {
-                      Get.find<CreditController>().fetchCredit();
+                    if (Get.isRegistered<WalletCreditController>()) {
+                      Get.find<WalletCreditController>().fetchCredit();
                     }
                     if (Get.isRegistered<TransReportController>()) {
                       final reportController =

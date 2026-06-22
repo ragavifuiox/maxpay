@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:maxpay/controllers/earning_controller.dart';
 import 'package:maxpay/core/constants/colors.dart';
-import 'package:maxpay/global_widget/common_filter_box.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
 import 'package:maxpay/view/my_earning/widget/earning_filter.dart';
 

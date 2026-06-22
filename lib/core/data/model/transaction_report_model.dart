@@ -87,7 +87,7 @@ class TransactionReport {
     if (json['data'] != null) {
       data = <TransrepData>[];
       json['data'].forEach((v) {
-        data!.add(new TransrepData.fromJson(v));
+        data!.add(TransrepData.fromJson(v));
       });
     }
     message = json['message'];
@@ -95,13 +95,13 @@ class TransactionReport {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['success'] = this.success;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['success'] = success;
     if (this.data != null) {
       data['data'] = this.data!.map((v) => v.toJson()).toList();
     }
-    data['message'] = this.message;
-    data['code'] = this.code;
+    data['message'] = message;
+    data['code'] = code;
     return data;
   }
 }
@@ -138,15 +138,15 @@ class TransrepData {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['transaction_id'] = this.transactionId;
-    data['operator'] = this.operator;
-    data['mobile'] = this.mobile;
-    data['amount'] = this.amount;
-    data['status'] = this.status;
-    data['date_time'] = this.dateTime;
-    data['logo'] = this.logo;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['transaction_id'] = transactionId;
+    data['operator'] = operator;
+    data['mobile'] = mobile;
+    data['amount'] = amount;
+    data['status'] = status;
+    data['date_time'] = dateTime;
+    data['logo'] = logo;
     return data;
   }
 }

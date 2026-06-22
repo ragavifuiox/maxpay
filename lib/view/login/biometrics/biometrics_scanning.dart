@@ -90,7 +90,7 @@ class _BiometricsScanningPageState extends State<BiometricsScanningPage> {
           snackPosition: SnackPosition.BOTTOM,
         );
       }
-    } on PlatformException catch (e) {
+    } on PlatformException {
       setState(() {
         isAuthenticating = false;
       });

@@ -207,40 +207,42 @@ class HomeHeaderSection extends StatelessWidget {
                         ),
                         child: Stack(
                           children: [
-                            AnimatedAlign(
-                              duration: const Duration(milliseconds: 300),
-                              curve: Curves.easeInOut,
-                              alignment: isDark
-                                  ? Alignment.centerLeft
-                                  : Alignment.centerRight,
-                              child: Padding(
-                                padding: EdgeInsets.all(3.r),
-                                child: Container(
-                                  width: isTablet ? 34.w : 28.w,
-                                  height: isTablet ? 34.w : 28.w,
-                                  decoration: BoxDecoration(
-                                    color: isDark
-                                        ? const Color(0xFF1E1E2D)
-                                        : Colors.white,
-                                    shape: BoxShape.circle,
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withValues(
-                                          alpha: 0.15,
+                            RepaintBoundary(
+                              child: AnimatedAlign(
+                                duration: const Duration(milliseconds: 300),
+                                curve: Curves.easeInOut,
+                                alignment: isDark
+                                    ? Alignment.centerLeft
+                                    : Alignment.centerRight,
+                                child: Padding(
+                                  padding: EdgeInsets.all(3.r),
+                                  child: Container(
+                                    width: isTablet ? 34.w : 28.w,
+                                    height: isTablet ? 34.w : 28.w,
+                                    decoration: BoxDecoration(
+                                      color: isDark
+                                          ? const Color(0xFF1E1E2D)
+                                          : Colors.white,
+                                      shape: BoxShape.circle,
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withValues(
+                                            alpha: 0.15,
+                                          ),
+                                          blurRadius: 5,
+                                          offset: const Offset(0, 2),
                                         ),
-                                        blurRadius: 5,
-                                        offset: const Offset(0, 2),
-                                      ),
-                                    ],
-                                  ),
-                                  child: Icon(
-                                    isDark
-                                        ? Icons.nightlight_round
-                                        : Icons.wb_sunny_rounded,
-                                    size: 14.sp,
-                                    color: isDark
-                                        ? Colors.white
-                                        : Colors.orange,
+                                      ],
+                                    ),
+                                    child: Icon(
+                                      isDark
+                                          ? Icons.nightlight_round
+                                          : Icons.wb_sunny_rounded,
+                                      size: 14.sp,
+                                      color: isDark
+                                          ? Colors.white
+                                          : Colors.orange,
+                                    ),
                                   ),
                                 ),
                               ),

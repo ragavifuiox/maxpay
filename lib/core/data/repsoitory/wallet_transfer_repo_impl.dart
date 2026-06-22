@@ -3,9 +3,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:maxpay/core/constants/api_routes.dart';
-import 'package:maxpay/core/data/model/wallet_request_model.dart';
 import 'package:maxpay/core/data/model/wallet_transfer_model.dart';
-import 'package:maxpay/core/domain/repository/wallet_request_repository.dart';
 import 'package:maxpay/core/domain/repository/wallet_transfer_repository.dart';
 import 'package:maxpay/core/error/failure.dart';
 import 'package:maxpay/core/services/api_services.dart';
