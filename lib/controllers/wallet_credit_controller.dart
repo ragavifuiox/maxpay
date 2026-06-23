@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
@@ -14,8 +12,6 @@ import 'package:maxpay/core/domain/usecase/wallet_credit_search_usecase.dart';
 import 'package:maxpay/core/domain/usecase/wallet_credit_usecase.dart';
 import 'package:maxpay/core/utils/logg_helper.dart';
 
-
-
 class WalletCreditController extends GetxController {
   final WalletCreditTypeUsecase walletcredittypeusecase;
   final WalletCreditSearchUsecase walletcreditsearchsecase;
@@ -25,45 +21,36 @@ class WalletCreditController extends GetxController {
     required this.walletcredittypeusecase,
     required this.walletcreditsearchsecase,
     required this.getCreditUseCase,
-    
   });
 
-
-RxString selectedProductName = ''.obs;
-RxString selectedcreditname= ''.obs;
- Rx<Credit?> creditData =
-      Rx<Credit?>(null);
+  RxString selectedProductName = ''.obs;
+  RxString selectedcreditname = ''.obs;
+  Rx<Credit?> creditData = Rx<Credit?>(null);
   RxBool isLoading = false.obs;
   String currentStatus = '';
 
   RxList<CreditData> Searchcredit = <CreditData>[].obs;
-    Rx<CreditType?> allplan =
-      Rx<CreditType?>(null);
+  Rx<CreditType?> allplan = Rx<CreditType?>(null);
   String fromDate = '';
-String toDate = '';
-String search = '';
-@override
-void onInit() {
-  super.onInit();
-  fetchcredittype();
-  fetchCredit();
-}
+  String toDate = '';
+  String search = '';
+  @override
+  void onInit() {
+    super.onInit();
+    fetchcredittype();
+    fetchCredit();
+  }
 
-
-Future<void> fetchCredit() async {
+  Future<void> fetchCredit() async {
     isLoading.value = true;
 
-    final result =
-        await getCreditUseCase();
+    final result = await getCreditUseCase();
 
     result.fold(
       (failure) {
         isLoading.value = false;
 
-        Get.snackbar(
-          'Error',
-          failure.message,
-        );
+        Get.snackbar('Error', failure.message);
       },
       (data) {
         creditData.value = data;
@@ -73,20 +60,16 @@ Future<void> fetchCredit() async {
     );
   }
 
- Future<void> fetchcredittype() async {
+  Future<void> fetchcredittype() async {
     isLoading.value = true;
 
-    final result =
-        await walletcredittypeusecase();
+    final result = await walletcredittypeusecase();
 
     result.fold(
       (failure) {
         isLoading.value = false;
 
-        Get.snackbar(
-          'Error',
-          failure.message,
-        );
+        Get.snackbar('Error', failure.message);
       },
       (data) {
         allplan.value = data;
@@ -96,139 +79,130 @@ Future<void> fetchCredit() async {
     );
   }
 
-Future<void> searchcredit({
-  required String search,
-  
-  required String credit,
-  required String fromdate,
-  required String todate,
-}) async {
-  try {
-    isLoading.value = true;
+  Future<void> searchcredit({
+    required String search,
 
-    AppLogger.debugPrint("===== REQUEST =====");
-    AppLogger.debugPrint({
-      "search": search,
-     
-      "productid": credit,
-      "fromdate": fromdate,
-      "todate": todate,
-    });
+    required String credit,
+    required String fromdate,
+    required String todate,
+  }) async {
+    try {
+      isLoading.value = true;
 
-    AppLogger.debugPrint("Calling transreportUsecase...");
+      AppLogger.debugPrint("===== REQUEST =====");
+      AppLogger.debugPrint({
+        "search": search,
 
-    final result = await walletcreditsearchsecase(
-      search: search,
-      
-      credit: credit,
-      fromdate: fromdate,
-      todate: todate,
+        "productid": credit,
+        "fromdate": fromdate,
+        "todate": todate,
+      });
+
+      AppLogger.debugPrint("Calling transreportUsecase...");
+
+      final result = await walletcreditsearchsecase(
+        search: search,
+
+        credit: credit,
+        fromdate: fromdate,
+        todate: todate,
+      );
+
+      AppLogger.debugPrint("Usecase Response Received");
+
+      result.fold(
+        (failure) {
+          AppLogger.logError("FAILURE");
+          AppLogger.logError(failure.message);
+
+          CustomToast.error(failure.message.toString());
+        },
+        (response) {
+          AppLogger.debugPrint("SUCCESS");
+
+          AppLogger.debugPrint(response.toJson());
+
+          Searchcredit.assignAll(response.data ?? []);
+
+          AppLogger.debugPrint("Total Records : ${Searchcredit.length}");
+
+          // CustomToast.success(
+          //   response.message ?? "Success",
+          // );
+        },
+      );
+    } catch (e, stackTrace) {
+      AppLogger.logError("EXCEPTION");
+      AppLogger.logError(e);
+      AppLogger.logError(stackTrace);
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> selectFromDate(BuildContext context) async {
+    DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2024),
+      lastDate: DateTime(2030),
     );
 
-    AppLogger.debugPrint("Usecase Response Received");
+    if (pickedDate != null) {
+      fromDate =
+          "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
 
-    result.fold(
-      (failure) {
-        AppLogger.logError("FAILURE");
-        AppLogger.logError(failure.message);
+      if (toDate.isNotEmpty) {
+        searchcredit(
+          search: search,
 
-        CustomToast.error(failure.message.toString());
-      },
-      (response) {
-        AppLogger.debugPrint("SUCCESS");
-
-        AppLogger.debugPrint(response.toJson());
-
-        Searchcredit.assignAll(response.data ?? []);
-
-        AppLogger.debugPrint(
-          "Total Records : ${Searchcredit.length}",
+          credit: selectedcreditname.value,
+          fromdate: fromDate,
+          todate: toDate,
         );
+      }
 
-        // CustomToast.success(
-        //   response.message ?? "Success",
-        // );
-      },
+      update();
+    }
+  }
+
+  Future<void> selectToDate(BuildContext context) async {
+    DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2024),
+      lastDate: DateTime(2030),
     );
-  } catch (e, stackTrace) {
-    AppLogger.logError("EXCEPTION");
-    AppLogger.logError(e);
-    AppLogger.logError(stackTrace);
-  } finally {
-    isLoading.value = false;
+
+    if (pickedDate != null) {
+      toDate =
+          "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+
+      if (fromDate.isNotEmpty) {
+        searchcredit(
+          search: search,
+
+          credit: selectedcreditname.value,
+          fromdate: fromDate,
+          todate: toDate,
+        );
+      }
+
+      update();
+    }
   }
-}
 
-  Future<void> selectFromDate(
-  BuildContext context,
-) async {
-  DateTime? pickedDate =
-      await showDatePicker(
-    context: context,
-    initialDate: DateTime.now(),
-    firstDate: DateTime(2024),
-    lastDate: DateTime(2030),
-  );
+  void onSearch(String value) {
+    search = value;
 
-  if (pickedDate != null) {
-    fromDate =
-        "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
-
-    if (toDate.isNotEmpty) {
+    if (fromDate.isNotEmpty && toDate.isNotEmpty) {
       searchcredit(
-  search: search,
-  
-  credit: selectedcreditname.value,
-  fromdate: fromDate,
-  todate: toDate,
-);
+        search: search,
+
+        credit: selectedcreditname.value,
+        fromdate: fromDate,
+        todate: toDate,
+      );
     }
-
-    update();
   }
-}
-
-Future<void> selectToDate(
-  BuildContext context,
-) async {
-  DateTime? pickedDate =
-      await showDatePicker(
-    context: context,
-    initialDate: DateTime.now(),
-    firstDate: DateTime(2024),
-    lastDate: DateTime(2030),
-  );
-
-  if (pickedDate != null) {
-    toDate =
-        "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
-
-    if (fromDate.isNotEmpty) {
-    searchcredit(
-  search: search,
-  
-  credit: selectedcreditname.value,
-  fromdate: fromDate,
-  todate: toDate,
-);
-    }
-
-    update();
-  }
-}
-
-void onSearch(String value) {
-  search = value;
-
-  if (fromDate.isNotEmpty &&
-      toDate.isNotEmpty) {
-  searchcredit(
-  search: search,
-  
-  credit: selectedcreditname.value,
-  fromdate: fromDate,
-  todate: toDate,
-);
-  }
-}
 }

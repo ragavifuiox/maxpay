@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+import 'package:maxpay/controllers/add_wallet_controller.dart';
 import 'package:maxpay/core/constants/asset_images.dart';
 import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/core/utils/texthelper.dart';
 import 'package:maxpay/global_widget/commom_button.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
-import 'package:maxpay/view/add_wallet/widge/add_wallet_dialogue.dart';
 import 'package:maxpay/view/add_wallet/widge/add_wallet_widget.dart';
 
-class AddWalletScreen extends StatelessWidget {
+class AddWalletScreen extends GetView<AddWalletController> {
   const AddWalletScreen({super.key});
 
   @override
@@ -61,10 +63,23 @@ class AddWalletScreen extends StatelessWidget {
 
               /// AMOUNT FIELD
               TextFormField(
+                controller: controller.amountController,
                 keyboardType: TextInputType.number,
                 style: TextStyle(color: colorScheme.onSurface),
                 decoration: InputDecoration(
                   hintText: "Enter Amount",
+                  prefixIcon: Container(
+                    width: 40,
+                    padding: const EdgeInsets.only(top: 4),
+                    child: Center(
+                      child: Text(
+                        "₹",
+                        style: TextHelper.max19(
+                          context,
+                        ).copyWith(fontSize: 25, fontWeight: FontWeight.w500),
+                      ),
+                    ),
+                  ),
                   hintStyle: TextStyle(
                     color: theme.colorScheme.onTertiaryFixedVariant,
                     fontFamily: 'Poppins',
@@ -100,10 +115,18 @@ class AddWalletScreen extends StatelessWidget {
                 child: CommonButton(
                   title: "Submit",
                   onTap: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) => const AddWalletPopup(),
-                    );
+                    if (controller.amountController.text.isNotEmpty) {
+                      controller.createQr(
+                        controller.amountController.text.trim(),
+                      );
+                    } else {
+                      Get.snackbar(
+                        "Alert",
+                        "Please Enter Amount",
+                        backgroundColor: Colors.red,
+                        colorText: Colors.white,
+                      );
+                    }
                   },
                 ),
               ),
@@ -120,30 +143,39 @@ class AddWalletScreen extends StatelessWidget {
 
               const SizedBox(height: 20),
 
-              transactionCard(
-                context: context,
-                status: "Failed",
-                statusColor: Colors.red,
-                amount: "₹ 500.00",
-              ),
+              Obx(() {
+                if (controller.isLoading.value) {
+                  return Center(child: CircularProgressIndicator());
+                }
 
-              const SizedBox(height: 8),
+                if (controller.walletQrHistory.value.code?.isEmpty ?? true) {
+                  return Center(child: Text("No Transactions"));
+                }
+                return Column(
+                  spacing: 12,
+                  crossAxisAlignment: .start,
+                  children: [
+                    ...(controller.walletQrHistory.value.code ?? []).map(
+                      (e) => transactionCard(
+                        context: context,
+                        txnId: e.txnId ?? '',
 
-              transactionCard(
-                context: context,
-                status: "Success",
-                statusColor: Colors.green,
-                amount: "₹ 500.00",
-              ),
+                        dateTime: DateFormat(
+                          'dd-MM-yyyy hh:mm a',
+                        ).format(e.updatedAt ?? DateTime.now()),
+                        status: e.status?.capitalize ?? '',
 
-              const SizedBox(height: 8),
-
-              transactionCard(
-                context: context,
-                status: "Processing",
-                statusColor: Colors.orange,
-                amount: "₹ 500.00",
-              ),
+                        statusColor: e.status == 'pending'
+                            ? Colors.orange
+                            : e.status == 'failed'
+                            ? Colors.red
+                            : Colors.green,
+                        amount: e.requestAmount ?? '',
+                      ),
+                    ),
+                  ],
+                );
+              }),
             ],
           ),
         ),

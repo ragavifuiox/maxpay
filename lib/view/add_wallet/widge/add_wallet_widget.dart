@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:maxpay/core/constants/colors.dart';
+import 'package:maxpay/core/extensions/currency.dart';
 import 'package:maxpay/core/utils/texthelper.dart';
 
 Widget transactionCard({
   required BuildContext context,
   required String status,
   required Color statusColor,
+
   required String amount,
+  required String txnId,
+  required String dateTime,
 }) {
   final theme = Theme.of(context);
 
@@ -28,7 +32,7 @@ Widget transactionCard({
           children: [
             Expanded(
               child: Text(
-                "UTR NO: 9785121TGV",
+                "UTR NO: $txnId",
                 style: TextHelper.max12(context),
                 overflow: TextOverflow.ellipsis,
               ),
@@ -36,7 +40,7 @@ Widget transactionCard({
             const SizedBox(width: 10),
             Expanded(
               child: Text(
-                "Date & Time:\n29-11-2026 07:38:43PM",
+                "Date & Time:\n$dateTime",
                 textAlign: TextAlign.end,
                 style: TextHelper.max12(context),
               ),
@@ -79,7 +83,7 @@ Widget transactionCard({
               children: [
                 Text("Amount", style: TextHelper.max12(context)),
                 const SizedBox(height: 5),
-                Text(amount, style: TextHelper.max10(context)),
+                Text(amount.currencyIndian, style: TextHelper.max10(context)),
               ],
             ),
           ],

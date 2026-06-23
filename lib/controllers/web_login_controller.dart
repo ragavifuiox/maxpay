@@ -1,12 +1,7 @@
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:maxpay/core/constants/snackbar.dart';
-import 'package:maxpay/core/data/model/get_bank_model.dart';
-import 'package:maxpay/core/data/model/web_logout_mode.dart';
-import 'package:maxpay/core/domain/usecase/get_bank_usecase.dart';
-import 'package:maxpay/core/domain/usecase/wallet_request_usecase.dart';
 import 'package:maxpay/core/domain/usecase/web_login_usecase.dart';
 import 'package:maxpay/core/domain/usecase/web_logout_usecase.dart';
 import 'package:maxpay/core/utils/logg_helper.dart';

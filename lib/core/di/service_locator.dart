@@ -47,6 +47,7 @@ import 'package:maxpay/core/data/repsoitory/update_pin_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/update_profile_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/verify_pin_repo_Impl.dart';
 import 'package:maxpay/core/data/repsoitory/wallet_bal_repo_impl.dart';
+import 'package:maxpay/core/data/repsoitory/wallet_create_qr_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/wallet_credit_search_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/wallet_credit_type_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/wallet_report_repo_impl.dart';
@@ -101,6 +102,7 @@ import 'package:maxpay/core/domain/repository/transaction_suc_fail_repository.da
 import 'package:maxpay/core/domain/repository/update_pin_repository.dart';
 import 'package:maxpay/core/domain/repository/verify_pin_repository.dart';
 import 'package:maxpay/core/domain/repository/wallet_bal_repository.dart';
+import 'package:maxpay/core/domain/repository/wallet_create_qr_repo.dart';
 import 'package:maxpay/core/domain/repository/wallet_credit_search_repository.dart';
 import 'package:maxpay/core/domain/repository/wallet_credit_type_repository.dart';
 import 'package:maxpay/core/domain/repository/wallet_report_repository.dart';
@@ -154,6 +156,7 @@ import 'package:maxpay/core/domain/usecase/trans_report_usecase.dart';
 import 'package:maxpay/core/domain/usecase/trans_suc_fail_usecase.dart';
 import 'package:maxpay/core/domain/usecase/update_pin_usecase.dart';
 import 'package:maxpay/core/domain/usecase/verify_pin_usecase.dart';
+import 'package:maxpay/core/domain/usecase/wallet_create_qr_usecase.dart';
 import 'package:maxpay/core/domain/usecase/wallet_credit_search_usecase.dart';
 import 'package:maxpay/core/domain/usecase/wallet_credit_usecase.dart';
 import 'package:maxpay/core/domain/usecase/wallet_report_usecase.dart';
@@ -240,30 +243,56 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton<VerifyPinRepository>(() => VerifyPinRepoImpl(sl()));
   sl.registerLazySingleton<DthTabRepository>(() => DthTabRepoImpl(sl()));
   sl.registerLazySingleton<SearchDthRepository>(() => SearchDthRepoImpl(sl()));
-  sl.registerLazySingleton<ConfirmDthRepository>(() => ConfirmDthRepoImpl(sl()));
-  sl.registerLazySingleton<DthRechargeRepository>(() => DthRechargeRepoImpl(sl()));
+  sl.registerLazySingleton<ConfirmDthRepository>(
+    () => ConfirmDthRepoImpl(sl()),
+  );
+  sl.registerLazySingleton<DthRechargeRepository>(
+    () => DthRechargeRepoImpl(sl()),
+  );
   sl.registerLazySingleton<GetKycRepository>(() => GetKycRepoImpl(sl()));
-  sl.registerLazySingleton<TransReportRepository>(() =>  TransReportRepoImpl(sl()));
-  sl.registerLazySingleton<GradeRepository>(() =>  GradeRepoImpl(sl()));
-  sl.registerLazySingleton<DisputeRepository>(() =>  DisputeRepoImpl(sl()));
-  sl.registerLazySingleton<PaymnetStatusRepository>(() =>  PaymentStatusRepoImpl(sl()));
-  sl.registerLazySingleton<RefundRepository>(() =>  RefundRepoImpl(sl()));
-  sl.registerLazySingleton<AllPlanRepository>(() =>  AllPlanRepoImpl(sl()));
-  sl.registerLazySingleton<UpdatePinRepository>(() =>  UpdatePinRepoImpl(sl()));
-  sl.registerLazySingleton<WalletCreditSearchRepository>(() =>  WalletCreditSearchRepoImpl(sl()));
-  sl.registerLazySingleton<WalletCreditTypeRepository>(() =>  WalletCreditTypeRepoImpl(sl()));
-  sl.registerLazySingleton<SubmitDsiputeRepository>(() =>  SubmitDisputeRepoImpl(sl()));
-  sl.registerLazySingleton<WalletTransferRepository>(() =>  WalletTransferRepoImpl(sl()));
-  sl.registerLazySingleton<WalletReportRepository>(() =>  WalletReportRepoImpl(sl()));
-  sl.registerLazySingleton<ProfileUpdateRepository>(() => UpdateProfileRepoImpl(sl()));
+  sl.registerLazySingleton<TransReportRepository>(
+    () => TransReportRepoImpl(sl()),
+  );
+  sl.registerLazySingleton<GradeRepository>(() => GradeRepoImpl(sl()));
+  sl.registerLazySingleton<DisputeRepository>(() => DisputeRepoImpl(sl()));
+  sl.registerLazySingleton<PaymnetStatusRepository>(
+    () => PaymentStatusRepoImpl(sl()),
+  );
+  sl.registerLazySingleton<RefundRepository>(() => RefundRepoImpl(sl()));
+  sl.registerLazySingleton<AllPlanRepository>(() => AllPlanRepoImpl(sl()));
+  sl.registerLazySingleton<UpdatePinRepository>(() => UpdatePinRepoImpl(sl()));
+  sl.registerLazySingleton<WalletCreditSearchRepository>(
+    () => WalletCreditSearchRepoImpl(sl()),
+  );
+  sl.registerLazySingleton<WalletCreditTypeRepository>(
+    () => WalletCreditTypeRepoImpl(sl()),
+  );
+  sl.registerLazySingleton<SubmitDsiputeRepository>(
+    () => SubmitDisputeRepoImpl(sl()),
+  );
+  sl.registerLazySingleton<WalletTransferRepository>(
+    () => WalletTransferRepoImpl(sl()),
+  );
+  sl.registerLazySingleton<WalletReportRepository>(
+    () => WalletReportRepoImpl(sl()),
+  );
+  sl.registerLazySingleton<ProfileUpdateRepository>(
+    () => UpdateProfileRepoImpl(sl()),
+  );
   sl.registerLazySingleton<StatementRepository>(() => StatementRepoImpl(sl()));
   sl.registerLazySingleton<BannerRepository>(() => BannerRepoImpl(sl()));
-  sl.registerLazySingleton<AdvertisementRepository>(() => AdvertisementRepoImpl(sl()));
+  sl.registerLazySingleton<AdvertisementRepository>(
+    () => AdvertisementRepoImpl(sl()),
+  );
   sl.registerLazySingleton<IpAddressRepository>(() => IpAddressRepoImpl(sl()));
-  sl.registerLazySingleton<LoginHistoryRepository>(() => LoginHistoryImpl(sl()));
+  sl.registerLazySingleton<LoginHistoryRepository>(
+    () => LoginHistoryImpl(sl()),
+  );
   sl.registerLazySingleton<WebLoginRepository>(() => WebLoginRepoImpl(sl()));
-  sl.registerLazySingleton< CashBackRepository>(() => CashBackRepoImpl(sl()));
-
+  sl.registerLazySingleton<CashBackRepository>(() => CashBackRepoImpl(sl()));
+  sl.registerLazySingleton<WalletCreateQrRepo>(
+    () => WalletCreateQrRepoImpl(sl()),
+  );
 
   /*-------------------       USECASE    ---------------------------------*/
   sl.registerLazySingleton<LoginUseCase>(() => LoginUseCase(sl()));
@@ -317,23 +346,44 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton<TransReportUsecase>(() => TransReportUsecase(sl()));
   sl.registerLazySingleton<GradeUsecase>(() => GradeUsecase(sl()));
   sl.registerLazySingleton<DisputeUsecase>(() => DisputeUsecase(sl()));
-  sl.registerLazySingleton<PaymentStatusUsecase>(() => PaymentStatusUsecase(sl()));
+  sl.registerLazySingleton<PaymentStatusUsecase>(
+    () => PaymentStatusUsecase(sl()),
+  );
   sl.registerLazySingleton<RefundUsecase>(() => RefundUsecase(sl()));
   sl.registerLazySingleton<AllPlanUsecase>(() => AllPlanUsecase(sl()));
   sl.registerLazySingleton<UpdatePinUsecase>(() => UpdatePinUsecase(sl()));
-  sl.registerLazySingleton<WalletCreditSearchUsecase>(() => WalletCreditSearchUsecase(sl()));
-  sl.registerLazySingleton<WalletCreditTypeUsecase>(() => WalletCreditTypeUsecase(sl()));
-  sl.registerLazySingleton<SubmitDisputeUsecase>(() => SubmitDisputeUsecase(sl()));
-  sl.registerLazySingleton<WalletTransferUsecase>(() => WalletTransferUsecase(sl()));
-  sl.registerLazySingleton<WalletReportUsecase>(() => WalletReportUsecase(sl()));
-  sl.registerLazySingleton<ProfileUpdateUsecase>(() => ProfileUpdateUsecase(sl()));
+  sl.registerLazySingleton<WalletCreditSearchUsecase>(
+    () => WalletCreditSearchUsecase(sl()),
+  );
+  sl.registerLazySingleton<WalletCreditTypeUsecase>(
+    () => WalletCreditTypeUsecase(sl()),
+  );
+  sl.registerLazySingleton<SubmitDisputeUsecase>(
+    () => SubmitDisputeUsecase(sl()),
+  );
+  sl.registerLazySingleton<WalletTransferUsecase>(
+    () => WalletTransferUsecase(sl()),
+  );
+  sl.registerLazySingleton<WalletReportUsecase>(
+    () => WalletReportUsecase(sl()),
+  );
+  sl.registerLazySingleton<ProfileUpdateUsecase>(
+    () => ProfileUpdateUsecase(sl()),
+  );
   sl.registerLazySingleton<StatementUsecase>(() => StatementUsecase(sl()));
   sl.registerLazySingleton<BannerUsecase>(() => BannerUsecase(sl()));
-  sl.registerLazySingleton<AdvertisementUsecase>(() => AdvertisementUsecase(sl()));
+  sl.registerLazySingleton<AdvertisementUsecase>(
+    () => AdvertisementUsecase(sl()),
+  );
   sl.registerLazySingleton<IpAddressUsecase>(() => IpAddressUsecase(sl()));
-  sl.registerLazySingleton<LoginHistoryUsecase>(() => LoginHistoryUsecase(sl()));
+  sl.registerLazySingleton<LoginHistoryUsecase>(
+    () => LoginHistoryUsecase(sl()),
+  );
   sl.registerLazySingleton<WebLoginUsecase>(() => WebLoginUsecase(sl()));
   sl.registerLazySingleton<CashBackUsecase>(() => CashBackUsecase(sl()));
+  sl.registerLazySingleton<WalletCreateQrUsecase>(
+    () => WalletCreateQrUsecase(sl()),
+  );
 
   // sl.registerLazySingleton<GetPrivacyPolicyUseCase>(
   //   () => GetPrivacyPolicyUseCase(sl()),

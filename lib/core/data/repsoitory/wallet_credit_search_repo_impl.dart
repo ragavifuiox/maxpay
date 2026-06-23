@@ -14,7 +14,7 @@ class WalletCreditSearchRepoImpl implements WalletCreditSearchRepository {
   @override
   Future<Either<Failure, CreditList>> searchcredit({
     required String credit,
-   
+
     required String fromdate,
     required String todate,
     required String search,
@@ -24,16 +24,14 @@ class WalletCreditSearchRepoImpl implements WalletCreditSearchRepository {
         ApiRoutes.searchcredit,
         data: {
           "wallet_type": credit,
-           "from_date": fromdate, 
-           "to_date": todate,
-           "search": search,
-         
-           
-           },
+          "from_date": fromdate,
+          "to_date": todate,
+          "search": search,
+        },
       );
 
-    AppLogger.debugPrint("RAW RESPONSE:");
-AppLogger.debugPrint(response);
+      AppLogger.debugPrint("RAW RESPONSE:");
+      AppLogger.debugPrint(response);
 
       final model = CreditList.fromJson(response);
       return Right(model);

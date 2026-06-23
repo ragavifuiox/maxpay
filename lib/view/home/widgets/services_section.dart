@@ -129,7 +129,7 @@ class MenuScreen extends StatelessWidget {
               child: Image.network(
                 imageUrl,
                 fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) {
+                errorBuilder: (_, _, _) {
                   return Container(
                     color: Colors.grey.shade300,
                     child: const Icon(Icons.broken_image),
@@ -256,7 +256,7 @@ class MenuScreen extends StatelessWidget {
     child: Image.network(
       imageUrl,
       fit: BoxFit.cover,
-      errorBuilder: (_, __, ___) {
+      errorBuilder: (_, _, _) {
         return Container(
           color: Colors.grey.shade300,
           child: const Icon(Icons.broken_image),
@@ -331,7 +331,7 @@ class MenuScreen extends StatelessWidget {
           child: Image.network(
             imageUrl,
             fit: BoxFit.cover,
-            errorBuilder: (_, __, ___) {
+            errorBuilder: (_, _, _) {
               return Container(
                 color: Colors.grey.shade300,
                 child: const Icon(Icons.broken_image),
@@ -397,7 +397,7 @@ class MenuScreen extends StatelessWidget {
               child: Image.network(
                 imageUrl,
                 fit: BoxFit.contain,
-                errorBuilder: (_, __, ___) {
+                errorBuilder: (_, _, _) {
                   return const Icon(
                     Icons.broken_image,
                     color: Colors.white,

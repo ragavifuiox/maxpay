@@ -8,20 +8,20 @@ class Advertisement {
 
   Advertisement.fromJson(Map<String, dynamic> json) {
     success = json['success'];
-    data = json['data'] != null ? new Data.fromJson(json['data']) : null;
+    data = json['data'] != null ? Data.fromJson(json['data']) : null;
     message = json['message'];
     code = json['code'];
     
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['success'] = this.success;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['success'] = success;
     if (this.data != null) {
       data['data'] = this.data!.toJson();
     }
-    data['message'] = this.message;
-    data['code'] = this.code;
+    data['message'] = message;
+    data['code'] = code;
     return data;
   }
 }
@@ -35,16 +35,16 @@ class Data {
     if (json['advertisements'] != null) {
       advertisements = <Advertisements>[];
       json['advertisements'].forEach((v) {
-        advertisements!.add(new Advertisements.fromJson(v));
+        advertisements!.add(Advertisements.fromJson(v));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.advertisements != null) {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    if (advertisements != null) {
       data['advertisements'] =
-          this.advertisements!.map((v) => v.toJson()).toList();
+          advertisements!.map((v) => v.toJson()).toList();
     }
     return data;
   }
@@ -109,24 +109,24 @@ class Advertisements {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['mobile'] = this.mobile;
-    data['name'] = this.name;
-    data['company_name'] = this.companyName;
-    data['ad_for'] = this.adFor;
-    data['district_id'] = this.districtId;
-    data['pincode_id'] = this.pincodeId;
-    data['web_link'] = this.webLink;
-    data['youtube_link'] = this.youtubeLink;
-    data['contact_no'] = this.contactNo;
-    data['from_date'] = this.fromDate;
-    data['to_date'] = this.toDate;
-    data['display_image'] = this.displayImage;
-    data['ad_image'] = this.adImage;
-    data['status'] = this.status;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['mobile'] = mobile;
+    data['name'] = name;
+    data['company_name'] = companyName;
+    data['ad_for'] = adFor;
+    data['district_id'] = districtId;
+    data['pincode_id'] = pincodeId;
+    data['web_link'] = webLink;
+    data['youtube_link'] = youtubeLink;
+    data['contact_no'] = contactNo;
+    data['from_date'] = fromDate;
+    data['to_date'] = toDate;
+    data['display_image'] = displayImage;
+    data['ad_image'] = adImage;
+    data['status'] = status;
+    data['created_at'] = createdAt;
+    data['updated_at'] = updatedAt;
     return data;
   }
 }

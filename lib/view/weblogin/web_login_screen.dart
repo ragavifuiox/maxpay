@@ -158,7 +158,7 @@ class WebLoginScreen extends GetView<WebLoginController> {
                                 return;
                               }
 
-                              controller..submitLogin();
+                              controller.submitLogin();
                             },
                     ),
                   ),

@@ -175,7 +175,7 @@ Future<void> walletTransfer({
     result.fold(
       (failure) {
         CustomToast.error(
-          failure.message ?? "Something went wrong",
+          failure.message,
         );
 
         AppLogger.debugPrint(

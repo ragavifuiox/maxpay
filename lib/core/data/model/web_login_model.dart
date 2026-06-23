@@ -10,16 +10,16 @@ class WebLogin {
     success = json['success'];
     data = json['data'];
     message = json['message'];
-    code = json['code'] != null ? new Code.fromJson(json['code']) : null;
+    code = json['code'] != null ? Code.fromJson(json['code']) : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['success'] = this.success;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['success'] = success;
     data['data'] = this.data;
-    data['message'] = this.message;
-    if (this.code != null) {
-      data['code'] = this.code!.toJson();
+    data['message'] = message;
+    if (code != null) {
+      data['code'] = code!.toJson();
     }
     return data;
   }
@@ -39,10 +39,10 @@ class Code {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['user_id'] = this.userId;
-    data['is_web_login'] = this.isWebLogin;
-    data['web_login_count'] = this.webLoginCount;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['user_id'] = userId;
+    data['is_web_login'] = isWebLogin;
+    data['web_login_count'] = webLoginCount;
     return data;
   }
 }
