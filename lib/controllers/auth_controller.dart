@@ -309,7 +309,7 @@ AppLogger.logError(
               if (fp == 1) {
                 Get.offAllNamed(AppRoutes.veirfypin);
               } else {
-                Get.offAllNamed(AppRoutes.enterPin);
+                Get.offAllNamed(AppRoutes.pinCodeCreation);
               }
             } else {
               isNewUserFlow.value = true;
@@ -338,7 +338,10 @@ AppLogger.logError(
       );
 
       if (authenticated) {
-        await storage.saveString("last_active_time", DateTime.now().toIso8601String());
+        await storage.saveString(
+          "last_active_time",
+          DateTime.now().toIso8601String(),
+        );
         Get.offAllNamed(AppRoutes.main);
       } else {
         CustomToast.error("Fingerprint authentication failed");
@@ -390,7 +393,7 @@ AppLogger.logError(
     try {
       isLoading.value = true;
 
-      AppLogger.logError("=========== CREATE PIN REQUEST ===========");
+      AppLogger.logError("=========== CREATE MPIN REQUEST ===========");
       AppLogger.logError("PIN => $pin");
       AppLogger.logError("USER_ID => ${storage.getInt("user_id")}");
       AppLogger.logError("IS_PIN BEFORE API => ${storage.getInt("is_pin")}");
@@ -400,14 +403,14 @@ AppLogger.logError(
 
       result.fold(
         (failure) {
-          AppLogger.logError("CREATE PIN FAILURE");
+          AppLogger.logError("CREATE MPIN FAILURE");
           AppLogger.logError(failure.message);
 
           CustomToast.error(failure.message);
         },
         
         (response) async {
-          AppLogger.logError("=========== CREATE PIN RESPONSE ===========");
+          AppLogger.logError("=========== CREATE MPIN RESPONSE ===========");
           AppLogger.logError("SUCCESS : ${response.success}");
           AppLogger.logError("MESSAGE : ${response.message}");
           AppLogger.logError("IS_PIN STORAGE : ${storage.getInt("is_pin")}");
@@ -415,11 +418,20 @@ AppLogger.logError(
 
           if (response.success == true) {
             await storage.saveInt("is_pin", 1);
-            await storage.saveString("last_active_time", DateTime.now().toIso8601String());
+            await storage.saveString(
+              "last_active_time",
+              DateTime.now().toIso8601String(),
+            );
 
             AppLogger.logError("IS_PIN SAVED => ${storage.getInt("is_pin")}");
 
-            Get.offAllNamed(AppRoutes.biometricsIntro);
+            Get.offAllNamed(
+              AppRoutes.successScreen,
+              arguments: {
+                "title": "Pin Created Successfully",
+                "message": "Your 6 digit pin has been created successfully",
+              },
+            );
           } else {
             AppLogger.logError("PIN CREATION FAILED => ${response.message}");
 
@@ -463,7 +475,10 @@ AppLogger.logError(
             CustomToast.success(response.message ?? "PIN Verified");
 
             AppLogger.logError("PIN VERIFIED SUCCESSFULLY");
-            await storage.saveString("last_active_time", DateTime.now().toIso8601String());
+            await storage.saveString(
+              "last_active_time",
+              DateTime.now().toIso8601String(),
+            );
 
             Get.offAllNamed(AppRoutes.main);
 
@@ -512,14 +527,17 @@ AppLogger.logError(
           AppLogger.logError("===========================================");
 
           if (response.success == true) {
-            await storage.saveInt("is_fingerprint", 1);
+            await storage.saveInt(
+              "is_fingerprint",
+              response.data?.isFingerPrint ?? 0,
+            );
 
-            isFingerPrint.value = 1;
+            isFingerPrint.value = response.data?.isFingerPrint ?? 0;
             CustomToast.success(
               response.message ?? "Fingerprint Updated Successfully",
             );
 
-            Get.offAllNamed(AppRoutes.successScreen);
+            // Get.offAllNamed(AppRoutes.successScreen);
           } else {
             CustomToast.error(response.message ?? "Fingerprint Update Failed");
           }

@@ -2,7 +2,6 @@
 
 import 'package:dartz/dartz.dart';
 import 'package:maxpay/core/data/model/my_earnings_model.dart';
-import 'package:maxpay/core/data/model/search_earnings_model.dart';
 import 'package:maxpay/core/domain/repository/search_earning_repository.dart';
 
 import 'package:maxpay/core/error/failure.dart';

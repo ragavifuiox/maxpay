@@ -93,23 +93,23 @@ class PrePaidController extends GetxController {
 }
 
   Future<void> searchPlans(String planId, String amount) async {
-    print("========== SEARCH API ==========");
-    print("PlanId : $planId");
-    print("Amount : $amount");
+    AppLogger.debugPrint("========== SEARCH API ==========");
+    AppLogger.debugPrint("PlanId : $planId");
+    AppLogger.debugPrint("Amount : $amount");
 
     final result = await searchPlanUsecase(planId, amount);
 
     result.fold(
       (failure) {
-        print("SEARCH FAILED");
-        print("Message : ${failure.message}");
+        AppLogger.debugPrint("SEARCH FAILED");
+        AppLogger.debugPrint("Message : ${failure.message}");
 
         CustomToast.error(failure.message);
       },
       (response) {
-        print("SEARCH SUCCESS");
-        print("Response : $response");
-        print("Data Count : ${response.data?.length}");
+        AppLogger.debugPrint("SEARCH SUCCESS");
+        AppLogger.debugPrint("Response : $response");
+        AppLogger.debugPrint("Data Count : ${response.data?.length}");
 
         searchPlansList.value = response.data ?? [];
 
@@ -119,16 +119,16 @@ class PrePaidController extends GetxController {
   }
 
   void applyTabFilter() {
-    print("============== FILTER START ==============");
+    AppLogger.debugPrint("============== FILTER START ==============");
 
-    print("Selected Tab ID : $selectedTabId");
+    AppLogger.debugPrint("Selected Tab ID : $selectedTabId");
 
     final selectedTab = planTabs.firstWhereOrNull(
       (e) => e.id.toString() == selectedTabId,
     );
 
     if (selectedTab == null) {
-      print("No matching tab found");
+      AppLogger.debugPrint("No matching tab found");
 
       filteredSearchPlans.value = searchPlansList;
       return;
@@ -136,23 +136,23 @@ class PrePaidController extends GetxController {
 
     final tabName = (selectedTab.planType ?? "").toLowerCase().trim();
 
-    print("Selected Tab Name : $tabName");
+    AppLogger.debugPrint("Selected Tab Name : $tabName");
 
-    print("Search Plan Count : ${searchPlansList.length}");
+    AppLogger.debugPrint("Search Plan Count : ${searchPlansList.length}");
 
     for (final p in searchPlansList) {
-      print("PlanType => ${p.planType}");
+      AppLogger.logError("PlanType => ${p.planType}");
     }
 
     filteredSearchPlans.value = searchPlansList.where((plan) {
       return (plan.planType ?? "").toLowerCase().trim() == tabName;
     }).toList();
 
-    print(
-      "Filtered Count : ${filteredSearchPlans.length} ${filteredSearchPlans.value.map((e) => e.toJson())}",
+    AppLogger.debugPrint(
+      "Filtered Count : ${filteredSearchPlans.length} ${filteredSearchPlans.map((e) => e.toJson())}",
     );
 
-    print("============== FILTER END ==============");
+    AppLogger.debugPrint("============== FILTER END ==============");
   }
   // Future<void> searchPlans(String planId, String amount) async {
   //   try {

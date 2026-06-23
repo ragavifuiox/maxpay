@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_instance/src/extension_instance.dart';
-import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:maxpay/controllers/transaction_report_controller.dart';
 import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/core/constants/snackbar.dart';
@@ -65,7 +64,7 @@ class _DisputeDialogState
 
            DropdownButtonFormField<String>(
   isExpanded: true,
-  value: selectedSubject,
+  initialValue: selectedSubject,
   decoration: InputDecoration(
     hintText: "Select Subject",
     border: OutlineInputBorder(

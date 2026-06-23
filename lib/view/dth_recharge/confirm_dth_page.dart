@@ -165,7 +165,7 @@ class ConfirmDthPage extends GetView<DthController> {
 
                   SizedBox(height: 20.h),
 
-                  _buildInputLabel('For Transaction Detail'),
+                  _buildInputLabel('For Transaction Detail', true),
 
                   _buildTextField(
                     context,
@@ -175,10 +175,12 @@ class ConfirmDthPage extends GetView<DthController> {
                   ),
 
                   SizedBox(height: 15.h),
+                  _buildInputLabel('Re-enter Amount', false),
 
                   _buildTextField(
                     context,
                     'Enter amount',
+                    isHighlighted: true,
                     controller: amountController,
                   ),
 
@@ -412,15 +414,39 @@ Widget _buildAmountBox(
   );
 }
 
-Widget _buildInputLabel(String label) {
+Widget _buildInputLabel(String label, [bool isOptionOrNot = false]) {
   return Padding(
     padding: EdgeInsets.only(bottom: 8.h),
-    child: Text(
-      label,
-      style: TextStyle(
-        fontSize: 13.sp,
-        fontWeight: FontWeight.w600,
-        color: Colors.grey,
+    child: Text.rich(
+      TextSpan(
+        children: [
+          TextSpan(
+            text: label,
+            style: TextStyle(
+              fontSize: 14.sp,
+              fontWeight: FontWeight.w400,
+              color: Colors.grey,
+            ),
+          ),
+          if (isOptionOrNot)
+            TextSpan(
+              text: " (Optional)",
+              style: TextStyle(
+                fontSize: 14.sp,
+                fontWeight: FontWeight.w400,
+                color: Colors.grey,
+              ),
+            )
+          else
+            TextSpan(
+              text: " *",
+              style: TextStyle(
+                fontSize: 14.sp,
+                fontWeight: FontWeight.w400,
+                color: Colors.red,
+              ),
+            ),
+        ],
       ),
     ),
   );
@@ -428,9 +454,12 @@ Widget _buildInputLabel(String label) {
 
 Widget _buildTextField(
   BuildContext context,
+
   String hint, {
   TextEditingController? controller,
+  Widget? prefixIcon,
   TextInputType? keyboardType,
+  bool isHighlighted = false,
   List<TextInputFormatter>? inputFormatters,
 }) {
   final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -446,8 +475,20 @@ Widget _buildTextField(
       inputFormatters:
           inputFormatters ?? [FilteringTextInputFormatter.digitsOnly],
       decoration: InputDecoration(
+        prefixIcon: prefixIcon,
         hintText: hint,
-        border: InputBorder.none,
+        enabledBorder: isHighlighted
+            ? OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10.r),
+                borderSide: BorderSide(color: AppColors.clrPrimary),
+              )
+            : InputBorder.none,
+        focusedBorder: isHighlighted
+            ? OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10.r),
+                borderSide: BorderSide(color: AppColors.clrPrimary),
+              )
+            : InputBorder.none,
         contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
       ),
     ),

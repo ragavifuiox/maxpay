@@ -6,19 +6,12 @@ import 'package:maxpay/core/utils/texthelper.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
 import 'package:maxpay/view/transaction_screens/widget/transaction_card.dart';
 
-enum TransactionStatus {
-  success,
- pending,
- failed,
-}
+enum TransactionStatus { success, pending, failed }
 
 class TransactionScreen extends GetView<TransReportController> {
   final TransactionStatus status;
 
-  const TransactionScreen({
-    super.key,
-    required this.status,
-  });
+  const TransactionScreen({super.key, required this.status});
 
   @override
   Widget build(BuildContext context) {
@@ -33,21 +26,15 @@ class TransactionScreen extends GetView<TransReportController> {
     String title;
 
     if (isSuccess) {
-      bgColor = isDark
-          ? const Color(0xFFE2F8E9)
-          : const Color(0xFFE2F8E9);
+      bgColor = isDark ? const Color(0xFFE2F8E9) : const Color(0xFFE2F8E9);
 
       title = "Transaction Success";
     } else if (isPending) {
-      bgColor = isDark
-          ? const Color(0xFFFFF1DD)
-          : const Color(0xFFFFF1DD);
+      bgColor = isDark ? const Color(0xFFFFF1DD) : const Color(0xFFFFF1DD);
 
       title = "Transaction Pending";
     } else {
-      bgColor = isDark
-          ? const Color(0xFFFFE4E6)
-          : const Color(0xFFFFE4E6);
+      bgColor = isDark ? const Color(0xFFFFE4E6) : const Color(0xFFFFE4E6);
 
       title = "Transaction Failed";
     }
@@ -55,9 +42,7 @@ class TransactionScreen extends GetView<TransReportController> {
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
 
-      appBar: CommonAppBar(
-        title:title,
-      ),
+      appBar: CommonAppBar(title: title),
 
       body: Padding(
         padding: const EdgeInsets.all(14),
@@ -202,87 +187,78 @@ class TransactionScreen extends GetView<TransReportController> {
 
             const SizedBox(height: 15),
             Divider(
-  color: Theme.of(context).brightness == Brightness.light
-      ? Colors.black12
-      : Colors.white24,
-),
-              const SizedBox(height: 15),
+              color: Theme.of(context).brightness == Brightness.light
+                  ? Colors.black12
+                  : Colors.white24,
+            ),
+            const SizedBox(height: 15),
+
             /// TRANSACTION LIST
-           Expanded(
-  child: Obx(() {
-    if (controller.isLoading.value) {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
-    }
+            Expanded(
+              child: Obx(() {
+                if (controller.isLoading.value) {
+                  return const Center(child: CircularProgressIndicator());
+                }
 
-    if (controller.transreportList.isEmpty) {
-      return const Center(
-        child: Text("No Data Found"),
-      );
-    }
+                if (controller.transreportList.isEmpty) {
+                  return const Center(child: Text("No Data Found"));
+                }
 
-    return ListView.builder(
-      itemCount: controller.transreportList.length,
-      itemBuilder: (context, index) {
-        return TransactionCard(
-          data: controller.transreportList[index],
-        );
-      },
-    );
-  }),
-),
+                return ListView.builder(
+                  itemCount: controller.transreportList.length,
+                  itemBuilder: (context, index) {
+                    return TransactionCard(
+                      data: controller.transreportList[index],
+                    );
+                  },
+                );
+              }),
+            ),
           ],
         ),
       ),
     );
   }
 
- Widget customField(
-  BuildContext context, {
-  required String hint,
-  IconData? prefix,
-}) {
-  final theme = Theme.of(context);
+  Widget customField(
+    BuildContext context, {
+    required String hint,
+    IconData? prefix,
+  }) {
+    final theme = Theme.of(context);
 
-  return Container(
-    height: 45,
-    padding: const EdgeInsets.symmetric(
-      horizontal: 12,
-    ),
-    decoration: BoxDecoration(
-      color: theme.brightness == Brightness.light
-          ? Colors.white
-          : AppColors.darkplceholder,
-      borderRadius: BorderRadius.circular(8),
-
-      /// FIELD BORDER
-      border: Border.all(
+    return Container(
+      height: 45,
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      decoration: BoxDecoration(
         color: theme.brightness == Brightness.light
-            ? const Color(0xFFD6D6D6)
-            : const Color.fromARGB(255, 159, 159, 159),
+            ? Colors.white
+            : AppColors.darkplceholder,
+        borderRadius: BorderRadius.circular(8),
+
+        /// FIELD BORDER
+        border: Border.all(
+          color: theme.brightness == Brightness.light
+              ? const Color(0xFFD6D6D6)
+              : const Color.fromARGB(255, 159, 159, 159),
+        ),
       ),
-    ),
-    child: Row(
-      children: [
-        if (prefix != null) ...[
-          Icon(
-            prefix,
-            size: 18,
-            color: theme.colorScheme.onSurfaceVariant,
-          ),
-          const SizedBox(width: 8),
-        ],
-        Expanded(
-          child: Text(
-            hint,
-            style: TextHelper.max1.copyWith(
-              color: theme.colorScheme.onSurfaceVariant,
+      child: Row(
+        children: [
+          if (prefix != null) ...[
+            Icon(prefix, size: 18, color: theme.colorScheme.onSurfaceVariant),
+            const SizedBox(width: 8),
+          ],
+          Expanded(
+            child: Text(
+              hint,
+              style: TextHelper.max1.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
             ),
           ),
-        ),
-      ],
-    ),
-  );
-}
+        ],
+      ),
+    );
+  }
 }

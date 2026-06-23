@@ -11,7 +11,7 @@ class WalletReport {
     if (json['data'] != null) {
       data = <WalReportData>[];
       json['data'].forEach((v) {
-        data!.add(new WalReportData.fromJson(v));
+        data!.add(WalReportData.fromJson(v));
       });
     }
     message = json['message'];
@@ -19,13 +19,13 @@ class WalletReport {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['success'] = this.success;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['success'] = success;
     if (this.data != null) {
       data['data'] = this.data!.map((v) => v.toJson()).toList();
     }
-    data['message'] = this.message;
-    data['code'] = this.code;
+    data['message'] = message;
+    data['code'] = code;
     return data;
   }
 }
@@ -60,14 +60,14 @@ class WalReportData {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['txn_id'] = this.txnId;
-    data['retailer_id'] = this.retailerId;
-    data['staff_id'] = this.staffId;
-    data['payment_type'] = this.paymentType;
-    data['amount'] = this.amount;
-    data['created_at'] = this.createdAt;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['txn_id'] = txnId;
+    data['retailer_id'] = retailerId;
+    data['staff_id'] = staffId;
+    data['payment_type'] = paymentType;
+    data['amount'] = amount;
+    data['created_at'] = createdAt;
     return data;
   }
 }

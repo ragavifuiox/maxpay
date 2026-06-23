@@ -26,7 +26,7 @@ class DTHRechargePage extends StatefulWidget {
 class _DTHRechargePageState extends State<DTHRechargePage>
     with SingleTickerProviderStateMixin {
   Data? selectedOperatorObj;
-  String _selectedOperator = "";
+  final String _selectedOperator = "";
   bool _showCustomerInfo = false;
   final PrePaidController controller = Get.put(
     PrePaidController(
@@ -119,7 +119,7 @@ class _DTHRechargePageState extends State<DTHRechargePage>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-            /// 🔹 WALLET BALANCE CARD
+              /// 🔹 WALLET BALANCE CARD
               Container(
                 width: double.infinity,
 
@@ -258,19 +258,18 @@ class _DTHRechargePageState extends State<DTHRechargePage>
                         );
                       }).toList(),
 
+                      onChanged: (Data? value) async {
+                        if (value == null) return;
 
-onChanged: (Data? value) async {
-  if (value == null) return;
+                        print("Selected Name: ${value.name}");
+                        print("Selected ID: ${value.id}");
 
-  print("Selected Name: ${value.name}");
-  print("Selected ID: ${value.id}");
+                        setState(() {
+                          selectedOperatorObj = value;
+                        });
 
-  setState(() {
-    selectedOperatorObj = value;
-  });
-
-  await _triggerSearch();
-}
+                        await _triggerSearch();
+                      },
                     ),
                   ),
                 );
@@ -309,7 +308,6 @@ onChanged: (Data? value) async {
               /// 🔹 TOGGLE BUTTONS (Plan / Customer Info)
               SizedBox(height: 15.h),
 
-            
               if (showNextButton) SizedBox(height: 15.h),
 
               /// 🔹 TOGGLE BUTTONS (Plan / Customer Info)
@@ -431,7 +429,25 @@ onChanged: (Data? value) async {
                             Get.snackbar("Error", "Please enter Customer ID");
                             return;
                           }
-
+                          final requiredAmount =
+                              double.tryParse(item["amount"].toString()) ?? 0.0;
+                          final currentBalance =
+                              Get.find<HomePageController>()
+                                  .walletBalance
+                                  .value
+                                  ?.data
+                                  ?.balance ??
+                              0.0;
+                          if (requiredAmount > currentBalance) {
+                            Get.toNamed(
+                              AppRoutes.insufficientBalance,
+                              arguments: {
+                                'currentBalance': currentBalance,
+                                'requiredAmount': requiredAmount,
+                              },
+                            );
+                            return;
+                          }
                           await dthcontroller.getconfirmdth(
                             item["plan"].productId.toString(),
                           );
@@ -594,8 +610,6 @@ onChanged: (Data? value) async {
                   ),
                 ),
               ),
-
-             
             ],
           ),
 
@@ -642,7 +656,7 @@ onChanged: (Data? value) async {
       ),
     );
   }
- 
+
   Widget _buildPlanStat(String value, String subLabel, String label) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

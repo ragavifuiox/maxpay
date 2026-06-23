@@ -1,8 +1,12 @@
 import 'package:get/get.dart';
+import 'package:maxpay/controllers/add_kyc_controller.dart';
 import 'package:maxpay/controllers/add_staff_controller.dart';
 import 'package:maxpay/controllers/auth_controller.dart';
+<<<<<<< HEAD
 import 'package:maxpay/controllers/cash_back_controller.dart';
 import 'package:maxpay/controllers/credit_controller.dart';
+=======
+>>>>>>> 953fe2da7434a645d4d4d59d1be6003c43c25b5c
 import 'package:maxpay/controllers/dispute_controller.dart';
 import 'package:maxpay/controllers/dth_controller.dart';
 import 'package:maxpay/controllers/earning_controller.dart';
@@ -23,6 +27,7 @@ import 'package:maxpay/controllers/wallet_request_controller.dart';
 import 'package:maxpay/controllers/web_login_controller.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/core/di/service_locator.dart';
+import 'package:maxpay/global_widget/insufficient_balance_page.dart';
 import 'package:maxpay/view/add_wallet/add_wallet_screen.dart';
 import 'package:maxpay/view/cashback/cash_back_screen.dart';
 import 'package:maxpay/view/dispute/dispute_screen.dart';
@@ -98,8 +103,6 @@ class AppPages {
       }),
     ),
 
-
-
     GetPage(
       transition: Transition.fade,
 
@@ -150,7 +153,7 @@ class AppPages {
     ),
     GetPage(
       name: AppRoutes.biometricsIntro,
-      page: () => const BiometricsIntroPage()
+      page: () => const BiometricsIntroPage(),
     ),
     GetPage(
       name: AppRoutes.biometricsScanning,
@@ -182,7 +185,7 @@ class AppPages {
     ),
     GetPage(name: AppRoutes.home, page: () => const HomePageScreen()),
     GetPage(name: AppRoutes.verify, page: () => const VerifyPinPage()),
-    GetPage(name: AppRoutes.enterPin, page: () =>  PinCodeEnterPage()),
+    GetPage(name: AppRoutes.enterPin, page: () => PinCodeEnterPage()),
 
     // GetPage(name: AppRoutes.main, page: () => const NavPageScreen()),
     // GetPage(name: AppRoutes.myearning, page: () => const MyEarningsScreen()),
@@ -215,15 +218,17 @@ class AppPages {
       binding: BindingsBuilder(() {
         Get.lazyPut<WalletCreditController>(
           () => WalletCreditController(
-            getCreditUseCase: sl(), walletcredittypeusecase: sl(), walletcreditsearchsecase: sl(),),
+            getCreditUseCase: sl(),
+            walletcredittypeusecase: sl(),
+            walletcreditsearchsecase: sl(),
+          ),
 
           fenix: true,
         );
       }),
     ),
 
-
- GetPage(
+    GetPage(
       transition: Transition.fade,
 
       name: AppRoutes.refund,
@@ -238,6 +243,7 @@ class AppPages {
         );
       }),
     ),
+<<<<<<< HEAD
     GetPage(
       transition: Transition.fade,
 
@@ -254,6 +260,10 @@ class AppPages {
       }),
     ),
  
+=======
+
+    GetPage(name: AppRoutes.cashback, page: () => const CashbackScreen()),
+>>>>>>> 953fe2da7434a645d4d4d59d1be6003c43c25b5c
 
     GetPage(
       transition: Transition.fade,
@@ -281,7 +291,11 @@ class AppPages {
 
       binding: BindingsBuilder(() {
         Get.lazyPut<ProfileController>(
+<<<<<<< HEAD
           () => ProfileController(getProfileUseCase: sl(), profileUpdateUseCase: sl(),),
+=======
+          () => ProfileController(getProfileUseCase: sl()),
+>>>>>>> 953fe2da7434a645d4d4d59d1be6003c43c25b5c
 
           fenix: true,
         );
@@ -304,8 +318,7 @@ class AppPages {
       }),
     ),
 
-
- GetPage(
+    GetPage(
       transition: Transition.fade,
 
       name: AppRoutes.confirmdth,
@@ -314,8 +327,11 @@ class AppPages {
 
       binding: BindingsBuilder(() {
         Get.lazyPut<DthController>(
-          () => DthController(dthtabUseCase: sl(), searchdthusecase: sl(), confirmdthUsecase: sl(), dthrechargeusecase: sl()
-           
+          () => DthController(
+            dthtabUseCase: sl(),
+            searchdthusecase: sl(),
+            confirmdthUsecase: sl(),
+            dthrechargeusecase: sl(),
           ),
 
           fenix: true,
@@ -345,12 +361,25 @@ class AppPages {
         );
       }),
     ),
+<<<<<<< HEAD
     GetPage(name: AppRoutes.kyc, page: () => const KycScreen()),
 
 
      GetPage(
       transition: Transition.fade,
 
+=======
+    GetPage(
+      name: AppRoutes.kyc,
+      page: () => const KycScreen(),
+      binding: BindingsBuilder(
+        () => Get.lazyPut(
+          () => AddKycController(addKycUsecase: sl(), getkycUsecase: sl()),
+        ),
+      ),
+    ),
+    GetPage(
+>>>>>>> 953fe2da7434a645d4d4d59d1be6003c43c25b5c
       name: AppRoutes.loginhistory,
 
       page: () => LoginHistoryScreen(),
@@ -373,7 +402,7 @@ class AppPages {
       page: () => const WebSignupSuccessScreen(),
     ),
     GetPage(name: AppRoutes.setting, page: () => const SettingsPage()),
-     GetPage(
+    GetPage(
       transition: Transition.fade,
 
       name: AppRoutes.grade,
@@ -382,10 +411,7 @@ class AppPages {
 
       binding: BindingsBuilder(() {
         Get.lazyPut<GradeController>(
-          () => GradeController(
-            gradeusecase: sl()
-           
-          ),
+          () => GradeController(gradeusecase: sl()),
 
           fenix: true,
         );
@@ -423,9 +449,6 @@ class AppPages {
       }),
     ),
 
-
-
-
     GetPage(
       transition: Transition.fade,
 
@@ -440,7 +463,7 @@ class AppPages {
             staffListUseCase: sl(),
             searchStaffUsecase: sl(),
             walletTransferUsecase: sl(),
-            walletReportUsecase: sl()
+            walletReportUsecase: sl(),
           ),
 
           fenix: true,
@@ -477,7 +500,7 @@ class AppPages {
             staffListUseCase: sl(),
             searchStaffUsecase: sl(),
             walletTransferUsecase: sl(),
-            walletReportUsecase: sl()
+            walletReportUsecase: sl(),
           ),
 
           fenix: true,
@@ -485,14 +508,19 @@ class AppPages {
       }),
     ),
     GetPage(name: AppRoutes.walletbal, page: () => const WalletBalanceScreen()),
+    GetPage(
+      name: AppRoutes.insufficientBalance,
+      page: () => const InsufficientBalancePage(),
+    ),
     GetPage(name: AppRoutes.dth, page: () => const DTHRechargePage()),
     GetPage(name: AppRoutes.addwallet, page: () => const AddWalletScreen()),
-    GetPage(name: AppRoutes.veirfypin, page: () =>  PinCodeEnterPage()),
-    GetPage(name: AppRoutes.wallettrnsfer, page: () =>  WalletTransferScreen()),
+    GetPage(name: AppRoutes.veirfypin, page: () => PinCodeEnterPage()),
+    GetPage(name: AppRoutes.wallettrnsfer, page: () => WalletTransferScreen()),
     GetPage(
       name: AppRoutes.statementReadMore,
       page: () => const StatementReadMoreScreen(),
     ),
+<<<<<<< HEAD
 
     GetPage(
       transition: Transition.fade,
@@ -513,6 +541,10 @@ class AppPages {
     ),
     // GetPage(name: AppRoutes.webloginqr, page: () => const WebLoginScreen()),
      GetPage(
+=======
+    GetPage(name: AppRoutes.webloginqr, page: () => const WebLoginScreen()),
+    GetPage(
+>>>>>>> 953fe2da7434a645d4d4d59d1be6003c43c25b5c
       transition: Transition.fade,
 
       name: AppRoutes.paymentstatus,
@@ -521,15 +553,13 @@ class AppPages {
 
       binding: BindingsBuilder(() {
         Get.lazyPut<PaymentStatusController>(
-          () => PaymentStatusController(
-            paymentStatusUsecase: sl()
-           
-          ),
+          () => PaymentStatusController(paymentStatusUsecase: sl()),
 
           fenix: true,
         );
       }),
     ),
+<<<<<<< HEAD
 
      GetPage(
       transition: Transition.fade,
@@ -549,6 +579,8 @@ class AppPages {
       }),
     ),
    
+=======
+>>>>>>> 953fe2da7434a645d4d4d59d1be6003c43c25b5c
 
     GetPage(
       transition: Transition.fade,
@@ -558,9 +590,7 @@ class AppPages {
 
       binding: BindingsBuilder(() {
         Get.lazyPut<DisputeController>(
-          () => DisputeController(
-           disputeusecase: sl()
-          ),
+          () => DisputeController(disputeusecase: sl()),
 
           fenix: true,
         );
@@ -579,7 +609,7 @@ class AppPages {
             addStaffUsecase: sl(),
             searchStaffUsecase: sl(),
             walletTransferUsecase: sl(),
-            walletReportUsecase: sl()
+            walletReportUsecase: sl(),
           ),
 
           fenix: true,
@@ -587,33 +617,26 @@ class AppPages {
       }),
     ),
 
+    GetPage(
+      name: AppRoutes.transaction,
+      transition: Transition.fade,
 
+      page: () {
+        final status = Get.arguments as TransactionStatus?;
 
-   GetPage(
-  name: AppRoutes.transaction,
-  transition: Transition.fade,
+        return TransactionScreen(status: status ?? TransactionStatus.success);
+      },
 
-  page: () {
-    final status =
-        Get.arguments as TransactionStatus?;
-
-    return TransactionScreen(
-      status:
-          status ?? TransactionStatus.success,
-    );
-  },
-
-  binding: BindingsBuilder(() {
-    Get.lazyPut<TransReportController>(
-      () => TransReportController(
-        transreportUsecase: sl(),
-        allPlanUsecase: sl(),
-        submitDisputeUsecase: sl()
-      ),
-      fenix: true,
-    );
-  }),
-),
-    
+      binding: BindingsBuilder(() {
+        Get.lazyPut<TransReportController>(
+          () => TransReportController(
+            transreportUsecase: sl(),
+            allPlanUsecase: sl(),
+            submitDisputeUsecase: sl(),
+          ),
+          fenix: true,
+        );
+      }),
+    ),
   ];
 }

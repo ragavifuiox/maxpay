@@ -1,6 +1,4 @@
 
-import 'package:maxpay/core/data/model/submit_dispute_model.dart';
-import 'package:maxpay/core/data/model/wallet_credit_type_model..dart';
 
 class ApiRoutes {
   static const baseURL = "http://139.59.91.7/test_paylinkonline.in/public/api";

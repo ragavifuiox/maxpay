@@ -30,69 +30,71 @@ class EarningsChart extends StatelessWidget {
             ),
         ],
       ),
-      child: LineChart(
-        LineChartData(
-          gridData: FlGridData(
-            show: true,
-            drawVerticalLine: true,
-            horizontalInterval: 1,
-            verticalInterval: 1,
-            getDrawingHorizontalLine: (value) {
-              return const FlLine(color: Colors.transparent, strokeWidth: 0);
-            },
-            getDrawingVerticalLine: (value) {
-              return FlLine(
-                color: isDark
-                    ? Colors.white.withValues(alpha: 0.21)
-                    : AppColors.clrTextgrey.withValues(alpha: 0.2),
-                strokeWidth: .8,
-                dashArray: [5, 5],
-              );
-            },
-          ),
-          titlesData: const FlTitlesData(show: false),
-          borderData: FlBorderData(show: false),
-          minX: 0,
-          maxX: 11,
-          minY: 0,
-          maxY: 6,
-          lineBarsData: [
-            LineChartBarData(
-              spots: const [
-                FlSpot(0, 3),
-                FlSpot(1, 4),
-                FlSpot(2, 3.2),
-                FlSpot(3, 4.2),
-                FlSpot(4, 4),
-                FlSpot(5, 5),
-                FlSpot(6, 2),
-                FlSpot(7, 2.5),
-                FlSpot(8, 3.5),
-                FlSpot(9, 2.8),
-                FlSpot(10, 2),
-              ],
-              isCurved: true,
-              color: isDark ? AppColors.redClr : AppColors.blueColor,
-              barWidth: 3,
-              isStrokeCapRound: true,
-              dotData: const FlDotData(show: false),
-              belowBarData: BarAreaData(
-                show: true,
-                gradient: LinearGradient(
-                  colors: [
-                    isDark
-                        ? AppColors.redClr.withValues(alpha: 0.3)
-                        : AppColors.blueColor.withValues(alpha: 0.3),
-                    isDark
-                        ? AppColors.redClr.withValues(alpha: 0.01)
-                        : AppColors.blueColor.withValues(alpha: 0.01),
-                  ],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
+      child: RepaintBoundary(
+        child: LineChart(
+          LineChartData(
+            gridData: FlGridData(
+              show: true,
+              drawVerticalLine: true,
+              horizontalInterval: 1,
+              verticalInterval: 1,
+              getDrawingHorizontalLine: (value) {
+                return const FlLine(color: Colors.transparent, strokeWidth: 0);
+              },
+              getDrawingVerticalLine: (value) {
+                return FlLine(
+                  color: isDark
+                      ? Colors.white.withValues(alpha: 0.21)
+                      : AppColors.clrTextgrey.withValues(alpha: 0.2),
+                  strokeWidth: .8,
+                  dashArray: [5, 5],
+                );
+              },
+            ),
+            titlesData: const FlTitlesData(show: false),
+            borderData: FlBorderData(show: false),
+            minX: 0,
+            maxX: 11,
+            minY: 0,
+            maxY: 6,
+            lineBarsData: [
+              LineChartBarData(
+                spots: const [
+                  FlSpot(0, 3),
+                  FlSpot(1, 4),
+                  FlSpot(2, 3.2),
+                  FlSpot(3, 4.2),
+                  FlSpot(4, 4),
+                  FlSpot(5, 5),
+                  FlSpot(6, 2),
+                  FlSpot(7, 2.5),
+                  FlSpot(8, 3.5),
+                  FlSpot(9, 2.8),
+                  FlSpot(10, 2),
+                ],
+                isCurved: true,
+                color: isDark ? AppColors.redClr : AppColors.blueColor,
+                barWidth: 3,
+                isStrokeCapRound: true,
+                dotData: const FlDotData(show: false),
+                belowBarData: BarAreaData(
+                  show: true,
+                  gradient: LinearGradient(
+                    colors: [
+                      isDark
+                          ? AppColors.redClr.withValues(alpha: 0.3)
+                          : AppColors.blueColor.withValues(alpha: 0.3),
+                      isDark
+                          ? AppColors.redClr.withValues(alpha: 0.01)
+                          : AppColors.blueColor.withValues(alpha: 0.01),
+                    ],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

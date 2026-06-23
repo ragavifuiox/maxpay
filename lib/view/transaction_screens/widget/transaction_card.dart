@@ -82,7 +82,7 @@ class TransactionCard extends StatelessWidget {
                     height: 30,
                     fit: BoxFit.cover,
                     errorBuilder:
-                        (_, __, ___) =>
+                        (_, _, _) =>
                             _defaultLogo(),
                   ),
                 )
@@ -119,7 +119,7 @@ class TransactionCard extends StatelessWidget {
                     CrossAxisAlignment.end,
                 children: [
                   Text(
-                    "${data.amount ?? '0'}",
+                    data.amount ?? '0',
                     style: const TextStyle(
                       fontSize: 20,
                       fontWeight:

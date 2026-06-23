@@ -93,9 +93,9 @@ class BiometricsIntroPage extends StatelessWidget {
 
                     GestureDetector(
                       onTap: () async {
-                        await controller.fingerprint(0);
+                        // await controller.fingerprint(0);
 
-                        Get.offAllNamed(AppRoutes.successScreen);
+                        Get.offAndToNamed(AppRoutes.main);
                       },
                       child: Text(
                         "Skip For Now",

@@ -243,8 +243,7 @@ class _MobileRechargePageState extends State<MobileRechargePage>
                       builder: (context, value, child) {
                         final hasText = value.text.isNotEmpty;
 
-                        return 
-                        SizedBox(
+                        return SizedBox(
                           width: 80,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.end,
@@ -606,6 +605,25 @@ class _MobileRechargePageState extends State<MobileRechargePage>
                             );
                             return;
                           }
+                          final requiredAmount =
+                              double.tryParse(plan.amount.toString()) ?? 0.0;
+                          final currentBalance =
+                              Get.find<HomePageController>()
+                                  .walletBalance
+                                  .value
+                                  ?.data
+                                  ?.balance ??
+                              0.0;
+                          if (requiredAmount > currentBalance) {
+                            Get.toNamed(
+                              AppRoutes.insufficientBalance,
+                              arguments: {
+                                'currentBalance': currentBalance,
+                                'requiredAmount': requiredAmount,
+                              },
+                            );
+                            return;
+                          }
 
                           await controller.confirmtrans(
                             plan.productId.toString(),
@@ -693,6 +711,24 @@ class _MobileRechargePageState extends State<MobileRechargePage>
                         }
 
                         AppLogger.logError("Validated Mobile: $mobile");
+                        final requiredAmount =
+                            double.tryParse(plan.amount.toString()) ?? 0.0;
+                        final currentBalance = Get.find<HomePageController>()
+                                .walletBalance
+                                .value
+                                ?.data
+                                ?.balance ??
+                            0.0;
+                        if (requiredAmount > currentBalance) {
+                          Get.toNamed(
+                            AppRoutes.insufficientBalance,
+                            arguments: {
+                              'currentBalance': currentBalance,
+                              'requiredAmount': requiredAmount,
+                            },
+                          );
+                          return;
+                        }
 
                         await controller.confirmtrans(
                           plan.productId.toString(),
@@ -730,25 +766,25 @@ class _MobileRechargePageState extends State<MobileRechargePage>
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 8.w, vertical: 6.h),
       padding: EdgeInsets.all(14.r),
-     decoration: BoxDecoration(
-  color: Theme.of(context).brightness == Brightness.dark
-      ? const Color(0xFF2F3349)
-      : AppColors.background,
-  borderRadius: BorderRadius.circular(16.r),
-  border: Border.all(
-    color: Theme.of(context).brightness == Brightness.dark
-        ? Colors.white.withValues(alpha: 0.06)
-        : Colors.black.withValues(alpha: 0.05),
-  ),
-  boxShadow: [
-    if (Theme.of(context).brightness != Brightness.dark)
-      BoxShadow(
-        color: Colors.black.withValues(alpha: 0.03),
-        blurRadius: 8,
-        offset: const Offset(0, 3),
+      decoration: BoxDecoration(
+        color: Theme.of(context).brightness == Brightness.dark
+            ? const Color(0xFF2F3349)
+            : AppColors.background,
+        borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(
+          color: Theme.of(context).brightness == Brightness.dark
+              ? Colors.white.withValues(alpha: 0.06)
+              : Colors.black.withValues(alpha: 0.05),
+        ),
+        boxShadow: [
+          if (Theme.of(context).brightness != Brightness.dark)
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.03),
+              blurRadius: 8,
+              offset: const Offset(0, 3),
+            ),
+        ],
       ),
-  ],
-),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -847,12 +883,11 @@ class _MobileRechargePageState extends State<MobileRechargePage>
 
           SizedBox(height: 14.h),
 
-         Divider(
-  color: Theme.of(context).brightness == Brightness.light
-      ? Colors.black12
-      : Colors.white24,
-),
-
+          Divider(
+            color: Theme.of(context).brightness == Brightness.light
+                ? Colors.black12
+                : Colors.white24,
+          ),
 
           SizedBox(height: 10.h),
 

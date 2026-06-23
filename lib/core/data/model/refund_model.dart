@@ -11,7 +11,7 @@ class Refund {
     if (json['data'] != null) {
       data = <RefundData>[];
       json['data'].forEach((v) {
-        data!.add(new RefundData.fromJson(v));  
+        data!.add(RefundData.fromJson(v));  
       });
     }
     message = json['message'];
@@ -19,13 +19,13 @@ class Refund {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['success'] = this.success;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['success'] = success;
     if (this.data != null) {
       data['data'] = this.data!.map((v) => v.toJson()).toList();
     }
-    data['message'] = this.message;
-    data['code'] = this.code;
+    data['message'] = message;
+    data['code'] = code;
     return data;
   }
 }
@@ -53,12 +53,12 @@ class RefundData {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['operator_name'] = this.operatorName;
-    data['operator_logo'] = this.operatorLogo;
-    data['transaction_no'] = this.transactionNo;
-    data['amount'] = this.amount;
-    data['date_time'] = this.dateTime;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['operator_name'] = operatorName;
+    data['operator_logo'] = operatorLogo;
+    data['transaction_no'] = transactionNo;
+    data['amount'] = amount;
+    data['date_time'] = dateTime;
     return data;
   }
 }
