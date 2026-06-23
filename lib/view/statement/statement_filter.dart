@@ -18,10 +18,9 @@ class StatementFilter extends GetView<StatementController> {
       builder: (controller) {
         return Container(
           padding: const EdgeInsets.all(12),
+          margin: EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: isDark
-                ? AppColors.darkplceholder
-                : AppColors.background,
+            color: isDark ? AppColors.darkplceholder : AppColors.background,
             borderRadius: BorderRadius.circular(10),
             border: Border.all(
               color: isDark
@@ -35,9 +34,7 @@ class StatementFilter extends GetView<StatementController> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12),
                 decoration: BoxDecoration(
-                  color: isDark
-                      ? AppColors.darkplceholder
-                      : Colors.white,
+                  color: isDark ? AppColors.darkplceholder : Colors.white,
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
                     color: isDark
@@ -46,31 +43,31 @@ class StatementFilter extends GetView<StatementController> {
                   ),
                 ),
                 child: DropdownButtonHideUnderline(
-                  child:DropdownButton<String>(
-  isExpanded: true,
-  value: controller.selectedtype.value.isEmpty
-      ? null
-      : controller.selectedtype.value,
+                  child: DropdownButton<String>(
+                    isExpanded: true,
+                    value: controller.selectedtype.value.isEmpty
+                        ? null
+                        : controller.selectedtype.value,
 
-  hint: const Text("Payment Type"),
+                    hint: const Text("Payment Type"),
 
-  items: controller.Type.map((item) {
-    return DropdownMenuItem<String>(
-      value: item,
-      child: Text(item),
-    );
-  }).toList(),
+                    items: controller.Type.map((item) {
+                      return DropdownMenuItem<String>(
+                        value: item,
+                        child: Text(item),
+                      );
+                    }).toList(),
 
-  onChanged: (value) {
-   controller.setType(value ?? "");
-controller.statement();// 🔥 MUST SET THIS;
-     debugPrint(
-    "Selected Payment Type => ${controller.selectedtype.value}",
-  );
+                    onChanged: (value) {
+                      controller.setType(value ?? "");
+                      controller.statement(); // 🔥 MUST SET THIS;
+                      debugPrint(
+                        "Selected Payment Type => ${controller.selectedtype.value}",
+                      );
 
-     controller.statement();
-  },
-)
+                      controller.statement();
+                    },
+                  ),
                 ),
               ),
 
@@ -81,8 +78,7 @@ controller.statement();// 🔥 MUST SET THIS;
                 children: [
                   Expanded(
                     child: InkWell(
-                      onTap: () =>
-                          controller.selectFromDate(context),
+                      onTap: () => controller.selectFromDate(context),
                       child: _DateField(
                         hint: controller.fromDate.isEmpty
                             ? "Start Date"
@@ -93,17 +89,13 @@ controller.statement();// 🔥 MUST SET THIS;
 
                   const SizedBox(width: 8),
 
-                  Icon(
-                    Icons.arrow_forward,
-                    color: theme.colorScheme.primary,
-                  ),
+                  Icon(Icons.arrow_forward, color: theme.colorScheme.primary),
 
                   const SizedBox(width: 8),
 
                   Expanded(
                     child: InkWell(
-                      onTap: () =>
-                          controller.selectToDate(context),
+                      onTap: () => controller.selectToDate(context),
                       child: _DateField(
                         hint: controller.toDate.isEmpty
                             ? "End Date"
@@ -137,14 +129,10 @@ controller.statement();// 🔥 MUST SET THIS;
                   ),
                   hintText: "Enter Mobile Number",
                   hintStyle: TextHelper.max1.copyWith(
-                    color: isDark
-                        ? AppColors.textclr
-                        : AppColors.clrTextgrey,
+                    color: isDark ? AppColors.textclr : AppColors.clrTextgrey,
                   ),
                   filled: true,
-                  fillColor: isDark
-                      ? AppColors.darkplceholder
-                      : Colors.white,
+                  fillColor: isDark ? AppColors.darkplceholder : Colors.white,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(7),
                   ),
@@ -175,19 +163,12 @@ class _DateField extends StatelessWidget {
     final isDark = theme.brightness == Brightness.dark;
 
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 10,
-        vertical: 12,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
       decoration: BoxDecoration(
-        color: isDark
-            ? AppColors.darkplceholder
-            : Colors.white,
+        color: isDark ? AppColors.darkplceholder : Colors.white,
         borderRadius: BorderRadius.circular(7),
         border: Border.all(
-          color: isDark
-              ? AppColors.darkFilterBorder
-              : AppColors.totalborde2,
+          color: isDark ? AppColors.darkFilterBorder : AppColors.totalborde2,
         ),
       ),
       child: Text(

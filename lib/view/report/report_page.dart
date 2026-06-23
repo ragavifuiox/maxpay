@@ -54,7 +54,7 @@ class ReportPage extends StatelessWidget {
                     context,
                     'My Earnings',
                     () {
-                       Get.toNamed(AppRoutes.myearning);
+                      Get.toNamed(AppRoutes.myearning);
                     },
                     SvgPicture.asset(AssetImages.earnings, width: 24.w),
                   ),
@@ -62,8 +62,7 @@ class ReportPage extends StatelessWidget {
                     context,
                     'Wallet Credit',
                     () {
-                     Get.toNamed(AppRoutes.
-                     walletcredit);
+                      Get.toNamed(AppRoutes.walletcredit);
                     },
                     SvgPicture.asset(AssetImages.wallet, width: 24.w),
                   ),
@@ -71,7 +70,7 @@ class ReportPage extends StatelessWidget {
                     context,
                     'Refunds',
                     () {
-                       Get.toNamed(AppRoutes.refund);
+                      Get.toNamed(AppRoutes.refund);
                     },
 
                     SvgPicture.asset(AssetImages.refunds, width: 24.w),
@@ -85,12 +84,11 @@ class ReportPage extends StatelessWidget {
                   //   },
                   //   SvgPicture.asset(AssetImages.cashback, width: 24.w),
                   // ),
-                  
-                   _buildMenuTile(
+                  _buildMenuTile(
                     context,
                     'Dispute Report',
                     () {
-                        Get.toNamed(AppRoutes.dispute);
+                      Get.toNamed(AppRoutes.dispute);
                     },
                     SvgPicture.asset(AssetImages.cashback, width: 24.w),
                   ),
@@ -98,7 +96,7 @@ class ReportPage extends StatelessWidget {
                     context,
                     'Statement',
                     () {
-                     Get.toNamed(AppRoutes.statement);
+                      Get.toNamed(AppRoutes.statement);
                     },
                     SvgPicture.asset(AssetImages.dispute, width: 21.w),
                   ),

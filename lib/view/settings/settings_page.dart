@@ -82,7 +82,7 @@ class SettingsPage extends StatelessWidget {
                     context,
                     'Update Pin',
                     () {
-                      Get.toNamed(AppRoutes.veirfypin, arguments: true);
+                      Get.toNamed(AppRoutes.verify, arguments: true);
                     },
                     SvgPicture.asset(AssetImages.updatePin, width: 24.w),
                   ),
@@ -124,7 +124,6 @@ class SettingsPage extends StatelessWidget {
                     'Rating Review',
                     () {
                       // Get.toNamed(AppRoutes.weblogin);
-                      
                     },
                     SvgPicture.asset(AssetImages.review, width: 24.w),
                   ),
@@ -238,16 +237,17 @@ class SettingsPage extends StatelessWidget {
                         SizedBox(width: 15.w),
                         Expanded(
                           child: _buildLogoutButton(
-  context,
-  'Web Logout',
-  Icons.logout_rounded,
-  () {
-    Get.find<WebLoginController>().WebLogout(
-      isweb: "1", // or whatever value your API expects
-    );
-  },
-  true,
-),
+                            context,
+                            'Web Logout',
+                            Icons.logout_rounded,
+                            () {
+                              Get.find<WebLoginController>().WebLogout(
+                                isweb:
+                                    "1", // or whatever value your API expects
+                              );
+                            },
+                            true,
+                          ),
                         ),
                       ],
                     ),

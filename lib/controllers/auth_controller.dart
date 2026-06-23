@@ -209,6 +209,7 @@ class AuthController extends GetxController {
       result.fold(
         (failure) {
           CustomToast.error(failure.message);
+
         },
         (response) async {
           AppLogger.logError("========== OTP RESPONSE ==========");

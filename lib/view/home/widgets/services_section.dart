@@ -22,8 +22,8 @@ class MenuScreen extends StatelessWidget {
   );
   final HomePageController homeController = Get.find<HomePageController>();
   final BannerController bannerController = Get.put(
-  BannerController(bannerUsecase: sl(), advusecase: sl(),),
-);
+    BannerController(bannerUsecase: sl(), advusecase: sl()),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -98,82 +98,87 @@ class MenuScreen extends StatelessWidget {
                       SizedBox(height: 16.h),
 
                       /// TOP BANNER
-              Obx(() {
-  final banner = bannerController.bannerData.value;
-  final list = banner?.data ?? [];
+                      Obx(() {
+                        final banner = bannerController.bannerData.value;
+                        final list = banner?.data ?? [];
 
-  if (bannerController.isLoading.value) {
-    return const Center(child: CircularProgressIndicator());
-  }
+                        if (bannerController.isLoading.value) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
 
-  if (list.isEmpty) {
-    return const SizedBox.shrink();
-  }
+                        if (list.isEmpty) {
+                          return const SizedBox.shrink();
+                        }
 
-  return Column(
-    children: [
-      SizedBox(
-        height: 150.h,
-        child: PageView.builder(
-          controller: bannerController.pageController,
-          itemCount: list.length,
-          onPageChanged: (index) {
-            bannerController.currentIndex.value = index;
-          },
-          itemBuilder: (context, index) {
-            final imageUrl =
-                (list[index].image ?? "").addToBase();
+                        return Column(
+                          children: [
+                            SizedBox(
+                              height: 150.h,
+                              child: PageView.builder(
+                                controller: bannerController.pageController,
+                                itemCount: list.length,
+                                onPageChanged: (index) {
+                                  bannerController.currentIndex.value = index;
+                                },
+                                itemBuilder: (context, index) {
+                                  final imageUrl = (list[index].image ?? "")
+                                      .addToBase();
 
-            return ClipRRect(
-              borderRadius: BorderRadius.circular(16.r),
-              child: Image.network(
-                imageUrl,
-                fit: BoxFit.cover,
-                errorBuilder: (_, _, _) {
-                  return Container(
-                    color: Colors.grey.shade300,
-                    child: const Icon(Icons.broken_image),
-                  );
-                },
-              ),
-            );
-          },
-        ),
-      ),
+                                  return ClipRRect(
+                                    borderRadius: BorderRadius.circular(16.r),
+                                    child: Image.network(
+                                      imageUrl,
+                                      fit: BoxFit.cover,
+                                      errorBuilder: (_, _, _) {
+                                        return Container(
+                                          color: Colors.grey.shade300,
+                                          child: const Icon(Icons.broken_image),
+                                        );
+                                      },
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
 
-      SizedBox(height: 8.h),
+                            SizedBox(height: 8.h),
 
-      /// 🔥 DOT INDICATOR
-     Obx(() {
-  return Row(
-    mainAxisAlignment: MainAxisAlignment.center,
-    children: List.generate(list.length, (index) {
-      final isActive =
-          bannerController.currentIndex.value == index;
+                            /// 🔥 DOT INDICATOR
+                            Obx(() {
+                              return Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: List.generate(list.length, (index) {
+                                  final isActive =
+                                      bannerController.currentIndex.value ==
+                                      index;
 
-      return AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        margin: EdgeInsets.symmetric(horizontal: 4.w),
+                                  return AnimatedContainer(
+                                    duration: const Duration(milliseconds: 300),
+                                    margin: EdgeInsets.symmetric(
+                                      horizontal: 4.w,
+                                    ),
 
-        height: 6.w,
+                                    height: 6.w,
 
-        // 🔥 ACTIVE DOT WIDTH BIGGER
-        width: isActive ? 18.w : 6.w,
+                                    // 🔥 ACTIVE DOT WIDTH BIGGER
+                                    width: isActive ? 18.w : 6.w,
 
-        decoration: BoxDecoration(
-          color: isActive
-              ? AppColors.clrPrimary
-              : Colors.grey.shade400,
+                                    decoration: BoxDecoration(
+                                      color: isActive
+                                          ? AppColors.clrPrimary
+                                          : Colors.grey.shade400,
 
-          borderRadius: BorderRadius.circular(20.r),
-        ),
-      );
-    }),
-  );
-}),
-    ],
-  );
-}),
+                                      borderRadius: BorderRadius.circular(20.r),
+                                    ),
+                                  );
+                                }),
+                              );
+                            }),
+                          ],
+                        );
+                      }),
 
                       SizedBox(height: 18.h),
 
@@ -238,35 +243,40 @@ class MenuScreen extends StatelessWidget {
 
                           /// CENTER BANNER
                           Expanded(
-  child: SizedBox(
-    height: 160.h,
-    child: Obx(() {
-  final advList =
-      bannerController.advdata.value?.data?.advertisements ?? [];
+                            child: SizedBox(
+                              height: 160.h,
+                              child: Obx(() {
+                                final advList =
+                                    bannerController
+                                        .advdata
+                                        .value
+                                        ?.data
+                                        ?.advertisements ??
+                                    [];
 
-  if (advList.isEmpty) {
-    return const SizedBox();
-  }
+                                if (advList.isEmpty) {
+                                  return const SizedBox();
+                                }
 
-  final imageUrl =
-      (advList.first.adImage ?? "").addToBase();
+                                final imageUrl = (advList.first.adImage ?? "")
+                                    .addToBase();
 
-  return ClipRRect(
-    borderRadius: BorderRadius.circular(16.r),
-    child: Image.network(
-      imageUrl,
-      fit: BoxFit.cover,
-      errorBuilder: (_, _, _) {
-        return Container(
-          color: Colors.grey.shade300,
-          child: const Icon(Icons.broken_image),
-        );
-      },
-    ),
-  );
-}),
-  ),
-),
+                                return ClipRRect(
+                                  borderRadius: BorderRadius.circular(16.r),
+                                  child: Image.network(
+                                    imageUrl,
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (_, _, _) {
+                                      return Container(
+                                        color: Colors.grey.shade300,
+                                        child: const Icon(Icons.broken_image),
+                                      );
+                                    },
+                                  ),
+                                );
+                              }),
+                            ),
+                          ),
                         ],
                       ),
 
@@ -296,53 +306,61 @@ class MenuScreen extends StatelessWidget {
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-
-                          
                           /// LEFT BANNER
                           SizedBox(width: 2.w),
-                            Expanded(
-  child: InkWell(
-    onTap: () {
-      final advList =
-          bannerController.advdata.value?.data?.advertisements ?? [];
+                          Expanded(
+                            child: InkWell(
+                              onTap: () {
+                                final advList =
+                                    bannerController
+                                        .advdata
+                                        .value
+                                        ?.data
+                                        ?.advertisements ??
+                                    [];
 
-      if (advList.isNotEmpty) {
-        _showFullImage(
-          context,
-          (advList.first.adImage ?? "").addToBase(),
-        );
-      }
-    },
-    child: SizedBox(
-      height: 160.h,
-      child: Obx(() {
-        final advList =
-            bannerController.advdata.value?.data?.advertisements ?? [];
+                                if (advList.isNotEmpty) {
+                                  _showFullImage(
+                                    context,
+                                    (advList.first.adImage ?? "").addToBase(),
+                                  );
+                                }
+                              },
+                              child: SizedBox(
+                                height: 160.h,
+                                child: Obx(() {
+                                  final advList =
+                                      bannerController
+                                          .advdata
+                                          .value
+                                          ?.data
+                                          ?.advertisements ??
+                                      [];
 
-        if (advList.isEmpty) {
-          return const SizedBox();
-        }
+                                  if (advList.isEmpty) {
+                                    return const SizedBox();
+                                  }
 
-        final imageUrl =
-            (advList.first.adImage ?? "").addToBase();
+                                  final imageUrl = (advList.first.adImage ?? "")
+                                      .addToBase();
 
-        return ClipRRect(
-          borderRadius: BorderRadius.circular(16.r),
-          child: Image.network(
-            imageUrl,
-            fit: BoxFit.cover,
-            errorBuilder: (_, _, _) {
-              return Container(
-                color: Colors.grey.shade300,
-                child: const Icon(Icons.broken_image),
-              );
-            },
-          ),
-        );
-      }),
-    ),
-  ),
-),
+                                  return ClipRRect(
+                                    borderRadius: BorderRadius.circular(16.r),
+                                    child: Image.network(
+                                      imageUrl,
+                                      fit: BoxFit.cover,
+                                      errorBuilder: (_, _, _) {
+                                        return Container(
+                                          color: Colors.grey.shade300,
+                                          child: const Icon(Icons.broken_image),
+                                        );
+                                      },
+                                    ),
+                                  );
+                                }),
+                              ),
+                            ),
+                          ),
                           SizedBox(width: 12.w),
 
                           Column(
@@ -380,38 +398,35 @@ class MenuScreen extends StatelessWidget {
     );
   }
 
-  void _showFullImage(
-  BuildContext context,
-  String imageUrl,
-) {
-  showDialog(
-    context: context,
-    barrierColor: Colors.black.withOpacity(0.9),
-    builder: (_) {
-      return GestureDetector(
-        onTap: () => Get.back(),
-        child: Center(
-          child: Hero(
-            tag: imageUrl,
-            child: InteractiveViewer(
-              child: Image.network(
-                imageUrl,
-                fit: BoxFit.contain,
-                errorBuilder: (_, _, _) {
-                  return const Icon(
-                    Icons.broken_image,
-                    color: Colors.white,
-                    size: 60,
-                  );
-                },
+  void _showFullImage(BuildContext context, String imageUrl) {
+    showDialog(
+      context: context,
+      barrierColor: Colors.black.withOpacity(0.9),
+      builder: (_) {
+        return GestureDetector(
+          onTap: () => Get.back(),
+          child: Center(
+            child: Hero(
+              tag: imageUrl,
+              child: InteractiveViewer(
+                child: Image.network(
+                  imageUrl,
+                  fit: BoxFit.contain,
+                  errorBuilder: (_, _, _) {
+                    return const Icon(
+                      Icons.broken_image,
+                      color: Colors.white,
+                      size: 60,
+                    );
+                  },
+                ),
               ),
             ),
           ),
-        ),
-      );
-    },
-  );
-}
+        );
+      },
+    );
+  }
 
   /// DYNAMIC ITEM
   Widget _dynamicServiceItem(BuildContext context, Data item, [int index = 0]) {
@@ -621,31 +636,27 @@ class MenuScreen extends StatelessWidget {
       //   break;
 
       case 'dth':
-       print("MENU SCREEN ID = ${item.id}");
+        print("MENU SCREEN ID = ${item.id}");
 
         Get.toNamed(
-          
           AppRoutes.dth,
 
-        arguments: {
-          "productId": item.id.toString(),
-          "productName": item.name ?? "",
-        },
-      );
+          arguments: {
+            "productId": item.id.toString(),
+            "productName": item.name ?? "",
+          },
+        );
 
-
-      break;
-       case 'payment status':
-
+        break;
+      case 'payment status':
         Get.toNamed(
-        AppRoutes.paymentstatus,
+          AppRoutes.paymentstatus,
 
-        arguments: {
-          "productId": item.id.toString(),
-          "productName": item.name ?? "",
-        },
-      );
-
+          arguments: {
+            "productId": item.id.toString(),
+            "productName": item.name ?? "",
+          },
+        );
 
       default:
         break;
