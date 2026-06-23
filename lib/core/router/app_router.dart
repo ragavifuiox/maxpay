@@ -2,11 +2,7 @@ import 'package:get/get.dart';
 import 'package:maxpay/controllers/add_kyc_controller.dart';
 import 'package:maxpay/controllers/add_staff_controller.dart';
 import 'package:maxpay/controllers/auth_controller.dart';
-<<<<<<< HEAD
 import 'package:maxpay/controllers/cash_back_controller.dart';
-import 'package:maxpay/controllers/credit_controller.dart';
-=======
->>>>>>> 953fe2da7434a645d4d4d59d1be6003c43c25b5c
 import 'package:maxpay/controllers/dispute_controller.dart';
 import 'package:maxpay/controllers/dth_controller.dart';
 import 'package:maxpay/controllers/earning_controller.dart';
@@ -243,7 +239,6 @@ class AppPages {
         );
       }),
     ),
-<<<<<<< HEAD
     GetPage(
       transition: Transition.fade,
 
@@ -253,17 +248,12 @@ class AppPages {
 
       binding: BindingsBuilder(() {
         Get.lazyPut<CashbackController>(
-          () => CashbackController( allPlanUsecase: sl(), cashbackUsecase: sl()),
+          () => CashbackController(allPlanUsecase: sl(), cashbackUsecase: sl()),
 
           fenix: true,
         );
       }),
     ),
- 
-=======
-
-    GetPage(name: AppRoutes.cashback, page: () => const CashbackScreen()),
->>>>>>> 953fe2da7434a645d4d4d59d1be6003c43c25b5c
 
     GetPage(
       transition: Transition.fade,
@@ -291,11 +281,10 @@ class AppPages {
 
       binding: BindingsBuilder(() {
         Get.lazyPut<ProfileController>(
-<<<<<<< HEAD
-          () => ProfileController(getProfileUseCase: sl(), profileUpdateUseCase: sl(),),
-=======
-          () => ProfileController(getProfileUseCase: sl()),
->>>>>>> 953fe2da7434a645d4d4d59d1be6003c43c25b5c
+          () => ProfileController(
+            getProfileUseCase: sl(),
+            profileUpdateUseCase: sl(),
+          ),
 
           fenix: true,
         );
@@ -361,40 +350,24 @@ class AppPages {
         );
       }),
     ),
-<<<<<<< HEAD
     GetPage(name: AppRoutes.kyc, page: () => const KycScreen()),
 
-
-     GetPage(
+    GetPage(
       transition: Transition.fade,
 
-=======
-    GetPage(
-      name: AppRoutes.kyc,
-      page: () => const KycScreen(),
-      binding: BindingsBuilder(
-        () => Get.lazyPut(
-          () => AddKycController(addKycUsecase: sl(), getkycUsecase: sl()),
-        ),
-      ),
-    ),
-    GetPage(
->>>>>>> 953fe2da7434a645d4d4d59d1be6003c43c25b5c
       name: AppRoutes.loginhistory,
 
       page: () => LoginHistoryScreen(),
 
       binding: BindingsBuilder(() {
         Get.lazyPut<LoginHistoryController>(
-          () => LoginHistoryController(loginHistoryUsecase: sl()
-            
-          ),
+          () => LoginHistoryController(loginHistoryUsecase: sl()),
 
           fenix: true,
         );
       }),
     ),
-    
+
     GetPage(name: AppRoutes.weblogin, page: () => const WebSignupScreen()),
     GetPage(name: AppRoutes.webotp, page: () => const WebOtpScreen()),
     GetPage(
@@ -520,7 +493,6 @@ class AppPages {
       name: AppRoutes.statementReadMore,
       page: () => const StatementReadMoreScreen(),
     ),
-<<<<<<< HEAD
 
     GetPage(
       transition: Transition.fade,
@@ -531,20 +503,15 @@ class AppPages {
 
       binding: BindingsBuilder(() {
         Get.lazyPut<WebLoginController>(
-          () => WebLoginController(webloginusecase: sl(),webLogoutUsecase: sl()
-           
-          ),
+          () =>
+              WebLoginController(webloginusecase: sl(), webLogoutUsecase: sl()),
 
           fenix: true,
         );
       }),
     ),
     // GetPage(name: AppRoutes.webloginqr, page: () => const WebLoginScreen()),
-     GetPage(
-=======
-    GetPage(name: AppRoutes.webloginqr, page: () => const WebLoginScreen()),
     GetPage(
->>>>>>> 953fe2da7434a645d4d4d59d1be6003c43c25b5c
       transition: Transition.fade,
 
       name: AppRoutes.paymentstatus,
@@ -559,9 +526,8 @@ class AppPages {
         );
       }),
     ),
-<<<<<<< HEAD
 
-     GetPage(
+    GetPage(
       transition: Transition.fade,
 
       name: AppRoutes.statement,
@@ -570,17 +536,12 @@ class AppPages {
 
       binding: BindingsBuilder(() {
         Get.lazyPut<StatementController>(
-          () => StatementController(
-            statementUsecase: sl(),
-          ),
+          () => StatementController(statementUsecase: sl()),
 
           fenix: true,
         );
       }),
     ),
-   
-=======
->>>>>>> 953fe2da7434a645d4d4d59d1be6003c43c25b5c
 
     GetPage(
       transition: Transition.fade,

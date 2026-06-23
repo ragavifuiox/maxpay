@@ -30,18 +30,15 @@ class Data {
   String? email;
   String? regMobileNumber;
   String? whatsappNumber;
-<<<<<<< HEAD
   String? profileImg;
-=======
-  Null profileImg;
->>>>>>> 953fe2da7434a645d4d4d59d1be6003c43c25b5c
 
-  Data(
-      {this.retailerName,
-      this.email,
-      this.regMobileNumber,
-      this.whatsappNumber,
-      this.profileImg});
+  Data({
+    this.retailerName,
+    this.email,
+    this.regMobileNumber,
+    this.whatsappNumber,
+    this.profileImg,
+  });
 
   Data.fromJson(Map<String, dynamic> json) {
     retailerName = json['retailer_name'];

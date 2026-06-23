@@ -48,15 +48,10 @@ class DthSuccessPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-<<<<<<< HEAD
-      final ProfileController profileController = Get.put(ProfileController(getProfileUseCase: sl(), profileUpdateUseCase: sl( ),));
-      final ScreenshotController screenshotController = ScreenshotController();
-=======
     final ProfileController profileController = Get.put(
-      ProfileController(getProfileUseCase: sl()),
+      ProfileController(getProfileUseCase: sl(), profileUpdateUseCase: sl()),
     );
     final ScreenshotController screenshotController = ScreenshotController();
->>>>>>> 953fe2da7434a645d4d4d59d1be6003c43c25b5c
 
     final bool isMobileOrDTH =
         productName.toLowerCase().contains('jio') ||

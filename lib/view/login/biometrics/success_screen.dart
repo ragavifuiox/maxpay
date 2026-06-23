@@ -78,40 +78,31 @@ class SuccessScreen extends StatelessWidget {
                 ),
                 const Spacer(),
 
-<<<<<<< HEAD
-               CommonButton(
-  title: "Go to Home",
-  onTap: () async {
-
-    final storage = LocalStorageService();
-    await storage.init();
-
-    final ip = storage.getString("ip_address") ?? "";
-    final city = storage.getString("city") ?? "";
-    final state = storage.getString("state") ?? "";
-    final network = storage.getString("network") ?? "";
-
-    final controller = Get.put(IpAddressController(ipAddressUseCase:sl() ));
-
-    await controller.saveIpAddress(
-      ipaddress: ip,
-      city: city,
-      state: state,
-      network: network,
-    );
-
-    Get.offAllNamed(AppRoutes.main);
-  },
-),
-=======
                 CommonButton(
                   title: "Go to Home",
-                  onTap: () {
-                    Get.toNamed(AppRoutes.main);
+                  onTap: () async {
+                    final storage = LocalStorageService();
+                    await storage.init();
+
+                    final ip = storage.getString("ip_address") ?? "";
+                    final city = storage.getString("city") ?? "";
+                    final state = storage.getString("state") ?? "";
+                    final network = storage.getString("network") ?? "";
+
+                    final controller = Get.put(
+                      IpAddressController(ipAddressUseCase: sl()),
+                    );
+
+                    await controller.saveIpAddress(
+                      ipaddress: ip,
+                      city: city,
+                      state: state,
+                      network: network,
+                    );
+
+                    Get.offAllNamed(AppRoutes.main);
                   },
                 ),
-
->>>>>>> 953fe2da7434a645d4d4d59d1be6003c43c25b5c
                 SizedBox(height: 40.h),
               ],
             ),
