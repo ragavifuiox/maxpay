@@ -1,22 +1,26 @@
 import 'package:get/get.dart';
 import 'package:maxpay/controllers/add_staff_controller.dart';
 import 'package:maxpay/controllers/auth_controller.dart';
+import 'package:maxpay/controllers/cash_back_controller.dart';
 import 'package:maxpay/controllers/credit_controller.dart';
 import 'package:maxpay/controllers/dispute_controller.dart';
 import 'package:maxpay/controllers/dth_controller.dart';
 import 'package:maxpay/controllers/earning_controller.dart';
 import 'package:maxpay/controllers/grade_controller.dart';
 import 'package:maxpay/controllers/homepage_controller.dart';
+import 'package:maxpay/controllers/login_history_controller.dart';
 import 'package:maxpay/controllers/menu_controlller.dart';
 import 'package:maxpay/controllers/payment_status_controller.dart';
 import 'package:maxpay/controllers/prepaid_controller.dart';
 
 import 'package:maxpay/controllers/profile_controller.dart';
 import 'package:maxpay/controllers/refund_controller.dart';
+import 'package:maxpay/controllers/statement_controller.dart';
 import 'package:maxpay/controllers/support_controller.dart';
 import 'package:maxpay/controllers/transaction_report_controller.dart';
 import 'package:maxpay/controllers/wallet_credit_controller.dart';
 import 'package:maxpay/controllers/wallet_request_controller.dart';
+import 'package:maxpay/controllers/web_login_controller.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/core/di/service_locator.dart';
 import 'package:maxpay/view/add_wallet/add_wallet_screen.dart';
@@ -54,6 +58,7 @@ import 'package:maxpay/view/staff/staff_list_screen.dart';
 import 'package:maxpay/view/staff/wallet_report_screen.dart';
 import 'package:maxpay/view/staff/wallet_transfer.dart';
 import 'package:maxpay/view/statement/state_readmore.dart';
+import 'package:maxpay/view/statement/statement_screen.dart';
 import 'package:maxpay/view/support/supoort_screen.dart';
 import 'package:maxpay/view/transaction_screens/transaction_success_screen.dart';
 import 'package:maxpay/view/update_pin/verify_pin_screen.dart';
@@ -233,8 +238,22 @@ class AppPages {
         );
       }),
     ),
-    
-    GetPage(name: AppRoutes.cashback, page: () => const CashbackScreen()),
+    GetPage(
+      transition: Transition.fade,
+
+      name: AppRoutes.cashback,
+
+      page: () => const CashbackScreen(),
+
+      binding: BindingsBuilder(() {
+        Get.lazyPut<CashbackController>(
+          () => CashbackController( allPlanUsecase: sl(), cashbackUsecase: sl()),
+
+          fenix: true,
+        );
+      }),
+    ),
+ 
 
     GetPage(
       transition: Transition.fade,
@@ -262,7 +281,7 @@ class AppPages {
 
       binding: BindingsBuilder(() {
         Get.lazyPut<ProfileController>(
-          () => ProfileController(getProfileUseCase: sl(),),
+          () => ProfileController(getProfileUseCase: sl(), profileUpdateUseCase: sl(),),
 
           fenix: true,
         );
@@ -327,10 +346,26 @@ class AppPages {
       }),
     ),
     GetPage(name: AppRoutes.kyc, page: () => const KycScreen()),
-    GetPage(
+
+
+     GetPage(
+      transition: Transition.fade,
+
       name: AppRoutes.loginhistory,
-      page: () => const LoginHistoryScreen(),
+
+      page: () => LoginHistoryScreen(),
+
+      binding: BindingsBuilder(() {
+        Get.lazyPut<LoginHistoryController>(
+          () => LoginHistoryController(loginHistoryUsecase: sl()
+            
+          ),
+
+          fenix: true,
+        );
+      }),
     ),
+    
     GetPage(name: AppRoutes.weblogin, page: () => const WebSignupScreen()),
     GetPage(name: AppRoutes.webotp, page: () => const WebOtpScreen()),
     GetPage(
@@ -458,7 +493,25 @@ class AppPages {
       name: AppRoutes.statementReadMore,
       page: () => const StatementReadMoreScreen(),
     ),
-    GetPage(name: AppRoutes.webloginqr, page: () => const WebLoginScreen()),
+
+    GetPage(
+      transition: Transition.fade,
+
+      name: AppRoutes.webloginqr,
+
+      page: () => WebLoginScreen(),
+
+      binding: BindingsBuilder(() {
+        Get.lazyPut<WebLoginController>(
+          () => WebLoginController(webloginusecase: sl(),webLogoutUsecase: sl()
+           
+          ),
+
+          fenix: true,
+        );
+      }),
+    ),
+    // GetPage(name: AppRoutes.webloginqr, page: () => const WebLoginScreen()),
      GetPage(
       transition: Transition.fade,
 
@@ -471,6 +524,24 @@ class AppPages {
           () => PaymentStatusController(
             paymentStatusUsecase: sl()
            
+          ),
+
+          fenix: true,
+        );
+      }),
+    ),
+
+     GetPage(
+      transition: Transition.fade,
+
+      name: AppRoutes.statement,
+
+      page: () => StatementScreen(),
+
+      binding: BindingsBuilder(() {
+        Get.lazyPut<StatementController>(
+          () => StatementController(
+            statementUsecase: sl(),
           ),
 
           fenix: true,

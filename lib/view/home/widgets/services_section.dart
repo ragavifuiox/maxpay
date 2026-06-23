@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:maxpay/controllers/banner_controller.dart';
 import 'package:maxpay/controllers/homepage_controller.dart';
 import 'package:maxpay/controllers/menu_controlller.dart';
 import 'package:maxpay/core/constants/asset_images.dart';
@@ -10,7 +11,7 @@ import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/core/di/service_locator.dart';
 import 'package:maxpay/view/home/widgets/home_header.dart';
-
+import 'package:maxpay/core/constants/extension.dart';
 import '../../../core/data/model/product_type.dart';
 
 class MenuScreen extends StatelessWidget {
@@ -20,6 +21,9 @@ class MenuScreen extends StatelessWidget {
     ServiceController(productTypeUseCase: sl()),
   );
   final HomePageController homeController = Get.find<HomePageController>();
+  final BannerController bannerController = Get.put(
+  BannerController(bannerUsecase: sl(), advusecase: sl(),),
+);
 
   @override
   Widget build(BuildContext context) {
@@ -94,15 +98,82 @@ class MenuScreen extends StatelessWidget {
                       SizedBox(height: 16.h),
 
                       /// TOP BANNER
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(16.r),
-                        child: Image.network(
-                          "https://images.unsplash.com/photo-1548013146-72479768bada?q=80&w=1000",
-                          height: 150.h,
-                          width: double.infinity,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
+              Obx(() {
+  final banner = bannerController.bannerData.value;
+  final list = banner?.data ?? [];
+
+  if (bannerController.isLoading.value) {
+    return const Center(child: CircularProgressIndicator());
+  }
+
+  if (list.isEmpty) {
+    return const SizedBox.shrink();
+  }
+
+  return Column(
+    children: [
+      SizedBox(
+        height: 150.h,
+        child: PageView.builder(
+          controller: bannerController.pageController,
+          itemCount: list.length,
+          onPageChanged: (index) {
+            bannerController.currentIndex.value = index;
+          },
+          itemBuilder: (context, index) {
+            final imageUrl =
+                (list[index].image ?? "").addToBase();
+
+            return ClipRRect(
+              borderRadius: BorderRadius.circular(16.r),
+              child: Image.network(
+                imageUrl,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) {
+                  return Container(
+                    color: Colors.grey.shade300,
+                    child: const Icon(Icons.broken_image),
+                  );
+                },
+              ),
+            );
+          },
+        ),
+      ),
+
+      SizedBox(height: 8.h),
+
+      /// 🔥 DOT INDICATOR
+     Obx(() {
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: List.generate(list.length, (index) {
+      final isActive =
+          bannerController.currentIndex.value == index;
+
+      return AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        margin: EdgeInsets.symmetric(horizontal: 4.w),
+
+        height: 6.w,
+
+        // 🔥 ACTIVE DOT WIDTH BIGGER
+        width: isActive ? 18.w : 6.w,
+
+        decoration: BoxDecoration(
+          color: isActive
+              ? AppColors.clrPrimary
+              : Colors.grey.shade400,
+
+          borderRadius: BorderRadius.circular(20.r),
+        ),
+      );
+    }),
+  );
+}),
+    ],
+  );
+}),
 
                       SizedBox(height: 18.h),
 
@@ -167,17 +238,35 @@ class MenuScreen extends StatelessWidget {
 
                           /// CENTER BANNER
                           Expanded(
-                            child: SizedBox(
-                              height: 160.h,
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(16.r),
-                                child: Image.asset(
-                                  AssetImages.banner1,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                            ),
-                          ),
+  child: SizedBox(
+    height: 160.h,
+    child: Obx(() {
+  final advList =
+      bannerController.advdata.value?.data?.advertisements ?? [];
+
+  if (advList.isEmpty) {
+    return const SizedBox();
+  }
+
+  final imageUrl =
+      (advList.first.adImage ?? "").addToBase();
+
+  return ClipRRect(
+    borderRadius: BorderRadius.circular(16.r),
+    child: Image.network(
+      imageUrl,
+      fit: BoxFit.cover,
+      errorBuilder: (_, __, ___) {
+        return Container(
+          color: Colors.grey.shade300,
+          child: const Icon(Icons.broken_image),
+        );
+      },
+    ),
+  );
+}),
+  ),
+),
                         ],
                       ),
 
@@ -207,25 +296,53 @@ class MenuScreen extends StatelessWidget {
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+
+                          
                           /// LEFT BANNER
                           SizedBox(width: 2.w),
-                          Expanded(
-                            child: InkWell(
-                              onTap: () {
-                                _showFullImage(context, AssetImages.banner2);
-                              },
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(16.r),
-                                child: Image.asset(
-                                  AssetImages.banner2,
-                                  height: 160.h,
-                                  width: double.infinity,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                            ),
-                          ),
+                            Expanded(
+  child: InkWell(
+    onTap: () {
+      final advList =
+          bannerController.advdata.value?.data?.advertisements ?? [];
 
+      if (advList.isNotEmpty) {
+        _showFullImage(
+          context,
+          (advList.first.adImage ?? "").addToBase(),
+        );
+      }
+    },
+    child: SizedBox(
+      height: 160.h,
+      child: Obx(() {
+        final advList =
+            bannerController.advdata.value?.data?.advertisements ?? [];
+
+        if (advList.isEmpty) {
+          return const SizedBox();
+        }
+
+        final imageUrl =
+            (advList.first.adImage ?? "").addToBase();
+
+        return ClipRRect(
+          borderRadius: BorderRadius.circular(16.r),
+          child: Image.network(
+            imageUrl,
+            fit: BoxFit.cover,
+            errorBuilder: (_, __, ___) {
+              return Container(
+                color: Colors.grey.shade300,
+                child: const Icon(Icons.broken_image),
+              );
+            },
+          ),
+        );
+      }),
+    ),
+  ),
+),
                           SizedBox(width: 12.w),
 
                           Column(
@@ -263,26 +380,38 @@ class MenuScreen extends StatelessWidget {
     );
   }
 
-  void _showFullImage(BuildContext context, String imagePath) {
-    showDialog(
-      context: context,
-      barrierColor: Colors.black.withOpacity(0.9),
-      builder: (_) {
-        return GestureDetector(
-          onTap: () => Get.back(),
-          child: Center(
-            child: Hero(
-              tag: imagePath,
-              child: Image.asset(
-                imagePath, // ✅ FIX HERE
+  void _showFullImage(
+  BuildContext context,
+  String imageUrl,
+) {
+  showDialog(
+    context: context,
+    barrierColor: Colors.black.withOpacity(0.9),
+    builder: (_) {
+      return GestureDetector(
+        onTap: () => Get.back(),
+        child: Center(
+          child: Hero(
+            tag: imageUrl,
+            child: InteractiveViewer(
+              child: Image.network(
+                imageUrl,
                 fit: BoxFit.contain,
+                errorBuilder: (_, __, ___) {
+                  return const Icon(
+                    Icons.broken_image,
+                    color: Colors.white,
+                    size: 60,
+                  );
+                },
               ),
             ),
           ),
-        );
-      },
-    );
-  }
+        ),
+      );
+    },
+  );
+}
 
   /// DYNAMIC ITEM
   Widget _dynamicServiceItem(BuildContext context, Data item, [int index = 0]) {

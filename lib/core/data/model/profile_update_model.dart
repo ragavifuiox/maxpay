@@ -30,7 +30,7 @@ class Data {
   String? email;
   String? regMobileNumber;
   String? whatsappNumber;
-  Null? profileImg;
+  String? profileImg;
 
   Data(
       {this.retailerName,

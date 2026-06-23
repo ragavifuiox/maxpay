@@ -34,6 +34,7 @@ class Data {
   String? pincode;
   String? state;
   String? status;
+  String? profileimg;
 
   Data(
       {this.id,
@@ -43,7 +44,8 @@ class Data {
       this.email,
       this.pincode,
       this.state,
-      this.status});
+      this.status,
+      this.profileimg});
 
   Data.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -54,6 +56,7 @@ class Data {
     pincode = json['pincode'];
     state = json['state'];
     status = json['status'];
+    profileimg = json['profileimg'];
   }
 
   Map<String, dynamic> toJson() {
@@ -66,6 +69,7 @@ class Data {
     data['pincode'] = pincode;
     data['state'] = state;
     data['status'] = status;
+    data['profileimg'] = profileimg;
     return data;
   }
 }

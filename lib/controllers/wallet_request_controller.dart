@@ -55,6 +55,7 @@ class GetBankController extends GetxController {
     }
   }
 
+
 Future<void> createWalletRequest({
   required String amount,
   required String paymenttype,

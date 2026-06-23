@@ -64,7 +64,7 @@ class WalletReportFilterWidget extends GetView<AddStaffController> {
   onChanged: (value) {
     controller.selectedcreditname.value = value ?? "";
      debugPrint(
-    "😁Selected Payment Type => ${controller.selectedcreditname.value}",
+    "Selected Payment Type => ${controller.selectedcreditname.value}",
   );
 
     controller.searchcredit(

@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:maxpay/controllers/auth_controller.dart';
 import 'package:maxpay/controllers/profile_controller.dart';
+import 'package:maxpay/controllers/web_login_controller.dart';
 import 'package:maxpay/core/constants/asset_images.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/core/utils/responsive.dart';
@@ -220,12 +221,16 @@ class SettingsPage extends StatelessWidget {
                         SizedBox(width: 15.w),
                         Expanded(
                           child: _buildLogoutButton(
-                            context,
-                            'Web Logout',
-                            Icons.logout_rounded,
-                            () {},
-                            true,
-                          ),
+  context,
+  'Web Logout',
+  Icons.logout_rounded,
+  () {
+    Get.find<WebLoginController>().WebLogout(
+      isweb: "1", // or whatever value your API expects
+    );
+  },
+  true,
+),
                         ),
                       ],
                     ),

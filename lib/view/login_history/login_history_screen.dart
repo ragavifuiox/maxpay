@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
+import 'package:get/get_state_manager/src/simple/get_view.dart';
+import 'package:maxpay/controllers/login_history_controller.dart';
 import 'package:maxpay/core/constants/colors.dart';
+import 'package:maxpay/core/data/model/login_history_model.dart';
 import 'package:maxpay/core/utils/texthelper.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
 import 'package:maxpay/view/login_history/widget/login_filter.dart';
 
-class LoginHistoryScreen extends StatelessWidget {
+class LoginHistoryScreen extends GetView<LoginHistoryController> {
   const LoginHistoryScreen({super.key});
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -38,17 +41,32 @@ class LoginHistoryScreen extends StatelessWidget {
             const SizedBox(height: 16),
 
             /// CARD LIST
-            Expanded(
-              child: ListView(
-                children: const [
-                  _LoginHistoryCard(),
+           Expanded(
+  child: Obx(() {
+    if (controller.isLoading.value) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
 
-                  SizedBox(height: 10),
+    if (controller.loghistory.isEmpty) {
+      return const Center(
+        child: Text("No Login History Found"),
+      );
+    }
 
-                  _LoginHistoryCard(),
-                ],
-              ),
-            ),
+    return ListView.separated(
+      itemCount: controller.loghistory.length,
+      separatorBuilder: (_, __) =>
+          const SizedBox(height: 10),
+      itemBuilder: (context, index) {
+        return _LoginHistoryCard(
+          item: controller.loghistory[index],
+        );
+      },
+    );
+  }),
+)
           ],
         ),
       ),
@@ -107,9 +125,12 @@ class LoginHistoryScreen extends StatelessWidget {
 // }
 
 /// LOGIN HISTORY CARD
-class _LoginHistoryCard
-    extends StatelessWidget {
-  const _LoginHistoryCard();
+class _LoginHistoryCard extends StatelessWidget {
+  final LogHistoryData item;
+
+  const _LoginHistoryCard({
+    required this.item,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -154,9 +175,7 @@ class _LoginHistoryCard
 
                   const SizedBox(width: 4),
 
-                  Text(
-                    "Madurai",
-
+                  Text(item.city ?? "-",
                     style:
                         TextHelper.max1
                             .copyWith(
@@ -187,8 +206,7 @@ class _LoginHistoryCard
 
                   const SizedBox(height: 5),
 
-                  Text(
-                    "2026-11-29 14:38:43",
+                  Text(item.loginTime ?? "-",
 
                     style:
                         TextHelper.max1
@@ -250,8 +268,7 @@ class _LoginHistoryCard
                     CrossAxisAlignment.end,
 
                 children: [
-                  Text(
-                    "http//network.router",
+                  Text(item.network ?? "-",
 
                     style:
                         TextHelper.max7

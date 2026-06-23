@@ -25,13 +25,13 @@ class UpdateProfileRepoImpl implements ProfileUpdateRepository {
   }) async {
     try {
     final response = await apiService.post(
-  ApiRoutes.searchplans,
+  ApiRoutes.updateprofile,
   data: {
     "pincode": pincode,
     "email": email,
     "reg_mobile_number": mobilenumber,
     "profile_image": profileimage,
-    "retailor_name": name,
+    "retailer_name": name,
   },
 );
 

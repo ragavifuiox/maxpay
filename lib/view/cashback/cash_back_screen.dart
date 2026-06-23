@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:maxpay/controllers/cash_back_controller.dart';
+
 import 'package:maxpay/core/constants/colors.dart';
+import 'package:maxpay/core/data/model/all_plan.dart';
 import 'package:maxpay/core/utils/texthelper.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
 
-class CashbackScreen extends StatelessWidget {
+class CashbackScreen extends GetView<CashbackController> {
   const CashbackScreen({super.key});
 
   @override
@@ -14,119 +18,157 @@ class CashbackScreen extends StatelessWidget {
       backgroundColor: theme.brightness == Brightness.light
           ? Colors.white
           : theme.scaffoldBackgroundColor,
-
-      /// ✅ Global AppBar
       appBar: const CommonAppBar(
         title: "Cash Back",
       ),
-
       body: Padding(
         padding: const EdgeInsets.all(16),
-
         child: Column(
           children: [
-            /// 🔵 Filter Box
-             Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: theme.brightness == Brightness.light
-            ? AppColors.background
-            : const Color(0xFF2F3349),
-
-        borderRadius: BorderRadius.circular(12),
-
-        border: theme.brightness == Brightness.dark
-            ? Border.all(
-                color: const Color(0xFF3C3F52),
-              )
-            : null,
-      ),
-
-
-              /// Search / Dropdown
+            Container(
+              margin: const EdgeInsets.only(bottom: 12),
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: theme.brightness == Brightness.light
+                    ? AppColors.background
+                    : const Color(0xFF2F3349),
+                borderRadius: BorderRadius.circular(12),
+                border: theme.brightness == Brightness.dark
+                    ? Border.all(
+                        color: const Color(0xFF3C3F52),
+                      )
+                    : null,
+              ),
               child: Container(
                 height: 52,
-
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 14,
-                ),
-
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 14),
                 decoration: BoxDecoration(
-                  color:
-                      theme.brightness == Brightness.light
-                          ? Colors.white
-                          : theme.colorScheme.surface,
-
+                  color: theme.brightness == Brightness.light
+                      ? Colors.white
+                      : theme.colorScheme.surface,
                   borderRadius: BorderRadius.circular(10),
-
                   border: Border.all(
-                    color:
-                      theme.brightness == Brightness.light
-                          ? Colors.black
-                          : Color(0xFF3C3F52),
+                    color: theme.brightness ==
+                            Brightness.light
+                        ? Colors.black
+                        : const Color(0xFF3C3F52),
                   ),
                 ),
-
-                child: Row(
-                  mainAxisAlignment:
-                      MainAxisAlignment.spaceBetween,
-
-                  children: [
-                    Text(
-                      "Select Product Type",
-
-                      style: TextHelper.max2.copyWith(
-                        color:
-                            theme.colorScheme.onSurface,
+                child: Obx(
+                  () => DropdownButtonHideUnderline(
+                    child: DropdownButton<Data>(
+                      isExpanded: true,
+                      hint: Text(
+                        controller
+                                .selectedProductName
+                                .value
+                                .isEmpty
+                            ? "Select Product Type"
+                            : controller
+                                .selectedProductName
+                                .value,
+                        style: TextHelper.max2.copyWith(
+                          color:
+                              theme.colorScheme.onSurface,
+                        ),
                       ),
-                    ),
+                      icon: Icon(
+                        Icons.arrow_forward_ios,
+                        size: 18,
+                        color: theme.colorScheme
+                            .onSurfaceVariant,
+                      ),
+                      items: controller
+                              .allPlan
+                              .value
+                              ?.data
+                              ?.map(
+                                (item) =>
+                                    DropdownMenuItem<Data>(
+                                  value: item,
+                                  child: Text(
+                                    item.name ?? '',
+                                  ),
+                                ),
+                              )
+                              .toList() ??
+                          [],
+                     onChanged: (value) {
+  if (value == null) return;
 
-                    Icon(
-                      Icons.arrow_forward_ios,
-                      size: 18,
+  controller.selectedProductName.value =
+      value.name ?? '';
 
-                      color: theme.colorScheme
-                          .onSurfaceVariant,
+  controller.selectedProductType.value =
+      value.productType ?? '';
+
+  controller.selectedProductId.value =
+      value.id.toString();
+
+  controller.fetchCashback(
+    value.id.toString(),
+  );
+},
                     ),
-                  ],
+                  ),
                 ),
               ),
             ),
 
             const SizedBox(height: 22),
 
-            /// Cashback List
-             Expanded(
-              child: ListView(
-                children: [
-                  CashbackTile(
-                    cashback: "5.0%",
-                    cashbackColor: Colors.green,
-                  ),
+            Expanded(
+              child: Obx(() {
+                if (controller.isLoading.value) {
+                  return const Center(
+                    child:
+                        CircularProgressIndicator(),
+                  );
+                }
 
-                  SizedBox(height: 12),
+                final cashbackList =
+                    controller.cashBack.value?.code ??
+                        [];
 
-                  CashbackTile(
-                    cashback: "-5.0%",
-                    cashbackColor: Colors.red,
-                  ),
+                if (cashbackList.isEmpty) {
+                  return const Center(
+                    child: Text(
+                      "Select Product Type",
+                    ),
+                  );
+                }
 
-                  SizedBox(height: 12),
+                return ListView.separated(
+                  itemCount: cashbackList.length,
+                  separatorBuilder:
+                      (_, __) =>
+                          const SizedBox(height: 12),
+                  itemBuilder: (context, index) {
+                    final item =
+                        cashbackList[index];
 
-                  CashbackTile(
-                    cashback: "₹ 5.00",
-                    cashbackColor: Colors.green,
-                  ),
+                    final commission =
+                        double.tryParse(
+                              item.debitCommission ??
+                                  '0',
+                            ) ??
+                            0;
 
-                  SizedBox(height: 12),
-
-                  CashbackTile(
-                    cashback: "₹ -5.00",
-                    cashbackColor: Colors.red,
-                  ),
-                ],
-              ),
+                    return CashbackTile(
+                      name: item.name ?? '',
+                      logo: item.logo ?? '',
+                      cashback:
+                          item.debitCommission ??
+                              '0',
+                      cashbackColor:
+                          commission >= 0
+                              ? Colors.green
+                              : Colors.red,
+                    );
+                  },
+                );
+              }),
             ),
           ],
         ),
@@ -136,11 +178,15 @@ class CashbackScreen extends StatelessWidget {
 }
 
 class CashbackTile extends StatelessWidget {
+  final String name;
+  final String logo;
   final String cashback;
   final Color cashbackColor;
 
   const CashbackTile({
     super.key,
+    required this.name,
+    required this.logo,
     required this.cashback,
     required this.cashbackColor,
   });
@@ -154,53 +200,41 @@ class CashbackTile extends StatelessWidget {
         horizontal: 14,
         vertical: 14,
       ),
-
       decoration: BoxDecoration(
         color: theme.brightness == Brightness.light
             ? AppColors.background
             : theme.colorScheme.surfaceContainer,
-
         borderRadius: BorderRadius.circular(12),
-
         border: theme.brightness == Brightness.dark
             ? Border.all(
-               color: const Color(0xFF3C3F52),
+                color: const Color(0xFF3C3F52),
               )
             : null,
       ),
-
       child: Row(
         children: [
-          /// Jio Logo
           Container(
-            height: 42,
-            width: 42,
-
+            height: 35,
+            width: 35,
+            clipBehavior: Clip.hardEdge,
             decoration: const BoxDecoration(
-              color: Colors.red,
-              shape: BoxShape.circle,
+              // shape: BoxShape.circle,
             ),
-
-            alignment: Alignment.center,
-
-            child: const Text(
-              "Jio",
-
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.w600,
-                fontSize: 12,
-              ),
+            child: Image.network(
+              logo,
+              fit: BoxFit.cover,
+              errorBuilder:
+                  (_, __, ___) => const Icon(
+                    Icons.image,
+                  ),
             ),
           ),
 
           const SizedBox(width: 12),
 
-          /// Name
           Expanded(
             child: Text(
-              "Jio",
-
+              name,
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
@@ -209,27 +243,22 @@ class CashbackTile extends StatelessWidget {
             ),
           ),
 
-          /// Cashback
           Column(
             crossAxisAlignment:
                 CrossAxisAlignment.end,
-
             children: [
               Text(
                 "Cashback",
-
                 style: TextHelper.max2.copyWith(
-                color: theme.brightness == Brightness.light
-                ? AppColors.darktextclr
-                :  Colors.white,
+                  color: theme.brightness ==
+                          Brightness.light
+                      ? AppColors.darktextclr
+                      : Colors.white,
+                ),
               ),
-            ),
-
               const SizedBox(height: 3),
-
               Text(
                 cashback,
-
                 style: TextStyle(
                   color: cashbackColor,
                   fontSize: 18,

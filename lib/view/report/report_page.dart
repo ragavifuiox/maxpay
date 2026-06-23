@@ -99,7 +99,7 @@ class ReportPage extends StatelessWidget {
                     context,
                     'Statement',
                     () {
-                       Get.to(StatementScreen());
+                     Get.toNamed(AppRoutes.statement);
                     },
                     SvgPicture.asset(AssetImages.dispute, width: 21.w),
                   ),

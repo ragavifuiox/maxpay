@@ -52,4 +52,12 @@ class ApiRoutes {
   static const SubmitDispute = "/submit_dispute";
   static const walletreport = "/staff_wallet_report";
   static const wallettransfer = "/staff_wallet_transfer";
+  static const updateprofile = "/update_profile";
+  static const statement = "/statement_report";
+  static const getip = "/get_ip";
+  static const banner = "/get_banner";
+  static const advertisement = "/get_advertisement";
+  static const loginhistory = "/login_history";
+  static const weblogin = "/web_login";
+  static const cashback = "/cash_back/";
 }
