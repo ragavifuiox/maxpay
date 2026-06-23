@@ -48,4 +48,5 @@ class AppRoutes {
   static const String verify='/verify';
   static const String wallettrnsfer='/wallettransfer';
   static const String walletreport='/walletreport';
+  static const String statement='/statement';
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:maxpay/controllers/homepage_controller.dart';
 import 'package:maxpay/controllers/profile_controller.dart';
+import 'package:maxpay/controllers/profile_update_controller.dart';
 import 'package:maxpay/core/constants/asset_images.dart';
 import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/core/utils/texthelper.dart';
@@ -78,25 +79,22 @@ class ProfileScreen extends GetView<ProfileController> {
                 Center(
                   child: Stack(
                     children: [
-                      Container(
-                        width: 95,
-                        height: 95,
-
-                        decoration:
-                            const BoxDecoration(
-                          shape: BoxShape.circle,
-
-                          image:
-                              DecorationImage(
-                            image: AssetImage(
-                              AssetImages
-                                  .profileImage,
-                            ),
-
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
+                     Obx(() {
+  return Container(
+    width: 95,
+    height: 95,
+    decoration: BoxDecoration(
+      shape: BoxShape.circle,
+      image: DecorationImage(
+        image: controller.selectedImage.value != null
+            ? FileImage(controller.selectedImage.value!)
+            : const AssetImage(AssetImages.profileImage)
+                as ImageProvider,
+        fit: BoxFit.cover,
+      ),
+    ),
+  );
+}),
 
                       Positioned(
                         bottom: 0,
@@ -123,13 +121,16 @@ class ProfileScreen extends GetView<ProfileController> {
                             ),
                           ),
 
-                          child: const Icon(
-                            Icons
-                                .camera_alt_outlined,
-                            color:
-                                Colors.white,
-                            size: 16,
-                          ),
+                         child: GestureDetector(
+  onTap: () {
+    controller.pickImage();
+  },
+  child: const Icon(
+    Icons.camera_alt_outlined,
+    color: Colors.white,
+    size: 16,
+  ),
+),
                         ),
                       ),
                     ],
@@ -262,11 +263,22 @@ class ProfileScreen extends GetView<ProfileController> {
                 const SizedBox(height: 35),
 
                 /// UPDATE BUTTON
-                CommonButton(
-                  title: "Update",
+              CommonButton(
+  title: "Update",
+ onTap: () {
+  print("Button Pressed");
+  print("NAME = ${nameController.text}");
+  print("PINCODE = ${pinController.text}");
 
-                  onTap: () {},
-                ),
+  controller.updateProfile(
+    name: nameController.text,
+    email: emailController.text,
+    mobile: phoneController.text,
+    pincode: pinController.text,
+    profileImage: "",
+  );
+}
+),
 
                 const SizedBox(height: 25),
               ],
@@ -305,7 +317,7 @@ class ProfileScreen extends GetView<ProfileController> {
     return TextFormField(
       controller: controller,
 
-      enabled: false,
+      enabled: true,
 
       style: TextStyle(
         color: theme.colorScheme.onSurface,

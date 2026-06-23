@@ -1,65 +1,60 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:maxpay/controllers/web_login_controller.dart';
 import 'package:maxpay/global_widget/commom_button.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
 
-class WebLoginScreen extends StatelessWidget {
+class WebLoginScreen extends GetView<WebLoginController> {
   const WebLoginScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    
     return Scaffold(
       body: Stack(
         children: [
-          /// BACKGROUND IMAGE
+          /// BACKGROUND
           SizedBox(
             width: double.infinity,
             height: double.infinity,
-            child: Image.asset(
-              "assets/images/login_bg.png",
-              fit: BoxFit.cover,
-            ),
+            // child: Image.asset(
+            //   "assets/images/login_bg.png",
+            //   fit: BoxFit.cover,
+            // ),
           ),
 
-          /// DARK BLUR OVERLAY
-         /// BACKGROUND COLOR
-Container(
-  width: double.infinity,
-  height: double.infinity,
-  color: Colors.white,
-),
+          Container(
+            width: double.infinity,
+            height: double.infinity,
+            color: Colors.black.withOpacity(0.5),
+          ),
 
           SafeArea(
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 20.w),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(height: 10.h),
 
-                  /// BACK BUTTON + TITLE
+                  /// HEADER
                   Row(
                     children: [
                       GestureDetector(
-                        onTap: () {
-                          Get.back();
-                        },
+                        onTap: Get.back,
                         child: Icon(
                           Icons.arrow_back_ios_new,
                           color: Colors.white,
                           size: 18.sp,
                         ),
                       ),
-
                       SizedBox(width: 12.w),
-
                       Text(
                         "Scan & Web Login",
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 16.sp,
-                          fontWeight: FontWeight.w500,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ],
@@ -67,34 +62,48 @@ Container(
 
                   SizedBox(height: 80.h),
 
-                  /// QR SCANNER BOX
+                  /// SCANNER
                   Center(
                     child: Stack(
                       alignment: Alignment.center,
                       children: [
-                        /// QR WHITE BOX
                         Container(
                           width: 220.w,
                           height: 220.w,
-                          padding: EdgeInsets.all(18.w),
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(12.r),
                           ),
-                          child: Image.asset(
-                            "assets/images/qr_code.png",
-                            fit: BoxFit.cover,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(12.r),
+                            child:MobileScanner(
+  onDetect: (capture) {
+    if (controller.isScanned.value) return;
+
+    final barcode = capture.barcodes.first.rawValue;
+
+    if (barcode != null && barcode.isNotEmpty) {
+      controller.scannedUserId.value = barcode;
+      controller.isScanned.value = true;
+
+      Get.snackbar(
+        "Success",
+        "QR Scanned Successfully",
+      );
+    }
+  },
+),
                           ),
                         ),
 
                         /// SCAN LINE
-                        Positioned(
-                          child: Container(
-                            width: 250.w,
-                            height: 3.h,
-                            color: const Color(0xFF11C5E8),
-                          ),
-                        ),
+                        // Positioned(
+                        //   child: Container(
+                        //     width: 250.w,
+                        //     height: 3.h,
+                        //     color: const Color(0xFF11C5E8),
+                        //   ),
+                        // ),
 
                         /// CORNERS
                         SizedBox(
@@ -113,15 +122,44 @@ Container(
                     ),
                   ),
 
+                  SizedBox(height: 20.h),
+
+                  /// SCANNED VALUE
+                  Obx(
+                    () => Text(
+                      controller.scannedUserId.value.isEmpty
+                          ? "Scan QR Code"
+                          : controller.scannedUserId.value,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+
                   const Spacer(),
 
                   /// SUBMIT BUTTON
-                  Center(
-                    child: CommonButton(
-                      title: "Submit",
-                      onTap: () {
-                        Get.back();
-                      },
+                  Obx(
+                    () => CommonButton(
+                      title: controller.isLoading.value
+                          ? "Loading..."
+                          : "Submit",
+                      onTap: controller.isLoading.value
+                          ? null
+                          : () {
+                              if (controller
+                                  .scannedUserId.value.isEmpty) {
+                                Get.snackbar(
+                                  "Error",
+                                  "Please scan QR code first",
+                                );
+                                return;
+                              }
+
+                              controller..submitLogin();
+                            },
                     ),
                   ),
 

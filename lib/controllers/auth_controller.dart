@@ -9,6 +9,7 @@ import 'package:maxpay/core/domain/usecase/login_usecase.dart';
 import 'package:maxpay/core/domain/usecase/otp_usecase.dart';
 import 'package:maxpay/core/domain/usecase/verify_pin_usecase.dart';
 import 'package:maxpay/core/services/local_storage_service.dart';
+import 'package:maxpay/core/utils/device_info.dart';
 import 'package:maxpay/core/utils/logg_helper.dart';
 import 'package:maxpay/view/nav_page/navbar_provider.dart';
 
@@ -224,6 +225,45 @@ class AuthController extends GetxController {
           AppLogger.logError("================================");
 
           if (response.success == true) {
+
+
+            final deviceInfo = await DeviceInfoService.getInfo();
+
+await storage.saveString(
+  "ip_address",
+  deviceInfo["ip"] ?? "",
+);
+
+await storage.saveString(
+  "city",
+  deviceInfo["city"] ?? "",
+);
+
+await storage.saveString(
+  "state",
+  deviceInfo["state"] ?? "",
+);
+
+await storage.saveString(
+  "network",
+  deviceInfo["network"] ?? "",
+);
+
+AppLogger.logError(
+  "IP => ${storage.getString("ip_address")}",
+);
+
+AppLogger.logError(
+  "CITY => ${storage.getString("city")}",
+);
+
+AppLogger.logError(
+  "STATE => ${storage.getString("state")}",
+);
+
+AppLogger.logError(
+  "NETWORK => ${storage.getString("network")}",
+);
             await storage.saveString("auth_token", response.data?.token ?? "");
 
             await storage.saveInt("user_id", response.data?.userId ?? 0);
@@ -368,6 +408,7 @@ class AuthController extends GetxController {
 
           CustomToast.error(failure.message);
         },
+        
         (response) async {
           AppLogger.logError("=========== CREATE MPIN RESPONSE ===========");
           AppLogger.logError("SUCCESS : ${response.success}");

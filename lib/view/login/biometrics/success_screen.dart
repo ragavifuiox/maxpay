@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get_instance/src/extension_instance.dart';
 import 'package:get/route_manager.dart';
+import 'package:maxpay/controllers/ip_address_controller.dart';
 import 'package:maxpay/core/constants/asset_images.dart';
 import 'package:maxpay/core/constants/colors.dart';
+import 'package:maxpay/core/di/service_locator.dart';
+import 'package:maxpay/core/services/local_storage_service.dart';
 import 'package:maxpay/core/utils/responsive.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/global_widget/commom_button.dart';
@@ -76,11 +80,29 @@ class SuccessScreen extends StatelessWidget {
 
                 CommonButton(
                   title: "Go to Home",
-                  onTap: () {
-                    Get.toNamed(AppRoutes.main);
+                  onTap: () async {
+                    final storage = LocalStorageService();
+                    await storage.init();
+
+                    final ip = storage.getString("ip_address") ?? "";
+                    final city = storage.getString("city") ?? "";
+                    final state = storage.getString("state") ?? "";
+                    final network = storage.getString("network") ?? "";
+
+                    final controller = Get.put(
+                      IpAddressController(ipAddressUseCase: sl()),
+                    );
+
+                    await controller.saveIpAddress(
+                      ipaddress: ip,
+                      city: city,
+                      state: state,
+                      network: network,
+                    );
+
+                    Get.offAllNamed(AppRoutes.main);
                   },
                 ),
-
                 SizedBox(height: 40.h),
               ],
             ),

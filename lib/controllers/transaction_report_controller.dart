@@ -44,11 +44,11 @@ String search = '';
 @override
 void onInit() {
   super.onInit();
-  fetchSupport();
+  fetchplan();
 }
 
 
- Future<void> fetchSupport() async {
+ Future<void> fetchplan() async {
     isLoading.value = true;
 
     final result =

@@ -49,7 +49,7 @@ class DthSuccessPage extends StatelessWidget {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final ProfileController profileController = Get.put(
-      ProfileController(getProfileUseCase: sl()),
+      ProfileController(getProfileUseCase: sl(), profileUpdateUseCase: sl()),
     );
     final ScreenshotController screenshotController = ScreenshotController();
 

@@ -1,231 +1,176 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
+import 'package:maxpay/controllers/login_history_controller.dart';
+import 'package:maxpay/controllers/payment_status_controller.dart';
+import 'package:maxpay/controllers/refund_controller.dart';
+import 'package:maxpay/core/constants/asset_images.dart';
+import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/core/utils/texthelper.dart';
 
-class LoginFilterwidget extends StatelessWidget {
+class LoginFilterwidget extends GetView<LoginHistoryController> {
   const LoginFilterwidget({super.key});
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
-    return 
-    Container(
-      padding: const EdgeInsets.all(12),
-     decoration: BoxDecoration(
-        color: theme.brightness == Brightness.light
-            ? const Color(0xFFE3F0FB)
-            : theme.colorScheme.surfaceContainer,
-
-        borderRadius: BorderRadius.circular(10),
-
-        border: Border.all(
-          color: theme.brightness == Brightness.light
-              ? const Color(0xFFB5D4F4)
-              : theme.colorScheme.outline,
-        ),
-      ),
-
-      child: Column(
-        children: [
-
-          /// SELECT CREDIT TYPE
-          Container(
-            width: double.infinity,
-
-            padding: const EdgeInsets.symmetric(
-              horizontal: 12,
-              vertical: 14,
-            ),
-
-            decoration: BoxDecoration(
-              color: theme.brightness == Brightness.light
-                  ? Colors.white
-                  : theme.colorScheme.surface,
-
-              borderRadius: BorderRadius.circular(8),
-
-              border: Border.all(
-                color: theme.brightness == Brightness.light
-                    ? const Color(0xFFB5D4F4)
-                    : theme.colorScheme.outline,
-              ),
-            ),
-
-            child: Row(
-              mainAxisAlignment:
-                  MainAxisAlignment.spaceBetween,
-
-              children: [
-                Text(
-                  "Select Credit Type",
-
-                  style: TextHelper.max1.copyWith(
-                    color: theme.colorScheme.onSurface,
-                  ),
-                ),
-
-                Icon(
-                  Icons.chevron_right,
-                  color:
-                      theme.colorScheme.onSurfaceVariant,
-                  size: 18,
-                ),
-              ],
+    return GetBuilder<LoginHistoryController>(
+      builder: (controller) {
+        return Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: isDark
+                ? AppColors.darkplceholder
+                : AppColors.background,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(
+              color: isDark
+                  ? AppColors.darkFilterBorder
+                  : AppColors.totalborde2.withValues(alpha: 0.1),
             ),
           ),
-
-          const SizedBox(height: 8),
-
-          /// DATE FIELD
-          Row(
+          child: Column(
             children: [
-              _DateField(
-                hint: "DD.MM.YYYY",
-                style: TextHelper.max1,
+              Row(
+                children: [
+                  Expanded(
+                    child: InkWell(
+                      onTap: () =>
+                          controller.selectFromDate(context),
+                      child: _dateField(
+                        context,
+                        controller.fromDate.isEmpty
+                            ? "Start Date"
+                            : controller.fromDate,
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(width: 8),
+
+                  Icon(
+                    Icons.arrow_forward,
+                    color: theme.colorScheme.primary,
+                  ),
+
+                  const SizedBox(width: 8),
+
+                  Expanded(
+                    child: InkWell(
+                      onTap: () =>
+                          controller.selectToDate(context),
+                      child: _dateField(
+                        context,
+                        controller.toDate.isEmpty
+                            ? "End Date"
+                            : controller.toDate,
+                      ),
+                    ),
+                  ),
+                ],
               ),
 
-              const SizedBox(width: 8),
+              const SizedBox(height: 12),
 
-              Icon(
-                Icons.arrow_forward,
-                size: 16,
-                color: theme.colorScheme.primary,
-              ),
+             TextField(
+  keyboardType: TextInputType.number,
+  style: TextStyle(
+    color: theme.colorScheme.onSurface,
+  ),
+  onChanged: (value) {
+    controller.search = value;
 
-              const SizedBox(width: 8),
-
-              _DateField(
-                hint: "DD.MM.YYYY",
-                style: TextHelper.max1,
-              ),
+    if (controller.fromDate.isNotEmpty &&
+        controller.toDate.isNotEmpty) {
+      controller.loghistory();
+    }
+  },
+  decoration: InputDecoration(
+    prefixIcon: Padding(
+      padding: const EdgeInsets.all(12.0),
+      child: SvgPicture.asset(
+        AssetImages.search,
+        colorFilter: ColorFilter.mode(
+          isDark
+              ? AppColors.textclr
+              : theme.colorScheme.onSurfaceVariant,
+          BlendMode.srcIn,
+        ),
+      ),
+    ),
+    hintText: "Enter Mobile Number",
+    hintStyle: TextHelper.max1.copyWith(
+      color: isDark
+          ? AppColors.textclr
+          : AppColors.clrTextgrey,
+    ),
+    filled: true,
+    fillColor:
+        isDark ? AppColors.darkplceholder : Colors.white,
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(7),
+      borderSide: BorderSide(
+        color: isDark
+            ? AppColors.darkFilterBorder
+            : AppColors.totalborde2,
+      ),
+    ),
+    enabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(7),
+      borderSide: BorderSide(
+        color: isDark
+            ? AppColors.darkFilterBorder
+            : AppColors.totalborde2,
+      ),
+    ),
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(7),
+      borderSide: BorderSide(
+        color: theme.colorScheme.primary,
+      ),
+    ),
+    contentPadding: const EdgeInsets.symmetric(
+      vertical: 0,
+    ),
+  ),
+)
             ],
           ),
-
-          const SizedBox(height: 8),
-
-          /// SEARCH FIELD
-          TextField(
-            style: TextStyle(
-              color: theme.colorScheme.onSurface,
-            ),
-
-            decoration: InputDecoration(
-              prefixIcon: Icon(
-                Icons.search,
-                color:
-                    theme.colorScheme.onSurfaceVariant,
-                size: 18,
-              ),
-
-              hintText: "Search",
-
-              hintStyle: TextHelper.max1.copyWith(
-                color:
-                    theme.colorScheme.onSurfaceVariant,
-              ),
-
-              filled: true,
-
-              fillColor:
-                  theme.brightness == Brightness.light
-                      ? Colors.white
-                      : theme.colorScheme.surface,
-
-              border: OutlineInputBorder(
-                borderRadius:
-                    BorderRadius.circular(7),
-
-                borderSide: BorderSide(
-                  color:
-                      theme.brightness ==
-                              Brightness.light
-                          ? const Color(0xFFB5D4F4)
-                          : theme.colorScheme.outline,
-                ),
-              ),
-
-              enabledBorder: OutlineInputBorder(
-                borderRadius:
-                    BorderRadius.circular(7),
-
-                borderSide: BorderSide(
-                  color:
-                      theme.brightness ==
-                              Brightness.light
-                          ? const Color(0xFFB5D4F4)
-                          : theme.colorScheme.outline,
-                ),
-              ),
-
-              focusedBorder: OutlineInputBorder(
-                borderRadius:
-                    BorderRadius.circular(7),
-
-                borderSide: BorderSide(
-                  color: theme.colorScheme.primary,
-                ),
-              ),
-
-              contentPadding:
-                  const EdgeInsets.symmetric(
-                vertical: 0,
-              ),
-            ),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
-}
 
-/// DATE FIELD
-class _DateField extends StatelessWidget {
-  final String hint;
-  final TextStyle? style;
-
-  const _DateField({
-    required this.hint,
-    this.style,
-  });
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _dateField(
+    BuildContext context,
+    String text,
+  ) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 10,
-          vertical: 10,
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 10,
+        vertical: 12,
+      ),
+      decoration: BoxDecoration(
+        color:
+            isDark ? AppColors.darkplceholder : Colors.white,
+        borderRadius: BorderRadius.circular(7),
+        border: Border.all(
+          color: isDark
+              ? AppColors.darkFilterBorder
+              : AppColors.totalborde2,
         ),
-
-        decoration: BoxDecoration(
-          color: theme.brightness == Brightness.light
-              ? Colors.white
-              : theme.colorScheme.surface,
-
-          borderRadius: BorderRadius.circular(7),
-
-          border: Border.all(
-            color: theme.brightness ==
-                    Brightness.light
-                ? const Color(0xFFB5D4F4)
-                : theme.colorScheme.outline,
-          ),
-        ),
-
-        child: Text(
-          hint,
-
-          style: style?.copyWith(
-                color: theme
-                    .colorScheme.onSurfaceVariant,
-              ) ??
-              TextStyle(
-                fontSize: 12,
-                color: theme
-                    .colorScheme.onSurfaceVariant,
-              ),
+      ),
+      child: Text(
+        text,
+        style: TextHelper.max1.copyWith(
+          color: isDark
+              ? AppColors.textclr
+              : theme.colorScheme.onSurfaceVariant,
         ),
       ),
     );

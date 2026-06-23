@@ -157,7 +157,7 @@ class UploadCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final imageUrl = fileName.addToBase(fileName);
+    final imageUrl = fileName.addToBase();
 
     print("Image URL => $imageUrl");
 

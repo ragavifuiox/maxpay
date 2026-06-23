@@ -19,8 +19,8 @@ class HomeHeaderSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeController = Get.find<ThemeController>();
+    final profileController = Get.put(ProfileController(getProfileUseCase: sl(), profileUpdateUseCase: sl()));
     final isTablet = Responsive.isTablet(context);
-
     return Obx(() {
       final theme = Theme.of(context);
       final colorScheme = theme.colorScheme;
@@ -44,22 +44,50 @@ class HomeHeaderSection extends StatelessWidget {
                     },
                     child: Row(
                       children: [
-                        CircleAvatar(
-                          radius: 20,
-                          backgroundColor: Colors.red.withValues(alpha: 0.2),
-                          child: NetworkImageWithLoader(
-                            'https://i.pravatar.cc/150?u=martin',
-                            radius: 20,
-                            errorWidget: Text(
-                              'M',
-                              style: Theme.of(context).textTheme.bodyLarge
-                                  ?.copyWith(
-                                    color: AppColors.clrPrimary,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                            ),
-                          ),
-                        ),
+                       Obx(() {
+  final imageUrl =
+      profileController.profileData.value?.data?.phoneNumber ?? "";
+
+  return CircleAvatar(
+    radius: 20,
+    backgroundColor: Colors.red.withValues(alpha: 0.2),
+    child: ClipOval(
+      child: imageUrl.isNotEmpty
+          ? NetworkImageWithLoader(
+              imageUrl,
+              radius: 20,
+              errorWidget: Text(
+                profileController
+                        .profileData
+                        .value
+                        ?.data
+                        ?.name
+                        ?.substring(0, 1)
+                        .toUpperCase() ??
+                    "U",
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      color: AppColors.clrPrimary,
+                      fontWeight: FontWeight.bold,
+                    ),
+              ),
+            )
+          : Text(
+              profileController
+                      .profileData
+                      .value
+                      ?.data
+                      ?.name
+                      ?.substring(0, 1)
+                      .toUpperCase() ??
+                  "U",
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    color: AppColors.clrPrimary,
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
+    ),
+  );
+}),
 
                         SizedBox(width: 10.w),
 
@@ -82,7 +110,7 @@ class HomeHeaderSection extends StatelessWidget {
 
                               Obx(() {
                                 final controller = Get.put(
-                                  ProfileController(getProfileUseCase: sl()),
+                                  ProfileController(getProfileUseCase: sl(), profileUpdateUseCase: sl()),
                                 );
                                 return Text(
                                   controller
