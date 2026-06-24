@@ -51,6 +51,7 @@ class TransactionScreen extends GetView<TransReportController> {
           children: [
             /// FILTER CONTAINER
            Container(
+            
   padding: const EdgeInsets.all(12),
  decoration: BoxDecoration(
   color: theme.brightness == Brightness.light
@@ -88,7 +89,7 @@ class TransactionScreen extends GetView<TransReportController> {
         value: controller.selectedProductId.value.isEmpty
             ? null
             : controller.selectedProductId.value,
-        hint: const Text("Select Product"),
+        hint: const Text("Select"),
         items: controller
                 .allplan
                 .value

@@ -1,27 +1,34 @@
 class WebLogin {
   bool? success;
-  bool? data;
   String? message;
+  bool? errors;
   Code? code;
 
-  WebLogin({this.success, this.data, this.message, this.code});
+  WebLogin({
+    this.success,
+    this.message,
+    this.errors,
+    this.code,
+  });
 
-  WebLogin.fromJson(Map<String, dynamic> json) {
-    success = json['success'];
-    data = json['data'];
-    message = json['message'];
-    code = json['code'] != null ? Code.fromJson(json['code']) : null;
+  factory WebLogin.fromJson(Map<String, dynamic> json) {
+    return WebLogin(
+      success: json['success'],
+      message: json['message'],
+      errors: json['errors'],
+      code: json['code'] is Map<String, dynamic>
+          ? Code.fromJson(json['code'])
+          : null,
+    );
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['success'] = success;
-    data['data'] = this.data;
-    data['message'] = message;
-    if (code != null) {
-      data['code'] = code!.toJson();
-    }
-    return data;
+    return {
+      'success': success,
+      'message': message,
+      'errors': errors,
+      'code': code?.toJson(),
+    };
   }
 }
 
@@ -32,17 +39,19 @@ class Code {
 
   Code({this.userId, this.isWebLogin, this.webLoginCount});
 
-  Code.fromJson(Map<String, dynamic> json) {
-    userId = json['user_id'];
-    isWebLogin = json['is_web_login'];
-    webLoginCount = json['web_login_count'];
+  factory Code.fromJson(Map<String, dynamic> json) {
+    return Code(
+      userId: json['user_id'],
+      isWebLogin: json['is_web_login'],
+      webLoginCount: json['web_login_count'],
+    );
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['user_id'] = userId;
-    data['is_web_login'] = isWebLogin;
-    data['web_login_count'] = webLoginCount;
-    return data;
+    return {
+      'user_id': userId,
+      'is_web_login': isWebLogin,
+      'web_login_count': webLoginCount,
+    };
   }
 }

@@ -1,48 +1,68 @@
-class WebLogout {
-  bool? success;
-  bool? data;
-  String? message;
-  Code? code;
+// class WebLogout {
+//   bool? success;
+//   bool? data;
+//   String? message;
+//   Code? code;
 
-  WebLogout({this.success, this.data, this.message, this.code});
+//   WebLogout({
+//     this.success,
+//     this.data,
+//     this.message,
+//     this.code,
+//   });
 
-  WebLogout.fromJson(Map<String, dynamic> json) {
-    success = json['success'];
-    data = json['data'];
-    message = json['message'];
-    code = json['code'] != null ? Code.fromJson(json['code']) : null;
-  }
+//   factory WebLogout.fromJson(Map<String, dynamic> json) {
+//     return WebLogout(
+//       success: json['success'] as bool?,
+//       data: json['data'] is bool ? json['data'] : null,
+//       message: json['message'] as String?,
+//       code: _parseCode(json['code']),
+//     );
+//   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['success'] = success;
-    data['data'] = this.data;
-    data['message'] = message;
-    if (code != null) {
-      data['code'] = code!.toJson();
-    }
-    return data;
-  }
-}
+//   static Code? _parseCode(dynamic value) {
+//     if (value is Map<String, dynamic>) {
+//       return Code.fromJson(value);
+//     }
+//     return null; // ✅ fixes [] and null
+//   }
 
-class Code {
-  String? userId;
-  int? isWebLogin;
-  int? webLoginCount;
+//   Map<String, dynamic> toJson() {
+//     return {
+//       'success': success,
+//       'data': data,
+//       'message': message,
+//       'code': code?.toJson(),
+//     };
+//   }
+// }
 
-  Code({this.userId, this.isWebLogin, this.webLoginCount});
+// class Code {
+//   String? userId;
+//   int? isWebLogin;
+//   int? webLoginCount;
 
-  Code.fromJson(Map<String, dynamic> json) {
-    userId = json['user_id'];
-    isWebLogin = json['is_web_login'];
-    webLoginCount = json['web_login_count'];
-  }
+//   Code({this.userId, this.isWebLogin, this.webLoginCount});
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['user_id'] = userId;
-    data['is_web_login'] = isWebLogin;
-    data['web_login_count'] = webLoginCount;
-    return data;
-  }
-}
+//   factory Code.fromJson(Map<String, dynamic> json) {
+//     return Code(
+//       userId: json['user_id']?.toString(),
+//       isWebLogin: _toInt(json['is_web_login']),
+//       webLoginCount: _toInt(json['web_login_count']),
+//     );
+//   }
+
+//   static int? _toInt(dynamic value) {
+//     if (value is int) return value;
+//     if (value is String) return int.tryParse(value);
+//     return null;
+//   }
+
+//   Map<String, dynamic> toJson() {
+//     return {
+//       'user_id': userId,
+//       'is_web_login': isWebLogin,
+//       'web_login_count': webLoginCount,
+//     };
+//   }
+// }

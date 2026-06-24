@@ -225,7 +225,7 @@ class _DTHRechargePageState extends State<DTHRechargePage>
                       isExpanded: true,
                       value: selectedOperatorObj,
 
-                      hint: const Text("Select Operator"),
+                      hint: const Text("Select "),
 
                       items: controller.plans.map((Data operator) {
                         return DropdownMenuItem<Data>(
@@ -315,15 +315,15 @@ class _DTHRechargePageState extends State<DTHRechargePage>
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  _buildToggleButton('Plan', !_showCustomerInfo, () {
+                  _buildToggleButton('Customer Info', !_showCustomerInfo, () {
                     setState(() {
-                      _showCustomerInfo = false;
+                      _showCustomerInfo = true;
                     });
                   }),
                   SizedBox(width: 10.w),
-                  _buildToggleButton('Customer Info', _showCustomerInfo, () {
+                  _buildToggleButton('Plan', _showCustomerInfo, () {
                     setState(() {
-                      _showCustomerInfo = true;
+                      _showCustomerInfo = false;
                     });
                   }),
                 ],

@@ -60,6 +60,7 @@ class ApiRoutes {
   static const loginhistory = "/login_history";
   static const weblogin = "/web_login";
   static const cashback = "/cash_back/";
+  static const weblogout = "/web_logout";
   static const createQr = "/create_qr";
   static const checkQr = "/check_qr_status";
   static const walletQrHistory = "/wallet_qr_history";

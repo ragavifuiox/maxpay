@@ -1,10 +1,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/core/constants/snackbar.dart';
 import 'package:maxpay/core/domain/usecase/web_login_usecase.dart';
 import 'package:maxpay/core/domain/usecase/web_logout_usecase.dart';
 import 'package:maxpay/core/utils/logg_helper.dart';
+import 'package:maxpay/view/weblogin/qr_success_screen.dart';
 
 class WebLoginController extends GetxController {
   final WebLoginUsecase webloginusecase;
@@ -14,42 +16,76 @@ class WebLoginController extends GetxController {
     required this.webloginusecase,
     required this.webLogoutUsecase,
   });
-
-  RxBool isLoading = false.obs;
-RxBool isScanned = false.obs;
+  RxBool isScanned = false.obs;
   RxString scannedUserId = ''.obs;
 
-  Future<void> submitLogin() async {
-    if (scannedUserId.value.isEmpty) {
-      CustomToast.error("Please scan QR first");
-      return;
-    }
+@override
+void onReady() {
+  super.onReady();
 
-    try {
-      isLoading.value = true;
-
-      final result = await webloginusecase(
-        scannedUserId.value,
-      );
-
-      result.fold(
-        (failure) {
-          CustomToast.error(failure.message);
-        },
-        (response) {
-          CustomToast.success(
-            response.message ?? "Web Login Success",
-          );
-
-          Get.back();
-        },
-      );
-    } catch (e) {
-      CustomToast.error(e.toString());
-    } finally {
-      isLoading.value = false;
-    }
+  isScanned.value = false;
+  scannedUserId.value = '';
+}
+  RxBool isLoading = false.obs;
+void resetScanner() {
+    isScanned.value = false;
+    scannedUserId.value = '';
   }
+
+Future<void> submitLogin() async {
+  print("===== SUBMIT LOGIN START =====");
+  print("Scanned User ID: ${scannedUserId.value}");
+
+  if (scannedUserId.value.isEmpty) {
+    print("ERROR: QR is empty");
+    CustomToast.error("Please scan QR first");
+    return;
+  }
+
+  try {
+    isLoading.value = true;
+    print("Loading started...");
+
+    final result = await webloginusecase(scannedUserId.value);
+
+    print("API CALLED");
+
+    result.fold(
+      (failure) {
+        print("FOLD => FAILURE");
+        print("Error Message: ${failure.message}");
+
+        CustomToast.error(failure.message);
+      },
+      (response) {
+        print("FOLD => SUCCESS RESPONSE RECEIVED");
+        print("Response success: ${response.success}");
+        print("Response message: ${response.message}");
+        print("Full response: $response");
+
+        if (response.success == true) {
+          print("LOGIN SUCCESS BLOCK");
+          CustomToast.success(response.message ?? "Web Login Success");
+
+          print("Navigating to Success Screen...");
+         Get.offAllNamed(AppRoutes.setting);
+        } else {
+          print("LOGIN FAILED BLOCK");
+          CustomToast.error(response.message ?? "Login failed");
+        }
+      },
+    );
+  } catch (e) {
+    print("EXCEPTION OCCURRED");
+    print("Error: $e");
+
+    CustomToast.error(e.toString());
+  } finally {
+    isLoading.value = false;
+    print("Loading stopped");
+    print("===== SUBMIT LOGIN END =====");
+  }
+}
 Future<void> WebLogout({
   required String isweb,
   
@@ -73,8 +109,8 @@ Future<void> WebLogout({
 
         debugPrint("ERROR: ${failure.message}");
       },
-      (response) {
 
+           (response) {
         // ✅ SUCCESS TOAST
         CustomToast.success(
           response.message ?? "web logout Successfully",

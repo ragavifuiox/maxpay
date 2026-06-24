@@ -2,7 +2,7 @@ class WebLogout {
   bool? success;
   bool? data;
   String? message;
-  Code? code;
+  dynamic code;
 
   WebLogout({this.success, this.data, this.message, this.code});
 
@@ -10,21 +10,34 @@ class WebLogout {
     success = json['success'];
     data = json['data'];
     message = json['message'];
-    code = json['code'] != null ? Code.fromJson(json['code']) : null;
+
+    // 🔥 SAFE PARSING
+    code = _parseCode(json['code']);
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
+    final Map<String, dynamic> data = {};
     data['success'] = success;
     data['data'] = this.data;
     data['message'] = message;
-    if (code != null) {
-      data['code'] = code!.toJson();
-    }
+    data['code'] = code;
     return data;
   }
-}
 
+  static dynamic _parseCode(dynamic value) {
+    if (value == null) return null;
+
+    if (value is Map<String, dynamic>) {
+      return Code.fromJson(value);
+    }
+
+    if (value is List) {
+      return value; // API gives []
+    }
+
+    return value;
+  }
+}
 class Code {
   String? userId;
   int? isWebLogin;
@@ -39,10 +52,10 @@ class Code {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['user_id'] = userId;
-    data['is_web_login'] = isWebLogin;
-    data['web_login_count'] = webLoginCount;
-    return data;
+    return {
+      'user_id': userId,
+      'is_web_login': isWebLogin,
+      'web_login_count': webLoginCount,
+    };
   }
 }

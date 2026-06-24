@@ -64,7 +64,7 @@ class CashbackScreen extends GetView<CashbackController> {
                                 .selectedProductName
                                 .value
                                 .isEmpty
-                            ? "Select Product Type"
+                            ? "Select"
                             : controller
                                 .selectedProductName
                                 .value,

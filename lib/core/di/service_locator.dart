@@ -54,6 +54,7 @@ import 'package:maxpay/core/data/repsoitory/wallet_report_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/wallet_request_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/wallet_transfer_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/web_login_repo_impl.dart';
+import 'package:maxpay/core/data/repsoitory/web_logout_repo_impl.dart';
 import 'package:maxpay/core/domain/repository/add_staff_repository.dart';
 import 'package:maxpay/core/domain/repository/advertisement_repository.dart';
 import 'package:maxpay/core/domain/repository/all_plan%20_repository.dart';
@@ -109,6 +110,7 @@ import 'package:maxpay/core/domain/repository/wallet_report_repository.dart';
 import 'package:maxpay/core/domain/repository/wallet_request_repository.dart';
 import 'package:maxpay/core/domain/repository/wallet_transfer_repository.dart';
 import 'package:maxpay/core/domain/repository/web_login_repository.dart';
+import 'package:maxpay/core/domain/repository/web_logout_repository.dart';
 import 'package:maxpay/core/domain/usecase/addd_staff_usecase.dart';
 import 'package:maxpay/core/domain/usecase/advertisement_usecase.dart';
 import 'package:maxpay/core/domain/usecase/all_plan_usecase.dart';
@@ -164,6 +166,7 @@ import 'package:maxpay/core/domain/usecase/wallet_request_usecase.dart';
 import 'package:maxpay/core/domain/usecase/wallet_transfer_usecase.dart';
 import 'package:maxpay/core/domain/usecase/wallet_usecase.dart';
 import 'package:maxpay/core/domain/usecase/web_login_usecase.dart';
+import 'package:maxpay/core/domain/usecase/web_logout_usecase.dart';
 import 'package:maxpay/core/services/api_services.dart';
 import 'package:maxpay/core/services/local_storage_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -289,6 +292,9 @@ Future<void> initDependencies() async {
     () => LoginHistoryImpl(sl()),
   );
   sl.registerLazySingleton<WebLoginRepository>(() => WebLoginRepoImpl(sl()));
+  sl.registerLazySingleton< CashBackRepository>(() => CashBackRepoImpl(sl()));
+  sl.registerLazySingleton< WebLogoutRepository>(() => WebLogoutRepoImpl(sl()));
+
   sl.registerLazySingleton<CashBackRepository>(() => CashBackRepoImpl(sl()));
   sl.registerLazySingleton<WalletCreateQrRepo>(
     () => WalletCreateQrRepoImpl(sl()),
@@ -381,6 +387,7 @@ Future<void> initDependencies() async {
   );
   sl.registerLazySingleton<WebLoginUsecase>(() => WebLoginUsecase(sl()));
   sl.registerLazySingleton<CashBackUsecase>(() => CashBackUsecase(sl()));
+  sl.registerLazySingleton<WebLogoutUsecase>(() => WebLogoutUsecase(sl()));
   sl.registerLazySingleton<WalletCreateQrUsecase>(
     () => WalletCreateQrUsecase(sl()),
   );

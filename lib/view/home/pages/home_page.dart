@@ -81,10 +81,11 @@ class HomePageScreen extends GetView<HomePageController> {
                               Get.toNamed(AppRoutes.walletbal);
                             },
                             value: '₹${balance.toStringAsFixed(2)}',
-                            textColor:
-                                Theme.of(context).brightness == Brightness.dark
-                                ? Color.fromARGB(255, 171, 171, 171)
-                                : AppColors.darktextclr,
+                            bgColor: AppColors.darkBlue.withValues(alpha: 0.04),
+                            // textColor:
+                            //     Theme.of(context).brightness == Brightness.dark
+                            //     ? Color.fromARGB(255, 171, 171, 171)
+                            //     : AppColors.darktextclr,
                             imageWidget: SvgPicture.asset(
                               AssetImages.walletBalance,
                             ),
