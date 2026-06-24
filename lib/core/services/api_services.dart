@@ -27,12 +27,21 @@ class ApiService {
     _dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) {
-          final token = _storage.getString("auth_token");
-          if (token != null) {
-            options.headers["Authorization"] = "Bearer $token";
-          }
-          return handler.next(options);
-        },
+  final token = _storage.getString("auth_token");
+
+  if (token != null && token.isNotEmpty) {
+    options.headers["Authorization"] = "Bearer $token";
+  }
+
+  return handler.next(options);
+},
+        // onRequest: (options, handler) {
+        //   final token = _storage.getString("auth_token");
+        //   if (token != null) {
+        //     options.headers["Authorization"] = "Bearer $token";
+        //   }
+        //   return handler.next(options);
+        // },
         // onError: (DioException e, handler) {
         //   log("API Error: ${e.message}");
         //   final statusCode = e.response?.statusCode;
@@ -50,6 +59,9 @@ class ApiService {
         //   return handler.next(e);
         // },
         onError: (DioException e, handler) {
+           print("FAILED URL => ${e.requestOptions.uri}");
+  print("STATUS => ${e.response?.statusCode}");
+  print("TOKEN => ${_storage.getString("auth_token")}");
           log("API Error: ${e.message}");
 
           // ✅ If NO INTERNET → go to network screen ONLY
@@ -148,14 +160,35 @@ class ApiService {
   //   g.Get.snackbar("Session Expired", "Please login again.");
   // }
 
+
+
+
   void _handleUnauthorized() {
-    if (_isUnauthorizedHandled) return;
-    _isUnauthorizedHandled = true;
+  final token = _storage.getString("auth_token");
 
-    _storage.remove("auth_token");
-
-    g.Get.offAllNamed(AppRoutes.welcome);
-
-    g.Get.snackbar("Session Expired", "Please login again.");
+  // Fresh install / logged out user
+  if (token == null || token.isEmpty) {
+    return;
   }
+
+  _storage.remove("auth_token");
+
+  g.Get.offAllNamed(AppRoutes.welcome);
+
+  g.Get.snackbar(
+    "Session Expired",
+    "Please login again.",
+  );
+}
+
+  // void _handleUnauthorized() {
+  //   if (_isUnauthorizedHandled) return;
+  //   _isUnauthorizedHandled = true;
+
+  //   _storage.remove("auth_token");
+
+  //   g.Get.offAllNamed(AppRoutes.welcome);
+
+  //   g.Get.snackbar("Session Expired", "Please login again.");
+  // }
 }

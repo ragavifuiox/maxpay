@@ -49,27 +49,44 @@ void onInit() {
 
 
  Future<void> fetchplan() async {
-    isLoading.value = true;
+  print("🚀 fetchplan() called");
 
-    final result =
-        await allPlanUsecase();
+  isLoading.value = true;
+  print("⏳ Loading started");
+
+  try {
+    final result = await allPlanUsecase();
+
+    print("📡 API call completed");
 
     result.fold(
       (failure) {
+        print("❌ Failure happened");
+        print("❌ Error message: ${failure.message}");
+
         isLoading.value = false;
 
-        Get.snackbar(
-          'Error',
-          failure.message,
-        );
+        Get.snackbar('Error', failure.message);
       },
       (data) {
+        print("✅ Success response received");
+        print("📦 Data: $data");
+
         allplan.value = data;
 
         isLoading.value = false;
       },
     );
+  } catch (e) {
+    print("🔥 Exception caught: $e");
+
+    isLoading.value = false;
+
+    Get.snackbar("Error", e.toString());
   }
+
+  print("🏁 fetchplan() finished");
+}
 
 Future<void> transactionreport({
   required String search,

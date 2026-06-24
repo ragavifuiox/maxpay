@@ -48,6 +48,7 @@ class TransactionCard extends StatelessWidget {
                   "Transaction ID: ${data.transactionId ?? '-'}",
                   style: const TextStyle(
                     fontSize: 12,
+                    color: Colors.black
                   ),
                 ),
               ),
@@ -55,6 +56,7 @@ class TransactionCard extends StatelessWidget {
                 data.dateTime ?? "",
                 style: const TextStyle(
                   fontSize: 11,
+                   color: Colors.black
                 ),
               ),
             ],
@@ -101,6 +103,7 @@ class TransactionCard extends StatelessWidget {
                       style: const TextStyle(
                         fontWeight:
                             FontWeight.w600,
+                             color: Colors.black
                       ),
                     ),
                     const SizedBox(height: 3),
@@ -108,6 +111,7 @@ class TransactionCard extends StatelessWidget {
                       "Number : ${data.mobile ?? ''}",
                       style: const TextStyle(
                         fontSize: 12,
+                         color: Colors.black
                       ),
                     ),
                   ],
@@ -124,6 +128,7 @@ class TransactionCard extends StatelessWidget {
                       fontSize: 20,
                       fontWeight:
                           FontWeight.bold,
+                           color: Colors.black
                     ),
                   ),
 
@@ -145,10 +150,11 @@ class TransactionCard extends StatelessWidget {
                     child: Text(
                       data.status ?? "",
                       style: const TextStyle(
-                        color: Colors.white,
+                        
                         fontSize: 10,
                         fontWeight:
                             FontWeight.w600,
+                             color: Colors.black
                       ),
                     ),
                   ),

@@ -56,7 +56,7 @@ class Data {
     pincode = json['pincode'];
     state = json['state'];
     status = json['status'];
-    profileimg = json['profileimg'];
+    profileimg = json['profile_img'];
   }
 
   Map<String, dynamic> toJson() {
@@ -69,7 +69,7 @@ class Data {
     data['pincode'] = pincode;
     data['state'] = state;
     data['status'] = status;
-    data['profileimg'] = profileimg;
+    data['profile_img'] = profileimg;
     return data;
   }
 }

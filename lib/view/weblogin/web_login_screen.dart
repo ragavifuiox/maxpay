@@ -2,220 +2,284 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:maxpay/controllers/web_login_controller.dart';
-import 'package:maxpay/global_widget/commom_button.dart';
+import 'package:maxpay/core/constants/colors.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
-class WebLoginScreen extends GetView<WebLoginController> {
+class WebLoginScreen extends StatefulWidget {
   const WebLoginScreen({super.key});
 
   @override
+  State<WebLoginScreen> createState() => _WebLoginScreenState();
+}
+
+class _WebLoginScreenState extends State<WebLoginScreen>
+    with SingleTickerProviderStateMixin {
+  late AnimationController animationController;
+
+  final WebLoginController controller =
+      Get.find<WebLoginController>();
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.resetScanner();
+    });
+
+    animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 2),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    animationController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    
     return Scaffold(
       body: Stack(
         children: [
-          /// BACKGROUND
-          SizedBox(
-            width: double.infinity,
-            height: double.infinity,
-            // child: Image.asset(
-            //   "assets/images/login_bg.png",
-            //   fit: BoxFit.cover,
-            // ),
+          /// FULL SCREEN CAMERA
+          MobileScanner(
+            fit: BoxFit.cover,
+            onDetect: (capture) async {
+              if (controller.isScanned.value) return;
+
+              final barcode =
+                  capture.barcodes.first.rawValue;
+
+              if (barcode != null &&
+                  barcode.isNotEmpty) {
+                controller.scannedUserId.value =
+                    barcode;
+
+                controller.isScanned.value = true;
+
+                await controller.submitLogin();
+              }
+            },
           ),
 
-          Container(
-            width: double.infinity,
-            height: double.infinity,
-            color: Colors.black.withOpacity(0.5),
-          ),
+          /// DARK OVERLAY WITH TRANSPARENT CENTER
+          const ScannerOverlay(),
 
+          /// TOP HEADER
           SafeArea(
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.w),
-              child: Column(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 20,
+                vertical: 15,
+              ),
+              child: Row(
                 children: [
-                  SizedBox(height: 10.h),
-
-                  /// HEADER
-                  Row(
-                    children: [
-                      GestureDetector(
-                        onTap: Get.back,
-                        child: Icon(
-                          Icons.arrow_back_ios_new,
-                          color: Colors.white,
-                          size: 18.sp,
-                        ),
+                  GestureDetector(
+                    onTap: () => Get.back(),
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.black45,
+                        borderRadius:
+                            BorderRadius.circular(10),
                       ),
-                      SizedBox(width: 12.w),
-                      Text(
-                        "Scan & Web Login",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  SizedBox(height: 80.h),
-
-                  /// SCANNER
-                  Center(
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Container(
-                          width: 220.w,
-                          height: 220.w,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(12.r),
-                          ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(12.r),
-                            child:MobileScanner(
-  onDetect: (capture) {
-    if (controller.isScanned.value) return;
-
-    final barcode = capture.barcodes.first.rawValue;
-
-    if (barcode != null && barcode.isNotEmpty) {
-      controller.scannedUserId.value = barcode;
-      controller.isScanned.value = true;
-
-      Get.snackbar(
-        "Success",
-        "QR Scanned Successfully",
-      );
-    }
-  },
-),
-                          ),
-                        ),
-
-                        /// SCAN LINE
-                        // Positioned(
-                        //   child: Container(
-                        //     width: 250.w,
-                        //     height: 3.h,
-                        //     color: const Color(0xFF11C5E8),
-                        //   ),
-                        // ),
-
-                        /// CORNERS
-                        SizedBox(
-                          width: 280.w,
-                          height: 280.w,
-                          child: Stack(
-                            children: [
-                              _corner(top: 0, left: 0),
-                              _corner(top: 0, right: 0),
-                              _corner(bottom: 0, left: 0),
-                              _corner(bottom: 0, right: 0),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  SizedBox(height: 20.h),
-
-                  /// SCANNED VALUE
-                  Obx(
-                    () => Text(
-                      controller.scannedUserId.value.isEmpty
-                          ? "Scan QR Code"
-                          : controller.scannedUserId.value,
-                      style: TextStyle(
+                      child: const Icon(
+                        Icons.arrow_back_ios_new,
                         color: Colors.white,
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w500,
+                        size: 18,
                       ),
                     ),
                   ),
 
-                  const Spacer(),
+                  const SizedBox(width: 15),
 
-                  /// SUBMIT BUTTON
-                  Obx(
-                    () => CommonButton(
-                      title: controller.isLoading.value
-                          ? "Loading..."
-                          : "Submit",
-                      onTap: controller.isLoading.value
-                          ? null
-                          : () {
-                              if (controller
-                                  .scannedUserId.value.isEmpty) {
-                                Get.snackbar(
-                                  "Error",
-                                  "Please scan QR code first",
-                                );
-                                return;
-                              }
-
-                              controller..submitLogin();
-                            },
+                  const Text(
+                    "Scan & Web Login",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
-
-                  SizedBox(height: 30.h),
                 ],
               ),
+            ),
+          ),
+
+          /// SCANNER FRAME
+          Center(
+            child: SizedBox(
+              width: 280.w,
+              height: 280.w,
+              child: IgnorePointer(
+                child: AnimatedBuilder(
+                  animation: animationController,
+                  builder: (_, __) {
+                    return CustomPaint(
+                      painter: ScannerPainter(
+                        animationController.value,
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+          ),
+
+          /// BOTTOM TEXT
+          Positioned(
+            bottom: 120,
+            left: 0,
+            right: 0,
+            child: Column(
+              children: const [
+                Text(
+                  "Scan QR Code",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                SizedBox(height: 8),
+                Text(
+                  "Place QR code inside the frame",
+                  style: TextStyle(
+                    color: Colors.white70,
+                    fontSize: 14,
+                  ),
+                ),
+              ],
             ),
           ),
         ],
       ),
     );
   }
+}
 
-  static Widget _corner({
-    double? top,
-    double? bottom,
-    double? left,
-    double? right,
-  }) {
-    return Positioned(
-      top: top,
-      bottom: bottom,
-      left: left,
-      right: right,
-      child: Container(
-        width: 40,
-        height: 40,
-        decoration: BoxDecoration(
-          border: Border(
-            top: top != null
-                ? const BorderSide(
-                    color: Color(0xFF11C5E8),
-                    width: 6,
-                  )
-                : BorderSide.none,
-            bottom: bottom != null
-                ? const BorderSide(
-                    color: Color(0xFF11C5E8),
-                    width: 6,
-                  )
-                : BorderSide.none,
-            left: left != null
-                ? const BorderSide(
-                    color: Color(0xFF11C5E8),
-                    width: 6,
-                  )
-                : BorderSide.none,
-            right: right != null
-                ? const BorderSide(
-                    color: Color(0xFF11C5E8),
-                    width: 6,
-                  )
-                : BorderSide.none,
+class ScannerOverlay extends StatelessWidget {
+  const ScannerOverlay({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    const double scanSize = 280;
+
+    return ColorFiltered(
+      colorFilter: const ColorFilter.mode(
+        Colors.black54,
+        BlendMode.srcOut,
+      ),
+      child: Stack(
+        fit: StackFit.expand,
+        children: [
+          Container(
+            decoration: const BoxDecoration(
+              color: Colors.black,
+              backgroundBlendMode: BlendMode.dstOut,
+            ),
           ),
-        ),
+          Center(
+            child: Container(
+              width: scanSize,
+              height: scanSize,
+              color: Colors.red,
+            ),
+          ),
+        ],
       ),
     );
+  }
+}
+
+class ScannerPainter extends CustomPainter {
+  final double value;
+
+  ScannerPainter(this.value);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    const double gap = 15;
+    const double corner = 40;
+    const double stroke = 6;
+
+    final left = gap;
+    final top = gap;
+    final right = size.width - gap;
+    final bottom = size.height - gap;
+
+    final paint = Paint()
+      ..color = AppColors.clrPrimary
+      ..strokeWidth = stroke
+      ..strokeCap = StrokeCap.round;
+
+    // Top Left
+    canvas.drawLine(
+      Offset(left, top),
+      Offset(left + corner, top),
+      paint,
+    );
+    canvas.drawLine(
+      Offset(left, top),
+      Offset(left, top + corner),
+      paint,
+    );
+
+    // Top Right
+    canvas.drawLine(
+      Offset(right, top),
+      Offset(right - corner, top),
+      paint,
+    );
+    canvas.drawLine(
+      Offset(right, top),
+      Offset(right, top + corner),
+      paint,
+    );
+
+    // Bottom Left
+    canvas.drawLine(
+      Offset(left, bottom),
+      Offset(left + corner, bottom),
+      paint,
+    );
+    canvas.drawLine(
+      Offset(left, bottom),
+      Offset(left, bottom - corner),
+      paint,
+    );
+
+    // Bottom Right
+    canvas.drawLine(
+      Offset(right, bottom),
+      Offset(right - corner, bottom),
+      paint,
+    );
+    canvas.drawLine(
+      Offset(right, bottom),
+      Offset(right, bottom - corner),
+      paint,
+    );
+
+    // Scan Line
+    final y = top + ((bottom - top) * value);
+
+    final scanPaint = Paint()
+      ..color = Colors.greenAccent
+      ..strokeWidth = 3;
+
+    canvas.drawLine(
+      Offset(left + 10, y),
+      Offset(right - 10, y),
+      scanPaint,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant ScannerPainter oldDelegate) {
+    return oldDelegate.value != value;
   }
 }

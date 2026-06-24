@@ -146,3 +146,103 @@ class _BlinkingZoomCardState extends State<BlinkingZoomCard>
     );
   }
 }
+class AnimatedBorderCard extends StatefulWidget {
+  final Widget child;
+
+  const AnimatedBorderCard({
+    super.key,
+    required this.child,
+  });
+
+  @override
+  State<AnimatedBorderCard> createState() => _AnimatedBorderCardState();
+}
+
+class _AnimatedBorderCardState extends State<AnimatedBorderCard>
+    with SingleTickerProviderStateMixin {
+  late AnimationController controller;
+
+  @override
+  void initState() {
+    super.initState();
+
+    controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 4),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: controller,
+      builder: (_, __) {
+        return CustomPaint(
+          painter: BorderDotPainter(
+            progress: controller.value,
+          ),
+          child: widget.child,
+        );
+      },
+    );
+  }
+}
+
+
+class BorderDotPainter extends CustomPainter {
+  final double progress;
+
+  BorderDotPainter({required this.progress});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    const radius = 12.0;
+
+    final rect = RRect.fromRectAndRadius(
+      Offset.zero & size,
+      const Radius.circular(radius),
+    );
+
+    final path = Path()..addRRect(rect);
+
+    final metric = path.computeMetrics().first;
+
+    final distance = metric.length * progress;
+
+    final tangent = metric.getTangentForOffset(distance);
+
+    if (tangent == null) return;
+
+    final point = tangent.position;
+
+    // Glow
+    canvas.drawCircle(
+      point,
+      8,
+      Paint()
+        ..color = Colors.orange.withOpacity(0.3)
+        ..maskFilter = const MaskFilter.blur(
+          BlurStyle.normal,
+          10,
+        ),
+    );
+
+    // Dot
+    canvas.drawCircle(
+      point,
+      4,
+      Paint()..color = Colors.orange,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant BorderDotPainter oldDelegate) {
+    return oldDelegate.progress != progress;
+  }
+}

@@ -58,4 +58,5 @@ class ApiRoutes {
   static const loginhistory = "/login_history";
   static const weblogin = "/web_login";
   static const cashback = "/cash_back/";
+  static const weblogout = "/web_logout";
 }

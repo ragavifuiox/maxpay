@@ -22,7 +22,7 @@ class WebLogoutRepoImpl implements WebLogoutRepository {
   }) async {
     try {
       final response = await apiService.post(
-        ApiRoutes.weblogin,
+        ApiRoutes.weblogout,
         data: {"is_web_login": isweb,},
       );
 

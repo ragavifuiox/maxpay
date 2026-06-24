@@ -8,8 +8,10 @@ import 'package:maxpay/controllers/web_login_controller.dart';
 import 'package:maxpay/core/constants/asset_images.dart';
 import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
+import 'package:maxpay/core/di/service_locator.dart';
 import 'package:maxpay/core/utils/responsive.dart';
 import 'package:maxpay/core/utils/theme.dart';
+import 'package:share_plus/share_plus.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -18,6 +20,15 @@ class SettingsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeController = Get.find<ThemeController>();
     final authController = Get.find<AuthController>();
+   final webcontroller = Get.isRegistered<WebLoginController>()
+    ? Get.find<WebLoginController>()
+    : Get.put(
+        WebLoginController(
+          webloginusecase: sl(),
+          webLogoutUsecase: sl(),
+        ),
+        permanent: true,
+      );
     final isTablet = Responsive.isTablet(context);
 
     return Obx(() {
@@ -160,41 +171,42 @@ class SettingsPage extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
 
                         children: [
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 6.w,
-                              vertical: 2.h,
-                            ),
-
-                            decoration: BoxDecoration(
-                              color: Colors.green,
-                              borderRadius: BorderRadius.circular(4.r),
-                            ),
-
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-
-                              children: [
-                                Text(
-                                  'Link',
-
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 9.sp,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-
-                                SizedBox(width: 2.w),
-
-                                Icon(
-                                  Icons.reply_rounded,
-                                  color: Colors.white,
-                                  size: 10.sp,
-                                ),
-                              ],
-                            ),
-                          ),
+                         InkWell(
+  onTap: () {
+    Share.share(
+      'Login to MaxPay Web:\nhttp://139.59.91.7/test_paylinkonline.in/public/retailer/login',
+    );
+  },
+  child: Container(
+    padding: EdgeInsets.symmetric(
+      horizontal: 6.w,
+      vertical: 2.h,
+    ),
+    decoration: BoxDecoration(
+      color: Colors.green,
+      borderRadius: BorderRadius.circular(4.r),
+    ),
+    child: Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          'Link',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 9.sp,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        SizedBox(width: 2.w),
+        Icon(
+          Icons.reply_rounded,
+          color: Colors.white,
+          size: 10.sp,
+        ),
+      ],
+    ),
+  ),
+),
 
                           SizedBox(width: 6.w),
 
@@ -225,30 +237,90 @@ class SettingsPage extends StatelessWidget {
                     ),
                     child: Row(
                       children: [
-                        Expanded(
-                          child: _buildLogoutButton(
-                            context,
-                            'Logout',
-                            Icons.logout_rounded,
-                            () {
-                              Get.find<AuthController>().logout();
-                            },
-                          ),
-                        ),
-                        SizedBox(width: 15.w),
-                        Expanded(
-                          child: _buildLogoutButton(
-  context,
-  'Web Logout',
-  Icons.logout_rounded,
-  () {
-    Get.find<WebLoginController>().WebLogout(
-      isweb: "1", // or whatever value your API expects
-    );
-  },
-  true,
+                       Expanded(
+  child: _buildLogoutButton(
+    context,
+    'Logout',
+    Icons.logout_rounded,
+    () {
+      Get.defaultDialog(
+        title: "Confirm Logout",
+        titleStyle: TextStyle(
+          fontSize: 18.sp,
+          fontWeight: FontWeight.w700,
+          fontFamily: 'Poppins',
+          color: Theme.of(context).colorScheme.onSurface,
+        ),
+
+        middleText: "Do you want to logout?",
+        middleTextStyle: TextStyle(
+          fontSize: 14.sp,
+          fontWeight: FontWeight.w400,
+          fontFamily: 'Poppins',
+          color: Theme.of(context).colorScheme.onSurface,
+        ),
+
+        textCancel: "No",
+        textConfirm: "Yes",
+
+        confirmTextColor: Colors.white,
+        cancelTextColor: Colors.grey,
+        buttonColor: AppColors.clrPrimary,
+
+        barrierDismissible: false,
+
+        onCancel: () {
+          Get.back();
+        },
+
+        onConfirm: () {
+          Get.back(); // close dialog first
+          Get.find<AuthController>().logout(); 
+          // OR your web logout:
+          // webcontroller.WebLogout(isweb: "0");
+        },
+      );
+    },
+  ),
 ),
-                        ),
+                        SizedBox(width: 15.w),
+                      Expanded(
+  child: _buildLogoutButton(
+    context,
+    'Web Logout',
+    Icons.logout_rounded,
+    () {
+      Get.defaultDialog(
+        title: "Confirm Logout",
+        titleStyle: TextStyle(
+          fontSize: 18.sp,
+          fontWeight: FontWeight.w700,
+          fontFamily: 'Poppins',
+         color:
+                              theme.colorScheme.onSurface,
+        ),
+        middleText: "Do you want to logout from Web?",
+        middleTextStyle: TextStyle(
+          fontSize: 14.sp,
+          fontWeight: FontWeight.w400,
+          fontFamily: 'Poppins',
+          color:
+                              theme.colorScheme.onSurface,
+        ),
+        textCancel: "No",
+        textConfirm: "Yes",
+        confirmTextColor: Colors.white,
+        buttonColor: AppColors.clrPrimary,
+        cancelTextColor: Colors.grey,
+        onConfirm: () {
+          Get.back();
+          webcontroller.WebLogout(isweb: "0");
+        },
+      );
+    },
+    true,
+  ),
+),
                       ],
                     ),
                   ),
@@ -347,4 +419,7 @@ class SettingsPage extends StatelessWidget {
       ),
     );
   }
+
+
+  
 }
