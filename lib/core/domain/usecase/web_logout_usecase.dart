@@ -2,7 +2,6 @@
 
 
 import 'package:dartz/dartz.dart';
-import 'package:maxpay/core/data/model/web_login_model.dart';
 
 import 'package:maxpay/core/data/model/web_logout_mode.dart';
 import 'package:maxpay/core/domain/repository/web_logout_repository.dart';

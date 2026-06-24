@@ -147,7 +147,7 @@ class CashbackScreen extends GetView<CashbackController> {
                 return ListView.separated(
                   itemCount: cashbackList.length,
                   separatorBuilder:
-                      (_, __) =>
+                      (_, _) =>
                           const SizedBox(height: 12),
                   itemBuilder: (context, index) {
                     final item =
@@ -229,7 +229,7 @@ class CashbackTile extends StatelessWidget {
               logo,
               fit: BoxFit.cover,
               errorBuilder:
-                  (_, __, ___) => const Icon(
+                  (_, _, _) => const Icon(
                     Icons.image,
                   ),
             ),

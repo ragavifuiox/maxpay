@@ -11,15 +11,15 @@ class LoginHistory {
     if (json['data'] != null) {
       data = <LogHistoryData>[];
       json['data'].forEach((v) {
-        data!.add(new LogHistoryData.fromJson(v));
+        data!.add(LogHistoryData.fromJson(v));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['status'] = this.status;
-    data['message'] = this.message;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['status'] = status;
+    data['message'] = message;
     if (this.data != null) {
       data['data'] = this.data!.map((v) => v.toJson()).toList();
     }
@@ -43,11 +43,11 @@ class LogHistoryData {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['city'] = this.city;
-    data['network'] = this.network;
-    data['ip_address'] = this.ipAddress;
-    data['login_time'] = this.loginTime;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['city'] = city;
+    data['network'] = network;
+    data['ip_address'] = ipAddress;
+    data['login_time'] = loginTime;
     return data;
   }
 }

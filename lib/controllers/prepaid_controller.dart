@@ -61,36 +61,37 @@ class PrePaidController extends GetxController {
   Rx<PlanDetailData?> selectplandetail = Rx<PlanDetailData?>(null);
 
   String selectedTabId = "";
- Future<void> getPlans({required String productid}) async {
-  try {
-    isLoading.value = true;
+  Future<void> getPlans({required String productid}) async {
+    try {
+      isLoading.value = true;
 
-    plans.clear();
+      plans.clear();
 
-    print("GET PLAN PRODUCT ID => $productid");
+      print("GET PLAN PRODUCT ID => $productid");
 
-    final result = await planUseCase(productid: productid);
+      final result = await planUseCase(productid: productid);
 
-    result.fold(
-      (failure) {
-        CustomToast.error(failure.message);
-      },
-      (response) {
-        print(
-          "API RESPONSE PRODUCT IDS => ${response.data?.map((e) => e.id).toList()}",
-        );
+      result.fold(
+        (failure) {
+          CustomToast.error(failure.message);
+        },
+        (response) {
+          print(
+            "API RESPONSE PRODUCT IDS => ${response.data?.map((e) => e.id).toList()}",
+          );
+          response.data?.sort((a, b) => (a.name ?? "").compareTo(b.name ?? ""));
 
-        plans.assignAll(response.data ?? []);
+          plans.assignAll(response.data ?? []);
 
-        if (plans.isNotEmpty) {
-          selectedPlan.value = plans.first;
-        }
-      },
-    );
-  } finally {
-    isLoading.value = false;
+          if (plans.isNotEmpty) {
+            selectedPlan.value = plans.first;
+          }
+        },
+      );
+    } finally {
+      isLoading.value = false;
+    }
   }
-}
 
   Future<void> searchPlans(String planId, String amount) async {
     AppLogger.debugPrint("========== SEARCH API ==========");

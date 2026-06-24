@@ -57,7 +57,7 @@ class LoginHistoryScreen extends GetView<LoginHistoryController> {
 
     return ListView.separated(
       itemCount: controller.loghistory.length,
-      separatorBuilder: (_, __) =>
+      separatorBuilder: (_, _) =>
           const SizedBox(height: 10),
       itemBuilder: (context, index) {
         return _LoginHistoryCard(

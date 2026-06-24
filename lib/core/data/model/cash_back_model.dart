@@ -13,18 +13,18 @@ class CashBack {
     if (json['code'] != null) {
       code = <Code>[];
       json['code'].forEach((v) {
-        code!.add(new Code.fromJson(v));
+        code!.add(Code.fromJson(v));
       });
     }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['success'] = this.success;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['success'] = success;
     data['data'] = this.data;
-    data['message'] = this.message;
-    if (this.code != null) {
-      data['code'] = this.code!.map((v) => v.toJson()).toList();
+    data['message'] = message;
+    if (code != null) {
+      data['code'] = code!.map((v) => v.toJson()).toList();
     }
     return data;
   }
@@ -46,11 +46,11 @@ class Code {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['product_id'] = this.productId;
-    data['name'] = this.name;
-    data['logo'] = this.logo;
-    data['debit_commission'] = this.debitCommission;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['product_id'] = productId;
+    data['name'] = name;
+    data['logo'] = logo;
+    data['debit_commission'] = debitCommission;
     return data;
   }
 }

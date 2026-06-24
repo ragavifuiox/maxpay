@@ -1,8 +1,10 @@
 import 'package:get/get.dart';
 import 'package:maxpay/controllers/add_kyc_controller.dart';
 import 'package:maxpay/controllers/add_staff_controller.dart';
+import 'package:maxpay/controllers/add_wallet_controller.dart';
 import 'package:maxpay/controllers/auth_controller.dart';
 import 'package:maxpay/controllers/cash_back_controller.dart';
+// import 'package:maxpay/controllers/credit_controller.dart';
 import 'package:maxpay/controllers/dispute_controller.dart';
 import 'package:maxpay/controllers/dth_controller.dart';
 import 'package:maxpay/controllers/earning_controller.dart';
@@ -486,7 +488,16 @@ class AppPages {
       page: () => const InsufficientBalancePage(),
     ),
     GetPage(name: AppRoutes.dth, page: () => const DTHRechargePage()),
-    GetPage(name: AppRoutes.addwallet, page: () => const AddWalletScreen()),
+    GetPage(
+      name: AppRoutes.addwallet,
+      page: () => const AddWalletScreen(),
+      binding: BindingsBuilder(
+        () => Get.lazyPut(
+          () => AddWalletController(createQrUsecase: sl()),
+          fenix: true,
+        ),
+      ),
+    ),
     GetPage(name: AppRoutes.veirfypin, page: () => PinCodeEnterPage()),
     GetPage(name: AppRoutes.wallettrnsfer, page: () => WalletTransferScreen()),
     GetPage(

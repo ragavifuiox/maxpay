@@ -13,6 +13,7 @@ import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/core/data/model/search_dth_model.dart';
 import 'package:maxpay/core/di/service_locator.dart';
 import 'package:maxpay/core/extensions/string_ext.dart';
+import 'package:maxpay/core/utils/logg_helper.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
 import 'package:maxpay/core/data/model/plan_model.dart';
 
@@ -61,15 +62,15 @@ class _DTHRechargePageState extends State<DTHRechargePage>
   void initState() {
     super.initState();
 
-    print("Arguments => ${Get.arguments}");
+    AppLogger.debugPrint("Arguments => ${Get.arguments}");
 
     final args = Get.arguments;
 
     productId = args["productId"]?.toString() ?? "";
     final String selectedAmount = args['amount'] ?? '';
-    print("ARGUMENT PRODUCT ID => $productId"); // ✅ ADD HERE
+    AppLogger.debugPrint("ARGUMENT PRODUCT ID => $productId"); // ✅ ADD HERE
 
-    print("ProductId => $productId");
+    AppLogger.debugPrint("ProductId => $productId");
 
     controller.getPlans(productid: productId);
 
