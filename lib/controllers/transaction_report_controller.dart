@@ -42,54 +42,84 @@ void onInit() {
 
 
  Future<void> fetchplan() async {
-  print("🚀 fetchplan() called");
+    isLoading.value = true;
 
-  isLoading.value = true;
-  print("⏳ Loading started");
-
-  try {
     final result = await allPlanUsecase();
-
-    print("📡 API call completed");
 
     result.fold(
       (failure) {
-        print("❌ Failure happened");
-        print("❌ Error message: ${failure.message}");
-
         isLoading.value = false;
 
         Get.snackbar('Error', failure.message);
       },
       (data) {
-        print("✅ Success response received");
-        print("📦 Data: $data");
-
         allplan.value = data;
 
         isLoading.value = false;
       },
     );
-  } catch (e) {
-    print("🔥 Exception caught: $e");
-
-    isLoading.value = false;
-
-    Get.snackbar("Error", e.toString());
   }
 
-  print("🏁 fetchplan() finished");
-}
+  Future<void> transactionreport({
+    required String search,
+    required String status,
+    required String productid,
+    required String fromdate,
+    required String todate,
+  }) async {
+    try {
+      isLoading.value = true;
 
-Future<void> transactionreport({
-  required String search,
-  required String status,
-  required String productid,
-  required String fromdate,
-  required String todate,
-}) async {
-  try {
-    isLoading.value = true;
+      AppLogger.debugPrint("===== REQUEST =====");
+      AppLogger.debugPrint({
+        "search": search,
+        "status": status,
+        "productid": productid,
+        "fromdate": fromdate,
+        "todate": todate,
+      });
+
+      AppLogger.debugPrint("Calling transreportUsecase...");
+
+      final result = await transreportUsecase(
+        search: search,
+        status: status,
+        productid: productid,
+        fromdate: fromdate,
+        todate: todate,
+      );
+
+      AppLogger.debugPrint("Usecase Response Received");
+
+      result.fold(
+        (failure) {
+          AppLogger.logError("FAILURE");
+          AppLogger.logError(failure.message);
+
+          CustomToast.error(failure.message.toString());
+        },
+        (response) {
+          AppLogger.debugPrint("SUCCESS");
+
+          AppLogger.debugPrint(response.toJson());
+
+          transreportList.assignAll(response.data ?? []);
+
+          AppLogger.debugPrint("Total Records : ${transreportList.length}");
+
+          // CustomToast.success(
+          //   response.message ?? "Success",
+          // );
+        },
+      );
+    } catch (e, stackTrace) {
+      AppLogger.logError("EXCEPTION");
+      AppLogger.logError(e);
+      AppLogger.logError(stackTrace);
+    } finally {
+      isLoading.value = false;
+    }
+  }
 
   Future<void> selectFromDate(BuildContext context) async {
     DateTime? pickedDate = await showDatePicker(
