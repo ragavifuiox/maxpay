@@ -94,7 +94,7 @@ class HomePageScreen extends GetView<HomePageController> {
                         BlinkingZoomCard(
                           child: StatCard(
                             onTap: () {
-                             Get.find<NavbarController>().openMenu();
+                              Get.find<NavbarController>().openMenu();
                             },
                             title: 'Transactions',
                             bgColor: AppColors.darkBlue.withValues(alpha: 0.04),

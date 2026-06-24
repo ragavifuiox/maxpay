@@ -216,9 +216,8 @@ class _MainSplashScreenState extends State<MainSplashScreen>
     if (lastActiveStr != null) {
       final lastActive = DateTime.tryParse(lastActiveStr);
       if (lastActive != null) {
-        final elapsed = DateTime.now().difference(lastActive);
-        if (elapsed < AppLifecycleController.inactivityThreshold) {
-          AppLogger.logError("Cold start: within threshold (${elapsed.inSeconds}s). Navigating straight to home.");
+        if (!AppLifecycleController.hasCrossedLogoutTime(lastActive, DateTime.now())) {
+          AppLogger.logError("Cold start: did not cross logout boundaries. Navigating straight to home.");
           Get.offAllNamed(AppRoutes.main);
           return;
         }

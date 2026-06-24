@@ -190,6 +190,7 @@ class AuthController extends GetxController {
           AppLogger.logError("PHONE : ${phoneNumber.value}");
 
           Get.toNamed(AppRoutes.otpVerification);
+          phoneController.clear();
         },
       );
     } catch (e) {
@@ -209,7 +210,6 @@ class AuthController extends GetxController {
       result.fold(
         (failure) {
           CustomToast.error(failure.message);
-
         },
         (response) async {
           AppLogger.logError("========== OTP RESPONSE ==========");
@@ -226,45 +226,23 @@ class AuthController extends GetxController {
           AppLogger.logError("================================");
 
           if (response.success == true) {
-
-
             final deviceInfo = await DeviceInfoService.getInfo();
 
-await storage.saveString(
-  "ip_address",
-  deviceInfo["ip"] ?? "",
-);
+            await storage.saveString("ip_address", deviceInfo["ip"] ?? "");
 
-await storage.saveString(
-  "city",
-  deviceInfo["city"] ?? "",
-);
+            await storage.saveString("city", deviceInfo["city"] ?? "");
 
-await storage.saveString(
-  "state",
-  deviceInfo["state"] ?? "",
-);
+            await storage.saveString("state", deviceInfo["state"] ?? "");
 
-await storage.saveString(
-  "network",
-  deviceInfo["network"] ?? "",
-);
+            await storage.saveString("network", deviceInfo["network"] ?? "");
 
-AppLogger.logError(
-  "IP => ${storage.getString("ip_address")}",
-);
+            AppLogger.logError("IP => ${storage.getString("ip_address")}");
 
-AppLogger.logError(
-  "CITY => ${storage.getString("city")}",
-);
+            AppLogger.logError("CITY => ${storage.getString("city")}");
 
-AppLogger.logError(
-  "STATE => ${storage.getString("state")}",
-);
+            AppLogger.logError("STATE => ${storage.getString("state")}");
 
-AppLogger.logError(
-  "NETWORK => ${storage.getString("network")}",
-);
+            AppLogger.logError("NETWORK => ${storage.getString("network")}");
             await storage.saveString("auth_token", response.data?.token ?? "");
 
             await storage.saveInt("user_id", response.data?.userId ?? 0);
@@ -307,11 +285,7 @@ AppLogger.logError(
             );
 
             if (pin == 1) {
-              if (fp == 1) {
-                Get.offAllNamed(AppRoutes.veirfypin);
-              } else {
-                Get.offAllNamed(AppRoutes.pinCodeCreation);
-              }
+              Get.offAllNamed(AppRoutes.veirfypin);
             } else {
               isNewUserFlow.value = true;
               Get.offAllNamed(AppRoutes.pinCodeCreation);
@@ -409,7 +383,7 @@ AppLogger.logError(
 
           CustomToast.error(failure.message);
         },
-        
+
         (response) async {
           AppLogger.logError("=========== CREATE MPIN RESPONSE ===========");
           AppLogger.logError("SUCCESS : ${response.success}");

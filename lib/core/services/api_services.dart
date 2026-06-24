@@ -58,8 +58,11 @@ class ApiService {
           if (e.response?.statusCode == 401) {
             _handleUnauthorized();
           } else {
-            g.Get.snackbar(
-              "Error",
+            // g.Get.snackbar(
+            //   "Error",
+            //   e.response?.data?['message'] ?? "Something went wrong",
+            // );
+            AppLogger.logError(
               e.response?.data?['message'] ?? "Something went wrong",
             );
           }
@@ -133,7 +136,7 @@ class ApiService {
       // If response is not a map (e.g., List or String)
       return {"data": response.data};
     } on DioException catch (e) {
-      log("DioException: ${e.message}");
+      log("DioException: ${e.requestOptions.path}  ${e.message}");
       rethrow;
     } catch (e) {
       log("Unknown error: $e");
