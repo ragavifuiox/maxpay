@@ -27,6 +27,7 @@ class AssetImages {
   static const processing = "assets/images/processing.svg";
   static const failedAll = "assets/images/failed_all.svg";
   static const statement = "assets/images/statement.svg";
+  static const cable = "assets/images/cable.svg";
 
   // Services
   static const prepaid = "assets/images/prepaid.svg";

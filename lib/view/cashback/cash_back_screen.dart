@@ -25,96 +25,101 @@ class CashbackScreen extends GetView<CashbackController> {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            Container(
-              margin: const EdgeInsets.only(bottom: 12),
-              padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
-                color: theme.brightness == Brightness.light
-                    ? AppColors.background
-                    : const Color(0xFF2F3349),
-                borderRadius: BorderRadius.circular(12),
-                border: theme.brightness == Brightness.dark
-                    ? Border.all(
-                        color: const Color(0xFF3C3F52),
-                      )
-                    : null,
-              ),
-              child: Container(
-                height: 52,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 14),
-                decoration: BoxDecoration(
-                  color: theme.brightness == Brightness.light
-                      ? Colors.white
-                      : theme.colorScheme.surface,
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(
-                    color: theme.brightness ==
-                            Brightness.light
-                        ? Colors.black
-                        : const Color(0xFF3C3F52),
-                  ),
+            
+           Container(
+  margin: const EdgeInsets.only(bottom: 12),
+  padding: const EdgeInsets.all(14),
+  decoration: BoxDecoration(
+    color: theme.brightness == Brightness.light
+        ? AppColors.background
+        : const Color(0xFF2F3349),
+    borderRadius: BorderRadius.circular(12),
+    border: theme.brightness == Brightness.dark
+        ? Border.all(
+            color: const Color(0xFF3C3F52),
+          )
+        : null,
+  ),
+  child: Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Padding(
+        padding: const EdgeInsets.only(left: 12),
+        child: Text(
+          "Product",
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            color: theme.colorScheme.onSurface,
+          ),
+        ),
+      ),
+
+      const SizedBox(height: 8),
+
+      Container(
+        height: 52,
+        padding: const EdgeInsets.symmetric(
+          horizontal: 14,
+        ),
+        decoration: BoxDecoration(
+          color: theme.brightness == Brightness.light
+              ? Colors.white
+              : theme.colorScheme.surface,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: theme.brightness == Brightness.light
+                ? Colors.black12
+                : const Color(0xFF3C3F52),
+          ),
+        ),
+        child: Obx(
+          () => DropdownButtonHideUnderline(
+            child: DropdownButton<Data>(
+              isExpanded: true,
+              hint: Text(
+                controller.selectedProductName.value.isEmpty
+                    ? "Select Product"
+                    : controller.selectedProductName.value,
+                style: TextHelper.max2.copyWith(
+                  color: theme.colorScheme.onSurface,
                 ),
-                child: Obx(
-                  () => DropdownButtonHideUnderline(
-                    child: DropdownButton<Data>(
-                      isExpanded: true,
-                      hint: Text(
-                        controller
-                                .selectedProductName
-                                .value
-                                .isEmpty
-                            ? "Select"
-                            : controller
-                                .selectedProductName
-                                .value,
-                        style: TextHelper.max2.copyWith(
-                          color:
-                              theme.colorScheme.onSurface,
-                        ),
-                      ),
-                      icon: Icon(
-                        Icons.arrow_forward_ios,
-                        size: 18,
-                        color: theme.colorScheme
-                            .onSurfaceVariant,
-                      ),
-                      items: controller
-                              .allPlan
-                              .value
-                              ?.data
-                              ?.map(
-                                (item) =>
-                                    DropdownMenuItem<Data>(
-                                  value: item,
-                                  child: Text(
-                                    item.name ?? '',
-                                  ),
-                                ),
-                              )
-                              .toList() ??
-                          [],
-                     onChanged: (value) {
-  if (value == null) return;
-
-  controller.selectedProductName.value =
-      value.name ?? '';
-
-  controller.selectedProductType.value =
-      value.productType ?? '';
-
-  controller.selectedProductId.value =
-      value.id.toString();
-
-  controller.fetchCashback(
-    value.id.toString(),
-  );
-},
+              ),
+              icon: Icon(
+                Icons.keyboard_arrow_down,
+                color: theme.colorScheme.onSurface,
+              ),
+              items: controller.allPlan.value?.data?.map(
+                    (item) => DropdownMenuItem<Data>(
+                      value: item,
+                      child: Text(item.name ?? ''),
                     ),
-                  ),
-                ),
-              ),
+                  ).toList() ??
+                  [],
+              onChanged: (value) {
+                if (value == null) return;
+
+                controller.selectedProductName.value =
+                    value.name ?? '';
+
+                controller.selectedProductType.value =
+                    value.productType ?? '';
+
+                controller.selectedProductId.value =
+                    value.id.toString();
+
+                controller.fetchCashback(
+                  value.id.toString(),
+                );
+              },
             ),
+          ),
+        ),
+      ),
+    ],
+  ),
+),
+            
 
             const SizedBox(height: 22),
 

@@ -65,7 +65,22 @@ class TransactionScreen extends GetView<TransReportController> {
       : null,
 ),
   child: Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
     children: [
+
+
+       Padding(
+  padding: const EdgeInsets.only(left: 2),
+  child: Text(
+    "Product",
+    style: TextStyle(
+      fontSize: 14,
+      fontWeight: FontWeight.w600,
+      color: theme.colorScheme.onSurface,
+    ),
+  ),
+),
+const SizedBox(height: 8),
       /// SELECT CREDIT TYPE
      Obx(
   () => Container(
