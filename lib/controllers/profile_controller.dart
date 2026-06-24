@@ -45,10 +45,8 @@ Future<void> fetchProfile() async {
     (data) {
       AppLogger.debugPrint("===== PROFILE RESPONSE =====");
 
-      if (data.toJson != null) {
-        AppLogger.debugPrint(data.toJson());
-      }
-
+      AppLogger.debugPrint(data.toJson());
+    
       profileData.value = data;
       isLoading.value = false;
     },

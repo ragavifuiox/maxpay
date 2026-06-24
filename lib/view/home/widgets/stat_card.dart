@@ -141,6 +141,7 @@ class _BlinkingZoomCardState extends State<BlinkingZoomCard>
         child: FadeTransition(
           opacity: _opacityAnimation,
           child: ScaleTransition(scale: _scaleAnimation, child: widget.child),
+          // child: widget.child,
         ),
       ),
     );

@@ -1,10 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
+import 'package:maxpay/controllers/add_wallet_controller.dart';
 import 'package:maxpay/core/constants/asset_images.dart';
+import 'package:maxpay/core/extensions/currency.dart';
 import 'package:maxpay/core/utils/texthelper.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 class AddWalletPopup extends StatelessWidget {
-  const AddWalletPopup({super.key});
+  final String amount;
+  final String url;
+  final String txtionId;
+  const AddWalletPopup({
+    super.key,
+    required this.amount,
+    required this.url,
+    required this.txtionId,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -21,45 +33,36 @@ class AddWalletPopup extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-
             /// TITLE
-           /// TITLE
-Row(
-  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  children: [
+            /// TITLE
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                /// LEFT SIDE TITLE
+                Text("Account Details", style: TextHelper.max10(context)),
 
-    /// LEFT SIDE TITLE
-    Text(
-      "Account Details",
-      style: TextHelper.max10(context),
-    ),
-
-    /// RIGHT SIDE ICONS
-    Row(
-      children: [
-
-        /// SHARE ICON
-        IconButton(
-  onPressed: () {
-    // share function
-  },
-  icon: SvgPicture.asset(
-    AssetImages.shareSvg,
-    width: 22,
-    height: 22,
-    colorFilter: const ColorFilter.mode(
-      Colors.green,
-      BlendMode.srcIn,
-    ),
-  ),
-),
-
-        
-       
-      ],
-    ),
-  ],
-),
+                /// RIGHT SIDE ICONS
+                Row(
+                  children: [
+                    /// SHARE ICON
+                    IconButton(
+                      onPressed: () {
+                        // share function
+                      },
+                      icon: SvgPicture.asset(
+                        AssetImages.shareSvg,
+                        width: 22,
+                        height: 22,
+                        colorFilter: const ColorFilter.mode(
+                          Colors.green,
+                          BlendMode.srcIn,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
 
             const SizedBox(height: 10),
 
@@ -70,11 +73,18 @@ Row(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Image.asset(
-                AssetImages.qrCode,
-                height: 220,
-                width: 220,
-                fit: BoxFit.contain,
+              child: QrImageView(
+                data: url,
+                version: QrVersions.auto,
+                size: 220,
+                errorStateBuilder: (cxt, err) {
+                  return const Center(
+                    child: Text(
+                      "Uh oh! Something went wrong...",
+                      textAlign: TextAlign.center,
+                    ),
+                  );
+                },
               ),
             ),
 
@@ -83,28 +93,20 @@ Row(
             /// AMOUNT
             Align(
               alignment: Alignment.centerLeft,
-              child: Text(
-                "Amount",
-                style: TextHelper.max12(context),
-              ),
+              child: Text("Amount", style: TextHelper.max12(context)),
             ),
 
             const SizedBox(height: 8),
 
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.symmetric(
-                horizontal: 14,
-                vertical: 14,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
               decoration: BoxDecoration(
-                border: Border.all(
-                  color: Colors.grey.shade300,
-                ),
+                border: Border.all(color: Colors.grey.shade300),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
-                "₹ 10,000.00",
+                amount.currencyIndian,
                 style: TextHelper.max12(context),
               ),
             ),
@@ -112,11 +114,35 @@ Row(
             const SizedBox(height: 12),
 
             /// TIMER
-            const Text(
-              "Expiry: 04:59",
+            Obx(() {
+              final controller = Get.find<AddWalletController>();
+              final minutes = (controller.remainingSeconds.value ~/ 60)
+                  .toString()
+                  .padLeft(2, '0');
+              final seconds = (controller.remainingSeconds.value % 60)
+                  .toString()
+                  .padLeft(2, '0');
+              return Text(
+                "Expiry: $minutes:$seconds",
+                style: const TextStyle(
+                  color: Colors.red,
+                  fontFamily: 'Poppins',
+                  fontWeight: FontWeight.w600,
+                ),
+              );
+            }),
+
+            const SizedBox(height: 14),
+
+            /// INFO TEXT
+            Text(
+              "Note: It may take a few seconds to update the status after payment.",
+              textAlign: TextAlign.center,
               style: TextStyle(
-                color: Colors.red,
-                fontWeight: FontWeight.bold,
+                color: Colors.grey.shade500,
+                fontSize: 12,
+                fontFamily: 'Poppins',
+                fontStyle: FontStyle.italic,
               ),
             ),
           ],

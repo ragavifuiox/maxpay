@@ -11,7 +11,7 @@ class Statement {
     if (json['data'] != null) {
       data = <StatementData>[];
       json['data'].forEach((v) {
-        data!.add(new StatementData.fromJson(v));
+        data!.add(StatementData.fromJson(v));
       });
     }
     message = json['message'];
@@ -19,13 +19,13 @@ class Statement {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['success'] = this.success;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['success'] = success;
     if (this.data != null) {
       data['data'] = this.data!.map((v) => v.toJson()).toList();
     }
-    data['message'] = this.message;
-    data['code'] = this.code;
+    data['message'] = message;
+    data['code'] = code;
     return data;
   }
 }
@@ -62,15 +62,15 @@ class StatementData {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['transaction_id'] = this.transactionId;
-    data['description'] = this.description;
-    data['date_time'] = this.dateTime;
-    data['opening_balance'] = this.openingBalance;
-    data['credit'] = this.credit;
-    data['debit'] = this.debit;
-    data['closing_balance'] = this.closingBalance;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['transaction_id'] = transactionId;
+    data['description'] = description;
+    data['date_time'] = dateTime;
+    data['opening_balance'] = openingBalance;
+    data['credit'] = credit;
+    data['debit'] = debit;
+    data['closing_balance'] = closingBalance;
     return data;
   }
 }

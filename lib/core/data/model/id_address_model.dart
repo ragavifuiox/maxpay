@@ -8,19 +8,19 @@ class IpAddress {
 
   IpAddress.fromJson(Map<String, dynamic> json) {
     success = json['success'];
-    data = json['data'] != null ? new Data.fromJson(json['data']) : null;
+    data = json['data'] != null ? Data.fromJson(json['data']) : null;
     message = json['message'];
     code = json['code'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['success'] = this.success;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['success'] = success;
     if (this.data != null) {
       data['data'] = this.data!.toJson();
     }
-    data['message'] = this.message;
-    data['code'] = this.code;
+    data['message'] = message;
+    data['code'] = code;
     return data;
   }
 }
@@ -31,7 +31,7 @@ class Data {
   String? ipAddress;
   String? city;
   String? state;
-  Null? country;
+  Null country;
   String? network;
   String? loginTime;
   String? createdAt;
@@ -63,17 +63,17 @@ class Data {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['retailer_id'] = this.retailerId;
-    data['ip_address'] = this.ipAddress;
-    data['city'] = this.city;
-    data['state'] = this.state;
-    data['country'] = this.country;
-    data['network'] = this.network;
-    data['login_time'] = this.loginTime;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['retailer_id'] = retailerId;
+    data['ip_address'] = ipAddress;
+    data['city'] = city;
+    data['state'] = state;
+    data['country'] = country;
+    data['network'] = network;
+    data['login_time'] = loginTime;
+    data['created_at'] = createdAt;
+    data['updated_at'] = updatedAt;
     return data;
   }
 }

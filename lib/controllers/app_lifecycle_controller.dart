@@ -7,7 +7,6 @@ import 'package:maxpay/core/utils/logg_helper.dart';
 class AppLifecycleController extends GetxController
     with WidgetsBindingObserver {
   static const String _keyLastActive = "last_active_time";
-  static const Duration inactivityThreshold = Duration(minutes: 3);
 
   @override
   void onInit() {
@@ -19,6 +18,35 @@ class AppLifecycleController extends GetxController
   void onClose() {
     WidgetsBinding.instance.removeObserver(this);
     super.onClose();
+  }
+
+  /// Returns true if the time interval between [lastActive] and [current]
+  /// crosses at least one daily boundary: 6:00 AM, 12:00 PM, 6:00 PM, or 12:00 AM (00:00).
+  static bool hasCrossedLogoutTime(DateTime lastActive, DateTime current) {
+    if (current.difference(lastActive).inHours >= 24) {
+      return true;
+    }
+
+    final datesToCheck = [
+      DateTime(lastActive.year, lastActive.month, lastActive.day),
+      DateTime(current.year, current.month, current.day),
+    ];
+
+    // Fixed daily boundary hours: 12 AM (0), 6 AM (6), 12 PM (12), 6 PM (18)
+    final hours = [0, 6, 12, 18];
+
+    for (final date in datesToCheck) {
+      for (final hour in hours) {
+        final boundary = DateTime(date.year, date.month, date.day, hour);
+        // If a boundary time occurred after lastActive and before or at current,
+        // it means we have crossed a logout boundary.
+        if (boundary.isAfter(lastActive) && !boundary.isAfter(current)) {
+          return true;
+        }
+      }
+    }
+
+    return false;
   }
 
   @override
@@ -40,7 +68,7 @@ class AppLifecycleController extends GetxController
         "Saved last active time: ${DateTime.now().toIso8601String()}",
       );
     } else if (state == AppLifecycleState.resumed) {
-      // Check if threshold is exceeded when resuming
+      // Check if a logout boundary was crossed when resuming
       final token = storage.getString("auth_token");
       final isPin = storage.getInt("is_pin") ?? 0;
       final isFingerPrint = storage.getInt("is_fingerprint") ?? 0;
@@ -50,12 +78,12 @@ class AppLifecycleController extends GetxController
         if (lastActiveStr != null) {
           final lastActive = DateTime.tryParse(lastActiveStr);
           if (lastActive != null) {
-            final elapsed = DateTime.now().difference(lastActive);
+            final crossed = hasCrossedLogoutTime(lastActive, DateTime.now());
             AppLogger.logError(
-              "Elapsed time since last active: ${elapsed.inSeconds}s (Threshold: ${inactivityThreshold.inSeconds}s)",
+              "App resumed. Last active: $lastActive, Current: ${DateTime.now()}. Crossed boundary: $crossed",
             );
 
-            if (elapsed >= inactivityThreshold) {
+            if (crossed) {
               final currentRoute = Get.currentRoute;
               final authRoutes = [
                 AppRoutes.splash,
@@ -72,7 +100,7 @@ class AppLifecycleController extends GetxController
 
               if (!authRoutes.contains(currentRoute)) {
                 AppLogger.logError(
-                  "Threshold exceeded. Navigating to PIN/Biometric verification screen.",
+                  "Logout boundary crossed. Navigating to PIN/Biometric verification screen.",
                 );
                 if (isFingerPrint == 1) {
                   Get.offAllNamed(AppRoutes.veirfypin);

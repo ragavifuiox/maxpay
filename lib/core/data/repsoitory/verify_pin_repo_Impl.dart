@@ -11,7 +11,7 @@ class VerifyPinRepoImpl implements VerifyPinRepository {
   VerifyPinRepoImpl(this.apiService);
 
   @override
-  Future<Either<Failure, VerifyPin>> Verifypin({
+  Future<Either<Failure, VerifyPin>> verifypin({
     required String pin,
   }) async {
     try {

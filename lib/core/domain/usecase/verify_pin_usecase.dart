@@ -7,6 +7,6 @@ class VerifyPinUsecase {
   final VerifyPinRepository repository;
   VerifyPinUsecase(this.repository);
   Future<Either<Failure, VerifyPin>> call(String pin) {
-    return repository.Verifypin(pin: pin);
+    return repository.verifypin(pin: pin);
   }
 }

@@ -713,7 +713,8 @@ class _MobileRechargePageState extends State<MobileRechargePage>
                         AppLogger.logError("Validated Mobile: $mobile");
                         final requiredAmount =
                             double.tryParse(plan.amount.toString()) ?? 0.0;
-                        final currentBalance = Get.find<HomePageController>()
+                        final currentBalance =
+                            Get.find<HomePageController>()
                                 .walletBalance
                                 .value
                                 ?.data

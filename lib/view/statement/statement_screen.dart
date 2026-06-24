@@ -32,43 +32,35 @@ class StatementScreen extends GetView<StatementController> {
           SizedBox(height: 8.h),
 
           /// LIST
-         Expanded(
-  child: Obx(() {
-    final controller = Get.find<StatementController>();
+          Expanded(
+            child: Obx(() {
+              final controller = Get.find<StatementController>();
 
-    if (controller.isLoading.value) {
-      return const Center(child: CircularProgressIndicator());
-    }
+              if (controller.isLoading.value) {
+                return const Center(child: CircularProgressIndicator());
+              }
 
-    if (controller.statementlist.isEmpty) {
-      return const Center(child: Text("No Data Found"));
-    }
+              if (controller.statementlist.isEmpty) {
+                return const Center(child: Text("No Data Found"));
+              }
 
-    return ListView.builder(
-      itemCount: controller.statementlist.length,
-      itemBuilder: (_, index) {
-        final item = controller.statementlist[index];
+              return ListView.builder(
+                itemCount: controller.statementlist.length,
+                itemBuilder: (_, index) {
+                  final item = controller.statementlist[index];
 
-        return _buildStatementCard(
-          context,
-          item,
-          theme,
-        );
-      },
-    );
-  }),
-),
+                  return _buildStatementCard(context, item, theme);
+                },
+              );
+            }),
+          ),
         ],
       ),
     );
   }
 
   /// CARD UI (same design, only data fixed)
-  Widget _buildStatementCard(
-    BuildContext context,
-    item,
-    ThemeData theme,
-  ) {
+  Widget _buildStatementCard(BuildContext context, item, ThemeData theme) {
     return Container(
       margin: EdgeInsets.only(bottom: 16.h),
       padding: EdgeInsets.all(14.r),
@@ -87,32 +79,40 @@ class StatementScreen extends GetView<StatementController> {
           _row("Description", item.description ?? "-", theme),
           _row("Transaction ID", item.transactionId ?? "-", theme),
           _row("Opening Balance", item.openingBalance ?? "-", theme),
-          _row("Credit", item.credit ?? "0", theme,
-              color: Colors.green),
-          _row("Debit", item.debit ?? "0", theme,
-              color: Colors.red),
-          _row("Closing Balance", item.closingBalance ?? "-", theme,
-              bold: true),
+          _row("Credit", item.credit ?? "0", theme, color: Colors.green),
+          _row("Debit", item.debit ?? "0", theme, color: Colors.red),
+          _row(
+            "Closing Balance",
+            item.closingBalance ?? "-",
+            theme,
+            bold: true,
+          ),
         ],
       ),
     );
   }
 
-  Widget _row(String label, String value, ThemeData theme,
-      {Color? color, bool bold = false}) {
+  Widget _row(
+    String label,
+    String value,
+    ThemeData theme, {
+    Color? color,
+    bool bold = false,
+  }) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 4.h),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label,
-              style: TextHelper.max6.copyWith(
-                color: theme.colorScheme.onSurface,
-              )),
+          Text(
+            label,
+            style: TextHelper.max6.copyWith(color: theme.colorScheme.onSurface),
+          ),
           Text(
             value,
             style: TextHelper.max7.copyWith(
-              color: color ??
+              color:
+                  color ??
                   (theme.brightness == Brightness.dark
                       ? Colors.white
                       : Colors.black),
@@ -127,9 +127,7 @@ class StatementScreen extends GetView<StatementController> {
   Widget _divider(ThemeData theme) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 8.h),
-      child: Divider(
-        color: theme.colorScheme.outline.withValues(alpha: 0.5),
-      ),
+      child: Divider(color: theme.colorScheme.outline.withValues(alpha: 0.5)),
     );
   }
 }

@@ -19,11 +19,9 @@ class EarningController extends GetxController {
   });
 
   RxBool isLoading = false.obs;
-  Rx<SearchEarning?> searchData =
-      Rx<SearchEarning?>(null);
-  Rx<Earnings?> earningsData =
-      Rx<Earnings?>(null);
-       String fromDate = '';
+  Rx<SearchEarning?> searchData = Rx<SearchEarning?>(null);
+  Rx<Earnings?> earningsData = Rx<Earnings?>(null);
+  String fromDate = '';
   String toDate = '';
   String search = '';
 
@@ -34,95 +32,84 @@ class EarningController extends GetxController {
   }
 
   Future<void> fetchEarnings() async {
-
-  isLoading.value = true;
-
-  final result = await getEarningsUseCase();
-
-  AppLogger.logError("API RESULT : $result");
-
-  result.fold(
-
-    (failure) {
-
-      AppLogger.logError("API ERROR : ${failure.message}");
-
-      isLoading.value = false;
-
-      Get.snackbar(
-        'Error',
-        failure.message,
-      );
-    },
-
-    (data) {
-
-      AppLogger.logError("FULL DATA : ${data.toJson()}");
-
-      AppLogger.logError("SUCCESS : ${data.success}");
-
-      AppLogger.logError("MESSAGE : ${data.message}");
-
-      AppLogger.logError("TOTAL EARNINGS : ${data.data?.totalEarnings}");
-
-      AppLogger.logError("TYPE : ${data.data?.totalEarnings.runtimeType}");
-
-      earningsData.value = data;
-
-      isLoading.value = false;
-    },
-  );
-}
-
-
-
-Future<void> searchEarnings(String fromdate, String todate,String search) async {
-  try {
     isLoading.value = true;
 
-    final result = await searchEarningsUseCase(
-      fromdate: fromdate,
-      todate: todate,
-      search: search
-    );
+    final result = await getEarningsUseCase();
+
+    AppLogger.logError("API RESULT : $result");
 
     result.fold(
       (failure) {
-        // CustomToast.error(failure.message);
+        AppLogger.logError("API ERROR : ${failure.message}");
+
+        isLoading.value = false;
+
+        Get.snackbar('Error', failure.message);
       },
-      (response) async {
 
-        AppLogger.logError("=========== SEARCH EARNINGS RESPONSE ===========");
-        AppLogger.logError("SUCCESS : ${response.success}");
-        AppLogger.logError("MESSAGE : ${response.message}");
-        AppLogger.logError("===========================================");
+      (data) {
+        AppLogger.logError("FULL DATA : ${data.toJson()}");
 
-        if (response.success == true) {
-searchData.value = response;
-          // CustomToast.success(
-          //   response.message ?? "PIN Created Successfully",
-          // );
+        AppLogger.logError("SUCCESS : ${data.success}");
 
-        
-        } else {
-          // CustomToast.error(
-          //   response.message ?? "Failed to create PIN",
-          // );
-        }
+        AppLogger.logError("MESSAGE : ${data.message}");
+
+        AppLogger.logError("TOTAL EARNINGS : ${data.data?.totalEarnings}");
+
+        AppLogger.logError("TYPE : ${data.data?.totalEarnings.runtimeType}");
+
+        earningsData.value = data;
+
+        isLoading.value = false;
       },
     );
-
-  } finally {
-    isLoading.value = false;
   }
-}
 
+  Future<void> searchEarnings(
+    String fromdate,
+    String todate,
+    String search,
+  ) async {
+    try {
+      isLoading.value = true;
 
+      final result = await searchEarningsUseCase(
+        fromdate: fromdate,
+        todate: todate,
+        search: search,
+      );
 
-Future<void> selectFromDate(
-      BuildContext context) async {
-    DateTime? pickedDate =
-        await showDatePicker(
+      result.fold(
+        (failure) {
+          // CustomToast.error(failure.message);
+        },
+        (response) async {
+          AppLogger.logError(
+            "=========== SEARCH EARNINGS RESPONSE ===========",
+          );
+          AppLogger.logError("SUCCESS : ${response.success}");
+          AppLogger.logError("MESSAGE : ${response.message}");
+          AppLogger.logError("===========================================");
+
+          if (response.success == true) {
+            searchData.value = response;
+            // CustomToast.success(
+            //   response.message ?? "PIN Created Successfully",
+            // );
+          } else {
+            // CustomToast.error(
+            //   response.message ?? "Failed to create PIN",
+            // );
+          }
+        },
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> selectFromDate(BuildContext context) async {
+    DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime(2024),
@@ -132,22 +119,16 @@ Future<void> selectFromDate(
     if (pickedDate != null) {
       fromDate =
           "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
-if (toDate.isNotEmpty) {
-  await searchEarnings(
-    fromDate,
-    toDate,
-    search,
-  );
-}
+      if (toDate.isNotEmpty) {
+        await searchEarnings(fromDate, toDate, search);
+      }
 
       update();
     }
   }
 
-  Future<void> selectToDate(
-      BuildContext context) async {
-    DateTime? pickedDate =
-        await showDatePicker(
+  Future<void> selectToDate(BuildContext context) async {
+    DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime(2024),
@@ -158,28 +139,19 @@ if (toDate.isNotEmpty) {
       toDate =
           "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
 
-    if (fromDate.isNotEmpty) {
-  await searchEarnings(
-    fromDate,
-    toDate,
-    search,
-  );
-}
+      if (fromDate.isNotEmpty) {
+        await searchEarnings(fromDate, toDate, search);
+      }
 
       update();
     }
   }
 
   void onSearch(String value) {
-  search = value;
+    search = value;
 
-  if (fromDate.isNotEmpty &&
-      toDate.isNotEmpty) {
-    searchEarnings(
-      fromDate,
-      toDate,
-      search,
-    );
+    if (fromDate.isNotEmpty && toDate.isNotEmpty) {
+      searchEarnings(fromDate, toDate, search);
+    }
   }
-}
 }

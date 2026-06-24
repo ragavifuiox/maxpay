@@ -1,7 +1,5 @@
 
 import 'package:dartz/dartz.dart';
-import 'package:maxpay/core/data/model/dth_recharge_model.dart';
-import 'package:maxpay/core/data/model/web_login_model.dart';
 import 'package:maxpay/core/data/model/web_logout_mode.dart';
 import 'package:maxpay/core/error/failure.dart';
 

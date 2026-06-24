@@ -93,7 +93,7 @@ class SettingsPage extends StatelessWidget {
                     context,
                     'Update Pin',
                     () {
-                      Get.toNamed(AppRoutes.veirfypin, arguments: true);
+                      Get.toNamed(AppRoutes.verify, arguments: true);
                     },
                     SvgPicture.asset(AssetImages.updatePin, width: 24.w),
                   ),
@@ -135,7 +135,6 @@ class SettingsPage extends StatelessWidget {
                     'Rating Review',
                     () {
                       // Get.toNamed(AppRoutes.weblogin);
-                      
                     },
                     SvgPicture.asset(AssetImages.review, width: 24.w),
                   ),
