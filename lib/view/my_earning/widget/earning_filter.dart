@@ -77,18 +77,25 @@ class EarningFilter extends GetView<EarningController> {
   style: TextStyle(
     color: theme.colorScheme.onSurface,
   ),
-  onChanged: (value) {
-    controller.search = value;
+ onChanged: (value) {
+  controller.search = value;
 
-    if (controller.fromDate.isNotEmpty &&
-    controller.toDate.isNotEmpty) {
-  controller.searchEarnings(
-    controller.fromDate,
-    controller.toDate,
-    controller.search,
-  );
-}
-  },
+  if (value.length == 10) {
+    controller.searchEarnings(
+      controller.fromDate,
+      controller.toDate,
+      value,
+    );
+  } else if (value.isEmpty) {
+    // Search cleared
+    controller.searchEarnings(
+      controller.fromDate,
+      controller.toDate,
+      "",
+    );
+  }
+},
+
   decoration: InputDecoration(
     prefixIcon: Padding(
       padding: const EdgeInsets.all(12.0),

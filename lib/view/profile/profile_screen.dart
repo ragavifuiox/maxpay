@@ -22,6 +22,11 @@ class ProfileScreen extends GetView<ProfileController> {
 
   final TextEditingController phoneController =
       TextEditingController();
+      
+  final TextEditingController wpcontroller =
+      TextEditingController();
+      final TextEditingController addresscontroller =
+      TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -63,6 +68,11 @@ class ProfileScreen extends GetView<ProfileController> {
         phoneController.text =
             profile?.phoneNumber ?? "";
 
+        wpcontroller.text =
+            profile?.whatsappnumber ?? "";
+  addresscontroller.text =
+            profile?.address ?? "";
+
         return SafeArea(
           child: Padding(
             padding:
@@ -78,20 +88,24 @@ class ProfileScreen extends GetView<ProfileController> {
                 Center(
                   child: Stack(
                     children: [
-                     Obx(() {
-  return Container(
-    width: 95,
-    height: 95,
-    decoration: BoxDecoration(
-      shape: BoxShape.circle,
-      image: DecorationImage(
-        image: controller.selectedImage.value != null
-            ? FileImage(controller.selectedImage.value!)
-            : const AssetImage(AssetImages.profileImage)
-                as ImageProvider,
-        fit: BoxFit.cover,
-      ),
-    ),
+                 Obx(() {
+  final profile = controller.profileData.value?.data;
+
+  ImageProvider provider;
+
+  if (controller.selectedImage.value != null) {
+    provider = FileImage(controller.selectedImage.value!);
+  } else if ((profile?.profileimg ?? "").isNotEmpty) {
+    provider = NetworkImage(
+      "${profile!.profileimg!}?t=${DateTime.now().millisecondsSinceEpoch}",
+    );
+  } else {
+    provider = const AssetImage(AssetImages.profileImage);
+  }
+
+  return CircleAvatar(
+    radius: 48,
+    backgroundImage: provider,
   );
 }),
 
@@ -168,7 +182,7 @@ class ProfileScreen extends GetView<ProfileController> {
                         ),
 
                         TextSpan(
-                          text: "Status: ",
+                          text: "User Type: ",
 
                           style: TextHelper
                               .max4
@@ -182,7 +196,7 @@ class ProfileScreen extends GetView<ProfileController> {
 
                         TextSpan(
                           text:
-                              profile?.status ??
+                              profile?.usertype ??
                                   "",
 
                           style: TextHelper
@@ -243,9 +257,34 @@ class ProfileScreen extends GetView<ProfileController> {
                   context,
                   emailController,
                 ),
+                 const SizedBox(height: 18),
+  _buildTitle(
+                  context,
+                  "Address",
+                ),
+
+                const SizedBox(height: 8),
+
+                _buildTextField(
+                  context,
+                  addresscontroller,
+                ),
 
                 const SizedBox(height: 18),
+  _buildTitle(
+                  context,
+                  "Whatsapp no",
+                ),
 
+                const SizedBox(height: 8),
+
+                _buildTextField(
+                  context,
+                  wpcontroller,
+                ),
+
+
+               const SizedBox(height: 18),
                 /// PHONE
                 _buildTitle(
                   context,
@@ -268,13 +307,17 @@ class ProfileScreen extends GetView<ProfileController> {
   print("Button Pressed");
   print("NAME = ${nameController.text}");
   print("PINCODE = ${pinController.text}");
+  print("profileimage😊 = ${controller.selectedImage.value?.path}");
 
   controller.updateProfile(
     name: nameController.text,
     email: emailController.text,
     mobile: phoneController.text,
     pincode: pinController.text,
-    profileImage: "",
+     profileImage: controller.selectedImage.value,
+     address: addresscontroller.text,
+      whatsappnumber: wpcontroller.text,
+    
   );
 }
 ),

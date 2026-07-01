@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:maxpay/controllers/statement_controller.dart';
 import 'package:maxpay/core/constants/colors.dart';
+import 'package:maxpay/core/constants/extension.dart';
 import 'package:maxpay/core/utils/texthelper.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
 import 'package:maxpay/view/statement/statement_filter.dart';
@@ -73,7 +74,13 @@ class StatementScreen extends GetView<StatementController> {
       ),
       child: Column(
         children: [
-          _row("Date & Time", item.dateTime ?? "-", theme),
+         _row(
+  "Date & Time",
+  item.dateTime != null && item.dateTime!.isNotEmpty
+      ? formatTransactionDate(item.dateTime!)
+      : "-",
+  theme,
+),
           _divider(theme),
 
           _row("Description", item.description ?? "-", theme),

@@ -346,6 +346,7 @@ Future<void> selectToDate(BuildContext context) async {
 
   void onSearch(String value) {
   search = value;
+    debugPrint("😊Search = $search");
 
   if (fromDate.isNotEmpty && toDate.isNotEmpty) {
     searchcredit(

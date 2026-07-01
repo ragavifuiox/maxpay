@@ -1,108 +1,137 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_instance/src/extension_instance.dart';
-import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
-import 'package:get/get_state_manager/src/simple/get_view.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
+import 'package:maxpay/controllers/add_wallet_controller.dart';
 import 'package:maxpay/controllers/homepage_controller.dart';
-import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
+import 'package:maxpay/view/add_wallet/add_wallet_screen.dart';
+import 'package:maxpay/view/wallet%20balance/wallet_history_card.dart';
 
-class WalletBalanceScreen extends GetView<HomePageController> {
+
+class WalletBalanceScreen extends GetView<AddWalletController> {
   const WalletBalanceScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    controller.fetchWalletBalance();
-
+    final homeController = Get.find<HomePageController>();
     return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
-      appBar: const CommonAppBar(title: "Wallet Balance"),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-        child: Container(
-          height: 164.h,
-          width: double.infinity,
-          decoration: BoxDecoration(
-            color: AppColors.clrPrimary,
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color: theme.brightness == Brightness.dark
-                    ? Colors.black54
-                    : Colors.black.withValues(alpha: 0.15),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
-            ],
+      appBar: CommonAppBar(title: "Wallet Balance"),
+      body: Obx(
+        () {
+         
+                final historyList = controller.walletQrHistory.value.code ?? [];
+final latestFive = historyList.take(3).toList(); // API already latest-first
+
+          return SingleChildScrollView(
+            child: Column(
+              children: [
+                const SizedBox(height: 20),
+
+                // Balance Card
+                Container(
+  margin: const EdgeInsets.symmetric(horizontal: 16),
+  height: 111,
+  decoration: BoxDecoration(
+    color: const Color(0xff18A9C4),
+    borderRadius: BorderRadius.circular(12),
+  ),
+  child: Center(
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Text(
+          "Total Balance",
+          style: TextStyle(
+            color: Colors.white,
+            fontFamily: 'poppins',
+            fontSize: 13,
+            fontWeight:FontWeight.w400
           ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: .center,
-            spacing: 9,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    "Total Balance",
-                    style: GoogleFonts.inter(
-                      color: Colors.white.withValues(alpha: 0.8),
-                      fontSize: (13.6).sp,
-                      height: 0,
-                    ),
-                  ),
-                  const SizedBox(width: 5),
-                  Icon(
-                    Icons.visibility_off_outlined,
-                    color: Colors.white.withValues(alpha: 0.8),
-                    size: 22,
-                  ),
-                ],
-              ),
-
-              Obx(() {
-                final balance =
-                    Get.find<HomePageController>().walletBalance.value;
-
-                return Text.rich(
-                  TextSpan(
-                    children: [
-                      TextSpan(
-                        text: "₹",
-                        style: GoogleFonts.inter(
+        ),
+        const SizedBox(height: 10),
+        Obx(
+          () => Text(
+            "₹${homeController.walletBalance.value?.data?.balance ?? '0.00'}",
+             style: GoogleFonts.inter(
                           color: Colors.white,
                           fontSize: 24.sp,
                           fontWeight: FontWeight.w700,
 
                           height: 0,
                         ),
-                      ),
-                      TextSpan(
-                        text:
-                            " ${(balance?.data?.balance)?.toStringAsFixed(2) ?? "0.00"}",
-                        style: GoogleFonts.inter(
-                          color: Colors.white,
-                          fontSize: (33.2).sp,
-                          fontWeight: FontWeight.w700,
+          ),
+        ),
+      ],
+    ),
+  ),
+),
 
-                          height: 0,
+                const SizedBox(height: 20),
+
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Row(
+                    mainAxisAlignment:
+                        MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        "Recent Transactions",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
                         ),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Get.to(
+                            () => const AddWalletScreen(),
+                          );
+                        },
+                        child: const Text("View All"),
                       ),
                     ],
                   ),
+                ),
 
-                  // style: TextStyle(
-                  //   color: Colors.white,
-                  //   fontSize: 24.sp,
-                  //   fontWeight: FontWeight.w700,
-                );
-              }),
-            ],
-          ),
-        ),
+
+latestFive.isEmpty
+    ? const Padding(
+        padding: EdgeInsets.all(20),
+        child: Text("No Transaction History"),
+      )
+    : Column(
+        children: latestFive.map((item) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 5,
+            ),
+            child: walletcard(
+              context: context,
+              status: item.status ?? '',
+              statusColor:
+                  item.status?.toLowerCase() == 'success'
+                      ? Colors.green
+                      : Colors.orange,
+              amount: item.requestAmount ?? '0',
+              txnId: item.txnId ?? '',
+              dateTime: item.createdAt == null
+                  ? ''
+                  : DateFormat(
+                      'dd-MM-yyyy hh:mm a',
+                    ).format(item.createdAt!),
+            ),
+          );
+        }).toList(),
+      ),
+
+                const SizedBox(height: 20),
+              ],
+            ),
+          );
+        },
       ),
     );
   }

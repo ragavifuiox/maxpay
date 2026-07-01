@@ -13,6 +13,7 @@ import 'package:maxpay/core/utils/date_uttils.dart';
 import 'package:maxpay/core/utils/responsive.dart';
 import 'package:maxpay/core/utils/theme.dart';
 import 'package:maxpay/view/nav_page/navbar_provider.dart';
+import 'package:maxpay/view/notification/notification_page.dart';
 
 class HomeHeaderSection extends StatelessWidget {
   const HomeHeaderSection({super.key});
@@ -129,7 +130,9 @@ print("🌐 Full URL: $imageUrl");
 
                     /// NOTIFICATION
                     GestureDetector(
-                      onTap: () {},
+                      onTap: () {
+                        Get.to(NotificationPage());
+                      },
                       child: Stack(
                         clipBehavior: Clip.none,
                         children: [
@@ -139,41 +142,41 @@ print("🌐 Full URL: $imageUrl");
                             color: colorScheme.onSurface,
                           ),
 
-                          Positioned(
-                            right: -4,
-                            top: -4,
-                            child: FadeIn(
-                              duration: const Duration(milliseconds: 300),
-                              child: Container(
-                                padding: EdgeInsets.all(4.r),
-                                decoration: BoxDecoration(
-                                  color: Colors.red,
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    color: Theme.of(
-                                      context,
-                                    ).colorScheme.surface,
-                                    width: 1.5,
-                                  ),
-                                ),
-                                constraints: BoxConstraints(
-                                  minWidth: 16.w,
-                                  minHeight: 16.h,
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    "99",
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 7.sp,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
+                          // Positioned(
+                          //   right: -4,
+                          //   top: -4,
+                          //   child: FadeIn(
+                          //     duration: const Duration(milliseconds: 300),
+                          //     child: Container(
+                          //       padding: EdgeInsets.all(4.r),
+                          //       decoration: BoxDecoration(
+                          //         color: Colors.red,
+                          //         shape: BoxShape.circle,
+                          //         border: Border.all(
+                          //           color: Theme.of(
+                          //             context,
+                          //           ).colorScheme.surface,
+                          //           width: 1.5,
+                          //         ),
+                          //       ),
+                          //       constraints: BoxConstraints(
+                          //         minWidth: 16.w,
+                          //         minHeight: 16.h,
+                          //       ),
+                          //       // child: Center(
+                          //       //   child: Text(
+                          //       //     "99",
+                          //       //     style: TextStyle(
+                          //       //       color: Colors.white,
+                          //       //       fontSize: 7.sp,
+                          //       //       fontWeight: FontWeight.bold,
+                          //       //     ),
+                          //       //     textAlign: TextAlign.center,
+                          //       //   ),
+                          //       // ),
+                          //     ),
+                          //   ),
+                          // ),
                         ],
                       ),
                     ),

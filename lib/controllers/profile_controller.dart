@@ -47,7 +47,8 @@ Future<void> fetchProfile() async {
 
       AppLogger.debugPrint(data.toJson());
     
-      profileData.value = data;
+   profileData.value = data;
+profileData.refresh();
       isLoading.value = false;
     },
   );
@@ -84,17 +85,21 @@ Future<void> fetchProfile() async {
   required String email,
   required String mobile,
   required String pincode,
-  required String profileImage,
+  File? profileImage,
+  required String address,
+  required String whatsappnumber,
 }) async {
   isLoading.value = true;
 
   final result = await profileUpdateUseCase(
-    pincode,
-    email,
-    mobile,
-    name,
-    profileImage,
-  );
+  pincode: pincode,
+  email: email,
+  mobilenumber: mobile,
+  name: name,
+  profileimage: profileImage,
+  whatsappnumber: whatsappnumber,
+  address: address,
+);
 
   result.fold(
     (failure) {
@@ -113,7 +118,7 @@ Future<void> fetchProfile() async {
 
       await fetchProfile();
 
-     
+         selectedImage.value = null;
       CustomToast.success(
         response.message ?? "Profile Updated Successfully",
       );

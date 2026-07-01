@@ -23,7 +23,7 @@ class TransReportRepoImpl implements TransReportRepository {
       final response = await apiService.post(
         ApiRoutes.transreport,
         data: {
-          "product_id": productid,
+          "product_type_id": productid,
            "from_date": fromdate, 
            "to_date": todate,
            "search": search,

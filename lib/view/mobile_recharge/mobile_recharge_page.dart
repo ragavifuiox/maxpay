@@ -51,7 +51,7 @@ class _MobileRechargePageState extends State<MobileRechargePage>
   final TextEditingController searchController = TextEditingController();
   Timer? _debounce;
   bool isPlanLoaded = false;
-
+bool isPaymentReceived = false;
   @override
   void initState() {
     super.initState();
@@ -498,35 +498,32 @@ class _MobileRechargePageState extends State<MobileRechargePage>
               SizedBox(height: 15.h),
 
               /// CHECKBOX
-              Row(
-                children: [
-                  SizedBox(
-                    width: 20.w,
-                    height: 20.w,
-
-                    child: Checkbox(
-                      value: true,
-                      onChanged: (v) {},
-
-                      activeColor: AppColors.clrPrimary,
-                    ),
-                  ),
-
-                  SizedBox(width: 8.w),
-
-                  Text(
-                    'Payment Received',
-
-                    style: TextStyle(
-                      fontSize: 13.sp,
-
-                      fontWeight: FontWeight.w500,
-
-                      color: isDark ? Colors.white70 : Colors.black87,
-                    ),
-                  ),
-                ],
-              ),
+                Row(
+  children: [
+    SizedBox(
+      width: 20.w,
+      height: 20.w,
+      child: Checkbox(
+        value: isPaymentReceived,
+        activeColor: AppColors.clrPrimary,
+        onChanged: (value) {
+          setState(() {
+            isPaymentReceived = value ?? false;
+          });
+        },
+      ),
+    ),
+    SizedBox(width: 8.w),
+    Text(
+      "Payment Received",
+      style: TextStyle(
+        fontSize: 13.sp,
+        fontWeight: FontWeight.w500,
+        color: Colors.deepOrangeAccent
+      ),
+    ),
+  ],
+),
 
               SizedBox(height: 20.h),
 
@@ -538,17 +535,22 @@ class _MobileRechargePageState extends State<MobileRechargePage>
                 }
 
                 return TabBar(
-                  controller: _tabController,
-                  isScrollable: true,
-                  indicatorColor: Colors.orange,
-                  labelColor: Colors.orange,
-                  unselectedLabelColor: Colors.grey,
-                  dividerColor: Colors.transparent,
-                  tabAlignment: TabAlignment.start,
-                  tabs: controller.planTabs.map((tab) {
-                    return Tab(text: tab.planType ?? "");
-                  }).toList(),
-                );
+  controller: _tabController,
+  isScrollable: true,
+
+  indicatorColor: isDark ? Colors.orange : AppColors.clrSecondary,
+
+  labelColor: isDark ? Colors.orange : AppColors.clrSecondary,
+
+  unselectedLabelColor: Colors.grey,
+
+  dividerColor: Colors.transparent,
+  tabAlignment: TabAlignment.start,
+
+  tabs: controller.planTabs.map((tab) {
+    return Tab(text: tab.planType ?? "");
+  }).toList(),
+);
               }),
 
               SizedBox(height: 15.h),
@@ -870,7 +872,7 @@ class _MobileRechargePageState extends State<MobileRechargePage>
                     ),
                   ),
                   child: Text(
-                    "Buy",
+                    "Select",
                     style: TextStyle(
                       fontSize: 10.sp,
                       color: Colors.white,

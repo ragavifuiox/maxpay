@@ -19,7 +19,7 @@ class AssetImages {
   // Dashboard Stats
   static const addWallet = "assets/images/add_wallet.svg";
   static const walletBalance = "assets/images/wallet_bal.svg";
-  static const transactions = "assets/images/transactions.svg";
+  static const transactions = "assets/images/trans-icon.svg";
   static const todaysCredit = "assets/images/todays_credit.svg";
   static const refunded = "assets/images/refunded.svg";
   static const complaints = "assets/images/complaints.svg";
@@ -27,6 +27,7 @@ class AssetImages {
   static const processing = "assets/images/processing.svg";
   static const failedAll = "assets/images/failed_all.svg";
   static const statement = "assets/images/statement.svg";
+  static const cable = "assets/images/cable.svg";
 
   // Services
   static const prepaid = "assets/images/prepaid.svg";

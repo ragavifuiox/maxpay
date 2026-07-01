@@ -175,6 +175,9 @@ class AppPages {
             transSucFailUsecase: sl(),
             complaintsUseCase: sl(),
             getPopupMessageUseCase: sl(),
+            refundCountUsecase: sl(),
+            todaycreditusecase: sl(),
+            
           ),
 
           fenix: true,
@@ -267,7 +270,9 @@ class AppPages {
       binding: BindingsBuilder(() {
         Get.lazyPut<GetBankController>(
           () =>
-              GetBankController(bankusecase: sl(), walletRequestUsecase: sl()),
+              GetBankController(bankusecase: sl(), 
+              walletRequestUsecase: sl(),
+               dueAmountUsecase: sl(),),
 
           fenix: true,
         );
@@ -482,7 +487,27 @@ class AppPages {
         );
       }),
     ),
-    GetPage(name: AppRoutes.walletbal, page: () => const WalletBalanceScreen()),
+
+
+
+     GetPage(
+      transition: Transition.fade,
+
+      name: AppRoutes.walletbal,
+
+      page: () => WalletBalanceScreen(),
+
+      binding: BindingsBuilder(() {
+        Get.lazyPut<AddWalletController>(
+          () => AddWalletController(createQrUsecase: sl()
+           
+          ),
+
+          fenix: true,
+        );
+      }),
+    ),
+    // 
     GetPage(
       name: AppRoutes.insufficientBalance,
       page: () => const InsufficientBalancePage(),
@@ -603,7 +628,7 @@ class AppPages {
         Get.lazyPut<TransReportController>(
           () => TransReportController(
             transreportUsecase: sl(),
-            allPlanUsecase: sl(),
+            producttypeUseCase: sl(),
             submitDisputeUsecase: sl(),
           ),
           fenix: true,

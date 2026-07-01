@@ -25,9 +25,9 @@ final List<String> Type= [
 
 void setType(String value) {
   selectedtype.value = value;
+  type = value.toLowerCase();
 
-  // IMPORTANT: map UI value to API value
-  type = value.toLowerCase(); // or adjust as per backend
+  update(); // <-- Add this
 }
   Future<void> statement() async {
   if (fromDate.isEmpty || toDate.isEmpty) return;

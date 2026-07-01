@@ -35,6 +35,9 @@ class Data {
   String? state;
   String? status;
   String? profileimg;
+  String? usertype;
+  String? address;
+  String? whatsappnumber;
 
   Data(
       {this.id,
@@ -45,7 +48,11 @@ class Data {
       this.pincode,
       this.state,
       this.status,
-      this.profileimg});
+      this.profileimg,
+      this.usertype,
+      this.address,
+      this.whatsappnumber,
+      });
 
   Data.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -57,6 +64,9 @@ class Data {
     state = json['state'];
     status = json['status'];
     profileimg = json['profile_img'];
+    usertype = json['user_type'];
+    whatsappnumber = json['whatsapp_number'];
+    address = json['billing_address'];
   }
 
   Map<String, dynamic> toJson() {
@@ -70,6 +80,9 @@ class Data {
     data['state'] = state;
     data['status'] = status;
     data['profile_img'] = profileimg;
+    data['user_type'] = usertype;
+    data['billing_address'] = address;
+    data['whatsapp_number'] = whatsappnumber;
     return data;
   }
 }

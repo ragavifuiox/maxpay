@@ -59,7 +59,7 @@ class _VerifyPinPageState extends State<VerifyPinPage> {
                 SizedBox(height: isTablet ? 48.h : 24.h),
 
                 Text(
-                  'Enter your MPIN',
+                  'Enter your OTP',
                   style: TextStyle(
                     fontFamily: 'Poppins',
                     fontWeight: FontWeight.w600,
@@ -68,15 +68,15 @@ class _VerifyPinPageState extends State<VerifyPinPage> {
                   ),
                 ),
                 SizedBox(height: 8.h),
-                Text(
-                  'Please enter your 4-digit security PIN to access your account.',
-                  style: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w400,
-                    fontSize: isTablet ? 18.sp : 13.sp,
-                    color: colorScheme.onSurface.withOpacity(0.6),
-                  ),
-                ),
+                // Text(
+                //   'Please enter your 4-digit security PIN to access your account.',
+                //   style: TextStyle(
+                //     fontFamily: 'Poppins',
+                //     fontWeight: FontWeight.w400,
+                //     fontSize: isTablet ? 18.sp : 13.sp,
+                //     color: colorScheme.onSurface.withOpacity(0.6),
+                //   ),
+                // ),
 
                 SizedBox(height: isTablet ? 56.h : 40.h),
 
@@ -96,7 +96,8 @@ class _VerifyPinPageState extends State<VerifyPinPage> {
                       ),
                       decoration: BoxDecoration(
                         color: AppColors.clrPrimary,
-                        borderRadius: BorderRadius.circular(12.r),
+                      shape:.circle,
+                        // borderRadius: BorderRadius.circular(12.r),
                         boxShadow: [
                           BoxShadow(
                             color: AppColors.clrPrimary.withOpacity(0.15),
@@ -117,7 +118,8 @@ class _VerifyPinPageState extends State<VerifyPinPage> {
                       ),
                       decoration: BoxDecoration(
                         color: AppColors.clrPrimary,
-                        borderRadius: BorderRadius.circular(12.r),
+                        shape: .circle,
+                        // borderRadius: BorderRadius.circular(12.r),
                         border: Border.all(
                           color: colorScheme.primary.withOpacity(0.5),
                           width: 2,

@@ -1,6 +1,11 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:maxpay/core/data/model/refund_count_model.dart';
+import 'package:maxpay/core/data/model/today_credit_model.dart';
+import 'package:maxpay/core/domain/repository/today_credit_repository.dart';
+import 'package:maxpay/core/domain/usecase/refund_count_usecase.dart';
+import 'package:maxpay/core/domain/usecase/today_credit_usecase.dart';
 import 'package:maxpay/core/utils/logg_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:maxpay/core/data/model/compalints_model.dart' hide Data;
@@ -22,6 +27,8 @@ class HomePageController extends GetxController {
   final TransSucFailUsecase transSucFailUsecase;
   final ComplaintsUseCase complaintsUseCase;
   final GetPopupMessageUseCase getPopupMessageUseCase;
+  final RefundCountUsecase refundCountUsecase;
+  final TodayCreditUsecase todaycreditusecase;
 
   HomePageController({
     required this.getNewsUseCase,
@@ -29,12 +36,16 @@ class HomePageController extends GetxController {
     required this.transSucFailUsecase,
     required this.complaintsUseCase,
     required this.getPopupMessageUseCase,
+    required this.refundCountUsecase,
+    required this.todaycreditusecase,
   });
 
   Rxn<TransactionResponse> transactionData = Rxn<TransactionResponse>();
   final Rx<WalletBalance?> walletBalance = Rx<WalletBalance?>(null);
   final Rx<PopupMessage?> popupMessage = Rx<PopupMessage?>(null);
   final Rx<Complaints?> complaints = Rx<Complaints?>(null);
+  final Rx<RefundCount?> refundcount = Rx<RefundCount?>(null);
+  final Rx<TodayCredit?> todaycredit = Rx<TodayCredit?>(null);
   final Rx<News?> news = Rx<News?>(null);
 
   RxBool isLoading = false.obs;
@@ -48,6 +59,8 @@ class HomePageController extends GetxController {
       await fetchWalletBalance();
       await fetchComplaints();
       await getTransactionSummary();
+      await fetchRefundCount();
+      await fetchtodaycredit();
       // await fetchpopupmessage();
     });
   }
@@ -205,6 +218,33 @@ class HomePageController extends GetxController {
     }
   }
 
+    Future<void> fetchtodaycredit() async {
+    try {
+      final result = await todaycreditusecase();
+
+      result.fold(
+        (failure) => Get.snackbar('Error', failure.message),
+        (data) => todaycredit.value = data,
+      );
+    } catch (e) {
+      AppLogger.logError("complaints error: $e");
+    }
+  }
+
+
+
+ Future<void> fetchRefundCount() async {
+    try {
+      final result = await refundCountUsecase();
+
+      result.fold(
+        (failure) => Get.snackbar('Error', failure.message),
+        (data) => refundcount.value = data,
+      );
+    } catch (e) {
+      AppLogger.logError("refund error: $e");
+    }
+  }
   // ---------------- TRANSACTION ----------------
   Future<void> getTransactionSummary() async {
     try {

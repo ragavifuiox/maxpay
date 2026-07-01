@@ -6,6 +6,7 @@ import 'package:maxpay/core/constants/asset_images.dart';
 import 'package:maxpay/core/extensions/currency.dart';
 import 'package:maxpay/core/utils/texthelper.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AddWalletPopup extends StatelessWidget {
   final String amount;
@@ -18,136 +19,169 @@ class AddWalletPopup extends StatelessWidget {
     required this.txtionId,
   });
 
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+  Future<void> _openUpiApp() async {
+    if (url.trim().isEmpty) {
+      Get.snackbar(
+        "Alert",
+        "UPI payment link is not available",
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      return;
+    }
 
-    return Dialog(
-      backgroundColor: Colors.transparent,
+    final upiUri = Uri.tryParse(url.trim());
+    if (upiUri == null) {
+      Get.snackbar(
+        "Alert",
+        "Invalid UPI payment link",
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      return;
+    }
+
+    final bool isOpened;
+    try {
+      isOpened = await launchUrl(upiUri, mode: LaunchMode.externalApplication);
+    } catch (_) {
+      Get.snackbar(
+        "Alert",
+        "No UPI app found. Please install GPay, PhonePe, Paytm, or any UPI app.",
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      return;
+    }
+
+    if (!isOpened) {
+      Get.snackbar(
+        "Alert",
+        "No UPI app found. Please install GPay, PhonePe, Paytm, or any UPI app.",
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    }
+  }
+
+ @override
+Widget build(BuildContext context) {
+  final theme = Theme.of(context);
+  final size = MediaQuery.of(context).size;
+
+  return Dialog(
+    backgroundColor: Colors.transparent,
+    child: ConstrainedBox(
+      constraints: BoxConstraints(
+        maxHeight: size.height * 0.85, // 👈 important fix
+      ),
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: theme.colorScheme.surface,
           borderRadius: BorderRadius.circular(14),
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            /// TITLE
-            /// TITLE
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                /// LEFT SIDE TITLE
-                Text("Account Details", style: TextHelper.max10(context)),
-
-                /// RIGHT SIDE ICONS
-                Row(
-                  children: [
-                    /// SHARE ICON
-                    IconButton(
-                      onPressed: () {
-                        // share function
-                      },
-                      icon: SvgPicture.asset(
-                        AssetImages.shareSvg,
-                        width: 22,
-                        height: 22,
-                        colorFilter: const ColorFilter.mode(
-                          Colors.green,
-                          BlendMode.srcIn,
-                        ),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text("Account Details", style: TextHelper.max10(context)),
+                  IconButton(
+                    onPressed: _openUpiApp,
+                    icon: SvgPicture.asset(
+                      AssetImages.shareSvg,
+                      width: 22,
+                      height: 22,
+                      colorFilter: const ColorFilter.mode(
+                        Colors.green,
+                        BlendMode.srcIn,
                       ),
                     ),
-                  ],
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 10),
+
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
                 ),
-              ],
-            ),
-
-            const SizedBox(height: 10),
-
-            /// QR IMAGE
-            Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
+                child: QrImageView(
+                  data: url,
+                  version: QrVersions.auto,
+                  size: 220,
+                ),
               ),
-              child: QrImageView(
-                data: url,
-                version: QrVersions.auto,
-                size: 220,
-                errorStateBuilder: (cxt, err) {
-                  return const Center(
-                    child: Text(
-                      "Uh oh! Something went wrong...",
-                      textAlign: TextAlign.center,
-                    ),
-                  );
-                },
+
+              const SizedBox(height: 10),
+
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text("Amount", style: TextHelper.max12(context)),
               ),
-            ),
 
-            const SizedBox(height: 18),
+              const SizedBox(height: 8),
 
-            /// AMOUNT
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Text("Amount", style: TextHelper.max12(context)),
-            ),
-
-            const SizedBox(height: 8),
-
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey.shade300),
-                borderRadius: BorderRadius.circular(8),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 14, vertical: 14),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey.shade300),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  amount.currencyIndian,
+                  style: TextHelper.max12(context),
+                ),
               ),
-              child: Text(
-                amount.currencyIndian,
-                style: TextHelper.max12(context),
-              ),
-            ),
 
-            const SizedBox(height: 12),
+              const SizedBox(height: 12),
 
-            /// TIMER
-            Obx(() {
-              final controller = Get.find<AddWalletController>();
-              final minutes = (controller.remainingSeconds.value ~/ 60)
-                  .toString()
-                  .padLeft(2, '0');
-              final seconds = (controller.remainingSeconds.value % 60)
-                  .toString()
-                  .padLeft(2, '0');
-              return Text(
-                "Expiry: $minutes:$seconds",
-                style: const TextStyle(
-                  color: Colors.red,
+              Obx(() {
+                final controller = Get.find<AddWalletController>();
+                final minutes =
+                    (controller.remainingSeconds.value ~/ 60)
+                        .toString()
+                        .padLeft(2, '0');
+                final seconds =
+                    (controller.remainingSeconds.value % 60)
+                        .toString()
+                        .padLeft(2, '0');
+
+                return Text(
+                  "Expiry: $minutes:$seconds",
+                  style: const TextStyle(
+                    color: Colors.red,
+                    fontFamily: 'Poppins',
+                    fontWeight: FontWeight.w600,
+                  ),
+                );
+              }),
+
+              const SizedBox(height: 14),
+
+              Text(
+                "Note: It may take a few seconds to update the status after payment.",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.grey.shade500,
+                  fontSize: 12,
                   fontFamily: 'Poppins',
-                  fontWeight: FontWeight.w600,
+                  fontStyle: FontStyle.italic,
                 ),
-              );
-            }),
-
-            const SizedBox(height: 14),
-
-            /// INFO TEXT
-            Text(
-              "Note: It may take a few seconds to update the status after payment.",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Colors.grey.shade500,
-                fontSize: 12,
-                fontFamily: 'Poppins',
-                fontStyle: FontStyle.italic,
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }

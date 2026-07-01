@@ -98,16 +98,20 @@ class StaffCardWidget extends StatelessWidget {
       children: [
         Text(title, style: TextHelper.max16(context)),
 
-        Text(
-          value,
-          style: TextStyle(
-            fontSize: 13.sp,
-            fontWeight: FontWeight.w600,
-            color: title == "Staff Name"
-                ? Colors.green
-                : theme.colorScheme.onSurface,
-          ),
-        ),
+       Text(
+  title == "Staff Name"
+      ? (value.isNotEmpty
+            ? value[0].toUpperCase() + value.substring(1)
+            : value)
+      : value,
+  style: TextStyle(
+    fontSize: 13.sp,
+    fontWeight: FontWeight.w600,
+    color: title == "Staff Name"
+        ? Colors.green
+        : theme.colorScheme.onSurface,
+  ),
+),
       ],
     );
   }

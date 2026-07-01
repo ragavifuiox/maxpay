@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:maxpay/controllers/support_controller.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
@@ -7,219 +9,113 @@ import 'package:url_launcher/url_launcher.dart';
 class SupportScreen extends StatelessWidget {
   SupportScreen({super.key});
 
-  final SupportController controller =
-      Get.find<SupportController>();
+  final SupportController controller = Get.find<SupportController>();
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor:
-          theme.scaffoldBackgroundColor,
-
-      appBar: const CommonAppBar(
-        title: "Support",
-      ),
-
+      backgroundColor: theme.scaffoldBackgroundColor,
+      appBar: const CommonAppBar(title: "Support"),
       body: Obx(() {
-
-        /// Loading
         if (controller.isLoading.value) {
           return const Center(
             child: CircularProgressIndicator(),
           );
         }
 
-        /// API DATA
-        final supportList =
-            controller.supportData.value?.data ?? [];
+        final supportList = controller.supportData.value?.data ?? [];
 
-        /// Empty
         if (supportList.isEmpty) {
-          return Center(
-            child: Text(
-              "No Support Data Found",
-
-              style: TextStyle(
-                color:
-                    theme.colorScheme.onSurface,
-              ),
-            ),
+          return const Center(
+            child: Text("No Support Data Found"),
           );
         }
 
         return ListView.separated(
           padding: const EdgeInsets.all(16),
-
           itemCount: supportList.length,
-
-          separatorBuilder: (_, _) =>
-              const SizedBox(height: 16),
-
+          separatorBuilder: (_, __) => const SizedBox(height: 18),
           itemBuilder: (context, index) {
-
             final item = supportList[index];
 
             return Container(
-              padding:
-                  const EdgeInsets.symmetric(
-                horizontal: 14,
-                vertical: 14,
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 18,
               ),
-
               decoration: BoxDecoration(
-                color:
-                    theme.brightness ==
-                            Brightness.dark
-                        ? theme.colorScheme
-                            .surfaceContainer
-                        : Colors.white,
-
-                borderRadius:
-                    BorderRadius.circular(14),
-
+                color: theme.brightness == Brightness.dark
+                    ? theme.cardColor
+                    : Colors.white,
+                borderRadius: BorderRadius.circular(14),
                 border: Border.all(
-                  color:
-                      theme.colorScheme.outline,
+                  color: Colors.grey.withOpacity(.15),
                 ),
-
                 boxShadow: [
                   BoxShadow(
-                    color: theme.brightness ==
-                            Brightness.dark
-                        ? Colors.transparent
-                        : Colors.black.withValues(alpha: 
-                            0.03,
-                          ),
-
-                    blurRadius: 8,
-
-                    offset:
-                        const Offset(0, 2),
+                    color: Colors.black.withOpacity(.05),
+                    blurRadius: 10,
+                    offset: const Offset(0, 2),
                   ),
                 ],
               ),
-
               child: Row(
                 children: [
-
-                  /// Profile Icon
+                  /// Avatar
                   CircleAvatar(
                     radius: 24,
-
-                    backgroundColor:
-                        theme.brightness ==
-                                Brightness.dark
-                            ? Colors.grey.shade800
-                            : Colors.grey.shade200,
-
+                    backgroundColor: Colors.grey.shade200,
                     child: Icon(
                       Icons.person,
-
-                      color:
-                          theme.brightness ==
-                                  Brightness.dark
-                              ? Colors.white70
-                              : Colors.grey.shade600,
+                      color: Colors.grey.shade500,
+                      size: 28,
                     ),
                   ),
 
                   const SizedBox(width: 14),
 
-                  /// Name + Phone
+                  /// Name & Phone
                   Expanded(
                     child: Column(
-                      crossAxisAlignment:
-                          CrossAxisAlignment
-                              .start,
-
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-
                         Text(
                           item.name ?? "",
-
                           style: TextStyle(
-                            fontSize: 16,
-                            fontWeight:
-                                FontWeight.w600,
-
-                            color: theme
-                                .colorScheme
-                                .onSurface,
+                            fontSize: 17,
+                            fontWeight: FontWeight.w600,
+                            color: theme.colorScheme.onSurface,
                           ),
                         ),
-
-                        const SizedBox(
-                          height: 4,
-                        ),
-
+                        const SizedBox(height: 6),
                         Text(
                           item.phoneNumber ?? "",
-
                           style: TextStyle(
-                            fontSize: 14,
-
-                            color: theme
-                                .colorScheme
-                                .onSurfaceVariant,
+                            fontSize: 15,
+                            color: Colors.grey.shade600,
                           ),
                         ),
                       ],
                     ),
                   ),
 
-               
-                  SizedBox(
-                    height: 36,
-                      child:
-                        ElevatedButton.icon(
-                           onPressed: () {
-                            makeCall(item.phoneNumber ?? "");
-                          },
-                      style:
-                          ElevatedButton
-                              .styleFrom(
-                        backgroundColor:
-                            const Color(
-                          0xff0EA5C6,
-                        ),
+                  /// Right Side Buttons
+                  Column(
+                    children: [
+                     _SupportButton(
+  image: "assets/images/wp-icon.svg",
+  onTap: () => openWhatsApp(item.phoneNumber ?? ""),
+),
 
-                        elevation: 0,
+const SizedBox(height: 10),
 
-                        padding:
-                            const EdgeInsets
-                                .symmetric(
-                          horizontal: 14,
-                        ),
-
-                        shape:
-                            RoundedRectangleBorder(
-                          borderRadius:
-                              BorderRadius
-                                  .circular(
-                            8,
-                          ),
-                        ),
-                      ),
-
-                      icon: const Icon(
-                        Icons.call,
-                        size: 16,
-                        color: Colors.white,
-                      ),
-
-                      label: const Text(
-                        "Call",
-
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 13,
-                          fontWeight:
-                              FontWeight.w500,
-                        ),
-                      ),
-                    ),
+_SupportButton(
+  image: "assets/images/call-icon.svg",
+  onTap: () => makeCall(item.phoneNumber ?? ""),
+),
+                    ],
                   ),
                 ],
               ),
@@ -231,16 +127,88 @@ class SupportScreen extends StatelessWidget {
   }
 }
 
+class _SupportButton extends StatelessWidget {
+  final String image;
+  final VoidCallback onTap;
 
+  const _SupportButton({
+    super.key,
+    required this.image,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      borderRadius: BorderRadius.circular(8),
+      onTap: onTap,
+      child: Container(
+        width: 46,
+        height: 36,
+        decoration: BoxDecoration(
+          color: const Color(0xff11A7C7),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Center(
+          child: SvgPicture.asset(
+            image,
+            width: 18,
+            height: 18,
+            colorFilter: const ColorFilter.mode(
+              Colors.white,
+              BlendMode.srcIn,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+/// Make Phone Call
 void makeCall(String phoneNumber) async {
-  final Uri url = Uri(scheme: 'tel', path: phoneNumber);
+  final Uri url = Uri(
+    scheme: 'tel',
+    path: phoneNumber,
+  );
 
   if (await canLaunchUrl(url)) {
-    await launchUrl(url, mode: LaunchMode.externalApplication);
+    await launchUrl(
+      url,
+      mode: LaunchMode.externalApplication,
+    );
   } else {
     Get.snackbar(
       "Error",
       "Cannot open dialer",
+      snackPosition: SnackPosition.BOTTOM,
+    );
+  }
+}
+
+/// Open WhatsApp
+Future<void> openWhatsApp(String phoneNumber) async {
+  String number = phoneNumber.replaceAll(RegExp(r'[^0-9]'), '');
+
+  if (number.length == 10) {
+    number = "91$number";
+  }
+
+  const message =
+      "👋 Hello! I need support regarding my account.";
+
+  final Uri uri = Uri.parse(
+    "https://wa.me/$number?text=${Uri.encodeComponent(message)}",
+  );
+
+  try {
+    await launchUrl(
+      uri,
+      mode: LaunchMode.externalApplication,
+    );
+  } catch (e) {
+    Get.snackbar(
+      "Error",
+      "Unable to open WhatsApp",
       snackPosition: SnackPosition.BOTTOM,
     );
   }

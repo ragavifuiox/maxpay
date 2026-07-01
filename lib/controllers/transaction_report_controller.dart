@@ -5,21 +5,23 @@ import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:maxpay/core/constants/snackbar.dart';
 import 'package:maxpay/core/data/model/all_plan.dart';
+import 'package:maxpay/core/data/model/product_type.dart';
 import 'package:maxpay/core/data/model/submit_dispute_model.dart';
 import 'package:maxpay/core/data/model/transaction_report_model.dart';
 import 'package:maxpay/core/domain/usecase/all_plan_usecase.dart';
+import 'package:maxpay/core/domain/usecase/product_type_usecase.dart';
 import 'package:maxpay/core/domain/usecase/submit_dispute_usecase.dart';
 import 'package:maxpay/core/domain/usecase/trans_report_usecase.dart';
 import 'package:maxpay/core/utils/logg_helper.dart';
 
 class TransReportController extends GetxController {
   final TransReportUsecase transreportUsecase;
-  final AllPlanUsecase allPlanUsecase;
+  final ProductTypeUseCase producttypeUseCase;
   final SubmitDisputeUsecase submitDisputeUsecase;
 
   TransReportController({
     required this.transreportUsecase,
-    required this.allPlanUsecase,
+    required this.producttypeUseCase,
     required this.submitDisputeUsecase,
   });
 
@@ -30,35 +32,51 @@ class TransReportController extends GetxController {
 
   RxList<TransrepData> transreportList = <TransrepData>[].obs;
   Rx<SubmitDisputeData?> disputeData = Rx<SubmitDisputeData?>(null);
-  Rx<AllPlan?> allplan = Rx<AllPlan?>(null);
+  Rx<ProductType?> producttype = Rx<ProductType?>(null);
   String fromDate = '';
 String toDate = '';
 String search = '';
+final TextEditingController searchController = TextEditingController();
+
+
 @override
 void onInit() {
   super.onInit();
-  fetchplan();
+fetchplan();
+  final now = DateTime.now();
+
+  fromDate =
+      "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
+
+  print("onInit fromDate = $fromDate");
+}
+void clearFilters() {
+  selectedProductId.value = '';
+  selectedProductName.value = '';
+  fromDate = '';
+  toDate = '';
+  search = '';
+  transreportList.clear();
+  update();
 }
 
+Future<void> fetchplan() async {
+  isLoading.value = true;
 
- Future<void> fetchplan() async {
-    isLoading.value = true;
+  final result = await producttypeUseCase();
 
-    final result = await allPlanUsecase();
+  result.fold(
+    (failure) {
+      Get.snackbar("Error", failure.message);
+    },
+    (data) {
+      producttype.value = data;
+      update(); // <-- add this
+    },
+  );
 
-    result.fold(
-      (failure) {
-        isLoading.value = false;
-
-        Get.snackbar('Error', failure.message);
-      },
-      (data) {
-        allplan.value = data;
-
-        isLoading.value = false;
-      },
-    );
-  }
+  isLoading.value = false;
+}
 
   Future<void> transactionreport({
     required String search,
@@ -121,58 +139,101 @@ void onInit() {
     }
   }
 
-  Future<void> selectFromDate(BuildContext context) async {
-    DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2024),
-      lastDate: DateTime(2030),
-    );
+//  Future<void> selectFromDate(BuildContext context) async {
+//   DateTime? pickedDate = await showDatePicker(
+//     context: context,
+//     initialDate: DateTime.parse(fromDate), // today's date initially
+//     firstDate: DateTime(2024),
+//     lastDate: DateTime(2030),
+//   );
 
-    if (pickedDate != null) {
-      fromDate =
-          "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+//   if (pickedDate != null) {
+//     fromDate =
+//         "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
 
-      if (toDate.isNotEmpty) {
-        transactionreport(
-          search: search,
-          status: currentStatus,
-          productid: selectedProductId.value,
-          fromdate: fromDate,
-          todate: toDate,
-        );
-      }
+//     update();
 
-      update();
-    }
+//     if (toDate.isNotEmpty) {
+//       transactionreport(
+//         search: search,
+//         status: currentStatus,
+//         productid: selectedProductId.value,
+//         fromdate: fromDate,
+//         todate: toDate,
+//       );
+//     }
+//   }
+// }
+
+
+Future<void> selectFromDate(BuildContext context) async {
+  DateTime initialDate;
+
+  try {
+    initialDate = fromDate.isNotEmpty
+        ? DateTime.parse(fromDate)
+        : DateTime.now();
+  } catch (e) {
+    initialDate = DateTime.now();
   }
 
-  Future<void> selectToDate(BuildContext context) async {
-    DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2024),
-      lastDate: DateTime(2030),
-    );
+  final pickedDate = await showDatePicker(
+    context: context,
+    initialDate: initialDate,
+    firstDate: DateTime(2024),
+    lastDate: DateTime(2030),
+  );
 
-    if (pickedDate != null) {
-      toDate =
-          "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+  if (pickedDate != null) {
+    fromDate =
+        "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
 
-      if (fromDate.isNotEmpty) {
-        transactionreport(
-          search: search,
-          status: currentStatus,
-          productid: selectedProductId.value,
-          fromdate: fromDate,
-          todate: toDate,
-        );
-      }
-
-      update();
-    }
+    update(["fromDate"]); // IMPORTANT
   }
+}
+  // Future<void> selectToDate(BuildContext context) async {
+  //   DateTime? pickedDate = await showDatePicker(
+  //     context: context,
+  //     initialDate: DateTime.now(),
+  //     firstDate: DateTime(2024),
+  //     lastDate: DateTime(2030),
+  //   );
 
+  //   if (pickedDate != null) {
+  //     toDate =
+  //         "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+
+  //     if (fromDate.isNotEmpty) {
+  //       transactionreport(
+  //         search: search,
+  //         status: currentStatus,
+  //         productid: selectedProductId.value,
+  //         fromdate: fromDate,
+  //         todate: toDate,
+  //       );
+  //     }
+
+  //     update();
+  //   }
+  // }
+
+
+
+Future<void> selectToDate(BuildContext context) async {
+  final pickedDate = await showDatePicker(
+    context: context,
+    initialDate: DateTime.now(),
+    firstDate: DateTime(2024),
+    lastDate: DateTime(2030),
+  );
+
+  if (pickedDate != null) {
+    toDate =
+        "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+
+    update(["toDate"]);
+  }
+}
   void onSearch(String value) {
     search = value;
 
@@ -237,4 +298,10 @@ void onInit() {
       print("🏁 Submit Dispute Completed");
     }
   }
+
+  @override
+void onClose() {
+  searchController.dispose();
+  super.onClose();
+}
 }

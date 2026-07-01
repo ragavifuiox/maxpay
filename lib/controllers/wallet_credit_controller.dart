@@ -62,7 +62,10 @@ class WalletCreditController extends GetxController {
 
   Future<void> fetchcredittype() async {
     isLoading.value = true;
-
+print("search = $search");
+print("credit = $creditData");
+print("fromdate = $fromDate");
+print("todate = $toDate");
     final result = await walletcredittypeusecase();
 
     result.fold(
@@ -79,66 +82,37 @@ class WalletCreditController extends GetxController {
     );
   }
 
-  Future<void> searchcredit({
-    required String search,
+ Future<void> searchcredit({
+  required String search,
+  required String credit,
+  required String fromdate,
+  required String todate,
+}) async {
+  print("========== API REQUEST ==========");
+  print("search : $search");
+  print("credit : $credit");
+  print("fromdate : $fromdate");
+  print("todate : $todate");
 
-    required String credit,
-    required String fromdate,
-    required String todate,
-  }) async {
-    try {
-      isLoading.value = true;
+  final result = await walletcreditsearchsecase(
+    search: search,
+    credit: credit,
+    fromdate: fromdate,
+    todate: todate,
+  );
 
-      AppLogger.debugPrint("===== REQUEST =====");
-      AppLogger.debugPrint({
-        "search": search,
+  result.fold(
+    (failure) {
+      print("API ERROR : ${failure.message}");
+    },
+    (response) {
+      print("API RESPONSE : ${response.toJson()}");
+      print("TOTAL RECORDS : ${response.data?.length}");
 
-        "productid": credit,
-        "fromdate": fromdate,
-        "todate": todate,
-      });
-
-      AppLogger.debugPrint("Calling transreportUsecase...");
-
-      final result = await walletcreditsearchsecase(
-        search: search,
-
-        credit: credit,
-        fromdate: fromdate,
-        todate: todate,
-      );
-
-      AppLogger.debugPrint("Usecase Response Received");
-
-      result.fold(
-        (failure) {
-          AppLogger.logError("FAILURE");
-          AppLogger.logError(failure.message);
-
-          CustomToast.error(failure.message.toString());
-        },
-        (response) {
-          AppLogger.debugPrint("SUCCESS");
-
-          AppLogger.debugPrint(response.toJson());
-
-          Searchcredit.assignAll(response.data ?? []);
-
-          AppLogger.debugPrint("Total Records : ${Searchcredit.length}");
-
-          // CustomToast.success(
-          //   response.message ?? "Success",
-          // );
-        },
-      );
-    } catch (e, stackTrace) {
-      AppLogger.logError("EXCEPTION");
-      AppLogger.logError(e);
-      AppLogger.logError(stackTrace);
-    } finally {
-      isLoading.value = false;
-    }
-  }
+      Searchcredit.assignAll(response.data ?? []);
+    },
+  );
+}
 
   Future<void> selectFromDate(BuildContext context) async {
     DateTime? pickedDate = await showDatePicker(
@@ -194,8 +168,9 @@ class WalletCreditController extends GetxController {
 
   void onSearch(String value) {
     search = value;
+    debugPrint("😊Search = $search");
 
-    if (fromDate.isNotEmpty && toDate.isNotEmpty) {
+    
       searchcredit(
         search: search,
 
@@ -203,6 +178,6 @@ class WalletCreditController extends GetxController {
         fromdate: fromDate,
         todate: toDate,
       );
-    }
+    
   }
 }

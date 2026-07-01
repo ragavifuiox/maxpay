@@ -3,7 +3,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:maxpay/core/constants/snackbar.dart';
+import 'package:maxpay/core/data/model/due_amount_model.dart';
 import 'package:maxpay/core/data/model/get_bank_model.dart';
+import 'package:maxpay/core/domain/usecase/due_amount_usecase.dart';
 import 'package:maxpay/core/domain/usecase/get_bank_usecase.dart';
 import 'package:maxpay/core/domain/usecase/wallet_request_usecase.dart';
 import 'package:maxpay/core/utils/logg_helper.dart';
@@ -11,19 +13,23 @@ import 'package:maxpay/core/utils/logg_helper.dart';
 class GetBankController extends GetxController {
   final GetBankUseCase bankusecase;
   final WalletRequestUsecase walletRequestUsecase;
+  final DueAmountUsecase dueAmountUsecase;
   GetBankController({
     required this.bankusecase,
     required this.walletRequestUsecase,
+    required this.dueAmountUsecase,
   });
 
   RxBool isLoading = false.obs;
   RxList<Data> plans = <Data>[].obs;
   Rx<Data?> selectedPlan = Rx<Data?>(null);
+  final Rx<DueAmount?> dueamount = Rx<DueAmount?>(null);
 
   @override
   void onInit() {
     super.onInit();
     getBank();
+     fetchDueAmount();
   }
 
   Future<void> getBank() async {
@@ -109,7 +115,26 @@ Future<void> createWalletRequest({
   }
 }
 
+ Future<void> fetchDueAmount() async {
+  try {
+    isLoading.value = true;
 
+    final result = await dueAmountUsecase();
+
+    result.fold(
+      (failure) {
+        Get.snackbar("Error", failure.message);
+      },
+      (response) {
+        dueamount.value = response;
+      },
+    );
+  } catch (e) {
+    AppLogger.logError("Due Amount Error: $e");
+  } finally {
+    isLoading.value = false;
+  }
+}
 void clearForm({
   required TextEditingController amountController,
   required TextEditingController utrController,

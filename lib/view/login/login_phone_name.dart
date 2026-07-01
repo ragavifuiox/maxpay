@@ -108,25 +108,46 @@ class LoginPhoneNamePage extends GetView<AuthController> {
                       title: controller.isLoading.value
                           ? "Loading..."
                           : "Submit",
+                      // onTap: () {
+                      //   if (!controller.isAccepted.value) {
+                      //     CustomToast.error("Please accept Terms & Conditions");
+                      //     return;
+                      //   }
+
+                      //   if (controller.phoneController.text.trim().isEmpty) {
+                      //     CustomToast.error("Please enter phone number");
+                      //     return;
+                      //   }
+
+                      //   if (controller.phoneController.text.trim().length <
+                      //       10) {
+                      //     CustomToast.error("Please enter valid mobile number");
+                      //     return;
+                      //   }
+
+                      //   controller.login();
+                      // },
+
                       onTap: () {
-                        if (!controller.isAccepted.value) {
-                          CustomToast.error("Please accept Terms & Conditions");
-                          return;
-                        }
+  final phone = controller.phoneController.text.trim();
 
-                        if (controller.phoneController.text.trim().isEmpty) {
-                          CustomToast.error("Please enter phone number");
-                          return;
-                        }
+  if (phone.isEmpty) {
+    CustomToast.error("Please enter mobile number");
+    return;
+  }
 
-                        if (controller.phoneController.text.trim().length <
-                            10) {
-                          CustomToast.error("Please enter valid mobile number");
-                          return;
-                        }
+  if (phone.length != 10) {
+    CustomToast.error("Please enter valid mobile number");
+    return;
+  }
 
-                        controller.login();
-                      },
+  if (!controller.isAccepted.value) {
+    CustomToast.error("Please accept Terms & Conditions");
+    return;
+  }
+
+  controller.login();
+},
                     ),
                   ),
                 ),

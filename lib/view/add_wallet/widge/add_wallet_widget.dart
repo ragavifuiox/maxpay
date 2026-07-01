@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:maxpay/core/constants/colors.dart';
+import 'package:maxpay/core/constants/extension.dart';
 import 'package:maxpay/core/extensions/currency.dart';
 import 'package:maxpay/core/utils/texthelper.dart';
 
@@ -40,15 +41,20 @@ Widget transactionCard({
             const SizedBox(width: 10),
             Expanded(
               child: Text(
-                "Date & Time:\n$dateTime",
-                textAlign: TextAlign.end,
-                style: TextHelper.max12(context),
-              ),
+  "Date & Time:\n${dateTime.isNotEmpty ? formatTransactionDate(dateTime) : "-"}",
+  textAlign: TextAlign.end,
+  style: TextHelper.max12(context),
+),
             ),
           ],
         ),
 
-        const SizedBox(height: 12),
+        const SizedBox(height: 1),
+           Divider(
+            color: theme.brightness == Brightness.light
+                ? Colors.black12
+                : Colors.white24,
+          ),
 
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,

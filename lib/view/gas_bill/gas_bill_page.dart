@@ -154,7 +154,7 @@ class _GasBillPageState extends State<GasBillPage> {
                                 borderRadius: BorderRadius.circular(6.r),
                               ),
                               child: Text(
-                                'buy',
+                                'Select',
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 12.sp,

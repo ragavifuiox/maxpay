@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 
 import 'package:maxpay/controllers/auth_controller.dart';
 import 'package:maxpay/core/constants/colors.dart';
+import 'package:maxpay/core/constants/snackbar.dart';
 import 'package:maxpay/core/utils/responsive.dart';
 import 'package:maxpay/global_widget/commom_button.dart';
 import 'package:maxpay/view/login/widgets/custom_numeric_keyboard.dart';
@@ -15,7 +16,36 @@ class PinCodeCreationPage extends GetView<AuthController> {
   final TextEditingController pinController = TextEditingController();
 
   final RxBool showAddButton = false.obs;
+bool isInvalidPin(String pin) {
+  const blockedPins = [
+    '0000',
+    '1111',
+    '2222',
+    '3333',
+    '4444',
+    '5555',
+    '6666',
+    '7777',
+    '8888',
+    '9999',
+    '1234',
+    '2345',
+    '3456',
+    '4567',
+    '5678',
+    '6789',
+    '9876',
+    '8765',
+    '7654',
+    '6543',
+    '5432',
+    '4321',
+    '3210',
+    '0123',
+  ];
 
+  return blockedPins.contains(pin);
+}
   void handleKeyPress(String key) {
     if (key == 'backspace') {
       if (pinController.text.isNotEmpty) {
@@ -73,7 +103,7 @@ class PinCodeCreationPage extends GetView<AuthController> {
                 SizedBox(height: isTablet ? 40.h : 20.h),
 
                 Text(
-                  'Create your MPIN',
+                  'Create your M-PIN',
 
                   style: TextStyle(
                     fontFamily: 'Poppins',
@@ -177,12 +207,28 @@ class PinCodeCreationPage extends GetView<AuthController> {
                               Expanded(
                                 child: CommonButton(
                                   title: "Add",
+onTap: () {
+  final pin = pinController.text.trim();
 
-                                  onTap: () {
-                                    controller.createPin(
-                                      pinController.text.trim(),
-                                    );
-                                  },
+  if (isInvalidPin(pin)) {
+    CustomToast.error("Please choose a stronger 4-digit MPIN");
+
+    // Clear the entered PIN
+    pinController.clear();
+
+    // Show keyboard again
+    showAddButton.value = false;
+
+    return;
+  }
+
+  controller.createPin(pin);
+},
+                                  // onTap: () {
+                                  //   controller.createPin(
+                                  //     pinController.text.trim(),
+                                  //   );
+                                  // },
                                 ),
                               ),
                             ],

@@ -28,7 +28,10 @@ class AppColors {
   static const Color pending = Color(0xFFFFF0D8);
   static const Color success = Color(0xFFDCFFEE);
   static const Color totalborde2 = Color(0xffCFCFCF);
+  static const Color graph = Color(0xffEAEBF1);
+  static const Color chart = Color(0xff615E83);
   static const Color totalborder1 = Color.fromARGB(255, 122, 122, 122);
+ 
 
     static const Color darkFilterBorder = Color(0xFF3A4058);
   

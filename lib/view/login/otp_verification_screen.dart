@@ -32,10 +32,35 @@ class _ScreenOtpVerificationState extends State<ScreenOtpVerification> {
   Timer? timer;
 
   @override
-  void initState() {
-    super.initState();
-    startTimer();
-  }
+void initState() {
+  super.initState();
+  startTimer();
+
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    if (authController.otp.value.isNotEmpty) {
+      setState(() {
+        _otpController.text = authController.otp.value;
+        _showVerifyButton = true;
+      });
+    }
+  });
+}
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   startTimer();
+  //    if (authController.otp.value.isNotEmpty) {
+  //   _otpController.text = authController.otp.value;
+
+  //   _showVerifyButton = true;
+
+  //   setState(() {});
+
+  //   // Optional: Auto verify
+  //   authController.verifyOtp(authController.otp.value);
+  // }
+  // }
 
   void startTimer() {
     timer?.cancel();
@@ -137,15 +162,15 @@ class _ScreenOtpVerificationState extends State<ScreenOtpVerification> {
                         width: 45.w,
                         height: 45.w,
 
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
+                        // decoration: BoxDecoration(
+                        //   shape: BoxShape.circle,
 
-                          border: Border.all(
-                            color: Colors.grey.withValues(alpha: .3),
-                          ),
-                        ),
+                        //   border: Border.all(
+                        //     color: Colors.grey.withValues(alpha: .3),
+                        //   ),
+                        // ),
 
-                        child: Icon(Icons.arrow_back_ios_new, size: 18.sp),
+                        child: Icon(Icons.arrow_back_ios_new, size: 23),
                       ),
                     ),
                   ),
@@ -292,7 +317,7 @@ class _ScreenOtpVerificationState extends State<ScreenOtpVerification> {
                           child: Text(
                             isOtpExpired
                                 ? 'Resend OTP'
-                                : 'Resend code in 00:$secondsRemaining',
+                                : '00:$secondsRemaining',
 
                             style: TextStyle(
                               fontFamily: 'Poppins',

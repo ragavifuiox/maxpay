@@ -189,8 +189,14 @@ class AuthController extends GetxController {
           AppLogger.logError("OTP : ${otp.value}");
           AppLogger.logError("PHONE : ${phoneNumber.value}");
 
-          Get.toNamed(AppRoutes.otpVerification);
-          phoneController.clear();
+        CustomToast.success("OTP: ${otp.value}");
+
+Get.toNamed(
+  AppRoutes.otpVerification,
+  arguments: {
+    "phone": phoneNumber.value,
+  },
+);
         },
       );
     } catch (e) {
@@ -351,7 +357,10 @@ class AuthController extends GetxController {
 
             AppLogger.logError("NEW OTP : ${otp.value}");
 
-            CustomToast.success("OTP Resent Successfully");
+            
+        CustomToast.success(
+             "OTP Resent Successfully\nOTP: ${otp.value}",
+         );
           } else {
             CustomToast.error(response.message ?? "Failed");
           }

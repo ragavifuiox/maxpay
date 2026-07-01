@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:maxpay/core/constants/colors.dart';
+import 'package:maxpay/core/constants/extension.dart';
 import 'package:maxpay/core/data/model/transaction_report_model.dart';
+import 'package:maxpay/core/utils/texthelper.dart';
 import 'package:maxpay/view/transaction_screens/widget/daispute_dialogue..dart';
 
 class TransactionCard extends StatelessWidget {
@@ -12,6 +15,8 @@ class TransactionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+        final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     final status =
         (data.status ?? "").toLowerCase();
 
@@ -38,29 +43,51 @@ class TransactionCard extends StatelessWidget {
       ),
       child: Column(
         children: [
-          /// Header
-          Row(
-            mainAxisAlignment:
-                MainAxisAlignment.spaceBetween,
+
+
+
+
+           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
                 child: Text(
                   "Transaction ID: ${data.transactionId ?? '-'}",
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: Colors.black
+                  style: TextHelper.max1.copyWith(
+                    color: isDark
+                        ? const Color(0xFFFFFFFF).withValues(alpha: 0.7)
+                        : AppColors.darktextclr,
                   ),
                 ),
               ),
-              Text(
-                data.dateTime ?? "",
-                style: const TextStyle(
-                  fontSize: 11,
-                   color: Colors.black
-                ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    "Date & Time",
+                    style: TextHelper.max1.copyWith(
+                      color: isDark
+                          ? const Color(0xFFFFFFFF).withValues(alpha: 0.7)
+                          : AppColors.darktextclr,
+                    ),
+                  ),
+                  const SizedBox(height: 5),
+                  Text(
+  data.dateTime != null && data.dateTime!.isNotEmpty
+      ? formatTransactionDate(data.dateTime!)
+      : "-",
+  style: TextHelper.max1.copyWith(
+    color: isDark
+        ? const Color(0xFFFFFFFF).withValues(alpha: 0.7)
+        : AppColors.darktextclr,
+  ),
+),
+                ],
               ),
             ],
           ),
+          /// Header
+//         
 
           const SizedBox(height: 10),
 

@@ -28,7 +28,8 @@ class _DTHRechargePageState extends State<DTHRechargePage>
     with SingleTickerProviderStateMixin {
   Data? selectedOperatorObj;
   final String _selectedOperator = "";
-  bool _showCustomerInfo = false;
+  bool isPaymentReceived = false;
+ bool showCustomerInfo = false;
   final PrePaidController controller = Get.put(
     PrePaidController(
       planUseCase: sl(),
@@ -164,50 +165,8 @@ class _DTHRechargePageState extends State<DTHRechargePage>
               ),
               SizedBox(height: 20.h),
 
-              /// 🔹 CUSTOMER ID INPUT
-              Container(
-                decoration: BoxDecoration(
-                  color: isDark
-                      ? AppColors.darkplceholder
-                      : AppColors.clrplceholder,
-                  borderRadius: BorderRadius.circular(10.r),
-                ),
-                child: TextField(
-                  controller: customerIdController,
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    color: isDark ? Colors.white : Colors.black,
-                  ),
-                  decoration: InputDecoration(
-                    hintText: 'Enter Customer ID',
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.symmetric(
-                      horizontal: 16.w,
-                      vertical: 12.h,
-                    ),
 
-                    suffixIcon: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.cancel,
-                          color: Colors.red.withValues(alpha: 0.5),
-                          size: 20.sp,
-                        ),
-                        SizedBox(width: 10.w),
-                        // Icon(Icons.person, color: Colors.orange, size: 20.sp),
-                        SizedBox(width: 10.w),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(height: 15.h),
-
-              /// 🔹 OPERATOR SELECTION
-              Obx(() {
+ Obx(() {
                 if (controller.isLoading.value) {
                   return const Center(child: CircularProgressIndicator());
                 }
@@ -275,8 +234,54 @@ class _DTHRechargePageState extends State<DTHRechargePage>
                   ),
                 );
               }),
+
+   SizedBox(height: 15.h),
+
+              /// 🔹 CUSTOMER ID INPUT
+              Container(
+                decoration: BoxDecoration(
+                  color: isDark
+                      ? AppColors.darkplceholder
+                      : AppColors.clrplceholder,
+                  borderRadius: BorderRadius.circular(10.r),
+                ),
+                child: TextField(
+                  controller: customerIdController,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    color: isDark ? Colors.white : Colors.black,
+                  ),
+                  decoration: InputDecoration(
+                    hintText: 'Enter Customer ID',
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 12.h,
+                    ),
+
+                    suffixIcon: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.cancel,
+                          color: Colors.red.withValues(alpha: 0.5),
+                          size: 20.sp,
+                        ),
+                        SizedBox(width: 10.w),
+                        // Icon(Icons.person, color: Colors.orange, size: 20.sp),
+                        SizedBox(width: 10.w),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
               SizedBox(height: 15.h),
 
+              /// 🔹 OPERATOR SELECTION
+             
+           
               /// 🔹 AMOUNT INPUT
               Container(
                 decoration: BoxDecoration(
@@ -312,25 +317,62 @@ class _DTHRechargePageState extends State<DTHRechargePage>
               if (showNextButton) SizedBox(height: 15.h),
 
               /// 🔹 TOGGLE BUTTONS (Plan / Customer Info)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  _buildToggleButton('Customer Info', !_showCustomerInfo, () {
-                    setState(() {
-                      _showCustomerInfo = true;
-                    });
-                  }),
-                  SizedBox(width: 10.w),
-                  _buildToggleButton('Plan', _showCustomerInfo, () {
-                    setState(() {
-                      _showCustomerInfo = false;
-                    });
-                  }),
-                ],
-              ),
+             Row(
+  mainAxisAlignment: MainAxisAlignment.end,
+  children: [
+    _buildToggleButton(
+      'CustomerInfo',
+      showCustomerInfo,
+      () {
+        setState(() {
+          showCustomerInfo = true;
+        });
+      },
+    ),
+    SizedBox(width: 10.w),
+    _buildToggleButton(
+      'Plan',
+      !showCustomerInfo,
+      () {
+        setState(() {
+          showCustomerInfo = false;
+        });
+      },
+    ),
+  ],
+),
+
+             SizedBox(height: 15.h),
+
+             Row(
+  children: [
+    SizedBox(
+      width: 20.w,
+      height: 20.w,
+      child: Checkbox(
+        value: isPaymentReceived,
+        activeColor: AppColors.clrPrimary,
+        onChanged: (value) {
+          setState(() {
+            isPaymentReceived = value ?? false;
+          });
+        },
+      ),
+    ),
+    SizedBox(width: 8.w),
+    Text(
+      "Payment Received",
+      style: TextStyle(
+        fontSize: 13.sp,
+        fontWeight: FontWeight.w500,
+        color: Colors.deepOrange
+      ),
+    ),
+  ],
+),
               SizedBox(height: 20.h),
 
-              if (!_showCustomerInfo) ...[
+          if (!showCustomerInfo) ...[
                 /// 🔹 TABS FOR PLANS
                 Obx(() {
                   if (dthcontroller.isLoading.value) {
@@ -468,7 +510,7 @@ class _DTHRechargePageState extends State<DTHRechargePage>
                   );
                 }),
               ] else ...[
-                /// 🔹 CUSTOMER INFO SECTION
+              
                 _buildCustomerInfoSection(isDark),
               ],
 
@@ -481,18 +523,21 @@ class _DTHRechargePageState extends State<DTHRechargePage>
   }
 
   Widget _buildInputLabel(String label) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: 8.h),
-      child: Text(
-        label,
-        style: TextStyle(
-          fontSize: 13.sp,
-          fontWeight: FontWeight.w600,
-          color: Colors.grey,
-        ),
+  return Padding(
+    padding: EdgeInsets.only(bottom: 8.h),
+    child: Text(
+      label,
+      style: TextStyle(
+        fontSize: 13.sp,
+        fontWeight: FontWeight.w600,
+        color: Colors.orange,
+        decoration: TextDecoration.underline,
+        decorationColor: Colors.orange,
+        decorationThickness: 2,
       ),
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildToggleButton(String label, bool isActive, VoidCallback onTap) {
     return GestureDetector(
@@ -601,7 +646,7 @@ class _DTHRechargePageState extends State<DTHRechargePage>
                     ),
                   ),
                   child: Text(
-                    "Buy",
+                    "Select",
                     style: TextStyle(
                       fontSize: 10.sp,
                       fontFamily: 'Poppins',

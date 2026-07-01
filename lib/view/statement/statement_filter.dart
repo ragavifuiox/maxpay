@@ -58,15 +58,20 @@ class StatementFilter extends GetView<StatementController> {
                       );
                     }).toList(),
 
-                    onChanged: (value) {
-                      controller.setType(value ?? "");
-                      controller.statement(); // 🔥 MUST SET THIS;
-                      debugPrint(
-                        "Selected Payment Type => ${controller.selectedtype.value}",
-                      );
+                   onChanged: (value) {
+  if (value != null) {
+    controller.setType(value);
 
-                      controller.statement();
-                    },
+    debugPrint(
+      "Selected Payment Type => ${controller.selectedtype.value}",
+    );
+
+    if (controller.fromDate.isNotEmpty &&
+        controller.toDate.isNotEmpty) {
+      controller.statement();
+    }
+  }
+},
                   ),
                 ),
               ),
@@ -127,7 +132,7 @@ class StatementFilter extends GetView<StatementController> {
                       ),
                     ),
                   ),
-                  hintText: "Enter Mobile Number",
+                  hintText: "Enter",
                   hintStyle: TextHelper.max1.copyWith(
                     color: isDark ? AppColors.textclr : AppColors.clrTextgrey,
                   ),
