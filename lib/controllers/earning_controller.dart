@@ -17,7 +17,7 @@ class EarningController extends GetxController {
     required this.getEarningsUseCase,
     required this.searchEarningsUseCase,
   });
-
+RxBool isSearchLoading = false.obs;
   RxBool isLoading = false.obs;
   Rx<SearchEarning?> searchData = Rx<SearchEarning?>(null);
   Rx<Earnings?> earningsData = Rx<Earnings?>(null);
@@ -65,49 +65,41 @@ class EarningController extends GetxController {
     );
   }
 
-  Future<void> searchEarnings(
-    String fromdate,
-    String todate,
-    String search,
-  ) async {
-    try {
-      isLoading.value = true;
+ Future<void> searchEarnings(
+  String fromdate,
+  String todate,
+  String search,
+) async {
+  try {
+    isSearchLoading.value = true;
 
-      final result = await searchEarningsUseCase(
-        fromdate: fromdate,
-        todate: todate,
-        search: search,
-      );
+    print("From Date: $fromdate");
+    print("To Date: $todate");
+    print("Search: $search");
 
-      result.fold(
-        (failure) {
-          // CustomToast.error(failure.message);
-        },
-        (response) async {
-          AppLogger.logError(
-            "=========== SEARCH EARNINGS RESPONSE ===========",
-          );
-          AppLogger.logError("SUCCESS : ${response.success}");
-          AppLogger.logError("MESSAGE : ${response.message}");
-          AppLogger.logError("===========================================");
+    final result = await searchEarningsUseCase(
+      fromdate: fromdate,
+      todate: todate,
+      search: search,
+    );
 
-          if (response.success == true) {
-            searchData.value = response;
-            // CustomToast.success(
-            //   response.message ?? "PIN Created Successfully",
-            // );
-          } else {
-            // CustomToast.error(
-            //   response.message ?? "Failed to create PIN",
-            // );
-          }
-        },
-      );
-    } finally {
-      isLoading.value = false;
-    }
+    result.fold(
+      (failure) {
+        print("API Error: ${failure.message}");
+      },
+      (response) {
+        print("API Response: ${response.toJson()}");
+
+        if (response.success == true) {
+          searchData.value = response;
+          print("List Length: ${response.data?.list?.length}");
+        }
+      },
+    );
+  } finally {
+    isSearchLoading.value = false;
   }
-
+}
   Future<void> selectFromDate(BuildContext context) async {
     DateTime? pickedDate = await showDatePicker(
       context: context,

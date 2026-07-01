@@ -20,7 +20,9 @@ class WalletRequestScreen extends StatelessWidget {
       Get.put(
     GetBankController(
       bankusecase: sl(),
-      walletRequestUsecase: sl(),
+      
+      walletRequestUsecase: sl(), 
+      dueAmountUsecase: sl(),
     ),
   );
 
@@ -137,15 +139,16 @@ class WalletRequestScreen extends StatelessWidget {
 
                     SizedBox(height: 4.h),
 
-                    Text(
-                      "₹ 245005.23",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18.sp,
-                        fontWeight:
-                            FontWeight.bold,
-                      ),
-                    ),
+                Obx(() {
+  return Text(
+    "₹ ${controller.dueamount.value?.code?.pendingAmount ?? 0}",
+    style: TextStyle(
+      color: Colors.white,
+      fontSize: 18.sp,
+      fontWeight: FontWeight.bold,
+    ),
+  );
+})
                   ],
                 ),
               ),

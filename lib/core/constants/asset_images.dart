@@ -19,7 +19,7 @@ class AssetImages {
   // Dashboard Stats
   static const addWallet = "assets/images/add_wallet.svg";
   static const walletBalance = "assets/images/wallet_bal.svg";
-  static const transactions = "assets/images/transactions.svg";
+  static const transactions = "assets/images/trans-icon.svg";
   static const todaysCredit = "assets/images/todays_credit.svg";
   static const refunded = "assets/images/refunded.svg";
   static const complaints = "assets/images/complaints.svg";

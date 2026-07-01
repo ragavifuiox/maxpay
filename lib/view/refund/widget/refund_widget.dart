@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:maxpay/core/constants/colors.dart';
+import 'package:maxpay/core/constants/extension.dart';
 import 'package:maxpay/core/data/model/refund_model.dart';
 
 class EarningsCard1 extends StatelessWidget {
@@ -54,16 +55,18 @@ class EarningsCard1 extends StatelessWidget {
               ),
 
               
-               Text(data.dateTime ?? "",
-
-                style: TextStyle(
-                  fontSize: 12,
-                 color: isDark
-                      ? const Color(0xFFFFFFFF).withValues(alpha: 0.7)
-                      : AppColors.darktextclr,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
+              Text(
+  (data.dateTime != null && data.dateTime!.isNotEmpty)
+      ? formatTransactionDate(data.dateTime!)
+      : "-",
+  style: TextStyle(
+    fontSize: 12,
+    color: isDark
+        ? const Color(0xFFFFFFFF).withValues(alpha: 0.7)
+        : AppColors.darktextclr,
+    fontWeight: FontWeight.w500,
+  ),
+),
             ],
           ),
 

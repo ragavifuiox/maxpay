@@ -1,3 +1,5 @@
+import 'dart:math';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -7,9 +9,11 @@ import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:get/get_state_manager/src/simple/get_view.dart';
 import 'package:maxpay/controllers/homepage_controller.dart';
+import 'package:maxpay/controllers/transaction_report_controller.dart';
 import 'package:maxpay/core/constants/asset_images.dart';
 import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
+import 'package:maxpay/core/di/service_locator.dart';
 import 'package:maxpay/view/home/widgets/earnings_chart.dart';
 import 'package:maxpay/view/home/widgets/home_header.dart';
 import 'package:maxpay/view/home/widgets/news_ticker.dart';
@@ -17,6 +21,173 @@ import 'package:maxpay/view/home/widgets/stat_card.dart';
 import 'package:maxpay/view/nav_page/navbar_provider.dart';
 import 'package:maxpay/view/transaction_screens/transaction_success_screen.dart';
 
+class AnimatedBorderDotCard extends StatefulWidget {
+  final Widget child;
+    final bool isDark;
+  const AnimatedBorderDotCard({super.key, required this.child, required this.isDark,});
+
+  @override
+  State<AnimatedBorderDotCard> createState() => _AnimatedBorderDotCardState();
+}
+
+class _AnimatedBorderDotCardState extends State<AnimatedBorderDotCard>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 2),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        return CustomPaint(
+          painter: _BorderDotPainter(
+  progress: _controller.value,
+  isDark: widget.isDark,
+),
+          child: child,
+        );
+      },
+      child: widget.child,
+    );
+  }
+}
+
+class _BorderDotPainter extends CustomPainter {
+  final double progress;
+  final bool isDark;
+
+  _BorderDotPainter({
+    required this.progress,
+    required this.isDark,
+  });
+
+  static const double _radius = 12.0;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final double w = size.width;
+    final double h = size.height;
+
+    final RRect rrect = RRect.fromRectAndRadius(
+      Rect.fromLTWH(0, 0, w, h),
+      const Radius.circular(_radius),
+    );
+
+    // 1. Faint dashed full border
+    _drawDashedRRect(
+      canvas,
+      rrect,
+      Paint()
+        ..color = Colors.blue.withOpacity(0.20)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2.5
+        ..strokeCap = StrokeCap.round,
+      dashLength: 6,
+      gapLength: 4,
+    );
+
+    // 2. Thick trail from 0 → progress using PathMetric
+    final Path fullPath = Path()..addRRect(rrect);
+    final PathMetric metric = fullPath.computeMetrics().first;
+    final double totalLen = metric.length;
+    final double trailLen = progress * totalLen;
+
+    if (trailLen > 0) {
+      canvas.drawPath(
+        metric.extractPath(0, trailLen),
+        Paint()
+          // ..color = const Color(0xFF2563EB).withOpacity(0.90)
+                   ..color = isDark
+    ? Colors.white
+    : AppColors.clrPrimary
+
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 3.5
+          ..strokeCap = StrokeCap.round
+          ..strokeJoin = StrokeJoin.round,
+      );
+    }
+
+    // 3. Dot at leading edge
+    final Tangent? tangent = metric.getTangentForOffset(trailLen);
+    if (tangent != null) {
+      final Offset dot = tangent.position;
+
+      // Glow
+      canvas.drawCircle(
+        dot,
+        11,
+        Paint()
+          ..shader = RadialGradient(
+            colors: [
+              const Color(0xFF3B82F6).withOpacity(0.50),
+              const Color(0xFF3B82F6).withOpacity(0.00),
+            ],
+          ).createShader(Rect.fromCircle(center: dot, radius: 11))
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4),
+      );
+
+      // White core
+      canvas.drawCircle(dot, 5, Paint()..color = isDark
+    ? Colors.white
+    : AppColors.clrPrimary);
+
+      // Blue ring
+      canvas.drawCircle(
+        dot,
+        5,
+        Paint()
+       ..color = isDark
+    ? Colors.white
+    : AppColors.clrPrimary
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 2.5,
+      );
+    }
+  }
+
+  void _drawDashedRRect(
+    Canvas canvas,
+    RRect rrect,
+    Paint paint, {
+    required double dashLength,
+    required double gapLength,
+  }) {
+    final PathMetrics metrics = (Path()..addRRect(rrect)).computeMetrics();
+    for (final PathMetric m in metrics) {
+      double d = 0;
+      bool draw = true;
+      while (d < m.length) {
+        final double len = draw ? dashLength : gapLength;
+        if (draw) canvas.drawPath(m.extractPath(d, d + len), paint);
+        d += len;
+        draw = !draw;
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(_BorderDotPainter old) => old.progress != progress;
+}
+
+// ─────────────────────────────────────────────
+// HOME PAGE SCREEN
+// ─────────────────────────────────────────────
 class HomePageScreen extends GetView<HomePageController> {
   const HomePageScreen({super.key});
 
@@ -35,7 +206,6 @@ class HomePageScreen extends GetView<HomePageController> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              /// 🔹 PREMIUM HEADER
               const HomeHeaderSection(),
 
               Padding(
@@ -43,13 +213,9 @@ class HomePageScreen extends GetView<HomePageController> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    /// 🔹 THE EARNINGS CHART
                     const EarningsChart(),
-
-                    /// 🔹 NEWS TICKER
                     const NewsTicker(),
 
-                    /// 🔹 DASHBOARD GRID
                     GridView.count(
                       crossAxisCount: 3,
                       shrinkWrap: true,
@@ -60,9 +226,7 @@ class HomePageScreen extends GetView<HomePageController> {
                       padding: EdgeInsets.all(4.w),
                       children: [
                         StatCard(
-                          onTap: () {
-                            Get.toNamed(AppRoutes.addwallet);
-                          },
+                          onTap: () => Get.toNamed(AppRoutes.addwallet),
                           title: 'Add Wallet',
                           bgColor: AppColors.darkBlue.withValues(alpha: 0.04),
                           imageWidget: SvgPicture.asset(
@@ -70,197 +234,184 @@ class HomePageScreen extends GetView<HomePageController> {
                             height: 32.h,
                           ),
                         ),
+
                         Obx(() {
                           final balance =
-                              controller.walletBalance.value?.data?.balance ??
-                              0.0;
-
+                              controller.walletBalance.value?.data?.balance ?? 0.0;
                           return StatCard(
                             title: 'Wallet Balance',
-                            onTap: () {
-                              Get.toNamed(AppRoutes.walletbal);
-                            },
+                            onTap: () => Get.toNamed(AppRoutes.walletbal),
                             value: '₹${balance.toStringAsFixed(2)}',
                             bgColor: AppColors.darkBlue.withValues(alpha: 0.04),
-                            // textColor:
-                            //     Theme.of(context).brightness == Brightness.dark
-                            //     ? Color.fromARGB(255, 171, 171, 171)
-                            //     : AppColors.darktextclr,
-                            imageWidget: SvgPicture.asset(
-                              AssetImages.walletBalance,
-                            ),
+                            imageWidget: SvgPicture.asset(AssetImages.walletBalance),
                           );
                         }),
 
-                        BlinkingZoomCard(
-                          child: StatCard(
-                            onTap: () {
-                              Get.find<NavbarController>().openMenu();
-                            },
-                            title: 'Transactions',
-                            bgColor: AppColors.darkBlue.withValues(alpha: 0.04),
-                            imageWidget: SvgPicture.asset(
-                              AssetImages.transactions,
-                              height: 32.h,
-                            ),
-                          ),
-                        ),
-                        StatCard(
-                          title: 'Todays Credit',
-                          value: '₹2500.00',
-                          textColor:
-                              Theme.of(context).brightness == Brightness.dark
-                              ? Color.fromARGB(255, 171, 171, 171)
-                              : AppColors.darktextclr,
+                        // ✅ TRANSACTIONS — animated border dot + zoom
+     BlinkingZoomCard(
+  child: Container(
+    padding: EdgeInsets.all(3), // Border thickness
+    decoration: BoxDecoration(
+      color: Theme.of(context).brightness == Brightness.dark
+          ? Colors.white
+          : Colors.red,
+      borderRadius: BorderRadius.circular(15.r),
+    ),
+    child: StatCard(
+      onTap: () => Get.find<NavbarController>().openMenu(),
+      title: 'Transactions',
+      bgColor: AppColors.clrPrimary,
+      textColor: Colors.white,
+      valueColor: Colors.white,
+      borderColor: Colors.transparent, // Hide StatCard border
+      imageWidget: SvgPicture.asset(
+        AssetImages.transactions,
+        height: 32.h,
+      ),
+    ),
+  ),
+),
 
-                          bgColor: AppColors.darkBlue.withValues(alpha: 0.04),
-                          imageWidget: SvgPicture.asset(
-                            AssetImages.todaysCredit,
-                            height: 32.h,
-                          ),
-                        ),
-                        StatCard(
-                          title: 'Refunded',
-                          value: '₹2500.00',
-                          textColor:
-                              Theme.of(context).brightness == Brightness.dark
-                              ? Color.fromARGB(255, 171, 171, 171)
-                              : AppColors.darktextclr,
-                          bgColor: AppColors.darkBlue.withValues(alpha: 0.04),
-                          imageWidget: SvgPicture.asset(
-                            AssetImages.refunded,
-                            height: 32.h,
-                          ),
-                        ),
+                      Obx(() {
+  final amount =
+      controller.todaycredit.value?.code?.todayCreditAmount ?? 0;
+
+  return StatCard(
+    title: 'Todays Credit',
+    value: '₹$amount',
+    textColor: Theme.of(context).brightness == Brightness.dark
+        ? const Color.fromARGB(255, 171, 171, 171)
+        : AppColors.darktextclr,
+    bgColor: AppColors.darkBlue.withValues(alpha: 0.04),
+    imageWidget: SvgPicture.asset(
+      AssetImages.todaysCredit,
+      height: 32.h,
+    ),
+  );
+}),
+
+                       Obx(() {
+  final refundAmount =
+      controller.refundcount.value?.code?.refundAmount ?? 0;
+
+  return StatCard(
+    title: 'Refunded',
+    value: refundAmount.toString(),
+    imageWidget: SvgPicture.asset(
+      AssetImages.refunded,
+      height: 32.h,
+    ),
+    bgColor: AppColors.darkBlue.withValues(alpha: 0.04),
+  );
+}),
 
                         Obx(() {
                           final complaintCount =
-                              controller
-                                  .complaints
-                                  .value
-                                  ?.data
-                                  ?.complaintCount ??
-                              0;
-
+                              controller.complaints.value?.data?.complaintCount ?? 0;
                           return StatCard(
                             title: 'Complaints',
-
                             value: complaintCount.toString(),
-
-                            imageWidget: SvgPicture.asset(
-                              AssetImages.complaints,
-                            ),
-                            textColor:
-                                Theme.of(context).brightness == Brightness.dark
-                                ? Color.fromARGB(255, 171, 171, 171)
+                            imageWidget: SvgPicture.asset(AssetImages.complaints),
+                            textColor: Theme.of(context).brightness == Brightness.dark
+                                ? const Color.fromARGB(255, 171, 171, 171)
                                 : AppColors.darktextclr,
                             bgColor: AppColors.darkBlue.withValues(alpha: 0.04),
                           );
                         }),
 
-                        // StatCard(
-                        //   title: 'Complaints',
-                        //   textColor: const Color(0xff636363),
-                        //   bgColor: AppColors.darkBlue.withValues(alpha: 0.04),
-                        //   value: '300',
-                        //   imageWidget: SvgPicture.asset(
-                        //     AssetImages.complaints,
-                        //     height: 32.h,
-                        //   ),
-                        // ),
-                        Obx(() {
-                          final success =
-                              controller.transactionData.value?.data?.success;
+                      Obx(() {
+  final success = controller.transactionData.value?.data?.success;
 
-                          return StatCard(
-                            bgColor: AppColors.success,
-                            onTap: () {
-                              Get.toNamed(
-                                AppRoutes.transaction,
-                                arguments: TransactionStatus.success,
-                              );
-                            },
-                            title: 'Success',
+  final amount = (success?.amount ?? 0).toDouble();
+  final count = success?.count ?? 0;
 
-                            value:
-                                '₹${success?.amount ?? 0} / ${success?.count ?? 0} Nos',
+  return StatCard(
+    bgColor: AppColors.success,
+    onTap: () {
+      final controller = Get.put(
+        TransReportController(
+          transreportUsecase: sl(),
+          producttypeUseCase: sl(),
+          submitDisputeUsecase: sl(),
+        ),
+      );
+      controller.clearFilters();
 
-                            imageWidget: SvgPicture.asset(
-                              AssetImages.success,
-                              height: 45.h,
-                            ),
-                            valueColor:
-                                Theme.of(context).brightness == Brightness.dark
-                                ? Colors.black
-                                : Colors.black,
-                            textColor: Colors.green,
-                          );
-                        }),
-                        Obx(() {
-                          final processing = controller
-                              .transactionData
-                              .value
-                              ?.data
-                              ?.processing;
+      Get.toNamed(
+        AppRoutes.transaction,
+        arguments: TransactionStatus.success,
+      );
+    },
+    title: 'Success',
+    value: '₹${amount.toStringAsFixed(2)} / $count Nos',
+    imageWidget: SvgPicture.asset(
+      AssetImages.success,
+      height: 45.h,
+    ),
+    valueColor: Colors.black,
+    textColor: Colors.green,
+  );
+}),
 
-                          return StatCard(
-                            bgColor: AppColors.pending,
-                            onTap: () {
-                              Get.toNamed(
-                                AppRoutes.transaction,
-                                arguments: TransactionStatus.pending,
-                              );
-                            },
-                            title: 'Processing',
+                    Obx(() {
+  final processing = controller.transactionData.value?.data?.processing;
 
-                            value:
-                                '₹${processing?.amount ?? 0} / ${processing?.count ?? 0} Nos',
+  final amount = (processing?.amount ?? 0).toDouble();
+  final count = processing?.count ?? 0;
 
-                            imageWidget: SvgPicture.asset(
-                              AssetImages.processing,
-                              height: 45.h,
-                            ),
-                            valueColor:
-                                Theme.of(context).brightness == Brightness.dark
-                                ? Colors.black
-                                : Colors.black,
-                            textColor: Colors.orange,
-                          );
-                        }),
-                        Obx(() {
-                          final failed =
-                              controller.transactionData.value?.data?.failed;
+  return StatCard(
+    bgColor: AppColors.pending,
+    onTap: () {
+      final controller = Get.find<TransReportController>();
+      controller.clearFilters();
 
-                          return StatCard(
-                            bgColor: AppColors.failed,
-                            onTap: () {
-                              Get.toNamed(
-                                AppRoutes.transaction,
-                                arguments: TransactionStatus.failed,
-                              );
-                            },
-                            title: 'Failed',
+      Get.toNamed(
+        AppRoutes.transaction,
+        arguments: TransactionStatus.pending,
+      );
+    },
+    title: 'Processing',
+    value: '₹${amount.toStringAsFixed(2)} / $count Nos',
+    imageWidget: SvgPicture.asset(
+      AssetImages.processing,
+      height: 45.h,
+    ),
+    valueColor: Colors.black,
+    textColor: Colors.orange,
+  );
+}),
 
-                            value:
-                                '₹${failed?.amount ?? 0} / ${failed?.count ?? 0} Nos',
+                      Obx(() {
+  final failed = controller.transactionData.value?.data?.failed;
 
-                            imageWidget: SvgPicture.asset(
-                              AssetImages.failedAll,
-                              height: 45.h,
-                            ),
-                            valueColor:
-                                Theme.of(context).brightness == Brightness.dark
-                                ? Colors.black
-                                : Colors.black,
-                            textColor: Colors.red,
-                          );
-                        }),
-                      ],
+  final amount = (failed?.amount ?? 0).toDouble();
+  final count = failed?.count ?? 0;
+
+  return StatCard(
+    bgColor: AppColors.failed,
+    onTap: () {
+      final controller = Get.find<TransReportController>();
+      controller.clearFilters();
+
+      Get.toNamed(
+        AppRoutes.transaction,
+        arguments: TransactionStatus.failed,
+      );
+    },
+    title: 'Failed',
+    value: '₹${amount.toStringAsFixed(2)} / $count Nos',
+    imageWidget: SvgPicture.asset(
+      AssetImages.failedAll,
+      height: 45.h,
+    ),
+    valueColor: Colors.black,
+    textColor: Colors.red,
+  );
+}),                      ],
                     ),
 
                     SizedBox(height: 20.h),
-
-                    SizedBox(height: 9.h), // Space for Nav Bar
+                    SizedBox(height: 9.h),
                   ],
                 ),
               ),

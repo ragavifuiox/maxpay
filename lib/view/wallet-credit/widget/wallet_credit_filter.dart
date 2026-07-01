@@ -60,12 +60,8 @@ class WalletCreditFilter extends GetView<WalletCreditController> {
         )
         .toList() ??
     [],
-            onChanged: (value) {
+ onChanged: (String? value) {
   controller.selectedcreditname.value = value ?? "";
-
-  debugPrint(
-    "wallet_type => ${controller.selectedcreditname.value}",
-  );
 
   controller.searchcredit(
     search: controller.search,
@@ -73,7 +69,7 @@ class WalletCreditFilter extends GetView<WalletCreditController> {
     fromdate: controller.fromDate,
     todate: controller.toDate,
   );
-},
+}
             ),
           ),
         ),
@@ -125,14 +121,7 @@ class WalletCreditFilter extends GetView<WalletCreditController> {
   style: TextStyle(
     color: theme.colorScheme.onSurface,
   ),
-  onChanged: (value) {
-    controller.search = value;
-
-    if (controller.fromDate.isNotEmpty &&
-        controller.toDate.isNotEmpty) {
-      controller.Searchcredit();
-    }
-  },
+  onChanged: controller.onSearch,
   decoration: InputDecoration(
     prefixIcon: Padding(
       padding: const EdgeInsets.all(12.0),

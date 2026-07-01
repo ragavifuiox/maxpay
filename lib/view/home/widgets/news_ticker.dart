@@ -51,7 +51,7 @@ class _NewsTickerState extends State<NewsTicker> {
     scrollController
         .animateTo(
           maxScrollExtent,
-          duration: const Duration(seconds: 15),
+          duration: const Duration(seconds: 1),
           curve: Curves.linear,
         )
         .then((_) {

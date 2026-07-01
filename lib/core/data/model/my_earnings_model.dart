@@ -29,7 +29,7 @@ class SearchEarning {
 }
 
 class Data {
-  int? totalEarnings;
+  double? totalEarnings;
   List<EarningItem>? list;
 
   Data({
@@ -38,8 +38,7 @@ class Data {
   });
 
   Data.fromJson(Map<String, dynamic> json) {
-    totalEarnings = json['total_earnings'];
-
+   totalEarnings = (json['total_earnings'] as num?)?.toDouble();
     if (json['list'] != null) {
       list = (json['list'] as List)
           .map((e) => EarningItem.fromJson(e))

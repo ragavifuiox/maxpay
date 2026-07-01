@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:maxpay/controllers/login_history_controller.dart';
@@ -72,8 +73,72 @@ class LoginFilterwidget extends GetView<LoginHistoryController> {
 
               const SizedBox(height: 12),
 
-             TextField(
-  keyboardType: TextInputType.number,
+//              TextField(
+//   keyboardType: TextInputType.number,
+//   style: TextStyle(
+//     color: theme.colorScheme.onSurface,
+//   ),
+//   onChanged: (value) {
+//     controller.search = value;
+
+//     if (controller.fromDate.isNotEmpty &&
+//         controller.toDate.isNotEmpty) {
+//       controller.loghistory();
+//     }
+//   },
+//   decoration: InputDecoration(
+//     prefixIcon: Padding(
+//       padding: const EdgeInsets.all(12.0),
+//       child: SvgPicture.asset(
+//         AssetImages.search,
+//         colorFilter: ColorFilter.mode(
+//           isDark
+//               ? AppColors.textclr
+//               : theme.colorScheme.onSurfaceVariant,
+//           BlendMode.srcIn,
+//         ),
+//       ),
+//     ),
+//     hintText: "Enter Mobile Number",
+//     hintStyle: TextHelper.max1.copyWith(
+//       color: isDark
+//           ? AppColors.textclr
+//           : AppColors.clrTextgrey,
+//     ),
+//     filled: true,
+//     fillColor:
+//         isDark ? AppColors.darkplceholder : Colors.white,
+//     border: OutlineInputBorder(
+//       borderRadius: BorderRadius.circular(7),
+//       borderSide: BorderSide(
+//         color: isDark
+//             ? AppColors.darkFilterBorder
+//             : AppColors.totalborde2,
+//       ),
+//     ),
+//     enabledBorder: OutlineInputBorder(
+//       borderRadius: BorderRadius.circular(7),
+//       borderSide: BorderSide(
+//         color: isDark
+//             ? AppColors.darkFilterBorder
+//             : AppColors.totalborde2,
+//       ),
+//     ),
+//     focusedBorder: OutlineInputBorder(
+//       borderRadius: BorderRadius.circular(7),
+//       borderSide: BorderSide(
+//         color: theme.colorScheme.primary,
+//       ),
+//     ),
+//     contentPadding: const EdgeInsets.symmetric(
+//       vertical: 0,
+//     ),
+//   ),
+// )
+
+
+TextField(
+  keyboardType: TextInputType.text,
   style: TextStyle(
     color: theme.colorScheme.onSurface,
   ),
@@ -82,12 +147,12 @@ class LoginFilterwidget extends GetView<LoginHistoryController> {
 
     if (controller.fromDate.isNotEmpty &&
         controller.toDate.isNotEmpty) {
-      controller.loghistory();
+      controller.LoginHistory();
     }
   },
   decoration: InputDecoration(
     prefixIcon: Padding(
-      padding: const EdgeInsets.all(12.0),
+      padding: const EdgeInsets.all(12),
       child: SvgPicture.asset(
         AssetImages.search,
         colorFilter: ColorFilter.mode(
@@ -98,7 +163,7 @@ class LoginFilterwidget extends GetView<LoginHistoryController> {
         ),
       ),
     ),
-    hintText: "Enter Mobile Number",
+    hintText: "Search (Mobile / City / IP Address / Network)",
     hintStyle: TextHelper.max1.copyWith(
       color: isDark
           ? AppColors.textclr
@@ -109,28 +174,15 @@ class LoginFilterwidget extends GetView<LoginHistoryController> {
         isDark ? AppColors.darkplceholder : Colors.white,
     border: OutlineInputBorder(
       borderRadius: BorderRadius.circular(7),
-      borderSide: BorderSide(
-        color: isDark
-            ? AppColors.darkFilterBorder
-            : AppColors.totalborde2,
-      ),
     ),
     enabledBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(7),
-      borderSide: BorderSide(
-        color: isDark
-            ? AppColors.darkFilterBorder
-            : AppColors.totalborde2,
-      ),
     ),
     focusedBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(7),
       borderSide: BorderSide(
         color: theme.colorScheme.primary,
       ),
-    ),
-    contentPadding: const EdgeInsets.symmetric(
-      vertical: 0,
     ),
   ),
 )

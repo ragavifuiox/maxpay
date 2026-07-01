@@ -95,7 +95,7 @@ class _PinCodeEnterPageState extends State<PinCodeEnterPage> {
                 SizedBox(height: isTablet ? 48.h : 24.h),
 
                 Text(
-                  'Enter your MPIN',
+                  'Enter your M-PIN',
                   style: TextStyle(
                     fontFamily: 'Poppins',
                     fontWeight: FontWeight.w600,

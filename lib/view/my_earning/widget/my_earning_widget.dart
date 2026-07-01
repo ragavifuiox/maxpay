@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:maxpay/core/constants/colors.dart';
+import 'package:maxpay/core/constants/extension.dart';
 import 'package:maxpay/core/data/model/my_earnings_model.dart';
 
 class EarningsCard extends StatelessWidget {
@@ -40,13 +41,15 @@ class EarningsCard extends StatelessWidget {
                 ),
               ),
               Text(
-                item.commissionDate ?? "-",
-                style: TextStyle(
-                  fontSize: 12,
-                  color: theme.colorScheme.onSurface,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
+  item.commissionDate != null
+      ? formatTransactionDate(item.commissionDate!)
+      : "-",
+  style: TextStyle(
+    fontSize: 12,
+    color: theme.colorScheme.onSurface,
+    fontWeight: FontWeight.w500,
+  ),
+),
             ],
           ),
 

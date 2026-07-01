@@ -69,24 +69,14 @@ class TransactionScreen extends GetView<TransReportController> {
     children: [
 
 
-       Padding(
-  padding: const EdgeInsets.only(left: 2),
-  child: Text(
-    "Product",
-    style: TextStyle(
-      fontSize: 14,
-      fontWeight: FontWeight.w600,
-      color: theme.colorScheme.onSurface,
-    ),
-  ),
-),
+     
 const SizedBox(height: 8),
       /// SELECT CREDIT TYPE
-     Obx(
-  () => Container(
-    padding: const EdgeInsets.symmetric(
-      horizontal: 12,
-    ),
+   Obx(() {
+  final productList = controller.producttype.value?.data ?? [];
+
+  return Container(
+    padding: const EdgeInsets.symmetric(horizontal: 12),
     decoration: BoxDecoration(
       color: theme.brightness == Brightness.light
           ? Colors.white
@@ -101,63 +91,58 @@ const SizedBox(height: 8),
     child: DropdownButtonHideUnderline(
       child: DropdownButton<String>(
         isExpanded: true,
-        value: controller.selectedProductId.value.isEmpty
-            ? null
-            : controller.selectedProductId.value,
+
+        value: productList.any((e) =>
+                e.id.toString() == controller.selectedProductId.value)
+            ? controller.selectedProductId.value
+            : null,
+
         hint: const Text("Select"),
-        items: controller
-                .allplan
-                .value
-                ?.data
-                ?.map(
-                  (item) => DropdownMenuItem<String>(
-                    value: item.id.toString(),
-                    child: Text(
-                      "${item.name} (${item.productType})",
-                    ),
-                  ),
-                )
-                .toList() ??
-            [],
+
+        items: productList.map((item) {
+          return DropdownMenuItem<String>(
+            value: item.id.toString(),
+            child: Text(item.name ?? ""),
+          );
+        }).toList(),
+
         onChanged: (value) {
           if (value == null) return;
 
-          controller.selectedProductId.value =
-              value;
+          controller.selectedProductId.value = value;
 
           controller.transactionreport(
-  search: controller.search,
-  status: status.name,
-  productid: value,
-  fromdate: controller.fromDate,
-  todate: controller.toDate,
-);
+            search: controller.search,
+            status: status.name,
+            productid: value,
+            fromdate: controller.fromDate,
+            todate: controller.toDate,
+          );
         },
       ),
     ),
-  ),
-),
+  );
+}),
 
       const SizedBox(height: 10),
 
       /// DATE FIELD
       Row(
         children: [
-          Expanded(
+         Expanded(
   child: GestureDetector(
-    onTap: () {
-      controller.selectFromDate(context);
-    },
-    child: GetBuilder<TransReportController>(
-      builder: (_) {
-        return customField(
-          context,
-          hint: controller.fromDate.isEmpty
-              ? "Start Date"
-              : controller.fromDate,
-        );
-      },
-    ),
+    onTap: () => controller.selectFromDate(context),
+    child:GetBuilder<TransReportController>(
+  id: "fromDate",
+  builder: (controller) {
+    return customField(
+      context,
+      hint: controller.fromDate.isEmpty
+          ? "${DateTime.now().year}-${DateTime.now().month.toString().padLeft(2, '0')}-${DateTime.now().day.toString().padLeft(2, '0')}"
+          : controller.fromDate,
+    );
+  },
+),
   ),
 ),
           Padding(
@@ -175,15 +160,18 @@ const SizedBox(height: 8),
       controller.selectToDate(context);
     },
     child: GetBuilder<TransReportController>(
-      builder: (_) {
-        return customField(
-          context,
-          hint: controller.toDate.isEmpty
-              ? "End Date"
-              : controller.toDate,
-        );
-      },
-    ),
+  id: "toDate",
+  builder: (_) {
+    return customField(
+      context,
+      hint: controller.toDate.isEmpty
+          ? "End Date"
+          : controller.toDate,
+      readOnly: true,
+      onTap: () => controller.selectToDate(context),
+    );
+  },
+),
   ),
 ),
         ],
@@ -237,44 +225,62 @@ const SizedBox(height: 8),
   }
 
   Widget customField(
-    BuildContext context, {
-    required String hint,
-    IconData? prefix,
-  }) {
-    final theme = Theme.of(context);
+  BuildContext context, {
+  required String hint,
+  IconData? prefix,
+  TextEditingController? controller,
+  ValueChanged<String>? onChanged,
+  bool readOnly = false,
+  VoidCallback? onTap,
+}) {
+  final theme = Theme.of(context);
 
-    return Container(
-      height: 45,
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      decoration: BoxDecoration(
+  return Container(
+    height: 45,
+    padding: const EdgeInsets.symmetric(horizontal: 12),
+    decoration: BoxDecoration(
+      color: theme.brightness == Brightness.light
+          ? Colors.white
+          : AppColors.darkplceholder,
+      borderRadius: BorderRadius.circular(8),
+      border: Border.all(
         color: theme.brightness == Brightness.light
-            ? Colors.white
-            : AppColors.darkplceholder,
-        borderRadius: BorderRadius.circular(8),
-
-        /// FIELD BORDER
-        border: Border.all(
-          color: theme.brightness == Brightness.light
-              ? const Color(0xFFD6D6D6)
-              : const Color.fromARGB(255, 159, 159, 159),
-        ),
+            ? const Color(0xFFD6D6D6)
+            : const Color.fromARGB(255, 159, 159, 159),
       ),
-      child: Row(
-        children: [
-          if (prefix != null) ...[
-            Icon(prefix, size: 18, color: theme.colorScheme.onSurfaceVariant),
-            const SizedBox(width: 8),
-          ],
-          Expanded(
-            child: Text(
-              hint,
-              style: TextHelper.max1.copyWith(
+    ),
+    child: Row(
+      children: [
+        if (prefix != null) ...[
+          Icon(
+            prefix,
+            size: 18,
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
+          const SizedBox(width: 8),
+        ],
+        Expanded(
+          child: TextField(
+            controller: controller,
+            onChanged: onChanged,
+            readOnly: readOnly,
+            onTap: onTap,
+            style: TextHelper.max1.copyWith(
+              color: theme.colorScheme.onSurface,
+            ),
+            decoration: InputDecoration(
+              hintText: hint,
+              hintStyle: TextHelper.max1.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
               ),
+              border: InputBorder.none,
+              isDense: true,
+              contentPadding: EdgeInsets.zero,
             ),
           ),
-        ],
-      ),
-    );
-  }
+        ),
+      ],
+    ),
+  );
+}
 }

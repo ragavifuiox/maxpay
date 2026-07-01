@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:maxpay/controllers/cash_back_controller.dart';
-
+import 'package:maxpay/core/data/model/product_type.dart';
 import 'package:maxpay/core/constants/colors.dart';
-import 'package:maxpay/core/data/model/all_plan.dart';
+
 import 'package:maxpay/core/utils/texthelper.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
 
@@ -79,7 +79,7 @@ class CashbackScreen extends GetView<CashbackController> {
               isExpanded: true,
               hint: Text(
                 controller.selectedProductName.value.isEmpty
-                    ? "Select Product"
+                    ? "Select "
                     : controller.selectedProductName.value,
                 style: TextHelper.max2.copyWith(
                   color: theme.colorScheme.onSurface,
@@ -103,7 +103,7 @@ class CashbackScreen extends GetView<CashbackController> {
                     value.name ?? '';
 
                 controller.selectedProductType.value =
-                    value.productType ?? '';
+                    value.name ?? '';
 
                 controller.selectedProductId.value =
                     value.id.toString();

@@ -47,21 +47,38 @@ class SettingsPage extends StatelessWidget {
         ),
         child: Scaffold(
           backgroundColor: Colors.transparent,
-          appBar: AppBar(
-            surfaceTintColor: Colors.transparent,
-            title: Text(
-              'Settings',
-              style: TextStyle(
-                fontFamily: 'Poppins',
-                fontWeight: FontWeight.w600,
-                fontSize: isTablet ? 24.sp : 20.sp,
-                color: colorScheme.onSurface,
-              ),
-            ),
-            centerTitle: false,
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-          ),
+           appBar: AppBar(
+  surfaceTintColor: Colors.transparent,
+  backgroundColor: Colors.transparent,
+  elevation: 0,
+  centerTitle: false,
+  title: Text(
+    'Settings',
+    style: TextStyle(
+      fontFamily: 'Poppins',
+      fontWeight: FontWeight.w600,
+      fontSize: isTablet ? 24.sp : 20.sp,
+      color: colorScheme.onSurface,
+    ),
+  ),
+  actions: [
+    Padding(
+      padding: EdgeInsets.only(right: 16.w),
+      child: InkWell(
+        onTap: () {
+          Get.toNamed(AppRoutes.webloginqr);
+        },
+        borderRadius: BorderRadius.circular(8.r),
+        child: Image.asset(
+          AssetImages.qrcode,
+          width: 26.w,
+          height: 26.w,
+          fit: BoxFit.contain,
+        ),
+      ),
+    ),
+  ],
+),
           body: SafeArea(
             child: SingleChildScrollView(
               padding: EdgeInsets.only(left: 20.w, right: 20.w, bottom: 46.h),
@@ -91,7 +108,7 @@ class SettingsPage extends StatelessWidget {
                   }, SvgPicture.asset(AssetImages.kyc, width: 24.w)),
                   _buildMenuTile(
                     context,
-                    'Update Pin',
+                    'Update M-Pin',
                     () {
                       Get.toNamed(AppRoutes.verify, arguments: true);
                     },

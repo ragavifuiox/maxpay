@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:maxpay/controllers/wallet_credit_controller.dart';
 import 'package:maxpay/core/constants/colors.dart';
+import 'package:maxpay/core/constants/extension.dart';
 import 'package:maxpay/core/data/model/wallet_credit_model.dart';
 import 'package:maxpay/core/utils/texthelper.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
@@ -174,13 +175,15 @@ class _WalletCreditCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 5),
                   Text(
-                    data.createdAt ?? "-",
-                    style: TextHelper.max1.copyWith(
-                      color: isDark
-                          ? const Color(0xFFFFFFFF).withValues(alpha: 0.7)
-                          : AppColors.darktextclr,
-                    ),
-                  ),
+  data.createdAt != null && data.createdAt!.isNotEmpty
+      ? formatTransactionDate(data.createdAt!)
+      : "-",
+  style: TextHelper.max1.copyWith(
+    color: isDark
+        ? const Color(0xFFFFFFFF).withValues(alpha: 0.7)
+        : AppColors.darktextclr,
+  ),
+),
                 ],
               ),
             ],

@@ -64,4 +64,8 @@ class ApiRoutes {
   static const createQr = "/create_qr";
   static const checkQr = "/check_qr_status";
   static const walletQrHistory = "/wallet_qr_history";
+  static const refundcount = "/refund_count";
+  static const todaycredit = "/today_credit_amount";
+  static const dueamount = "/due_amount";
+  
 }
