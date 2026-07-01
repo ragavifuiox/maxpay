@@ -264,6 +264,7 @@ class EarningsChart extends StatelessWidget {
       ),
       child: Column(
         children: [
+          SizedBox(height: 12),
           SizedBox(
             height: 120.h,
             child: LineChart(
@@ -273,12 +274,29 @@ class EarningsChart extends StatelessWidget {
                 minY: 0,
                 maxY: 4,
 
-                borderData: FlBorderData(show: false),
+                borderData: FlBorderData(
+                  show: true,
+                  border: Border(
+                    bottom: BorderSide(
+                      color: isDark
+                          ? Colors.white.withValues(alpha: .20)
+                          : Colors.orange.withValues(alpha: .25),
+                    ),
+                    top: BorderSide(
+                      color: isDark
+                          ? Colors.white.withValues(alpha: .20)
+                          : Colors.orange.withValues(alpha: .25),
+                    ),
+                    left: BorderSide.none,
+                    right: BorderSide.none,
+                  ),
+                ),
 
                 gridData: FlGridData(
                   show: true,
                   drawVerticalLine: false,
                   horizontalInterval: 1,
+                  drawHorizontalLine: true,
                   getDrawingHorizontalLine: (value) {
                     return FlLine(
                       color: isDark
@@ -500,8 +518,8 @@ class _Legend extends StatelessWidget {
           title,
           style: TextStyle(
             color: isDark ? Colors.white : AppColors.chart,
-            fontSize: 14.sp,
-            fontWeight: FontWeight.w500,
+            fontSize: 13.sp,
+            fontWeight: FontWeight.w400,
           ),
         ),
       ],
