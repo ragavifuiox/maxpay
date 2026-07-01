@@ -82,7 +82,7 @@
 
 //                   /// PURCHASE
 //                   LineChartBarData(
-//                     isCurved: true,
+//                     isCurved: false,
 //                     color: Colors.blue,
 //                     barWidth: 2.5,
 //                     isStrokeCapRound: true,
@@ -115,7 +115,7 @@
 
 //                   /// SUCCESS
 //                   LineChartBarData(
-//                     isCurved: true,
+//                     isCurved: false,
 //                     color: Colors.green,
 //                     barWidth: 2.5,
 //                     isStrokeCapRound: true,
@@ -148,7 +148,7 @@
 
 //                   /// FAILED
 //                   LineChartBarData(
-//                     isCurved: true,
+//                     isCurved: false,
 //                     color: Colors.red,
 //                     barWidth: 2.5,
 //                     isStrokeCapRound: true,
@@ -243,8 +243,6 @@
 //   }
 // }
 
-
-
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -262,13 +260,11 @@ class EarningsChart extends StatelessWidget {
       decoration: BoxDecoration(
         color: isDark ? AppColors.darkFilterBorder : Colors.white,
         borderRadius: BorderRadius.circular(22.r),
-        border: Border.all(
-          color: Colors.redAccent,
-          width: 1,
-        ),
+        border: Border.all(color: Colors.redAccent, width: 1),
       ),
       child: Column(
         children: [
+          SizedBox(height: 12),
           SizedBox(
             height: 120.h,
             child: LineChart(
@@ -278,17 +274,34 @@ class EarningsChart extends StatelessWidget {
                 minY: 0,
                 maxY: 4,
 
-                borderData: FlBorderData(show: false),
+                borderData: FlBorderData(
+                  show: true,
+                  border: Border(
+                    bottom: BorderSide(
+                      color: isDark
+                          ? Colors.white.withValues(alpha: .20)
+                          : Colors.orange.withValues(alpha: .25),
+                    ),
+                    top: BorderSide(
+                      color: isDark
+                          ? Colors.white.withValues(alpha: .20)
+                          : Colors.orange.withValues(alpha: .25),
+                    ),
+                    left: BorderSide.none,
+                    right: BorderSide.none,
+                  ),
+                ),
 
                 gridData: FlGridData(
                   show: true,
                   drawVerticalLine: false,
                   horizontalInterval: 1,
+                  drawHorizontalLine: true,
                   getDrawingHorizontalLine: (value) {
                     return FlLine(
                       color: isDark
-                          ? Colors.white.withOpacity(.20)
-                          : Colors.orange.withOpacity(.25),
+                          ? Colors.white.withValues(alpha: .20)
+                          : Colors.orange.withValues(alpha: .25),
                       strokeWidth: 1,
                     );
                   },
@@ -313,8 +326,7 @@ class EarningsChart extends StatelessWidget {
                         final style = TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w400,
-                          color:
-                              isDark ? Colors.white : AppColors.chart,
+                          color: isDark ? Colors.white : AppColors.chart,
                         );
 
                         switch (value.toInt()) {
@@ -339,10 +351,11 @@ class EarningsChart extends StatelessWidget {
                 lineBarsData: [
                   /// PURCHASE
                   LineChartBarData(
-                    isCurved: true,
+                    isCurved: false,
                     color: Colors.blue,
                     barWidth: 2.5,
                     isStrokeCapRound: true,
+                    curveSmoothness: 0,
                     belowBarData: BarAreaData(show: false),
                     spots: const [
                       FlSpot(0, .4),
@@ -357,10 +370,20 @@ class EarningsChart extends StatelessWidget {
                     ],
                     dotData: FlDotData(
                       show: true,
+                      checkToShowDot: (spot, barData) {
+                        final sortedSpots = List<FlSpot>.from(barData.spots);
+                        sortedSpots.sort((a, b) => b.y.compareTo(a.y));
+                        final topSpots = sortedSpots.take(2).toList();
+                        return topSpots.any(
+                          (s) => s.x == spot.x && s.y == spot.y,
+                        );
+                      },
                       getDotPainter: (spot, a, b, c) {
                         return FlDotCirclePainter(
                           radius: 4,
-                          color: Colors.white,
+                          color: isDark
+                              ? AppColors.darkFilterBorder
+                              : Colors.white,
                           strokeWidth: 1.5,
                           strokeColor: Colors.blue,
                         );
@@ -370,7 +393,7 @@ class EarningsChart extends StatelessWidget {
 
                   /// SUCCESS
                   LineChartBarData(
-                    isCurved: true,
+                    isCurved: false,
                     color: Colors.green,
                     barWidth: 2.5,
                     isStrokeCapRound: true,
@@ -388,10 +411,20 @@ class EarningsChart extends StatelessWidget {
                     ],
                     dotData: FlDotData(
                       show: true,
+                      checkToShowDot: (spot, barData) {
+                        final sortedSpots = List<FlSpot>.from(barData.spots);
+                        sortedSpots.sort((a, b) => b.y.compareTo(a.y));
+                        final topSpots = sortedSpots.take(3).toList();
+                        return topSpots.any(
+                          (s) => s.x == spot.x && s.y == spot.y,
+                        );
+                      },
                       getDotPainter: (spot, a, b, c) {
                         return FlDotCirclePainter(
                           radius: 4,
-                          color: Colors.white,
+                          color: isDark
+                              ? AppColors.darkFilterBorder
+                              : Colors.white,
                           strokeWidth: 1.5,
                           strokeColor: Colors.green,
                         );
@@ -401,7 +434,7 @@ class EarningsChart extends StatelessWidget {
 
                   /// FAILED
                   LineChartBarData(
-                    isCurved: true,
+                    isCurved: false,
                     color: Colors.red,
                     barWidth: 2.5,
                     isStrokeCapRound: true,
@@ -419,10 +452,20 @@ class EarningsChart extends StatelessWidget {
                     ],
                     dotData: FlDotData(
                       show: true,
+                      checkToShowDot: (spot, barData) {
+                        final sortedSpots = List<FlSpot>.from(barData.spots);
+                        sortedSpots.sort((a, b) => b.y.compareTo(a.y));
+                        final topSpots = sortedSpots.take(3).toList();
+                        return topSpots.any(
+                          (s) => s.x == spot.x && s.y == spot.y,
+                        );
+                      },
                       getDotPainter: (spot, a, b, c) {
                         return FlDotCirclePainter(
                           radius: 4,
-                          color: Colors.white,
+                          color: isDark
+                              ? AppColors.darkFilterBorder
+                              : Colors.white,
                           strokeWidth: 1.5,
                           strokeColor: Colors.red,
                         );
@@ -439,21 +482,9 @@ class EarningsChart extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _Legend(
-                color: Colors.blue,
-                title: "Purchase",
-                isDark: isDark,
-              ),
-              _Legend(
-                color: Colors.green,
-                title: "Success",
-                isDark: isDark,
-              ),
-              _Legend(
-                color: Colors.red,
-                title: "Failed",
-                isDark: isDark,
-              ),
+              _Legend(color: Colors.blue, title: "Purchase", isDark: isDark),
+              _Legend(color: Colors.green, title: "Success", isDark: isDark),
+              _Legend(color: Colors.red, title: "Failed", isDark: isDark),
             ],
           ),
         ],
@@ -480,18 +511,15 @@ class _Legend extends StatelessWidget {
         Container(
           width: 12,
           height: 12,
-          decoration: BoxDecoration(
-            color: color,
-            shape: BoxShape.circle,
-          ),
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
         ),
         SizedBox(width: 6.w),
         Text(
           title,
           style: TextStyle(
             color: isDark ? Colors.white : AppColors.chart,
-            fontSize: 14.sp,
-            fontWeight: FontWeight.w500,
+            fontSize: 13.sp,
+            fontWeight: FontWeight.w400,
           ),
         ),
       ],

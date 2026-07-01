@@ -1,5 +1,4 @@
 import 'package:get/get.dart';
-import 'package:maxpay/controllers/add_kyc_controller.dart';
 import 'package:maxpay/controllers/add_staff_controller.dart';
 import 'package:maxpay/controllers/add_wallet_controller.dart';
 import 'package:maxpay/controllers/auth_controller.dart';
@@ -37,7 +36,7 @@ import 'package:maxpay/view/home/widgets/services_section.dart';
 import 'package:maxpay/view/kyc/kyc_screen.dart';
 import 'package:maxpay/view/login/biometrics/biometrics_intro.dart';
 import 'package:maxpay/view/login/biometrics/biometrics_scanning.dart';
-import 'package:maxpay/view/login/biometrics/enter_pin%20screen.dart';
+import 'package:maxpay/view/login/biometrics/enter_pin_screen.dart';
 import 'package:maxpay/view/login/biometrics/pin_code_creation.dart';
 import 'package:maxpay/view/login/biometrics/success_screen.dart';
 import 'package:maxpay/view/login/otp_verification_screen.dart';
@@ -177,7 +176,6 @@ class AppPages {
             getPopupMessageUseCase: sl(),
             refundCountUsecase: sl(),
             todaycreditusecase: sl(),
-            
           ),
 
           fenix: true,
@@ -269,10 +267,11 @@ class AppPages {
 
       binding: BindingsBuilder(() {
         Get.lazyPut<GetBankController>(
-          () =>
-              GetBankController(bankusecase: sl(), 
-              walletRequestUsecase: sl(),
-               dueAmountUsecase: sl(),),
+          () => GetBankController(
+            bankusecase: sl(),
+            walletRequestUsecase: sl(),
+            dueAmountUsecase: sl(),
+          ),
 
           fenix: true,
         );
@@ -488,9 +487,7 @@ class AppPages {
       }),
     ),
 
-
-
-     GetPage(
+    GetPage(
       transition: Transition.fade,
 
       name: AppRoutes.walletbal,
@@ -499,15 +496,13 @@ class AppPages {
 
       binding: BindingsBuilder(() {
         Get.lazyPut<AddWalletController>(
-          () => AddWalletController(createQrUsecase: sl()
-           
-          ),
+          () => AddWalletController(createQrUsecase: sl()),
 
           fenix: true,
         );
       }),
     ),
-    // 
+    //
     GetPage(
       name: AppRoutes.insufficientBalance,
       page: () => const InsufficientBalancePage(),

@@ -12,107 +12,93 @@ class MyEarningsScreen extends GetView<EarningController> {
 
   @override
   Widget build(BuildContext context) {
-     final theme = Theme.of(context);
+    final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      
 
-      appBar: const CommonAppBar(
-        title: "My Earnings",
-      ),
+      appBar: const CommonAppBar(title: "My Earnings"),
 
       body: Padding(
         padding: const EdgeInsets.all(16),
 
-        child: Obx(
-          () {
+        child: Obx(() {
+          // Loading
+          if (controller.isLoading.value) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
-            // Loading
-            if (controller.isLoading.value) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
+          return Column(
+            children: [
+              const EarningFilter(),
 
-            return Column(
-              children: [
+              const SizedBox(height: 16),
+              Divider(
+                color: Theme.of(context).brightness == Brightness.light
+                    ? Colors.black12
+                    : Colors.white24,
+              ),
 
-                const EarningFilter(),
+              const SizedBox(height: 12),
+              // Total Earnings Container
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: AppColors.clrPrimary,
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(
+                    color: isDark
+                        ? AppColors.darkFilterBorder
+                        : AppColors.totalborde2.withValues(alpha: 0.1),
+                  ),
+                ),
+                child: Column(
+                  children: [
+                    const Text(
+                      "Total Earnings",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontFamily: 'poppins',
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      "₹ ${controller.earningsData.value?.data?.totalEarnings ?? 0}",
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
 
-                const SizedBox(height: 16),
-               Divider(
-  color: Theme.of(context).brightness == Brightness.light
-      ? Colors.black12
-      : Colors.white24,
-),
+              const SizedBox(height: 16),
 
-                const SizedBox(height: 12),
-                // Total Earnings Container
-               Container(
-  width: double.infinity,
-  padding: const EdgeInsets.all(12),
-  decoration: BoxDecoration(
-    color: AppColors.clrPrimary,
-    borderRadius: BorderRadius.circular(10),
-    border: Border.all(
-      color: isDark
-          ? AppColors.darkFilterBorder
-          : AppColors.totalborde2.withValues(alpha: 0.1),
-    ),
-  ),
-  child: Column(
-    children: [
-      const Text(
-        "Total Earnings",
-        style: TextStyle(
-          color: Colors.white,
-          fontFamily: 'poppins',
-          fontSize: 14,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-      const SizedBox(height: 4),
-      Text(
-        "₹ ${controller.earningsData.value?.data?.totalEarnings ?? 0}",
-        style: const TextStyle(
-          color: Colors.white,
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-    ],
-  ),
-),
+              // Dummy List
+              Expanded(
+                child: Obx(() {
+                  final list = controller.searchData.value?.data?.list ?? [];
 
-                const SizedBox(height: 16),
+                  if (list.isEmpty) {
+                    return const Center(child: Text("No Earnings Found"));
+                  }
 
-                // Dummy List
-               Expanded(
-  child: Obx(() {
-    final list =
-        controller.searchData.value?.data?.list ?? [];
-
-    if (list.isEmpty) {
-      return const Center(
-        child: Text("No Earnings Found"),
-      );
-    }
-
-    return ListView.builder(
-      itemCount: list.length,
-      itemBuilder: (context, index) {
-        return EarningsCard(
-          item: list[index],
-        );
-      },
-    );
-  }),
-),
-              ],
-            );
-          },
-        ),
+                  return ListView.builder(
+                    itemCount: list.length,
+                    itemBuilder: (context, index) {
+                      return EarningsCard(item: list[index]);
+                    },
+                  );
+                }),
+              ),
+            ],
+          );
+        }),
       ),
     );
   }

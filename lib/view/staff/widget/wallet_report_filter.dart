@@ -19,9 +19,7 @@ class WalletReportFilterWidget extends GetView<AddStaffController> {
         return Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: isDark
-                ? AppColors.darkplceholder
-                : AppColors.background,
+            color: isDark ? AppColors.darkplceholder : AppColors.background,
             borderRadius: BorderRadius.circular(10),
             border: Border.all(
               color: isDark
@@ -35,9 +33,7 @@ class WalletReportFilterWidget extends GetView<AddStaffController> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12),
                 decoration: BoxDecoration(
-                  color: isDark
-                      ? AppColors.darkplceholder
-                      : Colors.white,
+                  color: isDark ? AppColors.darkplceholder : Colors.white,
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
                     color: isDark
@@ -46,35 +42,35 @@ class WalletReportFilterWidget extends GetView<AddStaffController> {
                   ),
                 ),
                 child: DropdownButtonHideUnderline(
-                  child:DropdownButton<String>(
-  isExpanded: true,
-  value: controller.selectedcreditname.value.isEmpty
-      ? null
-      : controller.selectedcreditname.value,
+                  child: DropdownButton<String>(
+                    isExpanded: true,
+                    value: controller.selectedcreditname.value.isEmpty
+                        ? null
+                        : controller.selectedcreditname.value,
 
-  hint: const Text("Payment Type"),
+                    hint: const Text("Payment Type"),
 
-  items: controller.walletTypes.map((item) {
-    return DropdownMenuItem<String>(
-      value: item,
-      child: Text(item),
-    );
-  }).toList(),
+                    items: controller.walletTypes.map((item) {
+                      return DropdownMenuItem<String>(
+                        value: item,
+                        child: Text(item),
+                      );
+                    }).toList(),
 
-  onChanged: (value) {
-    controller.selectedcreditname.value = value ?? "";
-     debugPrint(
-    "Selected Payment Type => ${controller.selectedcreditname.value}",
-  );
+                    onChanged: (value) {
+                      controller.selectedcreditname.value = value ?? "";
+                      debugPrint(
+                        "Selected Payment Type => ${controller.selectedcreditname.value}",
+                      );
 
-    controller.searchcredit(
-      search: controller.search,
-      paymenttype: controller.selectedcreditname.value,
-      fromdate: controller.fromDate,
-      todate: controller.toDate,
-    );
-  },
-)
+                      controller.searchcredit(
+                        search: controller.search,
+                        paymenttype: controller.selectedcreditname.value,
+                        fromdate: controller.fromDate,
+                        todate: controller.toDate,
+                      );
+                    },
+                  ),
                 ),
               ),
 
@@ -85,8 +81,7 @@ class WalletReportFilterWidget extends GetView<AddStaffController> {
                 children: [
                   Expanded(
                     child: InkWell(
-                      onTap: () =>
-                          controller.selectFromDate(context),
+                      onTap: () => controller.selectFromDate(context),
                       child: _DateField(
                         hint: controller.fromDate.isEmpty
                             ? "Start Date"
@@ -97,17 +92,13 @@ class WalletReportFilterWidget extends GetView<AddStaffController> {
 
                   const SizedBox(width: 8),
 
-                  Icon(
-                    Icons.arrow_forward,
-                    color: theme.colorScheme.primary,
-                  ),
+                  Icon(Icons.arrow_forward, color: theme.colorScheme.primary),
 
                   const SizedBox(width: 8),
 
                   Expanded(
                     child: InkWell(
-                      onTap: () =>
-                          controller.selectToDate(context),
+                      onTap: () => controller.selectToDate(context),
                       child: _DateField(
                         hint: controller.toDate.isEmpty
                             ? "End Date"
@@ -127,8 +118,12 @@ class WalletReportFilterWidget extends GetView<AddStaffController> {
                   controller.onSearch(value);
                 },
                 decoration: InputDecoration(
+                  prefixIconConstraints: BoxConstraints(
+                    maxWidth: 50,
+                    maxHeight: 50,
+                  ),
                   prefixIcon: Padding(
-                    padding: const EdgeInsets.all(12),
+                    padding: const EdgeInsets.all(8.0),
                     child: SvgPicture.asset(
                       AssetImages.search,
                       colorFilter: ColorFilter.mode(
@@ -141,14 +136,10 @@ class WalletReportFilterWidget extends GetView<AddStaffController> {
                   ),
                   hintText: "Enter Mobile Number",
                   hintStyle: TextHelper.max1.copyWith(
-                    color: isDark
-                        ? AppColors.textclr
-                        : AppColors.clrTextgrey,
+                    color: isDark ? AppColors.textclr : AppColors.clrTextgrey,
                   ),
                   filled: true,
-                  fillColor: isDark
-                      ? AppColors.darkplceholder
-                      : Colors.white,
+                  fillColor: isDark ? AppColors.darkplceholder : Colors.white,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(7),
                   ),
@@ -179,19 +170,12 @@ class _DateField extends StatelessWidget {
     final isDark = theme.brightness == Brightness.dark;
 
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 10,
-        vertical: 12,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
       decoration: BoxDecoration(
-        color: isDark
-            ? AppColors.darkplceholder
-            : Colors.white,
+        color: isDark ? AppColors.darkplceholder : Colors.white,
         borderRadius: BorderRadius.circular(7),
         border: Border.all(
-          color: isDark
-              ? AppColors.darkFilterBorder
-              : AppColors.totalborde2,
+          color: isDark ? AppColors.darkFilterBorder : AppColors.totalborde2,
         ),
       ),
       child: Text(

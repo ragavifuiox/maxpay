@@ -10,7 +10,7 @@ import 'package:maxpay/core/utils/logg_helper.dart';
 class ApiService {
   final Dio _dio;
   final _storage = LocalStorageService();
-  bool _isUnauthorizedHandled = false;
+  final bool _isUnauthorizedHandled = false;
   ApiService()
     : _dio = Dio(
         BaseOptions(
@@ -27,14 +27,14 @@ class ApiService {
     _dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) {
-  final token = _storage.getString("auth_token");
+          final token = _storage.getString("auth_token");
 
-  if (token != null && token.isNotEmpty) {
-    options.headers["Authorization"] = "Bearer $token";
-  }
+          if (token != null && token.isNotEmpty) {
+            options.headers["Authorization"] = "Bearer $token";
+          }
 
-  return handler.next(options);
-},
+          return handler.next(options);
+        },
         // onRequest: (options, handler) {
         //   final token = _storage.getString("auth_token");
         //   if (token != null) {
@@ -59,9 +59,9 @@ class ApiService {
         //   return handler.next(e);
         // },
         onError: (DioException e, handler) {
-           print("FAILED URL => ${e.requestOptions.uri}");
-  print("STATUS => ${e.response?.statusCode}");
-  print("TOKEN => ${_storage.getString("auth_token")}");
+          print("FAILED URL => ${e.requestOptions.uri}");
+          print("STATUS => ${e.response?.statusCode}");
+          print("TOKEN => ${_storage.getString("auth_token")}");
           log("API Error: ${e.message}");
 
           // ✅ If NO INTERNET → go to network screen ONLY
@@ -91,9 +91,7 @@ class ApiService {
         endpoint,
         data: data,
         options: Options(
-          contentType: data is FormData
-              ? 'multipart/form-data'
-              : 'application/json',
+          contentType: data is FormData ? null : 'application/json',
         ),
       ),
     );
@@ -118,9 +116,7 @@ class ApiService {
         data: useFormData && data is Map
             ? FormData.fromMap(Map<String, dynamic>.from(data))
             : data,
-        options: Options(
-          contentType: useFormData ? 'multipart/form-data' : 'application/json',
-        ),
+        options: Options(contentType: useFormData ? null : 'application/json'),
       ),
     );
   }
@@ -163,26 +159,20 @@ class ApiService {
   //   g.Get.snackbar("Session Expired", "Please login again.");
   // }
 
-
-
-
   void _handleUnauthorized() {
-  final token = _storage.getString("auth_token");
+    final token = _storage.getString("auth_token");
 
-  // Fresh install / logged out user
-  if (token == null || token.isEmpty) {
-    return;
+    // Fresh install / logged out user
+    if (token == null || token.isEmpty) {
+      return;
+    }
+
+    _storage.remove("auth_token");
+
+    g.Get.offAllNamed(AppRoutes.welcome);
+
+    g.Get.snackbar("Session Expired", "Please login again.");
   }
-
-  _storage.remove("auth_token");
-
-  g.Get.offAllNamed(AppRoutes.welcome);
-
-  g.Get.snackbar(
-    "Session Expired",
-    "Please login again.",
-  );
-}
 
   // void _handleUnauthorized() {
   //   if (_isUnauthorizedHandled) return;

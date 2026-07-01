@@ -86,18 +86,22 @@ class RefundSearch extends GetView<RefundController> {
     }
   },
   decoration: InputDecoration(
-    prefixIcon: Padding(
-      padding: const EdgeInsets.all(12.0),
-      child: SvgPicture.asset(
-        AssetImages.search,
-        colorFilter: ColorFilter.mode(
-          isDark
-              ? AppColors.textclr
-              : theme.colorScheme.onSurfaceVariant,
-          BlendMode.srcIn,
-        ),
-      ),
-    ),
+    prefixIconConstraints: BoxConstraints(
+                    maxWidth: 50,
+                    maxHeight: 50,
+                  ),
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: SvgPicture.asset(
+                      AssetImages.search,
+                      colorFilter: ColorFilter.mode(
+                        isDark
+                            ? AppColors.textclr
+                            : theme.colorScheme.onSurfaceVariant,
+                        BlendMode.srcIn,
+                      ),
+                    ),
+                  ),
     hintText: "Enter Mobile Number",
     hintStyle: TextHelper.max1.copyWith(
       color: isDark

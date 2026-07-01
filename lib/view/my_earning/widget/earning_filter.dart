@@ -19,9 +19,7 @@ class EarningFilter extends GetView<EarningController> {
         return Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: isDark
-                ? AppColors.darkplceholder
-                : AppColors.background,
+            color: isDark ? AppColors.darkplceholder : AppColors.background,
             borderRadius: BorderRadius.circular(10),
             border: Border.all(
               color: isDark
@@ -35,8 +33,7 @@ class EarningFilter extends GetView<EarningController> {
                 children: [
                   Expanded(
                     child: InkWell(
-                      onTap: () =>
-                          controller.selectFromDate(context),
+                      onTap: () => controller.selectFromDate(context),
                       child: _dateField(
                         context,
                         controller.fromDate.isEmpty
@@ -48,17 +45,13 @@ class EarningFilter extends GetView<EarningController> {
 
                   const SizedBox(width: 8),
 
-                  Icon(
-                    Icons.arrow_forward,
-                    color: theme.colorScheme.primary,
-                  ),
+                  Icon(Icons.arrow_forward, color: theme.colorScheme.primary),
 
                   const SizedBox(width: 8),
 
                   Expanded(
                     child: InkWell(
-                      onTap: () =>
-                          controller.selectToDate(context),
+                      onTap: () => controller.selectToDate(context),
                       child: _dateField(
                         context,
                         controller.toDate.isEmpty
@@ -72,79 +65,74 @@ class EarningFilter extends GetView<EarningController> {
 
               const SizedBox(height: 12),
 
-             TextField(
-  keyboardType: TextInputType.number,
-  style: TextStyle(
-    color: theme.colorScheme.onSurface,
-  ),
- onChanged: (value) {
-  controller.search = value;
+              TextField(
+                keyboardType: TextInputType.number,
+                style: TextStyle(color: theme.colorScheme.onSurface),
+                onChanged: (value) {
+                  controller.search = value;
 
-  if (value.length == 10) {
-    controller.searchEarnings(
-      controller.fromDate,
-      controller.toDate,
-      value,
-    );
-  } else if (value.isEmpty) {
-    // Search cleared
-    controller.searchEarnings(
-      controller.fromDate,
-      controller.toDate,
-      "",
-    );
-  }
-},
+                  if (value.length == 10) {
+                    controller.searchEarnings(
+                      controller.fromDate,
+                      controller.toDate,
+                      value,
+                    );
+                  } else if (value.isEmpty) {
+                    // Search cleared
+                    controller.searchEarnings(
+                      controller.fromDate,
+                      controller.toDate,
+                      "",
+                    );
+                  }
+                },
 
-  decoration: InputDecoration(
-    prefixIcon: Padding(
-      padding: const EdgeInsets.all(12.0),
-      child: SvgPicture.asset(
-        AssetImages.search,
-        colorFilter: ColorFilter.mode(
-          isDark
-              ? AppColors.textclr
-              : theme.colorScheme.onSurfaceVariant,
-          BlendMode.srcIn,
-        ),
-      ),
-    ),
-    hintText: "Enter Mobile Number",
-    hintStyle: TextHelper.max1.copyWith(
-      color: isDark
-          ? AppColors.textclr
-          : AppColors.clrTextgrey,
-    ),
-    filled: true,
-    fillColor:
-        isDark ? AppColors.darkplceholder : Colors.white,
-    border: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(7),
-      borderSide: BorderSide(
-        color: isDark
-            ? AppColors.darkFilterBorder
-            : AppColors.totalborde2,
-      ),
-    ),
-    enabledBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(7),
-      borderSide: BorderSide(
-        color: isDark
-            ? AppColors.darkFilterBorder
-            : AppColors.totalborde2,
-      ),
-    ),
-    focusedBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(7),
-      borderSide: BorderSide(
-        color: theme.colorScheme.primary,
-      ),
-    ),
-    contentPadding: const EdgeInsets.symmetric(
-      vertical: 0,
-    ),
-  ),
-)
+                decoration: InputDecoration(
+                  prefixIconConstraints: BoxConstraints(
+                    maxWidth: 50,
+                    maxHeight: 50,
+                  ),
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: SvgPicture.asset(
+                      AssetImages.search,
+                      colorFilter: ColorFilter.mode(
+                        isDark
+                            ? AppColors.textclr
+                            : theme.colorScheme.onSurfaceVariant,
+                        BlendMode.srcIn,
+                      ),
+                    ),
+                  ),
+                  hintText: "Enter Mobile Number",
+                  hintStyle: TextHelper.max1.copyWith(
+                    color: isDark ? AppColors.textclr : AppColors.clrTextgrey,
+                  ),
+                  filled: true,
+                  fillColor: isDark ? AppColors.darkplceholder : Colors.white,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(7),
+                    borderSide: BorderSide(
+                      color: isDark
+                          ? AppColors.darkFilterBorder
+                          : AppColors.totalborde2,
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(7),
+                    borderSide: BorderSide(
+                      color: isDark
+                          ? AppColors.darkFilterBorder
+                          : AppColors.totalborde2,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(7),
+                    borderSide: BorderSide(color: theme.colorScheme.primary),
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(vertical: 0),
+                ),
+              ),
             ],
           ),
         );
@@ -152,26 +140,17 @@ class EarningFilter extends GetView<EarningController> {
     );
   }
 
-  Widget _dateField(
-    BuildContext context,
-    String text,
-  ) {
+  Widget _dateField(BuildContext context, String text) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 10,
-        vertical: 12,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
       decoration: BoxDecoration(
-        color:
-            isDark ? AppColors.darkplceholder : Colors.white,
+        color: isDark ? AppColors.darkplceholder : Colors.white,
         borderRadius: BorderRadius.circular(7),
         border: Border.all(
-          color: isDark
-              ? AppColors.darkFilterBorder
-              : AppColors.totalborde2,
+          color: isDark ? AppColors.darkFilterBorder : AppColors.totalborde2,
         ),
       ),
       child: Text(

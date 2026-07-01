@@ -58,20 +58,20 @@ class StatementFilter extends GetView<StatementController> {
                       );
                     }).toList(),
 
-                   onChanged: (value) {
-  if (value != null) {
-    controller.setType(value);
+                    onChanged: (value) {
+                      if (value != null) {
+                        controller.setType(value);
 
-    debugPrint(
-      "Selected Payment Type => ${controller.selectedtype.value}",
-    );
+                        debugPrint(
+                          "Selected Payment Type => ${controller.selectedtype.value}",
+                        );
 
-    if (controller.fromDate.isNotEmpty &&
-        controller.toDate.isNotEmpty) {
-      controller.statement();
-    }
-  }
-},
+                        if (controller.fromDate.isNotEmpty &&
+                            controller.toDate.isNotEmpty) {
+                          controller.statement();
+                        }
+                      }
+                    },
                   ),
                 ),
               ),
@@ -120,8 +120,12 @@ class StatementFilter extends GetView<StatementController> {
                   controller.onSearch(value);
                 },
                 decoration: InputDecoration(
+                  prefixIconConstraints: BoxConstraints(
+                    maxWidth: 50,
+                    maxHeight: 50,
+                  ),
                   prefixIcon: Padding(
-                    padding: const EdgeInsets.all(12),
+                    padding: const EdgeInsets.all(8.0),
                     child: SvgPicture.asset(
                       AssetImages.search,
                       colorFilter: ColorFilter.mode(

@@ -6,7 +6,6 @@ import 'package:maxpay/core/constants/snackbar.dart';
 import 'package:maxpay/core/domain/usecase/web_login_usecase.dart';
 import 'package:maxpay/core/domain/usecase/web_logout_usecase.dart';
 import 'package:maxpay/core/utils/logg_helper.dart';
-import 'package:maxpay/view/weblogin/qr_success_screen.dart';
 
 class WebLoginController extends GetxController {
   final WebLoginUsecase webloginusecase;
