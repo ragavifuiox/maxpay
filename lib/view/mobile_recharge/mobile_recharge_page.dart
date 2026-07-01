@@ -51,7 +51,7 @@ class _MobileRechargePageState extends State<MobileRechargePage>
   final TextEditingController searchController = TextEditingController();
   Timer? _debounce;
   bool isPlanLoaded = false;
-bool isPaymentReceived = false;
+  bool isPaymentReceived = false;
   @override
   void initState() {
     super.initState();
@@ -59,7 +59,11 @@ bool isPaymentReceived = false;
     selectedOperator = widget.productName;
     selectedProductId = widget.productId;
 
-    loadTabs();
+    try {
+      loadTabs();
+    } catch (e) {
+      _tabController = TabController(length: 2, vsync: this);
+    }
     controller.getPlans(productid: widget.productId);
     controller.getPlanTabs();
 
@@ -498,32 +502,32 @@ bool isPaymentReceived = false;
               SizedBox(height: 15.h),
 
               /// CHECKBOX
-                Row(
-  children: [
-    SizedBox(
-      width: 20.w,
-      height: 20.w,
-      child: Checkbox(
-        value: isPaymentReceived,
-        activeColor: AppColors.clrPrimary,
-        onChanged: (value) {
-          setState(() {
-            isPaymentReceived = value ?? false;
-          });
-        },
-      ),
-    ),
-    SizedBox(width: 8.w),
-    Text(
-      "Payment Received",
-      style: TextStyle(
-        fontSize: 13.sp,
-        fontWeight: FontWeight.w500,
-        color: Colors.deepOrangeAccent
-      ),
-    ),
-  ],
-),
+              Row(
+                children: [
+                  SizedBox(
+                    width: 20.w,
+                    height: 20.w,
+                    child: Checkbox(
+                      value: isPaymentReceived,
+                      activeColor: AppColors.clrPrimary,
+                      onChanged: (value) {
+                        setState(() {
+                          isPaymentReceived = value ?? false;
+                        });
+                      },
+                    ),
+                  ),
+                  SizedBox(width: 8.w),
+                  Text(
+                    "Payment Received",
+                    style: TextStyle(
+                      fontSize: 13.sp,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.deepOrangeAccent,
+                    ),
+                  ),
+                ],
+              ),
 
               SizedBox(height: 20.h),
 
@@ -535,22 +539,24 @@ bool isPaymentReceived = false;
                 }
 
                 return TabBar(
-  controller: _tabController,
-  isScrollable: true,
+                  controller: _tabController,
+                  isScrollable: true,
 
-  indicatorColor: isDark ? Colors.orange : AppColors.clrSecondary,
+                  indicatorColor: isDark
+                      ? Colors.orange
+                      : AppColors.clrSecondary,
 
-  labelColor: isDark ? Colors.orange : AppColors.clrSecondary,
+                  labelColor: isDark ? Colors.orange : AppColors.clrSecondary,
 
-  unselectedLabelColor: Colors.grey,
+                  unselectedLabelColor: Colors.grey,
 
-  dividerColor: Colors.transparent,
-  tabAlignment: TabAlignment.start,
+                  dividerColor: Colors.transparent,
+                  tabAlignment: TabAlignment.start,
 
-  tabs: controller.planTabs.map((tab) {
-    return Tab(text: tab.planType ?? "");
-  }).toList(),
-);
+                  tabs: controller.planTabs.map((tab) {
+                    return Tab(text: tab.planType ?? "");
+                  }).toList(),
+                );
               }),
 
               SizedBox(height: 15.h),

@@ -117,7 +117,7 @@ class _WebLoginScreenState extends State<WebLoginScreen>
               child: IgnorePointer(
                 child: AnimatedBuilder(
                   animation: animationController,
-                  builder: (_, __) {
+                  builder: (_, _) {
                     return CustomPaint(
                       painter: ScannerPainter(
                         animationController.value,

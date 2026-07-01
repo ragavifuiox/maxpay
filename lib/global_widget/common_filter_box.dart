@@ -29,8 +29,6 @@ class CommonFilterBox extends StatelessWidget {
       child: Column(
         children: [
           /// SELECT CREDIT TYPE
-          
-
           const SizedBox(height: 8),
 
           /// DATE FIELD
@@ -59,8 +57,12 @@ class CommonFilterBox extends StatelessWidget {
             style: TextStyle(color: theme.colorScheme.onSurface),
 
             decoration: InputDecoration(
+              prefixIconConstraints: BoxConstraints(
+                maxWidth: 50,
+                maxHeight: 50,
+              ),
               prefixIcon: Padding(
-                padding: const EdgeInsets.all(12.0),
+                padding: const EdgeInsets.all(8.0),
                 child: SvgPicture.asset(
                   AssetImages.search,
                   colorFilter: ColorFilter.mode(

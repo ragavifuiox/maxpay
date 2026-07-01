@@ -11,74 +11,53 @@ import 'package:maxpay/global_widget/custom_app.dart';
 class ProfileScreen extends GetView<ProfileController> {
   ProfileScreen({super.key});
 
-  final TextEditingController nameController =
-      TextEditingController();
+  final TextEditingController nameController = TextEditingController();
 
-  final TextEditingController pinController =
-      TextEditingController();
+  final TextEditingController pinController = TextEditingController();
 
-  final TextEditingController emailController =
-      TextEditingController();
+  final TextEditingController emailController = TextEditingController();
 
-  final TextEditingController phoneController =
-      TextEditingController();
-      
-  final TextEditingController wpcontroller =
-      TextEditingController();
-      final TextEditingController addresscontroller =
-      TextEditingController();
+  final TextEditingController phoneController = TextEditingController();
+
+  final TextEditingController wpcontroller = TextEditingController();
+  final TextEditingController addresscontroller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-  Get.find<HomePageController>().fetchpopupmessage("Profile");
-});
+      Get.find<HomePageController>().fetchpopupmessage("Profile");
+    });
     final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor:
-          theme.scaffoldBackgroundColor,
+      backgroundColor: theme.scaffoldBackgroundColor,
 
       resizeToAvoidBottomInset: true,
 
-      appBar: const CommonAppBar(
-        title: "Profile",
-      ),
+      appBar: const CommonAppBar(title: "Profile"),
 
       body: Obx(() {
         if (controller.isLoading.value) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
+          return const Center(child: CircularProgressIndicator());
         }
 
-        final profile =
-            controller.profileData.value?.data;
+        final profile = controller.profileData.value?.data;
 
         /// SET DATA
-        nameController.text =
-            profile?.name ?? "";
+        nameController.text = profile?.name ?? "";
 
-        pinController.text =
-            profile?.pincode ?? "";
+        pinController.text = profile?.pincode ?? "";
 
-        emailController.text =
-            profile?.email ?? "";
+        emailController.text = profile?.email ?? "";
 
-        phoneController.text =
-            profile?.phoneNumber ?? "";
+        phoneController.text = profile?.phoneNumber ?? "";
 
-        wpcontroller.text =
-            profile?.whatsappnumber ?? "";
-  addresscontroller.text =
-            profile?.address ?? "";
+        wpcontroller.text = profile?.whatsappnumber ?? "";
+        addresscontroller.text = profile?.address ?? "";
 
         return SafeArea(
           child: Padding(
-            padding:
-                const EdgeInsets.symmetric(
-              horizontal: 20,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
 
             child: ListView(
               children: [
@@ -88,26 +67,26 @@ class ProfileScreen extends GetView<ProfileController> {
                 Center(
                   child: Stack(
                     children: [
-                 Obx(() {
-  final profile = controller.profileData.value?.data;
+                      Obx(() {
+                        final profile = controller.profileData.value?.data;
 
-  ImageProvider provider;
+                        ImageProvider provider;
 
-  if (controller.selectedImage.value != null) {
-    provider = FileImage(controller.selectedImage.value!);
-  } else if ((profile?.profileimg ?? "").isNotEmpty) {
-    provider = NetworkImage(
-      "${profile!.profileimg!}?t=${DateTime.now().millisecondsSinceEpoch}",
-    );
-  } else {
-    provider = const AssetImage(AssetImages.profileImage);
-  }
+                        if (controller.selectedImage.value != null) {
+                          provider = FileImage(controller.selectedImage.value!);
+                        } else if ((profile?.profileimg ?? "").isNotEmpty) {
+                          provider = NetworkImage(
+                            "${profile!.profileimg!}?t=${DateTime.now().millisecondsSinceEpoch}",
+                          );
+                        } else {
+                          provider = const AssetImage(AssetImages.profileImage);
+                        }
 
-  return CircleAvatar(
-    radius: 48,
-    backgroundImage: provider,
-  );
-}),
+                        return CircleAvatar(
+                          radius: 48,
+                          backgroundImage: provider,
+                        );
+                      }),
 
                       Positioned(
                         bottom: 0,
@@ -117,33 +96,27 @@ class ProfileScreen extends GetView<ProfileController> {
                           width: 28,
                           height: 28,
 
-                          decoration:
-                              BoxDecoration(
-                            color: AppColors
-                                .clrPrimary,
+                          decoration: BoxDecoration(
+                            color: AppColors.clrPrimary,
 
-                            shape:
-                                BoxShape.circle,
+                            shape: BoxShape.circle,
 
-                            border:
-                                Border.all(
-                              color: theme
-                                  .colorScheme
-                                  .surface,
+                            border: Border.all(
+                              color: theme.colorScheme.surface,
                               width: 2,
                             ),
                           ),
 
-                         child: GestureDetector(
-  onTap: () {
-    controller.pickImage();
-  },
-  child: const Icon(
-    Icons.camera_alt_outlined,
-    color: Colors.white,
-    size: 16,
-  ),
-),
+                          child: GestureDetector(
+                            onTap: () {
+                              controller.pickImage();
+                            },
+                            child: const Icon(
+                              Icons.camera_alt_outlined,
+                              color: Colors.white,
+                              size: 16,
+                            ),
+                          ),
                         ),
                       ),
                     ],
@@ -156,56 +129,36 @@ class ProfileScreen extends GetView<ProfileController> {
                 Center(
                   child: RichText(
                     text: TextSpan(
-                      style: TextHelper.max3
-                          .copyWith(
-                        color: theme
-                            .colorScheme
-                            .onSurface,
+                      style: TextHelper.max3.copyWith(
+                        color: theme.colorScheme.onSurface,
                       ),
 
                       children: [
                         TextSpan(
-                          text:
-                              "User ID: ${profile?.userId ?? ""}  ",
+                          text: "User ID: ${profile?.userId ?? ""}  ",
 
-                          style: TextHelper
-                              .max3
-                              .copyWith(
+                          style: TextHelper.max3.copyWith(
                             fontSize: 14.6,
-                            fontWeight:
-                                FontWeight
-                                    .bold,
-                            color: theme
-                                .colorScheme
-                                .onSurface,
+                            fontWeight: FontWeight.bold,
+                            color: theme.colorScheme.onSurface,
                           ),
                         ),
 
                         TextSpan(
                           text: "User Type: ",
 
-                          style: TextHelper
-                              .max4
-                              .copyWith(
+                          style: TextHelper.max4.copyWith(
                             fontSize: 14.6,
-                            color: theme
-                                .colorScheme
-                                .onSurfaceVariant,
+                            color: theme.colorScheme.onSurfaceVariant,
                           ),
                         ),
 
                         TextSpan(
-                          text:
-                              profile?.usertype ??
-                                  "",
+                          text: profile?.usertype ?? "",
 
-                          style: TextHelper
-                              .max5
-                              .copyWith(
+                          style: TextHelper.max5.copyWith(
                             fontSize: 14.6,
-                            color: theme
-                                .colorScheme
-                                .primary,
+                            color: theme.colorScheme.primary,
                           ),
                         ),
                       ],
@@ -216,111 +169,76 @@ class ProfileScreen extends GetView<ProfileController> {
                 const SizedBox(height: 28),
 
                 /// NAME
-                _buildTitle(
-                  context,
-                  "Name",
-                ),
+                _buildTitle(context, "Name"),
 
                 const SizedBox(height: 8),
 
-                _buildTextField(
-                  context,
-                  nameController,
-                ),
+                _buildTextField(context, nameController),
 
                 const SizedBox(height: 18),
 
                 /// PINCODE
-                _buildTitle(
-                  context,
-                  "Pin code",
-                ),
+                _buildTitle(context, "Pin code"),
 
                 const SizedBox(height: 8),
 
-                _buildTextField(
-                  context,
-                  pinController,
-                ),
+                _buildTextField(context, pinController),
 
                 const SizedBox(height: 18),
 
                 /// EMAIL
-                _buildTitle(
-                  context,
-                  "Mail ID",
-                ),
+                _buildTitle(context, "Mail ID"),
 
                 const SizedBox(height: 8),
 
-                _buildTextField(
-                  context,
-                  emailController,
-                ),
-                 const SizedBox(height: 18),
-  _buildTitle(
-                  context,
-                  "Address",
-                ),
+                _buildTextField(context, emailController),
+                const SizedBox(height: 18),
+                _buildTitle(context, "Address"),
 
                 const SizedBox(height: 8),
 
-                _buildTextField(
-                  context,
-                  addresscontroller,
-                ),
+                _buildTextField(context, addresscontroller),
 
                 const SizedBox(height: 18),
-  _buildTitle(
-                  context,
-                  "Whatsapp no",
-                ),
+                _buildTitle(context, "Whatsapp no"),
 
                 const SizedBox(height: 8),
 
-                _buildTextField(
-                  context,
-                  wpcontroller,
-                ),
+                _buildTextField(context, wpcontroller),
 
+                const SizedBox(height: 18),
 
-               const SizedBox(height: 18),
                 /// PHONE
-                _buildTitle(
-                  context,
-                  "Phone no",
-                ),
+                _buildTitle(context, "Phone no"),
 
                 const SizedBox(height: 8),
 
-                _buildTextField(
-                  context,
-                  phoneController,
-                ),
+                _buildTextField(context, phoneController),
 
                 const SizedBox(height: 35),
 
                 /// UPDATE BUTTON
-              CommonButton(
-  title: "Update",
- onTap: () {
-  print("Button Pressed");
-  print("NAME = ${nameController.text}");
-  print("PINCODE = ${pinController.text}");
-  print("profileimage😊 = ${controller.selectedImage.value?.path}");
+                CommonButton(
+                  title: "Update",
+                  onTap: () {
+                    print("Button Pressed");
+                    print("NAME = ${nameController.text}");
+                    print("PINCODE = ${pinController.text}");
+                    print(
+                      "profileimage😊 = ${controller.selectedImage.value?.path}",
+                    );
 
-  controller.updateProfile(
-    name: nameController.text,
-    email: emailController.text,
-    mobile: phoneController.text,
-    pincode: pinController.text,
-     profileImage: controller.selectedImage.value,
-     address: addresscontroller.text,
-      whatsappnumber: wpcontroller.text,
-    
-  );
-}
-),
+                    controller.updateProfile(
+                      name: nameController.text,
+                      email: emailController.text,
+                      mobile: phoneController.text,
+                      pincode: pinController.text,
+                      profileImage: controller.selectedImage.value,
+                      address: addresscontroller.text,
+                      whatsappnumber: wpcontroller.text,
+                    );
+                  },
+                ),
 
                 const SizedBox(height: 25),
               ],
@@ -331,10 +249,7 @@ class ProfileScreen extends GetView<ProfileController> {
     );
   }
 
-  Widget _buildTitle(
-    BuildContext context,
-    String title,
-  ) {
+  Widget _buildTitle(BuildContext context, String title) {
     final theme = Theme.of(context);
 
     return Align(
@@ -343,9 +258,7 @@ class ProfileScreen extends GetView<ProfileController> {
       child: Text(
         title,
 
-        style: TextHelper.max6.copyWith(
-          color: theme.colorScheme.onSurface,
-        ),
+        style: TextHelper.max6.copyWith(color: theme.colorScheme.onSurface),
       ),
     );
   }
@@ -361,69 +274,42 @@ class ProfileScreen extends GetView<ProfileController> {
 
       enabled: true,
 
-      style: TextStyle(
-        color: theme.colorScheme.onSurface,
-      ),
+      style: TextStyle(color: theme.colorScheme.onSurface),
 
       decoration: InputDecoration(
         filled: true,
 
-        fillColor:
-            theme.brightness ==
-                    Brightness.light
-                ? const Color(
-                    0xffF1F1F1,
-                  )
-                : theme.colorScheme
-                    .surfaceContainer,
+        fillColor: theme.brightness == Brightness.light
+            ? const Color(0xffF1F1F1)
+            : theme.colorScheme.surfaceContainer,
 
-        disabledBorder:
-            OutlineInputBorder(
-          borderRadius:
-              BorderRadius.circular(10),
+        disabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
 
-          borderSide: BorderSide(
-            color:
-                theme.colorScheme.outline,
-          ),
+          borderSide: BorderSide(color: theme.colorScheme.outline),
         ),
 
-        contentPadding:
-            const EdgeInsets.symmetric(
+        contentPadding: const EdgeInsets.symmetric(
           horizontal: 15,
           vertical: 16,
         ),
 
         border: OutlineInputBorder(
-          borderRadius:
-              BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(10),
 
-          borderSide: BorderSide(
-            color:
-                theme.colorScheme.outline,
-          ),
+          borderSide: BorderSide(color: theme.colorScheme.outline),
         ),
 
-        enabledBorder:
-            OutlineInputBorder(
-          borderRadius:
-              BorderRadius.circular(10),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
 
-          borderSide: BorderSide(
-            color:
-                theme.colorScheme.outline,
-          ),
+          borderSide: BorderSide(color: theme.colorScheme.outline),
         ),
 
-        focusedBorder:
-            OutlineInputBorder(
-          borderRadius:
-              BorderRadius.circular(10),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
 
-          borderSide: BorderSide(
-            color:
-                theme.colorScheme.primary,
-          ),
+          borderSide: BorderSide(color: theme.colorScheme.primary),
         ),
       ),
     );
