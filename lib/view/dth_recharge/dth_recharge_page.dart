@@ -39,6 +39,8 @@ class _DTHRechargePageState extends State<DTHRechargePage>
       mobileRechargeUseCase: sl(),
       plantabusecase: sl(),
       tabdetailusecase: sl(),
+      downloadusecase: sl(),
+      checkOperatorUsecase: sl(),
     ),
   );
   final DthController dthcontroller = Get.put(

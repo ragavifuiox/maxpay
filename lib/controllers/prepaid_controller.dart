@@ -5,6 +5,7 @@ import 'package:get/get_navigation/src/root/parse_route.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:maxpay/core/constants/snackbar.dart';
+import 'package:maxpay/core/data/model/download_model.dart';
 import 'package:maxpay/core/data/model/mobile_recharge.dart'
     show MobileRecharge;
 import 'package:maxpay/core/data/model/plan_detail_model.dart';
@@ -13,6 +14,8 @@ import 'package:maxpay/core/data/model/plan_tab_model.dart';
 import 'package:maxpay/core/data/model/search_plan_model.dart';
 import 'package:maxpay/core/data/model/tab_detail.dart';
 import 'package:maxpay/core/data/model/trans_confirm_model.dart';
+import 'package:maxpay/core/domain/usecase/check_operator_usecase.dart';
+import 'package:maxpay/core/domain/usecase/downlaod_usecase.dart';
 import 'package:maxpay/core/domain/usecase/mobile_recharge_usecase.dart';
 import 'package:maxpay/core/domain/usecase/plan_detail_usecase.dart';
 import 'package:maxpay/core/domain/usecase/plan_tab_usecase.dart';
@@ -28,8 +31,10 @@ class PrePaidController extends GetxController {
   final PlanDetailUseCase planDetailUseCase;
   final TransConfirmUseCase transConfirmUseCase;
   final MobileRechargeUsecase mobileRechargeUseCase;
+  final CheckOperatorUsecase checkOperatorUsecase;
   final PlanTabUseCase plantabusecase;
   final TabDetailUsecase tabdetailusecase;
+  final DownloadUsecase downloadusecase;
   final String productdetid = Get.arguments?['productId'] ?? '';
 
   PrePaidController({
@@ -38,16 +43,21 @@ class PrePaidController extends GetxController {
     required this.planDetailUseCase,
     required this.transConfirmUseCase,
     required this.mobileRechargeUseCase,
+    required this.checkOperatorUsecase,
     required this.plantabusecase,
     required this.tabdetailusecase,
+    required this.downloadusecase,
   });
   RxBool isSearching = false.obs;
   RxBool isLoading = false.obs;
   Rx<MobileRecharge?> rechargeResponse = Rx<MobileRecharge?>(null);
   RxList<Data> plans = <Data>[].obs;
   RxList<PlanDetailData> plandetail = <PlanDetailData>[].obs;
-
+RxString operatorName = "".obs;
+RxString productId = "".obs;
   RxList<PlanData> searchPlansList = <PlanData>[].obs;
+
+  final operatorWebsite = "".obs;
 
   RxList<PlanDetailData> planDetailList = <PlanDetailData>[].obs;
   RxList<TabDetailData> filteredTabPlans = <TabDetailData>[].obs;
@@ -93,6 +103,62 @@ class PrePaidController extends GetxController {
     }
   }
 
+
+
+
+
+Future<void> checkOperator(String mobile) async {
+  print("📱 Mobile Number: $mobile");
+
+  final result = await checkOperatorUsecase(mobile);
+
+  result.fold(
+    (failure) {
+      print("❌ Operator API Failed");
+      print("❌ Error: ${failure.message}");
+
+      CustomToast.error(failure.message);
+    },
+    (response) async {
+      print("✅ Operator API Success");
+      print("📡 Operator: ${response.lookup?.records?.operator}");
+      print("🌍 Circle: ${response.lookup?.records?.circle}");
+      print("📦 Response: $response");
+
+      operatorName.value =
+          response.lookup?.records?.operator ?? "";
+
+      print("🎯 Selected Operator Name: ${operatorName.value}");
+
+      final data = plans.firstWhereOrNull(
+        (e) =>
+            (e.name ?? "").toLowerCase() ==
+            operatorName.value.toLowerCase(),
+      );
+
+      if (data != null) {
+        print("✅ Matching Plan Found");
+        print("🆔 Plan ID: ${data.id}");
+        print("🏷️ Plan Name: ${data.name}");
+
+        selectedPlan.value = data;
+
+        print("🔍 Calling searchPlans...");
+        await searchPlans(
+          data.id.toString(),
+          "",
+        );
+        print("✅ searchPlans Completed");
+      } else {
+        print("⚠️ No Matching Operator Found in Plans List");
+        print("📋 Available Operators:");
+        for (final plan in plans) {
+          print("➡️ ${plan.name}");
+        }
+      }
+    },
+  );
+}
   Future<void> searchPlans(String planId, String amount) async {
     AppLogger.debugPrint("========== SEARCH API ==========");
     AppLogger.debugPrint("PlanId : $planId");
@@ -228,6 +294,24 @@ class PrePaidController extends GetxController {
   }
 
   Future<void> getPlanTabs() async {
+    isLoading.value = true;
+
+    final result = await plantabusecase();
+
+    result.fold(
+      (failure) {
+        Get.snackbar('Error', failure.message);
+      },
+      (response) {
+        planTabs.value = response.data ?? [];
+      },
+    );
+
+    isLoading.value = false;
+  }
+
+
+  Future<void> getDownload() async {
     isLoading.value = true;
 
     final result = await plantabusecase();

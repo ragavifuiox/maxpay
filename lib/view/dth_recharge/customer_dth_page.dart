@@ -28,7 +28,7 @@ class CustomerDthPage extends GetView<PrePaidController> {
     final paymentStatus = args['paymentStatus'] ?? '';
     final transactionNo = args['transactionNo'] ?? '';
     final transactionAmount = args['transactionAmount'] ?? '';
-    final whatsappNumber = args['whatsappNumber'] ?? '';
+   final whatsappNumber = args['whatsappNumber'] ?? "N/A";
     final operatorInitial = args['operatorInitial'] ?? '';
     final operatorColor = args['operatorColor'] ?? Colors.red;
     final operatorLogo = args['operatorLogo'] ?? '';
@@ -99,7 +99,7 @@ class CustomerDthPage extends GetView<PrePaidController> {
 
                     SizedBox(height: 14.h),
 
-                    _buildRow(context, "Whatsapp no", whatsappNumber),
+                  _buildRow(context, "Whatsapp no", whatsappNumber),
                   ],
                 ),
               ),
@@ -160,39 +160,32 @@ class CustomerDthPage extends GetView<PrePaidController> {
                           );
 
                           AppLogger.debugPrint("AFTER API CALL");
-                          final rechargeData =
-                              controller.rechargeResponse.value;
+                           final rechargeData = controller.rechargeResponse.value;
 
-                          if (success && rechargeData != null) {
-                            final apiData = rechargeData.data?.apiResponse;
+if (success && rechargeData != null) {
+  final apiData = rechargeData.data?.apiResponse;
 
-                            Get.to(
-                              () => SuccessRechargePage(
-                                productName:
+  Get.to(
+    () => SuccessRechargePage(
+      rechargeId: rechargeData.data?.recharge?.id?.toString() ?? "",
+          productName:
                                     apiData?.logo ??
                                     confirmData?.productName ??
                                     "",
-                                operatorLogo: apiData?.logo ?? "",
-                                operatorInitial:
-                                    (apiData?.operatorName?.isNotEmpty ?? false)
-                                    ? apiData!.operatorName![0]
-                                    : "J",
-
-                                operatorColor: Colors.red,
-
-                                transactionNo:
-                                    apiData?.mobileno ?? mobileNumber,
-
-                                rechargeAmount:
-                                    (apiData?.amount ?? amountController.text)
-                                        .currencyIndian,
-
-                                transactionId: apiData?.txnid ?? "",
-
-                                dateTime: apiData?.requestDatetime ?? "",
-                              ),
-                            );
-                          }
+      operatorLogo: apiData?.logo ?? "",
+      operatorInitial:
+          (apiData?.operatorName?.isNotEmpty ?? false)
+              ? apiData!.operatorName![0]
+              : "J",
+      operatorColor: Colors.red,
+      transactionNo: apiData?.mobileno ?? mobileNumber,
+      rechargeAmount:
+          (apiData?.amount ?? amountController.text).currencyIndian,
+      transactionId: apiData?.txnid ?? "",
+      dateTime: apiData?.requestDatetime ?? "",
+    ),
+  );
+}
                         },
                 ),
               ),

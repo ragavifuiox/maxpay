@@ -73,7 +73,7 @@ class RechargeDetails {
     txnid = json['txnid'];
     status = json['status'];
     mobileno = json['mobileno'];
-    amount = json['amount'];
+    amount = json['amount']?.toString();
     operatorcode = json['operatorcode'];
     operatorName = json['operator_name'];
     requestDatetime = json['request_datetime'];

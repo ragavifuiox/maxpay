@@ -190,7 +190,7 @@ class SettingsPage extends StatelessWidget {
                          InkWell(
   onTap: () {
     Share.share(
-      'Login to MaxPay Web:\nhttp://139.59.91.7/test_paylinkonline.in/public/retailer/login',
+      'http://139.59.91.7/test_paylinkonline.in/public/retailer/login',
     );
   },
   child: Container(

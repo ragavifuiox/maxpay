@@ -53,10 +53,8 @@ class TransactionCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   "Transaction ID: ${data.transactionId ?? '-'}",
-                  style: TextHelper.max1.copyWith(
-                    color: isDark
-                        ? const Color(0xFFFFFFFF).withValues(alpha: 0.7)
-                        : AppColors.darktextclr,
+                 style: TextHelper.max1.copyWith(
+                    color: AppColors.darktextclr,
                   ),
                 ),
               ),
@@ -66,9 +64,7 @@ class TransactionCard extends StatelessWidget {
                   Text(
                     "Date & Time",
                     style: TextHelper.max1.copyWith(
-                      color: isDark
-                          ? const Color(0xFFFFFFFF).withValues(alpha: 0.7)
-                          : AppColors.darktextclr,
+                      color: AppColors.darktextclr,
                     ),
                   ),
                   const SizedBox(height: 5),
@@ -77,9 +73,7 @@ class TransactionCard extends StatelessWidget {
       ? formatTransactionDate(data.dateTime!)
       : "-",
   style: TextHelper.max1.copyWith(
-    color: isDark
-        ? const Color(0xFFFFFFFF).withValues(alpha: 0.7)
-        : AppColors.darktextclr,
+    color: AppColors.darktextclr,
   ),
 ),
                 ],

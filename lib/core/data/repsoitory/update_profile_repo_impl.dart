@@ -35,7 +35,7 @@ Future<Either<Failure, ProfileUpdate>> updateprofile({
       "billing_address": address,
 
       if (profileimage != null)
-        "profile_image": await MultipartFile.fromFile(
+        "profile_img": await MultipartFile.fromFile(
           profileimage.path,
           filename: profileimage.path.split('/').last,
         ),

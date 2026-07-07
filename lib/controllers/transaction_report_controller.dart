@@ -29,7 +29,8 @@ class TransReportController extends GetxController {
   RxString selectedProductId = ''.obs;
   RxBool isLoading = false.obs;
   String currentStatus = '';
-
+final TextEditingController fromDateController = TextEditingController();
+final TextEditingController toDateController = TextEditingController();
   RxList<TransrepData> transreportList = <TransrepData>[].obs;
   Rx<SubmitDisputeData?> disputeData = Rx<SubmitDisputeData?>(null);
   Rx<ProductType?> producttype = Rx<ProductType?>(null);
@@ -38,17 +39,20 @@ String toDate = '';
 String search = '';
 final TextEditingController searchController = TextEditingController();
 
-
 @override
 void onInit() {
   super.onInit();
-fetchplan();
+
+  fetchplan();
+
   final now = DateTime.now();
 
   fromDate =
       "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
 
-  print("onInit fromDate = $fromDate");
+  fromDateController.text = fromDate;
+
+  update(["fromDate"]);
 }
 void clearFilters() {
   selectedProductId.value = '';
@@ -169,12 +173,14 @@ Future<void> fetchplan() async {
 Future<void> selectFromDate(BuildContext context) async {
   DateTime initialDate;
 
-  try {
-    initialDate = fromDate.isNotEmpty
-        ? DateTime.parse(fromDate)
-        : DateTime.now();
-  } catch (e) {
+  if (fromDate.isEmpty) {
     initialDate = DateTime.now();
+  } else {
+    try {
+      initialDate = DateTime.parse(fromDate);
+    } catch (e) {
+      initialDate = DateTime.now();
+    }
   }
 
   final pickedDate = await showDatePicker(
@@ -188,7 +194,17 @@ Future<void> selectFromDate(BuildContext context) async {
     fromDate =
         "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
 
-    update(["fromDate"]); // IMPORTANT
+    fromDateController.text = fromDate;
+
+    update(["fromDate"]);
+
+    transactionreport(
+      search: search,
+      status: currentStatus,
+      productid: selectedProductId.value,
+      fromdate: fromDate,
+      todate: toDate,
+    );
   }
 }
   // Future<void> selectToDate(BuildContext context) async {
@@ -228,26 +244,22 @@ Future<void> selectToDate(BuildContext context) async {
   );
 
   if (pickedDate != null) {
-    toDate =
-        "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+  toDate =
+      "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
 
-    update(["toDate"]);
-  }
+  toDateController.text = toDate;
+
+  update(["toDate"]);
+
+  transactionreport(
+    search: search,
+    status: currentStatus,
+    productid: selectedProductId.value,
+    fromdate: fromDate,
+    todate: toDate,
+  );
 }
-  void onSearch(String value) {
-    search = value;
-
-    if (fromDate.isNotEmpty && toDate.isNotEmpty) {
-      transactionreport(
-        search: search,
-        status: currentStatus,
-        productid: selectedProductId.value,
-        fromdate: fromDate,
-        todate: toDate,
-      );
-    }
-  }
-
+}
   Future<void> SubmitDispute({
     required String subject,
     required String rechargeid,
@@ -299,9 +311,12 @@ Future<void> selectToDate(BuildContext context) async {
     }
   }
 
-  @override
+@override
 void onClose() {
+  fromDateController.dispose();
+  toDateController.dispose();
   searchController.dispose();
   super.onClose();
 }
+
 }

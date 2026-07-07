@@ -16,6 +16,7 @@ import 'package:maxpay/core/extensions/string_ext.dart';
 import 'package:maxpay/core/utils/logg_helper.dart';
 import 'package:maxpay/view/mobile_recharge/contact_list_page.dart';
 import 'package:permission_handler/permission_handler.dart' as ph;
+import 'package:url_launcher/url_launcher.dart';
 
 class MobileRechargePage extends StatefulWidget {
   final String productId;
@@ -222,14 +223,15 @@ bool isPaymentReceived = false;
                       : AppColors.clrplceholder,
                   borderRadius: BorderRadius.circular(10.r),
                 ),
-                child: TextField(
-                  controller: mobileController,
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    color: isDark ? Colors.white : Colors.black,
-                  ),
+                child:TextField(
+  controller: mobileController,
+  keyboardType: TextInputType.number,
+  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+  onChanged: (value) async {
+    if (value.length == 10) {
+      await controller.checkOperator(value);
+    }
+  },
                   decoration: InputDecoration(
                     hintText: 'Enter Mobile No',
                     hintStyle: TextStyle(color: Colors.grey, fontSize: 12.sp),
@@ -284,146 +286,219 @@ bool isPaymentReceived = false;
               /// DROPDOWN FROM BACKEND
               _buildInputLabel('Select Operator'),
 
-              Obx(() {
-                if (controller.isLoading.value) {
-                  return const Center(child: CircularProgressIndicator());
-                }
+              // Obx(() {
+              //   if (controller.isLoading.value) {
+              //     return const Center(child: CircularProgressIndicator());
+              //   }
 
-                return Container(
-                  padding: EdgeInsets.symmetric(horizontal: 14.w),
+              //   return Container(
+              //     padding: EdgeInsets.symmetric(horizontal: 14.w),
 
-                  decoration: BoxDecoration(
-                    color: isDark
-                        ? AppColors.darkplceholder
-                        : AppColors.clrplceholder,
+              //     decoration: BoxDecoration(
+              //       color: isDark
+              //           ? AppColors.darkplceholder
+              //           : AppColors.clrplceholder,
 
-                    borderRadius: BorderRadius.circular(10.r),
-                  ),
+              //       borderRadius: BorderRadius.circular(10.r),
+              //     ),
 
-                  child: DropdownButtonHideUnderline(
-                    child: DropdownButton<Data>(
-                      isExpanded: true,
+              //     child: DropdownButtonHideUnderline(
+              //       child: DropdownButton<Data>(
+              //         isExpanded: true,
 
-                      value:
-                          controller.plans.any(
-                            (e) => e.name == selectedOperator,
-                          )
-                          ? controller.plans.firstWhere(
-                              (e) => e.name == selectedOperator,
-                            )
-                          : null,
+              //        value: controller.selectedOperator.value,
 
-                      hint: Text(
-                        "Select",
-                        style: TextStyle(color: Colors.grey, fontSize: 14.sp),
-                      ),
+              //         hint: Text(
+              //           "Select",
+              //           style: TextStyle(color: Colors.grey, fontSize: 14.sp),
+              //         ),
 
-                      icon: const Icon(Icons.arrow_drop_down),
+              //         icon: const Icon(Icons.arrow_drop_down),
 
-                      selectedItemBuilder: (context) {
-                        return controller.plans.map((operator) {
-                          return Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  operator.name ?? "",
-                                  overflow: TextOverflow.ellipsis,
-                                  style: TextStyle(
-                                    fontSize: 14.sp,
-                                    color: isDark ? Colors.white : Colors.black,
-                                  ),
-                                ),
-                              ),
+              //         selectedItemBuilder: (context) {
+              //           return controller.plans.map((operator) {
+              //             return Row(
+              //               children: [
+              //                 Expanded(
+              //                   child: Text(
+              //                     operator.name ?? "",
+              //                     overflow: TextOverflow.ellipsis,
+              //                     style: TextStyle(
+              //                       fontSize: 14.sp,
+              //                       color: isDark ? Colors.white : Colors.black,
+              //                     ),
+              //                   ),
+              //                 ),
 
-                              Container(
-                                width: 30.w,
-                                height: 30.w,
-                                clipBehavior: Clip.antiAlias,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(1.r),
-                                ),
-                                child: Image.network(
-                                  operator.logo ?? "",
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (context, error, stackTrace) {
-                                    return Container(
-                                      color: Colors.grey.shade200,
-                                      alignment: Alignment.center,
-                                      child: Text(
-                                        (operator.name ?? "O")[0].toUpperCase(),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ),
-                            ],
-                          );
-                        }).toList();
-                      },
+              //                 Container(
+              //                   width: 30.w,
+              //                   height: 30.w,
+              //                   clipBehavior: Clip.antiAlias,
+              //                   decoration: BoxDecoration(
+              //                     borderRadius: BorderRadius.circular(1.r),
+              //                   ),
+              //                   child: Image.network(
+              //                     operator.logo ?? "",
+              //                     fit: BoxFit.cover,
+              //                     errorBuilder: (context, error, stackTrace) {
+              //                       return Container(
+              //                         color: Colors.grey.shade200,
+              //                         alignment: Alignment.center,
+              //                         child: Text(
+              //                           (operator.name ?? "O")[0].toUpperCase(),
+              //                         ),
+              //                       );
+              //                     },
+              //                   ),
+              //                 ),
+              //               ],
+              //             );
+              //           }).toList();
+              //         },
 
-                      items: controller.plans.map((Data operator) {
-                        return DropdownMenuItem<Data>(
-                          value: operator,
+              //         items: controller.plans.map((Data operator) {
+              //           return DropdownMenuItem<Data>(
+              //             value: operator,
 
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  operator.name ?? "",
-                                  style: TextStyle(
-                                    fontSize: 14.sp,
-                                    color: isDark ? Colors.white : Colors.black,
-                                  ),
-                                ),
-                              ),
+              //             child: Row(
+              //               children: [
+              //                 Expanded(
+              //                   child: Text(
+              //                     operator.name ?? "",
+              //                     style: TextStyle(
+              //                       fontSize: 14.sp,
+              //                       color: isDark ? Colors.white : Colors.black,
+              //                     ),
+              //                   ),
+              //                 ),
 
-                              Container(
-                                width: 30.w,
-                                height: 30.w,
-                                clipBehavior: Clip.antiAlias,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(1.r),
-                                ),
-                                child: Image.network(
-                                  operator.logo ?? "",
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (context, error, stackTrace) {
-                                    return Container(
-                                      color: Colors.grey.shade200,
-                                      alignment: Alignment.center,
-                                      child: Text(
-                                        (operator.name ?? "O")[0].toUpperCase(),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      }).toList(),
+              //                 Container(
+              //                   width: 30.w,
+              //                   height: 30.w,
+              //                   clipBehavior: Clip.antiAlias,
+              //                   decoration: BoxDecoration(
+              //                     borderRadius: BorderRadius.circular(1.r),
+              //                   ),
+              //                   child: Image.network(
+              //                     operator.logo ?? "",
+              //                     fit: BoxFit.cover,
+              //                     errorBuilder: (context, error, stackTrace) {
+              //                       return Container(
+              //                         color: Colors.grey.shade200,
+              //                         alignment: Alignment.center,
+              //                         child: Text(
+              //                           (operator.name ?? "O")[0].toUpperCase(),
+              //                         ),
+              //                       );
+              //                     },
+              //                   ),
+              //                 ),
+              //               ],
+              //             ),
+              //           );
+              //         }).toList(),
 
-                      onChanged: (Data? value) async {
-                        if (value == null) return;
+              //         onChanged: (Data? value) async {
+              //           if (value == null) return;
 
-                        setState(() {
-                          selectedOperator = value.name ?? "";
-                          selectedProductId = value.id?.toString() ?? "";
-                          isPlanLoaded = true;
-                        });
+              //           setState(() {
+              //             selectedOperator = value.name ?? "";
+              //             selectedProductId = value.id?.toString() ?? "";
+              //             isPlanLoaded = true;
+              //           });
 
-                        searchController.clear();
+              //           searchController.clear();
 
-                        await controller.searchPlans(selectedProductId, "");
+              //           await controller.searchPlans(selectedProductId, "");
 
-                        controller.applyTabFilter(); // add this
-                      },
-                    ),
-                  ),
-                );
-              }),
+              //           controller.applyTabFilter(); // add this
+              //         },
+              //       ),
+              //     ),
+              //   );
+              // }),
 
-              SizedBox(height: 15.h),
+//             
+             Obx(() {
+  return Container(
+    height: 55.h, // Same height as Mobile Number field
+    decoration: BoxDecoration(
+      color: isDark
+          ? AppColors.darkplceholder
+          : AppColors.clrplceholder,
+      borderRadius: BorderRadius.circular(10.r),
+    ),
+    alignment: Alignment.centerLeft,
+    padding: EdgeInsets.symmetric(horizontal: 16.w),
+    child: Row(
+      children: [
+        Expanded(
+          child: Text(
+            controller.operatorName.value.isEmpty
+                ? "Detecting operator..."
+                : controller.operatorName.value,
+            style: TextStyle(
+              fontSize: 14.sp,
+              color: isDark ? Colors.white : Colors.black,
+              fontWeight: FontWeight.w500,
+            ),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+        Icon(
+          Icons.network_cell,
+          size: 20.sp,
+          color: Colors.grey,
+        ),
+      ],
+    ),
+  );
+}),
+
+SizedBox(height: 8.h),
+
+Obx(() {
+  if (controller.operatorWebsite.value.isEmpty) {
+    return const SizedBox();
+  }
+
+  return InkWell(
+    onTap: () async {
+      final uri = Uri.parse(controller.operatorWebsite.value);
+
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(
+          uri,
+          mode: LaunchMode.externalApplication,
+        );
+      } else {
+        CustomToast.error("Unable to open website");
+      }
+    },
+    child: Row(
+      children: [
+        const Icon(
+          Icons.language,
+          color: Colors.blue,
+          size: 20,
+        ),
+        SizedBox(width: 6.w),
+        Expanded(
+          child: Text(
+            controller.operatorWebsite.value,
+            style: TextStyle(
+              color: Colors.blue,
+              decoration: TextDecoration.underline,
+              fontSize: 13.sp,
+            ),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ],
+    ),
+  );
+}),
+              
 
               SizedBox(height: 20.h),
 

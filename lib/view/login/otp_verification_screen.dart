@@ -31,10 +31,18 @@ class _ScreenOtpVerificationState extends State<ScreenOtpVerification> {
 
   Timer? timer;
 
-  @override
+ @override
 void initState() {
   super.initState();
   startTimer();
+
+  ever<String>(authController.otp, (otp) {
+    _otpController.text = otp;
+    setState(() {
+      _showVerifyButton = otp.isNotEmpty;
+    });
+  });
+
 
   WidgetsBinding.instance.addPostFrameCallback((_) {
     if (authController.otp.value.isNotEmpty) {
@@ -292,27 +300,28 @@ void initState() {
 
                         /// 🔹 TIMER
                         GestureDetector(
-                          onTap: isOtpExpired
-                              ? () async {
-                                  /// CLEAR OLD OTP
-                                  _otpController.clear();
+                          onTap:isOtpExpired
+    ? () async {
+        _otpController.clear();
 
-                                  /// HIDE VERIFY BUTTON
-                                  _showVerifyButton = false;
+        setState(() {
+          _showVerifyButton = false;
+        });
 
-                                  /// RESEND API
-                                  await authController.resendOtp();
+        await authController.resendOtp();
 
-                                  /// RESET TIMER
-                                  setState(() {
-                                    secondsRemaining = 30;
-                                    isOtpExpired = false;
-                                  });
+        if (authController.otp.value.isNotEmpty) {
+          setState(() {
+            _otpController.text = authController.otp.value;
+            _showVerifyButton = true;
+            secondsRemaining = 30;
+            isOtpExpired = false;
+          });
+        }
 
-                                  /// START TIMER AGAIN
-                                  startTimer();
-                                }
-                              : null,
+        startTimer();
+      }
+    : null,
 
                           child: Text(
                             isOtpExpired

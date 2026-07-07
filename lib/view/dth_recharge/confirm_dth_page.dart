@@ -191,11 +191,11 @@ class ConfirmDthPage extends GetView<DthController> {
                       title: "Customer Confirmation",
                       backgroundColor: AppColors.clrSecondary,
                       onTap: () {
-                        if (whatsappController.text.trim().isEmpty) {
-                          CustomToast.error("Please enter WhatsApp number");
+                        // if (whatsappController.text.trim().isEmpty) {
+                        //   CustomToast.error("Please enter WhatsApp number");
 
-                          return;
-                        }
+                        //   return;
+                        // }
 
                         if (amountController.text.trim().isEmpty) {
                           CustomToast.error("Please enter amount");
@@ -213,7 +213,9 @@ class ConfirmDthPage extends GetView<DthController> {
                             "paymentStatus": confirmData.paymentStatus ?? '',
                             "transactionNo": customerId,
                             "transactionAmount": amountController.text,
-                            "whatsappNumber": whatsappController.text,
+                           "whatsappNumber": whatsappController.text.trim().isEmpty
+    ? "N/A"
+    : whatsappController.text.trim(),
                             "operatorInitial":
                                 (confirmData.productName ?? '').isNotEmpty
                                 ? confirmData.productName![0]

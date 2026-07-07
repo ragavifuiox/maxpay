@@ -16,6 +16,17 @@ class TransactionScreen extends GetView<TransReportController> {
   @override
   Widget build(BuildContext context) {
     controller.currentStatus = status.name;
+     WidgetsBinding.instance.addPostFrameCallback((_) {
+    if (controller.transreportList.isEmpty) {
+      controller.transactionreport(
+        search: controller.search,
+        status: controller.currentStatus,
+        productid: controller.selectedProductId.value,
+        fromdate: controller.fromDate,
+        todate: controller.toDate,
+      );
+    }
+  });
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
@@ -136,11 +147,11 @@ const SizedBox(height: 8),
   id: "fromDate",
   builder: (controller) {
     return customField(
-      context,
-      hint: controller.fromDate.isEmpty
-          ? "${DateTime.now().year}-${DateTime.now().month.toString().padLeft(2, '0')}-${DateTime.now().day.toString().padLeft(2, '0')}"
-          : controller.fromDate,
-    );
+  context,
+  controller: controller.fromDateController,
+  readOnly: true,
+  onTap: () => controller.selectFromDate(context), hint: '',
+);
   },
 ),
   ),
@@ -163,13 +174,12 @@ const SizedBox(height: 8),
   id: "toDate",
   builder: (_) {
     return customField(
-      context,
-      hint: controller.toDate.isEmpty
-          ? "End Date"
-          : controller.toDate,
-      readOnly: true,
-      onTap: () => controller.selectToDate(context),
-    );
+  context,
+  controller: controller.toDateController,
+  hint: "End Date",
+  readOnly: true,
+  onTap: () => controller.selectToDate(context),
+);
   },
 ),
   ),
