@@ -1,6 +1,5 @@
 
 
-import 'package:maxpay/core/data/model/wallet_qr_history.dart';
 
 class ApiRoutes {
   static const baseURL = "http://139.59.91.7/test_paylinkonline.in/public/api";

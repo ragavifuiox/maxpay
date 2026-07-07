@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:maxpay/controllers/support_controller.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
@@ -36,7 +35,7 @@ class SupportScreen extends StatelessWidget {
         return ListView.separated(
           padding: const EdgeInsets.all(16),
           itemCount: supportList.length,
-          separatorBuilder: (_, __) => const SizedBox(height: 18),
+          separatorBuilder: (_, _) => const SizedBox(height: 18),
           itemBuilder: (context, index) {
             final item = supportList[index];
 
@@ -132,7 +131,6 @@ class _SupportButton extends StatelessWidget {
   final VoidCallback onTap;
 
   const _SupportButton({
-    super.key,
     required this.image,
     required this.onTap,
   });

@@ -19,9 +19,7 @@ class WalletCreditFilter extends GetView<WalletCreditController> {
         return Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: isDark
-                ? AppColors.darkplceholder
-                : AppColors.background,
+            color: isDark ? AppColors.darkplceholder : AppColors.background,
             borderRadius: BorderRadius.circular(10),
             border: Border.all(
               color: isDark
@@ -30,57 +28,57 @@ class WalletCreditFilter extends GetView<WalletCreditController> {
             ),
           ),
 
-          
           child: Column(
-            
-               children: [
+            children: [
+              Obx(
+                () => Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  decoration: BoxDecoration(
+                    color: theme.brightness == Brightness.light
+                        ? Colors.white
+                        : AppColors.darkplceholder,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      isExpanded: true,
+                      value: controller.selectedcreditname.value.isEmpty
+                          ? null
+                          : controller.selectedcreditname.value,
+                      hint: const Text(
+                        "Select ",
+                        style: TextStyle(fontSize: 14),
+                      ),
+                      items:
+                          controller.allplan.value?.data
+                              ?.map(
+                                (item) => DropdownMenuItem<String>(
+                                  value: item.name, // <-- send name
+                                  child: Text(item.name ?? ""),
+                                ),
+                              )
+                              .toList() ??
+                          [],
+                      onChanged: (String? value) {
+                        controller.selectedcreditname.value = value ?? "";
 
-      Obx(
-        () => Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          decoration: BoxDecoration(
-            color: theme.brightness == Brightness.light
-                ? Colors.white
-                : AppColors.darkplceholder,
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: DropdownButtonHideUnderline(
-            child: DropdownButton<String>(
-              isExpanded: true,
-              value: controller.selectedcreditname.value.isEmpty
-                  ? null
-                  : controller.selectedcreditname.value,
-              hint: const Text("Select ",style:TextStyle(fontSize: 14),),
-              items: controller.allplan.value?.data
-        ?.map(
-          (item) => DropdownMenuItem<String>(
-            value: item.name, // <-- send name
-            child: Text(item.name ?? ""),
-          ),
-        )
-        .toList() ??
-    [],
- onChanged: (String? value) {
-  controller.selectedcreditname.value = value ?? "";
-
-  controller.searchcredit(
-    search: controller.search,
-    credit: controller.selectedcreditname.value,
-    fromdate: controller.fromDate,
-    todate: controller.toDate,
-  );
-}
-            ),
-          ),
-        ),
-      ),
-      const SizedBox(height: 20,),
+                        controller.searchcredit(
+                          search: controller.search,
+                          credit: controller.selectedcreditname.value,
+                          fromdate: controller.fromDate,
+                          todate: controller.toDate,
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
               Row(
                 children: [
                   Expanded(
                     child: InkWell(
-                      onTap: () =>
-                          controller.selectFromDate(context),
+                      onTap: () => controller.selectFromDate(context),
                       child: _dateField(
                         context,
                         controller.fromDate.isEmpty
@@ -92,17 +90,13 @@ class WalletCreditFilter extends GetView<WalletCreditController> {
 
                   const SizedBox(width: 8),
 
-                  Icon(
-                    Icons.arrow_forward,
-                    color: theme.colorScheme.primary,
-                  ),
+                  Icon(Icons.arrow_forward, color: theme.colorScheme.primary),
 
                   const SizedBox(width: 8),
 
                   Expanded(
                     child: InkWell(
-                      onTap: () =>
-                          controller.selectToDate(context),
+                      onTap: () => controller.selectToDate(context),
                       child: _dateField(
                         context,
                         controller.toDate.isEmpty
@@ -116,61 +110,56 @@ class WalletCreditFilter extends GetView<WalletCreditController> {
 
               const SizedBox(height: 12),
 
-             TextField(
-  keyboardType: TextInputType.number,
-  style: TextStyle(
-    color: theme.colorScheme.onSurface,
-  ),
-  onChanged: controller.onSearch,
-  decoration: InputDecoration(
-    prefixIcon: Padding(
-      padding: const EdgeInsets.all(12.0),
-      child: SvgPicture.asset(
-        AssetImages.search,
-        colorFilter: ColorFilter.mode(
-          isDark
-              ? AppColors.textclr
-              : theme.colorScheme.onSurfaceVariant,
-          BlendMode.srcIn,
-        ),
-      ),
-    ),
-    hintText: "Enter Mobile Number",
-    hintStyle: TextHelper.max1.copyWith(
-      color: isDark
-          ? AppColors.textclr
-          : AppColors.clrTextgrey,
-    ),
-    filled: true,
-    fillColor:
-        isDark ? AppColors.darkplceholder : Colors.white,
-    border: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(7),
-      borderSide: BorderSide(
-        color: isDark
-            ? AppColors.darkFilterBorder
-            : AppColors.totalborde2,
-      ),
-    ),
-    enabledBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(7),
-      borderSide: BorderSide(
-        color: isDark
-            ? AppColors.darkFilterBorder
-            : AppColors.totalborde2,
-      ),
-    ),
-    focusedBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(7),
-      borderSide: BorderSide(
-        color: theme.colorScheme.primary,
-      ),
-    ),
-    contentPadding: const EdgeInsets.symmetric(
-      vertical: 0,
-    ),
-  ),
-)
+              TextField(
+                keyboardType: TextInputType.number,
+                style: TextStyle(color: theme.colorScheme.onSurface),
+                onChanged: controller.onSearch,
+                decoration: InputDecoration(
+                  prefixIconConstraints: BoxConstraints(
+                    maxWidth: 50,
+                    maxHeight: 50,
+                  ),
+                  prefixIcon: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: SvgPicture.asset(
+                      AssetImages.search,
+                      colorFilter: ColorFilter.mode(
+                        isDark
+                            ? AppColors.textclr
+                            : theme.colorScheme.onSurfaceVariant,
+                        BlendMode.srcIn,
+                      ),
+                    ),
+                  ),
+                  hintText: "Enter Mobile Number",
+                  hintStyle: TextHelper.max1.copyWith(
+                    color: isDark ? AppColors.textclr : AppColors.clrTextgrey,
+                  ),
+                  filled: true,
+                  fillColor: isDark ? AppColors.darkplceholder : Colors.white,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(7),
+                    borderSide: BorderSide(
+                      color: isDark
+                          ? AppColors.darkFilterBorder
+                          : AppColors.totalborde2,
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(7),
+                    borderSide: BorderSide(
+                      color: isDark
+                          ? AppColors.darkFilterBorder
+                          : AppColors.totalborde2,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(7),
+                    borderSide: BorderSide(color: theme.colorScheme.primary),
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(vertical: 0),
+                ),
+              ),
             ],
           ),
         );
@@ -178,26 +167,17 @@ class WalletCreditFilter extends GetView<WalletCreditController> {
     );
   }
 
-  Widget _dateField(
-    BuildContext context,
-    String text,
-  ) {
+  Widget _dateField(BuildContext context, String text) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 10,
-        vertical: 12,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
       decoration: BoxDecoration(
-        color:
-            isDark ? AppColors.darkplceholder : Colors.white,
+        color: isDark ? AppColors.darkplceholder : Colors.white,
         borderRadius: BorderRadius.circular(7),
         border: Border.all(
-          color: isDark
-              ? AppColors.darkFilterBorder
-              : AppColors.totalborde2,
+          color: isDark ? AppColors.darkFilterBorder : AppColors.totalborde2,
         ),
       ),
       child: Text(

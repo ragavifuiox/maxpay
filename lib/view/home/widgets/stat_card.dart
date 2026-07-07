@@ -10,6 +10,8 @@ class StatCard extends StatelessWidget {
   final Color? borderColor;
   final Color? textColor;
   final Color? valueColor;
+  final bool needSpacingbwImage;
+
   final VoidCallback? onTap;
 
   const StatCard({
@@ -22,6 +24,7 @@ class StatCard extends StatelessWidget {
     this.textColor,
     this.valueColor,
     this.onTap,
+    this.needSpacingbwImage = true,
   });
 
   @override
@@ -46,13 +49,12 @@ class StatCard extends StatelessWidget {
 
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+
           children: [
             /// IMAGE / ICON
             imageWidget,
+            if (needSpacingbwImage) SizedBox(height: 10.h),
 
-            SizedBox(height: 10.h),
-
-            /// TITLE
             Text(
               title,
               textAlign: TextAlign.center,
@@ -147,13 +149,11 @@ class _BlinkingZoomCardState extends State<BlinkingZoomCard>
     );
   }
 }
+
 class AnimatedBorderCard extends StatefulWidget {
   final Widget child;
 
-  const AnimatedBorderCard({
-    super.key,
-    required this.child,
-  });
+  const AnimatedBorderCard({super.key, required this.child});
 
   @override
   State<AnimatedBorderCard> createState() => _AnimatedBorderCardState();
@@ -183,18 +183,15 @@ class _AnimatedBorderCardState extends State<AnimatedBorderCard>
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: controller,
-      builder: (_, __) {
+      builder: (_, _) {
         return CustomPaint(
-          painter: BorderDotPainter(
-            progress: controller.value,
-          ),
+          painter: BorderDotPainter(progress: controller.value),
           child: widget.child,
         );
       },
     );
   }
 }
-
 
 class BorderDotPainter extends CustomPainter {
   final double progress;
@@ -228,18 +225,11 @@ class BorderDotPainter extends CustomPainter {
       8,
       Paint()
         ..color = Colors.orange.withOpacity(0.3)
-        ..maskFilter = const MaskFilter.blur(
-          BlurStyle.normal,
-          10,
-        ),
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10),
     );
 
     // Dot
-    canvas.drawCircle(
-      point,
-      4,
-      Paint()..color = Colors.orange,
-    );
+    canvas.drawCircle(point, 4, Paint()..color = Colors.orange);
   }
 
   @override

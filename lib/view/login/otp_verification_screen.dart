@@ -166,7 +166,7 @@ void initState() {
                         }
                       },
 
-                      child: Container(
+                      child: SizedBox(
                         width: 45.w,
                         height: 45.w,
 
