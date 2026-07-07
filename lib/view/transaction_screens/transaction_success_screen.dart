@@ -16,17 +16,17 @@ class TransactionScreen extends GetView<TransReportController> {
   @override
   Widget build(BuildContext context) {
     controller.currentStatus = status.name;
-     WidgetsBinding.instance.addPostFrameCallback((_) {
-    if (controller.transreportList.isEmpty) {
-      controller.transactionreport(
-        search: controller.search,
-        status: controller.currentStatus,
-        productid: controller.selectedProductId.value,
-        fromdate: controller.fromDate,
-        todate: controller.toDate,
-      );
-    }
-  });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (controller.transreportList.isEmpty) {
+        controller.transactionreport(
+          search: controller.search,
+          status: controller.currentStatus,
+          productid: controller.selectedProductId.value,
+          fromdate: controller.fromDate,
+          todate: controller.toDate,
+        );
+      }
+    });
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
@@ -186,69 +186,55 @@ class TransactionScreen extends GetView<TransReportController> {
                     ],
                   ),
 
-<<<<<<< HEAD
-      /// DATE FIELD
-      Row(
-        children: [
-         Expanded(
-  child: GestureDetector(
-    onTap: () => controller.selectFromDate(context),
-    child:GetBuilder<TransReportController>(
-  id: "fromDate",
-  builder: (controller) {
-    return customField(
-  context,
-  controller: controller.fromDateController,
-  readOnly: true,
-  onTap: () => controller.selectFromDate(context), hint: '',
-);
-  },
-),
-  ),
-),
-          Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 8,
-            ),
-            child: Icon(
-              Icons.arrow_forward,
-              color: theme.colorScheme.onSurface,
-            ),
-          ),
-         Expanded(
-  child: GestureDetector(
-    onTap: () {
-      controller.selectToDate(context);
-    },
-    child: GetBuilder<TransReportController>(
-  id: "toDate",
-  builder: (_) {
-    return customField(
-  context,
-  controller: controller.toDateController,
-  hint: "End Date",
-  readOnly: true,
-  onTap: () => controller.selectToDate(context),
-);
-  },
-),
-  ),
-),
-        ],
-      ),
+                  /// DATE FIELD
+                  Row(
+                    children: [
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () => controller.selectFromDate(context),
+                          child: GetBuilder<TransReportController>(
+                            id: "fromDate",
+                            builder: (controller) {
+                              return customField(
+                                context,
+                                controller: controller.fromDateController,
+                                readOnly: true,
+                                onTap: () => controller.selectFromDate(context),
+                                hint: '',
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        child: Icon(
+                          Icons.arrow_forward,
+                          color: theme.colorScheme.onSurface,
+                        ),
+                      ),
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () {
+                            controller.selectToDate(context);
+                          },
+                          child: GetBuilder<TransReportController>(
+                            id: "toDate",
+                            builder: (_) {
+                              return customField(
+                                context,
+                                controller: controller.toDateController,
+                                hint: "End Date",
+                                readOnly: true,
+                                onTap: () => controller.selectToDate(context),
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
 
-      const SizedBox(height: 10),
-
-      /// SEARCH FIELD
-      customField(
-        context,
-        hint: "Search",
-        prefix: Icons.search,
-      ),
-    ],
-  ),
-),
-=======
                   const SizedBox(height: 10),
 
                   /// SEARCH FIELD
@@ -256,7 +242,6 @@ class TransactionScreen extends GetView<TransReportController> {
                 ],
               ),
             ),
->>>>>>> 40e29b5e6f669809b3a3f5578fdbd6e4a495eb23
 
             const SizedBox(height: 15),
             Divider(

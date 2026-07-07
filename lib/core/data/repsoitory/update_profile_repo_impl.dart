@@ -33,25 +33,16 @@ class UpdateProfileRepoImpl implements ProfileUpdateRepository {
         "whatsapp_number": whatsappnumber,
         "billing_address": address,
         if (profileimage != null)
-          "profile_image": await MultipartFile.fromFile(
+          "profile_img": await MultipartFile.fromFile(
             profileimage.path,
             filename: profileimage.path.split('/').last,
           ),
       });
 
-<<<<<<< HEAD
-      if (profileimage != null)
-        "profile_img": await MultipartFile.fromFile(
-          profileimage.path,
-          filename: profileimage.path.split('/').last,
-        ),
-    });
-=======
       final response = await apiService.post(
         ApiRoutes.updateprofile,
         data: formData,
       );
->>>>>>> 40e29b5e6f669809b3a3f5578fdbd6e4a495eb23
 
       final model = ProfileUpdate.fromJson(response);
       return Right(model);
