@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:maxpay/controllers/support_controller.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
@@ -101,21 +102,31 @@ class SupportScreen extends StatelessWidget {
                   ),
 
                   /// Right Side Buttons
-                  Column(
-                    children: [
-                     _SupportButton(
-  image: "assets/images/wp-icon.svg",
-  onTap: () => openWhatsApp(item.phoneNumber ?? ""),
-),
+              Column(
+  children: [
+    _SupportButton(
+      backgroundColor: const Color(0xFF25D366), // WhatsApp Green
+      icon: const FaIcon(
+        FontAwesomeIcons.whatsapp,
+        color: Colors.white,
+        size: 14,
+      ),
+      onTap: () => openWhatsApp(item.phoneNumber ?? ""),
+    ),
 
-const SizedBox(height: 10),
+    const SizedBox(height: 8),
 
-_SupportButton(
-  image: "assets/images/call-icon.svg",
-  onTap: () => makeCall(item.phoneNumber ?? ""),
-),
-                    ],
-                  ),
+    _SupportButton(
+      backgroundColor: const Color(0xFF3F51B5), // Blue
+      icon: const Icon(
+        Icons.call,
+        color: Colors.white,
+        size: 14,
+      ),
+      onTap: () => makeCall(item.phoneNumber ?? ""),
+    ),
+  ],
+)
                 ],
               ),
             );
@@ -127,37 +138,30 @@ _SupportButton(
 }
 
 class _SupportButton extends StatelessWidget {
-  final String image;
+  final Widget icon;
   final VoidCallback onTap;
+  final Color backgroundColor;
 
   const _SupportButton({
-    required this.image,
+    super.key,
+    required this.icon,
     required this.onTap,
+    required this.backgroundColor,
   });
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      borderRadius: BorderRadius.circular(8),
       onTap: onTap,
+      borderRadius: BorderRadius.circular(4),
       child: Container(
-        width: 46,
-        height: 36,
+        width: 29,
+        height: 25,
         decoration: BoxDecoration(
-          color: const Color(0xff11A7C7),
-          borderRadius: BorderRadius.circular(8),
+          color: backgroundColor,
+          borderRadius: BorderRadius.circular(4),
         ),
-        child: Center(
-          child: SvgPicture.asset(
-            image,
-            width: 18,
-            height: 18,
-            colorFilter: const ColorFilter.mode(
-              Colors.white,
-              BlendMode.srcIn,
-            ),
-          ),
-        ),
+        child: Center(child: icon),
       ),
     );
   }

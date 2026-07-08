@@ -68,5 +68,6 @@ class ApiRoutes {
   static const dueamount = "/due_amount";
   static const download = "/receipt_download/";
   static const checkoperator = "/check_operator";
+  static const offer = "/rechargeOffers";
   
 }

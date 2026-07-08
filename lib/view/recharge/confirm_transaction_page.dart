@@ -22,9 +22,10 @@ class ConfirmTransactionPage extends GetView<PrePaidController> {
 
   TextEditingController amountController = TextEditingController();
   ConfirmTransactionPage({super.key});
+late String productdetid;
 
-  late String productdetid;
-  final args = Get.arguments ?? {};
+final args = Get.arguments ?? {};
+String get enteredAmount => (args["amount"] ?? "").toString();
   String get type => args["type"] ?? "mobile";
 
   void setProductId(String id) {
@@ -40,6 +41,9 @@ class ConfirmTransactionPage extends GetView<PrePaidController> {
     final String mobileNumber = args['mobileNumber'] ?? '';
     // final String productId = args['productId'] ?? '';
     whatsappController.text = mobileNumber;
+    if (amountController.text.isEmpty) {
+  amountController.text = enteredAmount;
+}
     return Obx(() {
       final confirmData = controller.transConfirmData.value?.data;
       // final operatorLogo = confirmData?.logo ?? '';
@@ -128,14 +132,17 @@ class ConfirmTransactionPage extends GetView<PrePaidController> {
                         const Color(0xffE0E4FF),
                       ),
 
-                      _buildAmountBox(
-                        context,
-                        'Transaction Amount',
-                        confirmData.transactionAmount?.currencyIndian ?? "0",
-                        Colors.red,
-                        const Color(0xffFFE5E5),
-                        const Color(0xffFFE4E8),
-                      ),
+                  _buildAmountBox(
+  context,
+  'Transaction Amount',
+  (enteredAmount.isNotEmpty
+          ? enteredAmount
+          : (confirmData.transactionAmount ?? "0"))
+      .currencyIndian,
+  Colors.red,
+  const Color(0xffFFE5E5),
+  const Color(0xffFFE4E8),
+),
 
                       _buildAmountBox(
                         context,

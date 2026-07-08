@@ -4,8 +4,8 @@ import 'package:get/get.dart';
 import 'package:maxpay/controllers/auth_controller.dart';
 import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/core/di/service_locator.dart';
-import 'package:maxpay/core/utils/responsive.dart';
 import 'package:maxpay/global_widget/commom_button.dart';
+import 'package:maxpay/global_widget/custom_app.dart';
 import 'package:maxpay/view/update_pin/update_pin_screen.dart';
 import 'package:pinput/pinput.dart';
 
@@ -17,7 +17,7 @@ class VerifyPinPage extends StatefulWidget {
 }
 
 class _VerifyPinPageState extends State<VerifyPinPage> {
-  final TextEditingController pinController = TextEditingController();
+  final TextEditingController otpController = TextEditingController();
 
   final AuthController authController = Get.put(
     AuthController(
@@ -31,121 +31,140 @@ class _VerifyPinPageState extends State<VerifyPinPage> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final isTablet = Responsive.isTablet(context);
-
     return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
-      appBar: AppBar(
-        backgroundColor: theme.scaffoldBackgroundColor,
-        elevation: 0,
+      backgroundColor: Colors.white,
+      appBar: CommonAppBar(
+        title: " ",
+       
       ),
-      body: Center(
-        child: ConstrainedBox(
-          constraints: BoxConstraints(
-            maxWidth: isTablet ? 500 : double.infinity,
-          ),
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 24.w),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(height: isTablet ? 48.h : 24.h),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Column(
+            children: [
+              const SizedBox(height: 10),
 
-                Text(
-                  'Enter your OTP',
-                  style: TextStyle(
-                    fontFamily: 'Poppins',
+              /// Title
+              const Text(
+                "Verification code",
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black,
+                  fontFamily: 'Lufga',
+                ),
+              ),
+
+              const SizedBox(height: 10),
+
+              const Text(
+                "Please type the verification code\nsent to +91 000 000 0000",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey,
+                  height: 1.5,
+                  fontFamily: 'Lufga',
+                ),
+              ),
+
+              const SizedBox(height: 40),
+
+              /// OTP
+              Pinput(
+                controller: otpController,
+                length: 4,
+                keyboardType: TextInputType.number,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+
+                defaultPinTheme: PinTheme(
+                  width: 56,
+                  height: 56,
+                  textStyle: const TextStyle(
+                    fontSize: 20,
+                    color: Colors.white,
                     fontWeight: FontWeight.w600,
-                    fontSize: isTablet ? 30.sp : 22.sp,
-                    color: colorScheme.onSurface,
+                  ),
+                  decoration: BoxDecoration(
+                    color: const Color(0xff1BA6C7),
+                    shape: BoxShape.circle,
                   ),
                 ),
-                SizedBox(height: 8.h),
-                // Text(
-                //   'Please enter your 4-digit security PIN to access your account.',
-                //   style: TextStyle(
-                //     fontFamily: 'Poppins',
-                //     fontWeight: FontWeight.w400,
-                //     fontSize: isTablet ? 18.sp : 13.sp,
-                //     color: colorScheme.onSurface.withOpacity(0.6),
-                //   ),
-                // ),
 
-                SizedBox(height: isTablet ? 56.h : 40.h),
-
-                Center(
-                  child: Pinput(
-                    length: 4,
-                    controller: pinController,
-                    readOnly: false,
-                    defaultPinTheme: PinTheme(
-                      width: isTablet ? 72.w : 58.w,
-                      height: isTablet ? 72.w : 58.w,
-                      textStyle: TextStyle(
-                        fontFamily: 'Poppins',
-                        fontSize: isTablet ? 28.sp : 22.sp,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppColors.clrPrimary,
-                      shape:.circle,
-                        // borderRadius: BorderRadius.circular(12.r),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColors.clrPrimary.withOpacity(0.15),
-                            blurRadius: 10,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                    ),
-                    focusedPinTheme: PinTheme(
-                      width: isTablet ? 72.w : 58.w,
-                      height: isTablet ? 72.w : 58.w,
-                      textStyle: TextStyle(
-                        fontFamily: 'Poppins',
-                        fontSize: isTablet ? 28.sp : 22.sp,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppColors.clrPrimary,
-                        shape: .circle,
-                        // borderRadius: BorderRadius.circular(12.r),
-                        border: Border.all(
-                          color: colorScheme.primary.withOpacity(0.5),
-                          width: 2,
-                        ),
-                      ),
+                focusedPinTheme: PinTheme(
+                  width: 56,
+                  height: 56,
+                  textStyle: const TextStyle(
+                    fontSize: 20,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  decoration: BoxDecoration(
+                    color: const Color(0xff1BA6C7),
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: Colors.blue,
+                      width: 2,
                     ),
                   ),
                 ),
 
-                SizedBox(height: isTablet ? 40.h : 32.h),
+                submittedPinTheme: PinTheme(
+                  width: 56,
+                  height: 56,
+                  textStyle: const TextStyle(
+                    fontSize: 20,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  decoration: const BoxDecoration(
+                    color: Color(0xff1BA6C7),
+                    shape: BoxShape.circle,
+                  ),
+                ),
+              ),
 
-                Spacer(),
-                Obx(
-                  () => CommonButton(
-                    title: "Verify",
-                    width: Get.width,
+              const SizedBox(height: 30),
+
+              GestureDetector(
+                onTap: () {
+                  // Resend OTP
+                },
+                child: const Text(
+                  "Resend Otp",
+                  style: TextStyle(
+                    color: Colors.green,
+                    fontWeight: FontWeight.w600,
+                    decoration: TextDecoration.underline,
+                  ),
+                ),
+              ),
+
+              const Spacer(),
+
+              Obx(
+                () => SizedBox(
+                  width: 170,
+                  height: 50,
+                  child: CommonButton(
+                    title: "Continue",
+                    width: 170,
                     isLoading: authController.isLoading.value,
                     onTap: () async {
                       final success = await authController.verifyPin(
-                        pinController.text.trim(),
+                        otpController.text.trim(),
                       );
+
                       if (success) {
-                        Get.to(() => UpdatePinPage());
+                        Get.to(() =>  UpdatePinPage());
                       }
                     },
                   ),
                 ),
+              ),
 
-                SizedBox(height: 20.h),
-              ],
-            ),
+              const SizedBox(height: 30),
+            ],
           ),
         ),
       ),

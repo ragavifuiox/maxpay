@@ -27,6 +27,7 @@ import 'package:maxpay/core/data/repsoitory/login_history_impl.dart';
 import 'package:maxpay/core/data/repsoitory/login_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/mobile_rehcarge_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/news_repo_impl.dart';
+import 'package:maxpay/core/data/repsoitory/offer_recharge_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/otp_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/payment_status_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/plan_detail_repo_impl.dart';
@@ -87,6 +88,7 @@ import 'package:maxpay/core/domain/repository/login_history_repository.dart';
 import 'package:maxpay/core/domain/repository/login_repository.dart';
 import 'package:maxpay/core/domain/repository/mobile_recharge_repository.dart';
 import 'package:maxpay/core/domain/repository/news_repository.dart';
+import 'package:maxpay/core/domain/repository/offer_recharge_repository.dart';
 import 'package:maxpay/core/domain/repository/otp_repository.dart';
 import 'package:maxpay/core/domain/repository/paymnet_status_repository.dart';
 import 'package:maxpay/core/domain/repository/plan_detail_repository.dart';
@@ -149,6 +151,7 @@ import 'package:maxpay/core/domain/usecase/login_history_usecase.dart';
 import 'package:maxpay/core/domain/usecase/login_usecase.dart';
 import 'package:maxpay/core/domain/usecase/mobile_recharge_usecase.dart';
 import 'package:maxpay/core/domain/usecase/news_usecase.dart';
+import 'package:maxpay/core/domain/usecase/offer_rechdarge_usecase.dart';
 import 'package:maxpay/core/domain/usecase/otp_usecase.dart';
 import 'package:maxpay/core/domain/usecase/payment_status_usecase.dart';
 import 'package:maxpay/core/domain/usecase/plan_detail_usecase.dart';
@@ -262,6 +265,10 @@ Future<void> initDependencies() async {
   );
   sl.registerLazySingleton<SearchStaffRepository>(
     () => SearchStaffRepoImpl(sl()),
+  );
+
+   sl.registerLazySingleton<OfferRechargeRepository>(
+    () => OfferRechargeRepoImpl(sl()),
   );
   sl.registerLazySingleton<PlanTabRepository>(() => PlanTabRepoImpl(sl()));
   sl.registerLazySingleton<TabDetailRepository>(() => TabdetailRepoImpl(sl()));
@@ -387,6 +394,7 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton<RefundUsecase>(() => RefundUsecase(sl()));
   sl.registerLazySingleton<AllPlanUsecase>(() => AllPlanUsecase(sl()));
   sl.registerLazySingleton<UpdatePinUsecase>(() => UpdatePinUsecase(sl()));
+  sl.registerLazySingleton<OfferRechargeUsecase>(() => OfferRechargeUsecase(sl()));
   sl.registerLazySingleton<WalletCreditSearchUsecase>(
     () => WalletCreditSearchUsecase(sl()),
   );

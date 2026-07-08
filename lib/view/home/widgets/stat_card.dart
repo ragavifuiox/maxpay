@@ -52,36 +52,46 @@ class StatCard extends StatelessWidget {
 
           children: [
             /// IMAGE / ICON
-            imageWidget,
-            if (needSpacingbwImage) SizedBox(height: 10.h),
+            Flexible(
+  flex: 3,
+  child: imageWidget,
+),
 
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontFamily: 'Poppins',
-                fontWeight: FontWeight.w700,
-                letterSpacing: 0,
-                fontSize: 10.sp,
-                color: textColor ?? theme.colorScheme.onSurface,
-              ),
-            ),
+if (needSpacingbwImage) SizedBox(height: 6.h),
 
-            /// VALUE
-            if (value != null) ...[
-              SizedBox(height: 2.h),
+Flexible(
+  child: Text(
+    title,
+    textAlign: TextAlign.center,
+    maxLines: 1,
+    overflow: TextOverflow.ellipsis,
+    style: TextStyle(
+      fontFamily: 'Poppins',
+      fontWeight: FontWeight.w700,
+      fontSize: 10.sp,
+      color: textColor ?? theme.colorScheme.onSurface,
+    ),
+  ),
+),
 
-              Text(
-                value!,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontFamily: 'Poppins',
-                  fontWeight: FontWeight.w600,
-                  fontSize: 11.sp,
-                  color: valueColor ?? theme.textTheme.bodyLarge?.color,
-                ),
-              ),
-            ],
+if (value != null) ...[
+  SizedBox(height: 2.h),
+  Flexible(
+    child: Text(
+      value!,
+      maxLines: 2,
+      overflow: TextOverflow.ellipsis,
+      textAlign: TextAlign.center,
+      style: TextStyle(
+        fontFamily: 'Poppins',
+        fontWeight: FontWeight.w600,
+        fontSize: 10.sp,
+        height: 1.1,
+        color: valueColor ?? theme.textTheme.bodyLarge?.color,
+      ),
+    ),
+  ),
+],
           ],
         ),
       ),

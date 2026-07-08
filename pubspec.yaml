@@ -69,7 +69,8 @@ dependencies:
   qr_flutter: ^4.1.0
   dotted_border: ^3.1.0
   font_awesome_flutter: ^11.0.0
-
+  upi_pay: ^1.1.0
+  android_intent_plus: ^6.0.0
 dev_dependencies:
   flutter_launcher_icons: ^0.14.4
   flutter_lints: ^6.0.0

@@ -40,7 +40,8 @@ class _DTHRechargePageState extends State<DTHRechargePage>
       plantabusecase: sl(),
       tabdetailusecase: sl(),
       downloadusecase: sl(),
-      checkOperatorUsecase: sl(),
+      checkOperatorUsecase: sl(), 
+      offerRechargeUsecase: sl(),
     ),
   );
   final DthController dthcontroller = Get.put(
@@ -346,31 +347,104 @@ class _DTHRechargePageState extends State<DTHRechargePage>
 
              SizedBox(height: 15.h),
 
-             Row(
-  children: [
-    SizedBox(
-      width: 20.w,
-      height: 20.w,
-      child: Checkbox(
-        value: isPaymentReceived,
-        activeColor: AppColors.clrPrimary,
-        onChanged: (value) {
-          setState(() {
-            isPaymentReceived = value ?? false;
-          });
-        },
-      ),
+           Container(
+  width: double.infinity,
+  padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
+  decoration: BoxDecoration(
+    border: Border.all(
+      color: const Color(0xff19A7CE),
+      width: 1,
     ),
-    SizedBox(width: 8.w),
-    Text(
-      "Payment Received",
-      style: TextStyle(
-        fontSize: 13.sp,
-        fontWeight: FontWeight.w500,
-        color: Colors.deepOrange
+    borderRadius: BorderRadius.circular(10.r),
+  ),
+  child: Stack(
+    clipBehavior: Clip.none,
+    children: [
+      // Profile Image
+     
+
+      Column(
+        children: [
+          Text(
+            "Customer Payment",
+            style: TextStyle(
+              fontSize: 15.sp,
+              fontWeight: FontWeight.w700,
+              color: const Color(0xff19A7CE),
+              decoration: TextDecoration.underline,
+            ),
+          ),
+
+          SizedBox(height: 12.h),
+
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              /// Not Received
+              GestureDetector(
+                onTap: () {
+                  setState(() {
+                    isPaymentReceived = false;
+                  });
+                },
+                child: Row(
+                  children: [
+                    Checkbox(
+                      value: !isPaymentReceived,
+                      activeColor: Colors.red,
+                      onChanged: (_) {
+                        setState(() {
+                          isPaymentReceived = false;
+                        });
+                      },
+                    ),
+                    Text(
+                      "Not Received",
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14.sp,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              /// Received
+              GestureDetector(
+                onTap: () {
+                  setState(() {
+                    isPaymentReceived = true;
+                  });
+                },
+                child: Row(
+                  children: [
+                    Checkbox(
+                      value: isPaymentReceived,
+                      activeColor: Colors.green,
+                      onChanged: (_) {
+                        setState(() {
+                          isPaymentReceived = true;
+                        });
+                      },
+                    ),
+                    Text(
+                      "Received",
+                      style: TextStyle(
+                        color: Colors.green,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14.sp,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
-    ),
-  ],
+    ],
+  ),
 ),
               SizedBox(height: 20.h),
 

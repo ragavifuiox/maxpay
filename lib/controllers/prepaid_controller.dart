@@ -11,12 +11,14 @@ import 'package:maxpay/core/data/model/mobile_recharge.dart'
 import 'package:maxpay/core/data/model/plan_detail_model.dart';
 import 'package:maxpay/core/data/model/plan_model.dart';
 import 'package:maxpay/core/data/model/plan_tab_model.dart';
+import 'package:maxpay/core/data/model/rehcarge_offer_model.dart';
 import 'package:maxpay/core/data/model/search_plan_model.dart';
 import 'package:maxpay/core/data/model/tab_detail.dart';
 import 'package:maxpay/core/data/model/trans_confirm_model.dart';
 import 'package:maxpay/core/domain/usecase/check_operator_usecase.dart';
 import 'package:maxpay/core/domain/usecase/downlaod_usecase.dart';
 import 'package:maxpay/core/domain/usecase/mobile_recharge_usecase.dart';
+import 'package:maxpay/core/domain/usecase/offer_rechdarge_usecase.dart';
 import 'package:maxpay/core/domain/usecase/plan_detail_usecase.dart';
 import 'package:maxpay/core/domain/usecase/plan_tab_usecase.dart';
 import 'package:maxpay/core/domain/usecase/plan_usecase.dart';
@@ -35,6 +37,7 @@ class PrePaidController extends GetxController {
   final PlanTabUseCase plantabusecase;
   final TabDetailUsecase tabdetailusecase;
   final DownloadUsecase downloadusecase;
+  final OfferRechargeUsecase offerRechargeUsecase;
   final String productdetid = Get.arguments?['productId'] ?? '';
 
   PrePaidController({
@@ -47,6 +50,7 @@ class PrePaidController extends GetxController {
     required this.plantabusecase,
     required this.tabdetailusecase,
     required this.downloadusecase,
+    required this.offerRechargeUsecase,
   });
   RxBool isSearching = false.obs;
   RxBool isLoading = false.obs;
@@ -56,8 +60,10 @@ class PrePaidController extends GetxController {
 RxString operatorName = "".obs;
 RxString productId = "".obs;
   RxList<PlanData> searchPlansList = <PlanData>[].obs;
-
+RxString defaultOperator = "".obs;
   final operatorWebsite = "".obs;
+RxList<OfferRecords> offerList = <OfferRecords>[].obs;
+  RxBool isOfferLoading = false.obs;
 
   RxList<PlanDetailData> planDetailList = <PlanDetailData>[].obs;
   RxList<TabDetailData> filteredTabPlans = <TabDetailData>[].obs;
@@ -73,6 +79,7 @@ RxString productId = "".obs;
   String selectedTabId = "";
   Future<void> getPlans({required String productid}) async {
     try {
+      
       isLoading.value = true;
 
       plans.clear();
@@ -91,7 +98,14 @@ RxString productId = "".obs;
           );
           response.data?.sort((a, b) => (a.name ?? "").compareTo(b.name ?? ""));
 
-          plans.assignAll(response.data ?? []);
+         plans.assignAll(response.data ?? []);
+
+if (plans.isNotEmpty) {
+  selectedPlan.value = plans.first;
+
+  defaultOperator.value = plans.first.name ?? "";
+  operatorName.value = defaultOperator.value;
+}
 
           if (plans.isNotEmpty) {
             selectedPlan.value = plans.first;
@@ -103,62 +117,157 @@ RxString productId = "".obs;
     }
   }
 
+void resetOperatorSelection() {
+  operatorName.value = "";
+  operatorWebsite.value = "";
+  selectedPlan.value = null;   // ✅ null → dropdown shows "Select" hint
 
+  searchPlansList.clear();
+  filteredSearchPlans.clear();
 
+  update();
+}
+// Future<void> checkOperator(String mobile) async {
+//   final result = await checkOperatorUsecase(mobile);
 
+//   result.fold(
+//     (failure) {
+//       CustomToast.error(failure.message);
+//     },
+//     (response) async {
+//       // Use product name instead of lookup operator
+//       final backendOperator = response.product?.name?.trim() ?? "";
+
+//       operatorName.value = backendOperator;
+//       operatorWebsite.value = response.product?.description ?? "";
+
+//       print("Backend Operator : $backendOperator");
+
+//       // Find matching operator in dropdown
+//       final operator = plans.firstWhereOrNull(
+//         (e) =>
+//             (e.name ?? "").trim().toLowerCase() ==
+//             backendOperator.toLowerCase(),
+//       );
+
+//       if (operator != null) {
+//         print("Matched : ${operator.name}");
+
+//         // Change dropdown
+//         selectedPlan.value = operator;
+
+//         // Load plans
+//         await searchPlans(operator.id.toString(), "");
+
+//         applyTabFilter();
+
+//         update(); // Refresh UI if using GetBuilder
+//       } else {
+//         print("No Matching Operator");
+
+//         for (final item in plans) {
+//           print("Dropdown : ${item.name}");
+//         }
+//       }
+//     },
+//   );
+// }
+
+Future<void> getOffers(String mobile) async {
+  try {
+    isLoading.value = true;
+    offerList.clear();
+
+    AppLogger.logError("========== OFFER API ==========");
+    AppLogger.logError("Mobile : $mobile");
+
+    final result = await offerRechargeUsecase(mobile);
+
+    result.fold(
+      (failure) {
+        AppLogger.logError("❌ OFFER API FAILED");
+        AppLogger.logError("Message : ${failure.message}");
+
+        CustomToast.error(failure.message);
+      },
+      (response) {
+        AppLogger.logError("✅ OFFER API SUCCESS");
+        AppLogger.logError("Status : ${response.status}");
+        AppLogger.logError("Operator : ${response.offers?.operator}");
+        AppLogger.logError("Offer Count : ${response.offers?.records?.length}");
+
+        if (response.offers?.records != null) {
+          for (final offer in response.offers!.records!) {
+            AppLogger.logError(
+              "Amount : ${offer.rs} | Description : ${offer.desc}",
+            );
+          }
+        }
+
+        offerList.assignAll(response.offers?.records ?? []);
+
+        AppLogger.logError("Offer List Length : ${offerList.length}");
+      },
+    );
+  } catch (e, stackTrace) {
+    AppLogger.logError("🔥 Exception : $e");
+    AppLogger.logError("StackTrace : $stackTrace");
+  } finally {
+    isOfferLoading.value = false;
+    AppLogger.logError("========== OFFER API END ==========");
+  }
+}
 
 Future<void> checkOperator(String mobile) async {
-  print("📱 Mobile Number: $mobile");
+  try {
+    isLoading.value = true;
 
-  final result = await checkOperatorUsecase(mobile);
+    final result = await checkOperatorUsecase(mobile);
 
-  result.fold(
-    (failure) {
-      print("❌ Operator API Failed");
-      print("❌ Error: ${failure.message}");
+    result.fold(
+      (failure) {
+        CustomToast.error(failure.message);
+      },
+      (response) async {
+        final backendOperator = response.product?.name?.trim() ?? "";
 
-      CustomToast.error(failure.message);
-    },
-    (response) async {
-      print("✅ Operator API Success");
-      print("📡 Operator: ${response.lookup?.records?.operator}");
-      print("🌍 Circle: ${response.lookup?.records?.circle}");
-      print("📦 Response: $response");
+        operatorName.value = backendOperator;
+        operatorWebsite.value = response.product?.description ?? "";
 
-      operatorName.value =
-          response.lookup?.records?.operator ?? "";
+        print("Backend Operator : $backendOperator");
 
-      print("🎯 Selected Operator Name: ${operatorName.value}");
-
-      final data = plans.firstWhereOrNull(
-        (e) =>
-            (e.name ?? "").toLowerCase() ==
-            operatorName.value.toLowerCase(),
-      );
-
-      if (data != null) {
-        print("✅ Matching Plan Found");
-        print("🆔 Plan ID: ${data.id}");
-        print("🏷️ Plan Name: ${data.name}");
-
-        selectedPlan.value = data;
-
-        print("🔍 Calling searchPlans...");
-        await searchPlans(
-          data.id.toString(),
-          "",
+        final operator = plans.firstWhereOrNull(
+          (e) =>
+              (e.name ?? "").trim().toLowerCase() ==
+              backendOperator.toLowerCase(),
         );
-        print("✅ searchPlans Completed");
-      } else {
-        print("⚠️ No Matching Operator Found in Plans List");
-        print("📋 Available Operators:");
-        for (final plan in plans) {
-          print("➡️ ${plan.name}");
+
+        if (operator != null) {
+          print("Matched : ${operator.name}");
+
+          selectedPlan.value = operator;
+
+          await searchPlans(operator.id.toString(), "");
+
+          applyTabFilter();
+
+          update();
+        } else {
+          print("No Matching Operator");
+
+          for (final item in plans) {
+            print("Dropdown : ${item.name}");
+          }
         }
-      }
-    },
-  );
+      },
+    );
+  } finally {
+    isLoading.value = false;
+  }
 }
+
+
+
   Future<void> searchPlans(String planId, String amount) async {
     AppLogger.debugPrint("========== SEARCH API ==========");
     AppLogger.debugPrint("PlanId : $planId");
@@ -261,6 +370,8 @@ Future<void> checkOperator(String mobile) async {
   //   }
   // }
 
+
+
   Future<void> confirmtrans(String prodcutdetid) async {
     AppLogger.logError("🚀 [CONFIRM TRANS] Started");
     AppLogger.logError("🆔 Product Detail ID: $prodcutdetid");
@@ -327,6 +438,9 @@ Future<void> checkOperator(String mobile) async {
 
     isLoading.value = false;
   }
+
+
+
 
   Future<bool> mobilerecharge(
     String productdetid,
