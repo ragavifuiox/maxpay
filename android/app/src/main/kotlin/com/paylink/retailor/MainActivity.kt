@@ -1,4 +1,4 @@
-package com.example.paylink
+package com.paylink.retailor
 
 import android.content.Intent
 import android.net.Uri
