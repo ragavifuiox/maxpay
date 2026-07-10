@@ -10,6 +10,7 @@ import 'package:maxpay/core/data/repsoitory/compalint_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/confirm_dth_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/create_pin_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/credit_repo_impl.dart';
+import 'package:maxpay/core/data/repsoitory/customer_info_repo_iml.dart';
 import 'package:maxpay/core/data/repsoitory/dispute_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/download_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/dth_recharge_repo_impl.dart';
@@ -71,6 +72,7 @@ import 'package:maxpay/core/domain/repository/compalints_repository.dart';
 import 'package:maxpay/core/domain/repository/confirm_dth_repository.dart';
 import 'package:maxpay/core/domain/repository/create_pin_repository.dart';
 import 'package:maxpay/core/domain/repository/credit_repository.dart';
+import 'package:maxpay/core/domain/repository/customer_info_repository.dart';
 import 'package:maxpay/core/domain/repository/dispute_repository.dart';
 import 'package:maxpay/core/domain/repository/downlaod_repository.dart';
 import 'package:maxpay/core/domain/repository/dth_recharge_repository.dart';
@@ -133,6 +135,7 @@ import 'package:maxpay/core/domain/usecase/complaints_usecase.dart';
 import 'package:maxpay/core/domain/usecase/confirm_dth_usecase.dart';
 import 'package:maxpay/core/domain/usecase/create_pin_usecase.dart';
 import 'package:maxpay/core/domain/usecase/credit_usecase.dart';
+import 'package:maxpay/core/domain/usecase/customer_info_usecase.dart';
 import 'package:maxpay/core/domain/usecase/dispute_usecase.dart';
 import 'package:maxpay/core/domain/usecase/downlaod_usecase.dart';
 import 'package:maxpay/core/domain/usecase/dth_recharge_usecase.dart';
@@ -327,6 +330,7 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton< WebLogoutRepository>(() => WebLogoutRepoImpl(sl()));
   sl.registerLazySingleton<RefundCountRepository>(() => RefundCountRepoImpl(sl()));
   sl.registerLazySingleton<TodayCreditRepository>(() => TodayCreditRepoImpl(sl()));
+  sl.registerLazySingleton<CustomerInfoRepository>(() => CustomerInfoRepoImpl(sl()));
 
 
   sl.registerLazySingleton<WalletCreateQrRepo>(
@@ -395,6 +399,7 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton<AllPlanUsecase>(() => AllPlanUsecase(sl()));
   sl.registerLazySingleton<UpdatePinUsecase>(() => UpdatePinUsecase(sl()));
   sl.registerLazySingleton<OfferRechargeUsecase>(() => OfferRechargeUsecase(sl()));
+  sl.registerLazySingleton<CustomerInfoUsecase>(() => CustomerInfoUsecase(sl()));
   sl.registerLazySingleton<WalletCreditSearchUsecase>(
     () => WalletCreditSearchUsecase(sl()),
   );

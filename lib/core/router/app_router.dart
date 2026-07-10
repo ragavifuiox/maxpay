@@ -330,7 +330,8 @@ class AppPages {
             dthtabUseCase: sl(),
             searchdthusecase: sl(),
             confirmdthUsecase: sl(),
-            dthrechargeusecase: sl(),
+            dthrechargeusecase: sl(), customerInfoUsecase: sl(),
+            
           ),
 
           fenix: true,

@@ -201,29 +201,34 @@ class HomePageScreen extends GetView<HomePageController> {
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
-        child: SingleChildScrollView(
+      
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              
               const HomeHeaderSection(),
 
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 30.h),
-                child: Column(
+              Expanded(
+  child: Padding(
+    padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
+    child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const EarningsChart(),
-                    const NewsTicker(),
+SizedBox(height: 8.h),
 
-                    GridView.count(
-                      crossAxisCount: 3,
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      mainAxisSpacing: 10.h,
-                      crossAxisSpacing: 10.w,
-                      childAspectRatio: 0.9,
-                      padding: EdgeInsets.all(4.w),
-                      children: [
+const NewsTicker(),
+SizedBox(height: 2.h),
+
+Expanded(
+  child: GridView.count(
+    crossAxisCount: 3,
+    physics: const NeverScrollableScrollPhysics(),
+    mainAxisSpacing: 8.h,
+    crossAxisSpacing: 8.w,
+    childAspectRatio: 1.05,
+    padding: EdgeInsets.zero,
+    children: [
                         StatCard(
                           onTap: () => Get.toNamed(AppRoutes.addwallet),
                           title: 'Add Wallet',
@@ -478,16 +483,16 @@ class HomePageScreen extends GetView<HomePageController> {
                         }),
                       ],
                     ),
-
-                    SizedBox(height: 20.h),
-                    SizedBox(height: 9.h),
+),
+                   
                   ],
                 ),
               ),
+              )
             ],
           ),
         ),
-      ),
-    );
+      );
+    
   }
 }

@@ -4,10 +4,12 @@ import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:maxpay/core/constants/snackbar.dart';
 import 'package:maxpay/core/data/model/confirm_dth_model.dart';
+import 'package:maxpay/core/data/model/custoer_info_model.dart';
 import 'package:maxpay/core/data/model/dth_recharge_model.dart';
 import 'package:maxpay/core/data/model/dth_tab_model.dart';
 import 'package:maxpay/core/data/model/search_dth_model.dart';
 import 'package:maxpay/core/domain/usecase/confirm_dth_usecase.dart';
+import 'package:maxpay/core/domain/usecase/customer_info_usecase.dart';
 import 'package:maxpay/core/domain/usecase/dth_recharge_usecase.dart';
 import 'package:maxpay/core/domain/usecase/dth_tab_usecase.dart';
 import 'package:maxpay/core/domain/usecase/search_dth_usecase.dart';
@@ -18,14 +20,17 @@ class DthController extends GetxController {
   final SearchDthUsecase searchdthusecase;
   final ConfirmDthUsecase confirmdthUsecase;
   final DthRechargeUsecase dthrechargeusecase ;
+  final CustomerInfoUsecase customerInfoUsecase ;
 
   DthController({
     required this.dthtabUseCase,
     required this.searchdthusecase,
     required this.confirmdthUsecase,
     required this.dthrechargeusecase,
+    required this.customerInfoUsecase,
   });
-
+  RxBool isCustomerInfoLoading = false.obs;
+  Rx<CustomerInfo?> customerInfo = Rx<CustomerInfo?>(null);
   RxBool isLoading = false.obs;
 RxBool isRechargeLoading = false.obs;
   RxList<DthtabData> planTabs = <DthtabData>[].obs;
@@ -195,4 +200,47 @@ Rx<ConfirmDth?> confirmdth = Rx<ConfirmDth?>(null);
     }
   }
 
+
+  Future<void> getCustomerInfo(String productId, String customerId) async {
+    if (productId.isEmpty || customerId.isEmpty) {
+      Get.snackbar('Error', 'Product ID and Customer ID are required');
+      return;
+    }
+
+    isCustomerInfoLoading.value = true;
+    customerInfo.value = null;
+
+    AppLogger.logError("🚀 [CUSTOMER INFO] Request => productId: $productId, customerId: $customerId");
+
+    final result = await customerInfoUsecase(
+      productId,
+      customerId,
+    );
+
+    result.fold(
+      (failure) {
+        AppLogger.logError("❌ Customer Info Error: ${failure.message}");
+        Get.snackbar('Error', failure.message);
+      },
+      (response) {
+        customerInfo.value = response;
+
+        AppLogger.logError("✅ [CUSTOMER INFO SUCCESS]");
+        AppLogger.logError("📦 Full response: ${response.toJson()}");
+
+        final records = response.data?.records;
+        AppLogger.logError("📋 Records count: ${records?.length ?? 0}");
+
+        if (records != null && records.isNotEmpty) {
+          final first = records.first;
+          AppLogger.logError("🪪 First record => ${first.toJson()}");
+          AppLogger.logError("🏷️ planname value => ${first.planname}");
+        } else {
+          AppLogger.logError("⚠️ Records list is empty or null");
+        }
+      },
+    );
+
+    isCustomerInfoLoading.value = false;
+  }
 }

@@ -50,7 +50,7 @@ class PrePaidController extends GetxController {
     required this.plantabusecase,
     required this.tabdetailusecase,
     required this.downloadusecase,
-    required this.offerRechargeUsecase,
+    required this.offerRechargeUsecase,  
   });
   RxBool isSearching = false.obs;
   RxBool isLoading = false.obs;
@@ -79,7 +79,7 @@ RxList<OfferRecords> offerList = <OfferRecords>[].obs;
   String selectedTabId = "";
   Future<void> getPlans({required String productid}) async {
     try {
-      
+
       isLoading.value = true;
 
       plans.clear();
@@ -88,30 +88,51 @@ RxList<OfferRecords> offerList = <OfferRecords>[].obs;
 
       final result = await planUseCase(productid: productid);
 
-      result.fold(
-        (failure) {
-          CustomToast.error(failure.message);
-        },
-        (response) {
-          print(
-            "API RESPONSE PRODUCT IDS => ${response.data?.map((e) => e.id).toList()}",
-          );
-          response.data?.sort((a, b) => (a.name ?? "").compareTo(b.name ?? ""));
+//       result.fold(
+//         (failure) {
+//           CustomToast.error(failure.message);
+//         },
+//         (response) {
+//           print(
+//             "API RESPONSE PRODUCT IDS => ${response.data?.map((e) => e.id).toList()}",
+//           );
+//           response.data?.sort((a, b) => (a.name ?? "").compareTo(b.name ?? ""));
 
-         plans.assignAll(response.data ?? []);
+//          plans.assignAll(response.data ?? []);
 
-if (plans.isNotEmpty) {
-  selectedPlan.value = plans.first;
+// if (plans.isNotEmpty) {
+//   selectedPlan.value = plans.first;
 
-  defaultOperator.value = plans.first.name ?? "";
-  operatorName.value = defaultOperator.value;
-}
+//   defaultOperator.value = plans.first.name ?? "";
+//   operatorName.value = defaultOperator.value;
+// }
 
-          if (plans.isNotEmpty) {
-            selectedPlan.value = plans.first;
-          }
-        },
-      );
+//           if (plans.isNotEmpty) {
+//             selectedPlan.value = plans.first;
+//           }
+//         },
+//       );
+
+result.fold(
+  (failure) {
+    CustomToast.error(failure.message);
+  },
+  (response) {
+    print(
+      "API RESPONSE PRODUCT IDS => ${response.data?.map((e) => e.id).toList()}",
+    );
+
+    response.data?.sort(
+      (a, b) => (a.name ?? "").compareTo(b.name ?? ""),
+    );
+
+    plans.assignAll(response.data ?? []);
+
+    selectedPlan.value = null;
+    defaultOperator.value = "";
+    operatorName.value = "";
+  },
+);
     } finally {
       isLoading.value = false;
     }
@@ -172,49 +193,32 @@ void resetOperatorSelection() {
 //     },
 //   );
 // }
-
 Future<void> getOffers(String mobile) async {
   try {
-    isLoading.value = true;
-    offerList.clear();
+    print("Offer Loading Started");
 
-    AppLogger.logError("========== OFFER API ==========");
-    AppLogger.logError("Mobile : $mobile");
+    isOfferLoading.value = true;
+    offerList.clear();
 
     final result = await offerRechargeUsecase(mobile);
 
+    print("Offer API Response Received");
+
     result.fold(
       (failure) {
-        AppLogger.logError("❌ OFFER API FAILED");
-        AppLogger.logError("Message : ${failure.message}");
-
+        print("Offer Failed");
         CustomToast.error(failure.message);
       },
       (response) {
-        AppLogger.logError("✅ OFFER API SUCCESS");
-        AppLogger.logError("Status : ${response.status}");
-        AppLogger.logError("Operator : ${response.offers?.operator}");
-        AppLogger.logError("Offer Count : ${response.offers?.records?.length}");
-
-        if (response.offers?.records != null) {
-          for (final offer in response.offers!.records!) {
-            AppLogger.logError(
-              "Amount : ${offer.rs} | Description : ${offer.desc}",
-            );
-          }
-        }
-
+        print("Offer Success");
         offerList.assignAll(response.offers?.records ?? []);
-
-        AppLogger.logError("Offer List Length : ${offerList.length}");
       },
     );
-  } catch (e, stackTrace) {
-    AppLogger.logError("🔥 Exception : $e");
-    AppLogger.logError("StackTrace : $stackTrace");
+  } catch (e) {
+    print(e);
   } finally {
+    print("Offer Loading End");
     isOfferLoading.value = false;
-    AppLogger.logError("========== OFFER API END ==========");
   }
 }
 

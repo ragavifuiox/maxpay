@@ -66,6 +66,17 @@ class ReportPage extends StatelessWidget {
                     },
                     SvgPicture.asset(AssetImages.wallet, width: 24.w),
                   ),
+
+
+                   _buildMenuTile(
+                    context,
+                    'Transfer Detail',
+                    () {
+                      Get.toNamed(AppRoutes.refund);
+                    },
+
+                    SvgPicture.asset(AssetImages.refunds, width: 24.w),
+                  ),
                   _buildMenuTile(
                     context,
                     'Refunds',
@@ -92,6 +103,9 @@ class ReportPage extends StatelessWidget {
                     },
                     SvgPicture.asset(AssetImages.cashback, width: 24.w),
                   ),
+
+
+                  
                   _buildMenuTile(
                     context,
                     'Statement',
@@ -99,6 +113,22 @@ class ReportPage extends StatelessWidget {
                       Get.toNamed(AppRoutes.statement);
                     },
                     SvgPicture.asset(AssetImages.dispute, width: 21.w),
+                  ),
+                  _buildMenuTile(
+                    context,
+                    'Staff List',
+                    () {
+                      Get.toNamed(AppRoutes.stafflist);
+                    },
+                    SvgPicture.asset(AssetImages.stafflist, width: 21.w),
+                  ),
+                  _buildMenuTile(
+                    context,
+                    'Grade',
+                    () {
+                      Get.toNamed(AppRoutes.grade);
+                    },
+                    SvgPicture.asset(AssetImages.grade, width: 21.w),
                   ),
                 ],
               ),

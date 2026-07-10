@@ -3,13 +3,14 @@ import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:maxpay/controllers/support_controller.dart';
+import 'package:maxpay/core/di/service_locator.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SupportScreen extends StatelessWidget {
   SupportScreen({super.key});
 
-  final SupportController controller = Get.find<SupportController>();
+  final SupportController controller = Get.put(SupportController(supportUseCase: sl()));
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +18,12 @@ class SupportScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
-      appBar: const CommonAppBar(title: "Support"),
+   appBar: AppBar(
+  automaticallyImplyLeading: false,
+  titleSpacing: 19,
+  title: const Text("Support"),
+
+),
       body: Obx(() {
         if (controller.isLoading.value) {
           return const Center(

@@ -11,6 +11,7 @@ import 'package:maxpay/core/extensions/currency.dart';
 import 'package:maxpay/core/utils/logg_helper.dart';
 import 'package:maxpay/global_widget/commom_button.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
+import 'package:maxpay/view/dth_recharge/dth_failed_recharge_screen.dart';
 import 'package:maxpay/view/dth_recharge/dth_success_page.dart';
 
 import 'package:get/get.dart';
@@ -36,6 +37,14 @@ class ConfirmDthPage extends GetView<DthController> {
     final String customerId = args['customerId'] ?? '';
 
     final String selectedAmount = args['amount']?.toString() ?? '';
+
+    print("========== Confirm DTH ==========");
+print("Arguments: $args");
+print("Customer ID: $customerId");
+print("Amount: $selectedAmount");
+print("Product ID: ${args['productdetid']}");
+
+
 
     print("SELECTED AMOUNT => $selectedAmount");
 
@@ -89,7 +98,7 @@ class ConfirmDthPage extends GetView<DthController> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                'Product Name',
+                                'Product ',
                                 style: TextStyle(
                                   color: Colors.grey,
                                   fontSize: 14.sp,
@@ -198,9 +207,15 @@ class ConfirmDthPage extends GetView<DthController> {
                         // }
 
                         if (amountController.text.trim().isEmpty) {
-                          CustomToast.error("Please enter amount");
-                          return;
-                        }
+  CustomToast.error("Please enter amount");
+  return;
+}
+
+// Validate entered amount with selected amount
+if (amountController.text.trim() != selectedAmount.trim()) {
+  CustomToast.error("Entered amount does not match the transaction amount");
+  return;
+}
 
                         final args = Get.arguments ?? {};
 
@@ -212,7 +227,9 @@ class ConfirmDthPage extends GetView<DthController> {
                             "productName": confirmData.productName ?? '',
                             "paymentStatus": confirmData.paymentStatus ?? '',
                             "transactionNo": customerId,
-                            "transactionAmount": amountController.text,
+"transactionAmount": amountController.text.trim().isNotEmpty
+    ? amountController.text.trim()
+    : selectedAmount,
                            "whatsappNumber": whatsappController.text.trim().isEmpty
     ? "N/A"
     : whatsappController.text.trim(),
@@ -241,20 +258,22 @@ class ConfirmDthPage extends GetView<DthController> {
                             ? null
                             : () async {
                                 if (whatsappController.text.trim().isEmpty) {
-                                  Get.snackbar(
-                                    "Validation",
-                                    "Please enter WhatsApp number",
-                                  );
-                                  return;
+                                 if (amountController.text.trim().isEmpty) {
+                                   CustomToast.error("Please enter amount");
+ 
+  return;
+}
+
+// Validate entered amount with selected amount
+if (amountController.text.trim() != selectedAmount.trim()) {
+  CustomToast.error("Entered amount does not match the transaction amount");
+  
+  return;
+}
+                                
                                 }
 
-                                if (amountController.text.trim().isEmpty) {
-                                  Get.snackbar(
-                                    "Validation",
-                                    "Please enter amount",
-                                  );
-                                  return;
-                                }
+                             
 
                                 print(
                                   "ARGS PRODUCT ID => ${args['productdetid']}",
@@ -277,37 +296,48 @@ class ConfirmDthPage extends GetView<DthController> {
                                 final rechargeData =
                                     controller.rechargeResponse.value;
 
-                                if (success && rechargeData != null) {
-                                  final apiData = rechargeData.data?.data;
+                               if (rechargeData != null) {
+  final apiData = rechargeData.data?.data;
 
-                                  Get.to(
-                                    () => DthSuccessPage(
-                                      productName:
-                                          // apiData?.logo ??
-                                          confirmData.productName ?? "",
-                                      // operatorLogo: apiData?.customerid ?? "",
-                                      operatorInitial:
-                                          (apiData?.operatorName?.isNotEmpty ??
-                                              false)
-                                          ? apiData!.operatorName![0]
-                                          : "J",
+  final status =
+      rechargeData.status?.toLowerCase() ?? "";
 
-                                      operatorColor: Colors.red,
-
-                                      transactionNo:
-                                          apiData?.mobileno ?? customerId,
-
-                                      rechargeAmount:
-                                          (apiData?.amount ??
-                                                  amountController.text)
-                                              .currencyIndian,
-
-                                      transactionId: apiData?.txnid ?? "",
-
-                                      dateTime: apiData?.requestDatetime ?? "",
-                                    ),
-                                  );
-                                }
+  if (success && status == "success") {
+    Get.to(
+      () => DthSuccessPage(
+        productName: confirmData.productName ?? "",
+        operatorInitial:
+            (apiData?.operatorName?.isNotEmpty ?? false)
+                ? apiData!.operatorName![0]
+                : "J",
+        operatorColor: Colors.red,
+        transactionNo: apiData?.mobileno ?? customerId,
+        rechargeAmount:
+            (apiData?.amount ?? amountController.text)
+                .currencyIndian,
+        transactionId: apiData?.txnid ?? "",
+        dateTime: apiData?.requestDatetime ?? "",
+      ),
+    );
+  } else {
+    Get.to(
+      () => DthFailedRechargeScreen(
+        productName: confirmData.productName ?? "",
+        operatorInitial:
+            (apiData?.operatorName?.isNotEmpty ?? false)
+                ? apiData!.operatorName![0]
+                : "J",
+        operatorColor: Colors.red,
+        transactionNo: apiData?.mobileno ?? customerId,
+        rechargeAmount:
+            (apiData?.amount ?? amountController.text)
+                .currencyIndian,
+        transactionId: apiData?.txnid ?? "",
+        dateTime: apiData?.requestDatetime ?? "",
+      ),
+    );
+  }
+}
                               },
                       ),
                     ),

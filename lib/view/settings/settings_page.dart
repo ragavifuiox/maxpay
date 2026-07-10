@@ -92,17 +92,15 @@ class SettingsPage extends StatelessWidget {
                     },
                     SvgPicture.asset(AssetImages.profile, width: 24.w),
                   ),
-                  _buildMenuTile(
+                   _buildMenuTile(
                     context,
-                    'Staff List',
+                    'Cashback',
                     () {
-                      Get.toNamed(AppRoutes.stafflist);
+                      Get.toNamed(AppRoutes.cashback);
                     },
-                    SvgPicture.asset(AssetImages.stafflist, width: 24.w),
+                    SvgPicture.asset(AssetImages.cashback, width: 24.w),
                   ),
-                  _buildMenuTile(context, 'Grade', () {
-                    Get.toNamed(AppRoutes.grade);
-                  }, SvgPicture.asset(AssetImages.grade, width: 24.w)),
+                  
                   _buildMenuTile(context, 'KYC', () {
                     Get.toNamed(AppRoutes.kyc);
                   }, SvgPicture.asset(AssetImages.kyc, width: 24.w)),
@@ -129,14 +127,7 @@ class SettingsPage extends StatelessWidget {
                     ),
                   ),
 
-                  _buildMenuTile(
-                    context,
-                    'Cashback',
-                    () {
-                      Get.toNamed(AppRoutes.cashback);
-                    },
-                    SvgPicture.asset(AssetImages.cashback, width: 24.w),
-                  ),
+                 
 
                   _buildMenuTile(
                     context,

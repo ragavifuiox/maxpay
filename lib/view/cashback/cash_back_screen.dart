@@ -163,9 +163,8 @@ class CashbackScreen extends GetView<CashbackController> {
                     return CashbackTile(
                       name: item.name ?? '',
                       logo: item.logo ?? '',
-                      cashback:
-                          item.debitCommission ??
-                              '0',
+                     cashback: "${item.debitCommission ?? '0'}%",
+                              
                       cashbackColor:
                           commission >= 0
                               ? Colors.green

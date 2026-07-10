@@ -12,6 +12,7 @@ import 'package:maxpay/core/extensions/currency.dart';
 import 'package:maxpay/core/utils/logg_helper.dart';
 import 'package:maxpay/global_widget/commom_button.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
+import 'package:maxpay/view/recharge/failed_recharge_page.dart';
 import 'package:maxpay/view/recharge/success_recharge_page.dart';
 
 import 'package:get/get.dart';
@@ -41,12 +42,10 @@ String get enteredAmount => (args["amount"] ?? "").toString();
     final String mobileNumber = args['mobileNumber'] ?? '';
     // final String productId = args['productId'] ?? '';
     whatsappController.text = mobileNumber;
-    if (amountController.text.isEmpty) {
-  amountController.text = enteredAmount;
-}
+
     return Obx(() {
       final confirmData = controller.transConfirmData.value?.data;
-      // final operatorLogo = confirmData?.logo ?? '';
+     
 
       if (controller.isLoading.value) {
         return const Scaffold(body: Center(child: CircularProgressIndicator()));
@@ -90,7 +89,7 @@ String get enteredAmount => (args["amount"] ?? "").toString();
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              'Product Name',
+                              'Product',
                               style: TextStyle(
                                 color: Colors.grey,
                                 fontSize: 14.sp,
@@ -298,7 +297,17 @@ String get enteredAmount => (args["amount"] ?? "").toString();
                               //   );
                               //   return;
                               // }
+// if (amountController.text.trim().isEmpty) {
+//   CustomToast.error("Please re-enter amount");
+//   return;
+// }
 
+// if (amountController.text.trim() != enteredAmount.trim()) {
+//   CustomToast.error(
+//     "Re-entered amount does not match the transaction amount",
+//   );
+//   return;
+// }
                               if (amountController.text.trim().isEmpty) {
                                 Get.snackbar(
                                   "Validation",
@@ -306,7 +315,15 @@ String get enteredAmount => (args["amount"] ?? "").toString();
                                 );
                                 return;
                               }
+final entered = double.tryParse(enteredAmount.trim()) ?? 0.0;
+final reEntered = double.tryParse(amountController.text.trim()) ?? 0.0;
 
+if (entered != reEntered) {
+  CustomToast.error(
+    "Re-entered amount does not match the transaction amount",
+  );
+  return;
+}
                               AppLogger.debugPrint(
                                 "👉 FINAL PRODUCT ID: ${controller.productdetid}",
                               );
@@ -355,15 +372,57 @@ String get enteredAmount => (args["amount"] ?? "").toString();
                               // }
 
 
-                              final rechargeData = controller.rechargeResponse.value;
+//                               final rechargeData = controller.rechargeResponse.value;
+
+// if (success && rechargeData != null) {
+//   final apiData = rechargeData.data?.apiResponse;
+
+//   Get.to(
+//     () => SuccessRechargePage(
+//       rechargeId: rechargeData.data?.recharge?.id?.toString() ?? "",
+//       productName: apiData?.logo ?? confirmData.productName ?? "",
+//       operatorLogo: apiData?.logo ?? "",
+//       operatorInitial:
+//           (apiData?.operatorName?.isNotEmpty ?? false)
+//               ? apiData!.operatorName![0]
+//               : "J",
+//       operatorColor: Colors.red,
+//       transactionNo: apiData?.mobileno ?? mobileNumber,
+//       rechargeAmount:
+//           (apiData?.amount ?? amountController.text).currencyIndian,
+//       transactionId: apiData?.txnid ?? "",
+//       dateTime: apiData?.requestDatetime ?? "",
+//     ),
+//   );
+// }
+
+
+final rechargeData = controller.rechargeResponse.value;
+final apiData = rechargeData?.data?.apiResponse;
 
 if (success && rechargeData != null) {
-  final apiData = rechargeData.data?.apiResponse;
-
   Get.to(
     () => SuccessRechargePage(
       rechargeId: rechargeData.data?.recharge?.id?.toString() ?? "",
-      productName: apiData?.logo ?? confirmData.productName ?? "",
+      productName: apiData?.operatorName ?? confirmData.productName ?? "",
+      operatorLogo: apiData?.logo ?? "",
+      operatorInitial:
+          (apiData?.operatorName?.isNotEmpty ?? false)
+              ? apiData!.operatorName![0]
+              : "J",
+      operatorColor: Colors.green,
+      transactionNo: apiData?.mobileno ?? mobileNumber,
+      rechargeAmount:
+          (apiData?.amount ?? amountController.text).currencyIndian,
+      transactionId: apiData?.txnid ?? "",
+      dateTime: apiData?.requestDatetime ?? "",
+    ),
+  );
+} else {
+  Get.to(
+    () => FailedRechargePage(
+      rechargeId: rechargeData?.data?.recharge?.id?.toString() ?? "",
+      productName: apiData?.operatorName ?? confirmData.productName ?? "",
       operatorLogo: apiData?.logo ?? "",
       operatorInitial:
           (apiData?.operatorName?.isNotEmpty ?? false)

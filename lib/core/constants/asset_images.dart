@@ -73,6 +73,10 @@ class AssetImages {
   static const edit1 = "assets/images/edit1.svg";
   static const review = "assets/images/review.svg";
   static const whatsapp = "assets/images/whatsapp.svg";
+  static const successIcon = "assets/images/tik-service.svg";
+  static const processIcon = "assets/images/ser-processing - Copy.svg";
+ 
+  static const failedIcon = "assets/images/close-circle.svg";
 }
 
 SizedBox adjustWidth(double width) {
@@ -84,8 +88,6 @@ SizedBox adjustHieght(double height) {
 }
 
 //  privacy_policy and terms_condition links
-const privacyPolicy = 'https://kathalan.in/privacy_policy';
-const termsCondition = 'https://kathalan.in/terms_condition';
 
 Duration animationDuration = const Duration(milliseconds: 300);
 

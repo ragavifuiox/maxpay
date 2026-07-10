@@ -115,6 +115,7 @@ class TransrepData {
   String? status;
   String? dateTime;
   String? logo;
+  String? producttype;
 
   TransrepData(
       {this.id,
@@ -124,11 +125,13 @@ class TransrepData {
       this.amount,
       this.status,
       this.dateTime,
-      this.logo});
+      this.logo,
+      this.producttype});
 
   TransrepData.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     transactionId = json['transaction_id'];
+    producttype = json['product_type'];
     operator = json['operator'];
     mobile = json['mobile'];
     amount = json['amount'];
@@ -147,6 +150,7 @@ class TransrepData {
     data['status'] = status;
     data['date_time'] = dateTime;
     data['logo'] = logo;
+    data['producttype'] =producttype;
     return data;
   }
 }

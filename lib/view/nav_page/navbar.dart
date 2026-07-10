@@ -14,7 +14,7 @@ class CustomBottomNavBar extends GetView<NavbarController> {
     {"image": AssetImages.home, "label": "Home"},
     {"image": AssetImages.report, "label": "Report"},
     {"image": AssetImages.request, "label": "Request"},
-    {"image": AssetImages.qr, "label": "My QR"},
+    {"image": AssetImages.support, "label": "Support"},
     {"image": AssetImages.settings, "label": "Settings"},
   ];
 

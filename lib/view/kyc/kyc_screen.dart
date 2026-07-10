@@ -167,7 +167,7 @@ class UploadCard extends StatelessWidget {
       onTap: onTap,
       child: Container(
   width: double.infinity,
-  height: 220,
+  height: 130,
   decoration: BoxDecoration(
     borderRadius: BorderRadius.circular(12),
     border: Border.all(color: theme.colorScheme.outline),

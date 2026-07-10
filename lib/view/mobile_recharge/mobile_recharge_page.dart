@@ -35,7 +35,7 @@ class MobileRechargePage extends StatefulWidget {
 
 class _MobileRechargePageState extends State<MobileRechargePage>
     with SingleTickerProviderStateMixin {
-  late TabController _tabController;
+  TabController? _tabController;
   String selectedProductId = '';
   String selectedOperator = '';
   String selectedTabId = "";
@@ -53,7 +53,7 @@ bool showNextButton = false;
   final TextEditingController searchController = TextEditingController();
   Timer? _debounce;
   bool isPlanLoaded = false;
-  bool isPaymentReceived = false;
+  bool? isPaymentReceived;
   bool showOperatorDropdown = true;
   @override
   void initState() {
@@ -88,18 +88,17 @@ bool showNextButton = false;
     controller.selectedTabId = selectedTabId; // FIX
 
     controller.applyTabFilter();
+_tabController!.addListener(() {
+  if (_tabController!.indexIsChanging) return;
 
-    _tabController.addListener(() {
-      if (_tabController.indexIsChanging) return;
+  final tab = controller.planTabs[_tabController!.index];
 
-      final tab = controller.planTabs[_tabController.index];
+  selectedTabId = tab.id.toString();
 
-      selectedTabId = tab.id.toString();
+  controller.selectedTabId = selectedTabId;
 
-      controller.selectedTabId = selectedTabId;
-
-      controller.applyTabFilter();
-    });
+  controller.applyTabFilter();
+});
 
     setState(() {});
   }
@@ -107,8 +106,7 @@ bool showNextButton = false;
   @override
   void dispose() {
     _debounce?.cancel();
-
-    _tabController.dispose();
+    _tabController?.dispose();
     mobileController.dispose();
     amountController.dispose();
     searchController.dispose();
@@ -652,8 +650,8 @@ Obx(() {
                     if ((operator.logo ?? "").isNotEmpty)
                       Image.network(
                         operator.logo!,
-                        width: 24,
-                        height: 24,
+                        width: 40,
+                        height: 40,
                       ),
                     const SizedBox(width: 10),
                     Expanded(
@@ -826,15 +824,15 @@ Container(
                 },
                 child: Row(
                   children: [
-                    Checkbox(
-                      value: !isPaymentReceived,
-                      activeColor: Colors.red,
-                      onChanged: (_) {
-                        setState(() {
-                          isPaymentReceived = false;
-                        });
-                      },
-                    ),
+                   Checkbox(
+  value: isPaymentReceived == false,
+  activeColor: Colors.red,
+  onChanged: (_) {
+    setState(() {
+      isPaymentReceived = false;
+    });
+  },
+),
                     Text(
                       "Pending    ",
                       style: TextStyle(
@@ -856,15 +854,15 @@ Container(
                 },
                 child: Row(
                   children: [
-                    Checkbox(
-                      value: isPaymentReceived,
-                      activeColor: Colors.green,
-                      onChanged: (_) {
-                        setState(() {
-                          isPaymentReceived = true;
-                        });
-                      },
-                    ),
+                   Checkbox(
+  value: isPaymentReceived == true,
+  activeColor: Colors.green,
+  onChanged: (_) {
+    setState(() {
+      isPaymentReceived = true;
+    });
+  },
+),
                     Text(
                       "Paid",
                       style: TextStyle(
@@ -910,19 +908,38 @@ Row(
   'Offer',
   isSelected: !isPlanSelected,
   onTap: () async {
-    setState(() {
-      isPlanSelected = false;
-    });
+  print("========== OFFER BUTTON CLICK ==========");
 
-    final mobile = mobileController.text.trim();
+  setState(() {
+    isPlanSelected = false;
+  });
 
-    if (mobile.length != 10) {
-      CustomToast.error("Please enter valid mobile number");
-      return;
+  final mobile = mobileController.text.trim();
+
+  print("Mobile Number : $mobile");
+
+  if (mobile.length != 10) {
+    print("Invalid Mobile Number");
+    CustomToast.error("Please enter valid mobile number");
+    return;
+  }
+
+  print("Calling getOffers API...");
+
+  await controller.getOffers(mobile);
+
+  print("API Completed");
+  print("Offer Count : ${controller.offerList.length}");
+
+  if (controller.offerList.isNotEmpty) {
+    for (final offer in controller.offerList) {
+      print("Amount : ${offer.rs}");
+      print("Description : ${offer.desc}");
     }
+  }
 
-    await controller.getOffers(mobile);
-  },
+  print("========== END ==========");
+},
 ),
       ],
     ),
@@ -930,41 +947,104 @@ Row(
     // Right Side
     if (showNextButton)
       GestureDetector(
+        // onTap: () async {
+        //   String mobile = mobileController.text.trim();
+        //   String amount = amountController.text.trim();
+
+        //   if (mobile.length != 10) {
+        //     CustomToast.error("Please enter valid mobile number");
+        //     return;
+        //   }
+
+        //   if (controller.selectedPlan.value == null) {
+        //     CustomToast.error("Please select operator");
+        //     return;
+        //   }
+
+        //   if (amount.isEmpty) {
+        //     CustomToast.error("Please enter amount");
+        //     return;
+        //   }
+
+        //   if (isPaymentReceived != true) {
+        //     CustomToast.error("Please confirm customer payment received");
+        //     return;
+        //   }
+
+        //   await controller.confirmtrans(selectedProductId);
+
+        //   Get.toNamed(
+        //     AppRoutes.transconfirm,
+        //     arguments: {
+        //       "mobileNumber": mobile,
+        //       "productdetid": selectedProductId,
+        //       "amount": amount,
+        //     },
+        //   );
+        // },
+
+
         onTap: () async {
-          String mobile = mobileController.text.trim();
-          String amount = amountController.text.trim();
+  String mobile = mobileController.text.trim();
+  String amount = amountController.text.trim();
 
-          if (mobile.length != 10) {
-            CustomToast.error("Please enter valid mobile number");
-            return;
-          }
+  print("========== Recharge Validation ==========");
+  print("Mobile Number      : $mobile");
+  print("Amount             : $amount");
+  print("Selected ProductID : $selectedProductId");
+  print("Selected Operator  : $selectedOperator");
+  print("Selected Plan      : ${controller.selectedPlan.value}");
+  print("Payment Received   : $isPaymentReceived");
+  print("=========================================");
 
-          if (controller.selectedPlan.value == null) {
-            CustomToast.error("Please select operator");
-            return;
-          }
+  // Mobile validation
+  if (mobile.isEmpty) {
+    CustomToast.error("Please enter mobile number");
+    return;
+  }
 
-          if (amount.isEmpty) {
-            CustomToast.error("Please enter amount");
-            return;
-          }
+  if (mobile.length != 10) {
+    CustomToast.error("Please enter valid mobile number");
+    return;
+  }
 
-          if (!isPaymentReceived) {
-            CustomToast.error("Please confirm customer payment received");
-            return;
-          }
+  // Operator validation
+  if (controller.selectedPlan.value == null) {
+    CustomToast.error("Please select operator");
+    return;
+  }
 
-          await controller.confirmtrans(selectedProductId);
+  // Product ID validation
+  if (selectedProductId.isEmpty) {
+    CustomToast.error("Product ID not found. Please select operator again.");
+    return;
+  }
 
-          Get.toNamed(
-            AppRoutes.transconfirm,
-            arguments: {
-              "mobileNumber": mobile,
-              "productdetid": selectedProductId,
-              "amount": amount,
-            },
-          );
-        },
+  // Amount validation
+  if (amount.isEmpty) {
+    CustomToast.error("Please enter amount");
+    return;
+  }
+
+  // Payment validation
+  if (isPaymentReceived != true) {
+    CustomToast.error("Please confirm customer payment received");
+    return;
+  }
+
+  print("Calling confirmtrans() with Product ID: $selectedProductId");
+
+  await controller.confirmtrans(selectedProductId);
+
+  Get.toNamed(
+    AppRoutes.transconfirm,
+    arguments: {
+      "mobileNumber": mobile,
+      "productdetid": selectedProductId,
+      "amount": amount,
+    },
+  );
+},
         child: Container(
           padding: EdgeInsets.symmetric(horizontal: 39.w, vertical: 10.h),
           decoration: BoxDecoration(
@@ -988,32 +1068,28 @@ Row(
               SizedBox(height: 20.h),
 
               /// TABBAR
-              Obx(() {
-                if (controller.planTabs.isEmpty ||
-                    _tabController.length != controller.planTabs.length) {
-                  return const SizedBox();
-                }
-
-                return TabBar(
-                  controller: _tabController,
-                  isScrollable: true,
-
-                  indicatorColor: isDark
-                      ? Colors.orange
-                      : AppColors.clrSecondary,
-
-                  labelColor: isDark ? Colors.orange : AppColors.clrSecondary,
-
-                  unselectedLabelColor: Colors.grey,
-
-                  dividerColor: Colors.transparent,
-                  tabAlignment: TabAlignment.start,
-
-                  tabs: controller.planTabs.map((tab) {
-                    return Tab(text: tab.planType ?? "");
-                  }).toList(),
-                );
-              }),
+            if (isPlanSelected)
+  (_tabController == null ||
+          controller.planTabs.isEmpty ||
+          _tabController!.length != controller.planTabs.length)
+      ? const Center(child: CircularProgressIndicator())
+      : TabBar(
+          controller: _tabController!,
+          isScrollable: true,
+          indicatorColor: isDark
+              ? Colors.orange
+              : AppColors.clrSecondary,
+          labelColor: isDark
+              ? Colors.orange
+              : AppColors.clrSecondary,
+          unselectedLabelColor: Colors.grey,
+          dividerColor: Colors.transparent,
+          tabAlignment: TabAlignment.start,
+          tabs: controller.planTabs
+              .map((tab) => Tab(text: tab.planType ?? ""))
+              .toList(),
+        ),
+  
 
               SizedBox(height: 15.h),
               
