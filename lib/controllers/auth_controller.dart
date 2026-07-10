@@ -14,6 +14,8 @@ import 'package:maxpay/core/services/local_storage_service.dart';
 import 'package:maxpay/core/utils/device_info.dart';
 import 'package:maxpay/core/utils/logg_helper.dart';
 import 'package:maxpay/view/nav_page/navbar_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:sim_card_code/sim_card_code.dart';
 
 class AuthController extends GetxController {
   final LoginUseCase loginUseCase;
@@ -67,7 +69,6 @@ class AuthController extends GetxController {
 
       final enteredPhone = phoneController.text.trim();
 
-      /*
       // 1. Request phone permission
       var status = await Permission.phone.status;
       if (!status.isGranted) {
@@ -138,7 +139,6 @@ class AuthController extends GetxController {
         );
         return;
       }
-      */
 
       final result = await loginUseCase(
         enteredPhone,
@@ -191,14 +191,12 @@ class AuthController extends GetxController {
           AppLogger.logError("OTP : ${otp.value}");
           AppLogger.logError("PHONE : ${phoneNumber.value}");
 
-        CustomToast.success("OTP: ${otp.value}");
+          CustomToast.success("OTP: ${otp.value}");
 
-Get.toNamed(
-  AppRoutes.otpVerification,
-  arguments: {
-    "phone": phoneNumber.value,
-  },
-);
+          Get.toNamed(
+            AppRoutes.otpVerification,
+            arguments: {"phone": phoneNumber.value},
+          );
         },
       );
     } catch (e) {
@@ -325,23 +323,19 @@ Get.toNamed(
           "last_active_time",
           DateTime.now().toIso8601String(),
         );
-         final historyController = Get.put(
-        LoginHistoryController(
-          loginHistoryUsecase: sl(),
-        ),
-      );
+        final historyController = Get.put(
+          LoginHistoryController(loginHistoryUsecase: sl()),
+        );
 
-      historyController.fromDate =
-          DateTime.now().toString().split(' ')[0];
+        historyController.fromDate = DateTime.now().toString().split(' ')[0];
 
-      historyController.toDate =
-          DateTime.now().toString().split(' ')[0];
+        historyController.toDate = DateTime.now().toString().split(' ')[0];
 
-      historyController.search = "";
+        historyController.search = "";
 
-      await historyController.LoginHistory();
+        await historyController.LoginHistory();
 
-      Get.offAllNamed(AppRoutes.main);
+        Get.offAllNamed(AppRoutes.main);
       } else {
         CustomToast.error("Fingerprint authentication failed");
       }
@@ -375,10 +369,7 @@ Get.toNamed(
 
             AppLogger.logError("NEW OTP : ${otp.value}");
 
-            
-        CustomToast.success(
-             "OTP Resent Successfully\nOTP: ${otp.value}",
-         );
+            CustomToast.success("OTP Resent Successfully\nOTP: ${otp.value}");
           } else {
             CustomToast.error(response.message ?? "Failed");
           }
@@ -493,38 +484,40 @@ Get.toNamed(
           //   return false;
           // }
 
-if (response.success == true) {
-  CustomToast.success(response.message ?? "PIN Verified");
+          if (response.success == true) {
+            CustomToast.success(response.message ?? "PIN Verified");
 
-  AppLogger.logError("PIN VERIFIED SUCCESSFULLY");
+            AppLogger.logError("PIN VERIFIED SUCCESSFULLY");
 
-  await storage.saveString(
-    "last_active_time",
-    DateTime.now().toIso8601String(),
-  );
+            await storage.saveString(
+              "last_active_time",
+              DateTime.now().toIso8601String(),
+            );
 
-  final historyController =Get.put(LoginHistoryController(loginHistoryUsecase:sl() ));
+            final historyController = Get.put(
+              LoginHistoryController(loginHistoryUsecase: sl()),
+            );
 
-  historyController.fromDate =
-      DateTime.now().toString().split(' ')[0];
+            historyController.fromDate = DateTime.now().toString().split(
+              ' ',
+            )[0];
 
-  historyController.toDate =
-      DateTime.now().toString().split(' ')[0];
+            historyController.toDate = DateTime.now().toString().split(' ')[0];
 
-  historyController.search = "";
+            historyController.search = "";
 
-  await historyController.LoginHistory();
+            await historyController.LoginHistory();
 
-  Get.offAllNamed(AppRoutes.main);
+            Get.offAllNamed(AppRoutes.main);
 
-  return true;
-} else {
-  CustomToast.error(response.message ?? "Invalid PIN");
+            return true;
+          } else {
+            CustomToast.error(response.message ?? "Invalid PIN");
 
-  AppLogger.logError("INVALID PIN ENTERED");
+            AppLogger.logError("INVALID PIN ENTERED");
 
-  return false;
-}
+            return false;
+          }
         },
       );
     } catch (e) {
@@ -613,8 +606,8 @@ if (response.success == true) {
             await storage.remove("auth_token");
             await storage.remove("user_id");
             await storage.remove("last_active_time");
-             phoneController.clear();
-             
+            phoneController.clear();
+
             Get.offAllNamed(AppRoutes.loginPhoneName);
             Get.find<NavbarController>().setIndex(0);
           } else {
