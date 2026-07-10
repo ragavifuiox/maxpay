@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:local_auth/local_auth.dart';
+import 'package:maxpay/controllers/login_history_controller.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/core/constants/snackbar.dart';
+import 'package:maxpay/core/di/service_locator.dart';
 import 'package:maxpay/core/domain/usecase/create_pin_usecase.dart';
 import 'package:maxpay/core/domain/usecase/finger_print_usecase.dart';
 import 'package:maxpay/core/domain/usecase/login_usecase.dart';
@@ -323,7 +325,23 @@ Get.toNamed(
           "last_active_time",
           DateTime.now().toIso8601String(),
         );
-        Get.offAllNamed(AppRoutes.main);
+         final historyController = Get.put(
+        LoginHistoryController(
+          loginHistoryUsecase: sl(),
+        ),
+      );
+
+      historyController.fromDate =
+          DateTime.now().toString().split(' ')[0];
+
+      historyController.toDate =
+          DateTime.now().toString().split(' ')[0];
+
+      historyController.search = "";
+
+      await historyController.LoginHistory();
+
+      Get.offAllNamed(AppRoutes.main);
       } else {
         CustomToast.error("Fingerprint authentication failed");
       }
@@ -455,25 +473,58 @@ Get.toNamed(
           AppLogger.logError("SUCCESS: ${response.success}");
           AppLogger.logError("MESSAGE: ${response.message}");
 
-          if (response.success == true) {
-            CustomToast.success(response.message ?? "PIN Verified");
+          // if (response.success == true) {
+          //   CustomToast.success(response.message ?? "PIN Verified");
 
-            AppLogger.logError("PIN VERIFIED SUCCESSFULLY");
-            await storage.saveString(
-              "last_active_time",
-              DateTime.now().toIso8601String(),
-            );
+          //   AppLogger.logError("PIN VERIFIED SUCCESSFULLY");
+          //   await storage.saveString(
+          //     "last_active_time",
+          //     DateTime.now().toIso8601String(),
+          //   );
 
-            Get.offAllNamed(AppRoutes.main);
+          //   Get.offAllNamed(AppRoutes.main);
 
-            return true;
-          } else {
-            CustomToast.error(response.message ?? "Invalid PIN");
+          //   return true;
+          // } else {
+          //   CustomToast.error(response.message ?? "Invalid PIN");
 
-            AppLogger.logError("INVALID PIN ENTERED");
+          //   AppLogger.logError("INVALID PIN ENTERED");
 
-            return false;
-          }
+          //   return false;
+          // }
+
+if (response.success == true) {
+  CustomToast.success(response.message ?? "PIN Verified");
+
+  AppLogger.logError("PIN VERIFIED SUCCESSFULLY");
+
+  await storage.saveString(
+    "last_active_time",
+    DateTime.now().toIso8601String(),
+  );
+
+  final historyController =Get.put(LoginHistoryController(loginHistoryUsecase:sl() ));
+
+  historyController.fromDate =
+      DateTime.now().toString().split(' ')[0];
+
+  historyController.toDate =
+      DateTime.now().toString().split(' ')[0];
+
+  historyController.search = "";
+
+  await historyController.LoginHistory();
+
+  Get.offAllNamed(AppRoutes.main);
+
+  return true;
+} else {
+  CustomToast.error(response.message ?? "Invalid PIN");
+
+  AppLogger.logError("INVALID PIN ENTERED");
+
+  return false;
+}
         },
       );
     } catch (e) {
@@ -562,7 +613,8 @@ Get.toNamed(
             await storage.remove("auth_token");
             await storage.remove("user_id");
             await storage.remove("last_active_time");
-
+             phoneController.clear();
+             
             Get.offAllNamed(AppRoutes.loginPhoneName);
             Get.find<NavbarController>().setIndex(0);
           } else {

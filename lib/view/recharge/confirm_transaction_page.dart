@@ -12,6 +12,7 @@ import 'package:maxpay/core/extensions/currency.dart';
 import 'package:maxpay/core/utils/logg_helper.dart';
 import 'package:maxpay/global_widget/commom_button.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
+import 'package:maxpay/view/recharge/failed_recharge_page.dart';
 import 'package:maxpay/view/recharge/success_recharge_page.dart';
 
 import 'package:get/get.dart';
@@ -22,9 +23,10 @@ class ConfirmTransactionPage extends GetView<PrePaidController> {
 
   TextEditingController amountController = TextEditingController();
   ConfirmTransactionPage({super.key});
+late String productdetid;
 
-  late String productdetid;
-  final args = Get.arguments ?? {};
+final args = Get.arguments ?? {};
+String get enteredAmount => (args["amount"] ?? "").toString();
   String get type => args["type"] ?? "mobile";
 
   void setProductId(String id) {
@@ -40,9 +42,10 @@ class ConfirmTransactionPage extends GetView<PrePaidController> {
     final String mobileNumber = args['mobileNumber'] ?? '';
     // final String productId = args['productId'] ?? '';
     whatsappController.text = mobileNumber;
+
     return Obx(() {
       final confirmData = controller.transConfirmData.value?.data;
-      // final operatorLogo = confirmData?.logo ?? '';
+     
 
       if (controller.isLoading.value) {
         return const Scaffold(body: Center(child: CircularProgressIndicator()));
@@ -86,7 +89,7 @@ class ConfirmTransactionPage extends GetView<PrePaidController> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              'Product Name',
+                              'Product',
                               style: TextStyle(
                                 color: Colors.grey,
                                 fontSize: 14.sp,
@@ -128,14 +131,17 @@ class ConfirmTransactionPage extends GetView<PrePaidController> {
                         const Color(0xffE0E4FF),
                       ),
 
-                      _buildAmountBox(
-                        context,
-                        'Transaction Amount',
-                        confirmData.transactionAmount?.currencyIndian ?? "0",
-                        Colors.red,
-                        const Color(0xffFFE5E5),
-                        const Color(0xffFFE4E8),
-                      ),
+                  _buildAmountBox(
+  context,
+  'Transaction Amount',
+  (enteredAmount.isNotEmpty
+          ? enteredAmount
+          : (confirmData.transactionAmount ?? "0"))
+      .currencyIndian,
+  Colors.red,
+  const Color(0xffFFE5E5),
+  const Color(0xffFFE4E8),
+),
 
                       _buildAmountBox(
                         context,
@@ -291,7 +297,17 @@ class ConfirmTransactionPage extends GetView<PrePaidController> {
                               //   );
                               //   return;
                               // }
+// if (amountController.text.trim().isEmpty) {
+//   CustomToast.error("Please re-enter amount");
+//   return;
+// }
 
+// if (amountController.text.trim() != enteredAmount.trim()) {
+//   CustomToast.error(
+//     "Re-entered amount does not match the transaction amount",
+//   );
+//   return;
+// }
                               if (amountController.text.trim().isEmpty) {
                                 Get.snackbar(
                                   "Validation",
@@ -299,7 +315,15 @@ class ConfirmTransactionPage extends GetView<PrePaidController> {
                                 );
                                 return;
                               }
+final entered = double.tryParse(enteredAmount.trim()) ?? 0.0;
+final reEntered = double.tryParse(amountController.text.trim()) ?? 0.0;
 
+if (entered != reEntered) {
+  CustomToast.error(
+    "Re-entered amount does not match the transaction amount",
+  );
+  return;
+}
                               AppLogger.debugPrint(
                                 "👉 FINAL PRODUCT ID: ${controller.productdetid}",
                               );
@@ -311,41 +335,108 @@ class ConfirmTransactionPage extends GetView<PrePaidController> {
                               );
 
                               AppLogger.debugPrint("AFTER API CALL");
-                              final rechargeData =
-                                  controller.rechargeResponse.value;
+                              // final rechargeData =
+                              //     controller.rechargeResponse.value;
 
-                              if (success && rechargeData != null) {
-                                final apiData = rechargeData.data?.apiResponse;
+                              // if (success && rechargeData != null) {
+                              //   final apiData = rechargeData.data?.apiResponse;
 
-                                Get.to(
-                                  () => SuccessRechargePage(
-                                    productName:
-                                        apiData?.logo ??
-                                        confirmData.productName ??
-                                        "",
-                                    operatorLogo: apiData?.logo ?? "",
-                                    operatorInitial:
-                                        (apiData?.operatorName?.isNotEmpty ??
-                                            false)
-                                        ? apiData!.operatorName![0]
-                                        : "J",
+                              //   Get.to(
+                              //     () => SuccessRechargePage(
+                              //       productName:
+                              //           apiData?.logo ??
+                              //           confirmData.productName ??
+                              //           "",
+                              //       operatorLogo: apiData?.logo ?? "",
+                              //       operatorInitial:
+                              //           (apiData?.operatorName?.isNotEmpty ??
+                              //               false)
+                              //           ? apiData!.operatorName![0]
+                              //           : "J",
 
-                                    operatorColor: Colors.red,
+                              //       operatorColor: Colors.red,
+                              //     rechargeId: response.data!.recharge!.id.toString(), // <-- add this
+                              //       transactionNo:
+                              //           apiData?.mobileno ?? mobileNumber,
 
-                                    transactionNo:
-                                        apiData?.mobileno ?? mobileNumber,
+                              //       rechargeAmount:
+                              //           (apiData?.amount ??
+                              //                   amountController.text)
+                              //               .currencyIndian,
 
-                                    rechargeAmount:
-                                        (apiData?.amount ??
-                                                amountController.text)
-                                            .currencyIndian,
+                              //       transactionId: apiData?.txnid ?? "",
 
-                                    transactionId: apiData?.txnid ?? "",
+                              //       dateTime: apiData?.requestDatetime ?? "",
+                              //     ),
+                              //   );
+                              // }
 
-                                    dateTime: apiData?.requestDatetime ?? "",
-                                  ),
-                                );
-                              }
+
+//                               final rechargeData = controller.rechargeResponse.value;
+
+// if (success && rechargeData != null) {
+//   final apiData = rechargeData.data?.apiResponse;
+
+//   Get.to(
+//     () => SuccessRechargePage(
+//       rechargeId: rechargeData.data?.recharge?.id?.toString() ?? "",
+//       productName: apiData?.logo ?? confirmData.productName ?? "",
+//       operatorLogo: apiData?.logo ?? "",
+//       operatorInitial:
+//           (apiData?.operatorName?.isNotEmpty ?? false)
+//               ? apiData!.operatorName![0]
+//               : "J",
+//       operatorColor: Colors.red,
+//       transactionNo: apiData?.mobileno ?? mobileNumber,
+//       rechargeAmount:
+//           (apiData?.amount ?? amountController.text).currencyIndian,
+//       transactionId: apiData?.txnid ?? "",
+//       dateTime: apiData?.requestDatetime ?? "",
+//     ),
+//   );
+// }
+
+
+final rechargeData = controller.rechargeResponse.value;
+final apiData = rechargeData?.data?.apiResponse;
+
+if (success && rechargeData != null) {
+  Get.to(
+    () => SuccessRechargePage(
+      rechargeId: rechargeData.data?.recharge?.id?.toString() ?? "",
+      productName: apiData?.operatorName ?? confirmData.productName ?? "",
+      operatorLogo: apiData?.logo ?? "",
+      operatorInitial:
+          (apiData?.operatorName?.isNotEmpty ?? false)
+              ? apiData!.operatorName![0]
+              : "J",
+      operatorColor: Colors.green,
+      transactionNo: apiData?.mobileno ?? mobileNumber,
+      rechargeAmount:
+          (apiData?.amount ?? amountController.text).currencyIndian,
+      transactionId: apiData?.txnid ?? "",
+      dateTime: apiData?.requestDatetime ?? "",
+    ),
+  );
+} else {
+  Get.to(
+    () => FailedRechargePage(
+      rechargeId: rechargeData?.data?.recharge?.id?.toString() ?? "",
+      productName: apiData?.operatorName ?? confirmData.productName ?? "",
+      operatorLogo: apiData?.logo ?? "",
+      operatorInitial:
+          (apiData?.operatorName?.isNotEmpty ?? false)
+              ? apiData!.operatorName![0]
+              : "J",
+      operatorColor: Colors.red,
+      transactionNo: apiData?.mobileno ?? mobileNumber,
+      rechargeAmount:
+          (apiData?.amount ?? amountController.text).currencyIndian,
+      transactionId: apiData?.txnid ?? "",
+      dateTime: apiData?.requestDatetime ?? "",
+    ),
+  );
+}
                             },
                     ),
                   ),

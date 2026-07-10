@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/core/constants/extension.dart';
+import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/core/data/model/transaction_report_model.dart';
 import 'package:maxpay/core/utils/texthelper.dart';
 import 'package:maxpay/view/transaction_screens/widget/daispute_dialogue..dart';
@@ -53,10 +56,8 @@ class TransactionCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   "Transaction ID: ${data.transactionId ?? '-'}",
-                  style: TextHelper.max1.copyWith(
-                    color: isDark
-                        ? const Color(0xFFFFFFFF).withValues(alpha: 0.7)
-                        : AppColors.darktextclr,
+                 style: TextHelper.max1.copyWith(
+                    color: AppColors.darktextclr,
                   ),
                 ),
               ),
@@ -66,9 +67,7 @@ class TransactionCard extends StatelessWidget {
                   Text(
                     "Date & Time",
                     style: TextHelper.max1.copyWith(
-                      color: isDark
-                          ? const Color(0xFFFFFFFF).withValues(alpha: 0.7)
-                          : AppColors.darktextclr,
+                      color: AppColors.darktextclr,
                     ),
                   ),
                   const SizedBox(height: 5),
@@ -77,9 +76,7 @@ class TransactionCard extends StatelessWidget {
       ? formatTransactionDate(data.dateTime!)
       : "-",
   style: TextHelper.max1.copyWith(
-    color: isDark
-        ? const Color(0xFFFFFFFF).withValues(alpha: 0.7)
-        : AppColors.darktextclr,
+    color: AppColors.darktextclr,
   ),
 ),
                 ],
@@ -238,11 +235,21 @@ class TransactionCard extends StatelessWidget {
                   () {},
                 ),
                 const SizedBox(width: 6),
-                _button(
-                  "Resend",
-                  Colors.green,
-                  () {},
-                ),
+              _button(
+  "Resend",
+  Colors.green,
+  () {
+     print("========== RESEND ==========");
+    print("ID: ${data.id}");
+    print("Transaction ID: ${data.transactionId}");
+    print("Product Type: ${data.producttype}");
+    print("Mobile: ${data.mobile}");
+    print("Amount: ${data.amount}");
+    print("Status: ${data.status}");
+    print("Logo: ${data.logo}");
+    _onResend(context);
+  },
+),
               ],
             ],
           ),
@@ -303,4 +310,33 @@ class TransactionCard extends StatelessWidget {
       ),
     );
   }
+
+  void _onResend(BuildContext context) {
+  final productType = (data.producttype ?? "").toLowerCase();
+
+  if (productType == "prepaid") {
+    Get.toNamed(
+      AppRoutes.transconfirm,
+      arguments: {
+        "mobileNumber": data.mobile,
+        "amount": data.amount,
+        "productdetid": data.id.toString(),
+      },
+    );
+  } else if (productType == "dth") {
+    Get.toNamed(
+      AppRoutes.confirmdth,
+      arguments: {
+        "customerId": data.mobile,
+        "amount": data.amount,
+        "productdetid": data.id.toString(),
+      },
+    );
+  } else {
+    Get.snackbar(
+      "Error",
+      "Unknown product type",
+    );
+  }
+}
 }

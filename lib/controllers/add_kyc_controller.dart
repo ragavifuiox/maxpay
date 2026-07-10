@@ -247,11 +247,11 @@ class AddKycController extends GetxController {
           if (data.success == true && data.data != null) {
             emailController.text = data.data?.email ?? '';
 
-            addressFileName.value = data.data?.address?.split('/').last ?? '';
+          addressFileName.value = data.data?.address ?? '';
 
-            gstFileName.value = data.data?.gstNo?.split('/').last ?? '';
+gstFileName.value = data.data?.gstNo ?? '';
 
-            panFileName.value = data.data?.pan?.split('/').last ?? '';
+panFileName.value = data.data?.pan ?? '';
 
             isKycSubmitted.value = true;
           }

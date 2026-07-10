@@ -9,6 +9,7 @@ import 'package:maxpay/core/extensions/currency.dart';
 import 'package:maxpay/core/utils/logg_helper.dart';
 import 'package:maxpay/global_widget/commom_button.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
+import 'package:maxpay/view/recharge/failed_recharge_page.dart';
 import 'package:maxpay/view/recharge/success_recharge_page.dart';
 
 class CustomerTransConfirmationScreen extends GetView<PrePaidController> {
@@ -160,39 +161,81 @@ class CustomerTransConfirmationScreen extends GetView<PrePaidController> {
                           );
 
                           AppLogger.debugPrint("AFTER API CALL");
-                          final rechargeData =
-                              controller.rechargeResponse.value;
+                          // final rechargeData =
+                          //     controller.rechargeResponse.value;
 
-                          if (success && rechargeData != null) {
-                            final apiData = rechargeData.data?.apiResponse;
+                          // if (success && rechargeData != null) {
+                          //   final apiData = rechargeData.data?.apiResponse;
 
-                            Get.to(
-                              () => SuccessRechargePage(
-                                productName:
-                                    apiData?.logo ??
-                                    confirmData?.productName ??
-                                    "",
-                                operatorLogo: apiData?.logo ?? "",
-                                operatorInitial:
-                                    (apiData?.operatorName?.isNotEmpty ?? false)
-                                    ? apiData!.operatorName![0]
-                                    : "J",
+                          //   Get.to(
+                          //     () => SuccessRechargePage(
+                          //       productName:
+                          //           apiData?.logo ??
+                          //           confirmData?.productName ??
+                          //           "",
+                          //       operatorLogo: apiData?.logo ?? "",
+                          //       operatorInitial:
+                          //           (apiData?.operatorName?.isNotEmpty ?? false)
+                          //           ? apiData!.operatorName![0]
+                          //           : "J",
 
-                                operatorColor: Colors.red,
+                          //       operatorColor: Colors.red,
 
-                                transactionNo:
-                                    apiData?.mobileno ?? mobileNumber,
+                          //       transactionNo:
+                          //           apiData?.mobileno ?? mobileNumber,
 
-                                rechargeAmount:
-                                    (apiData?.amount ?? amountController.text)
-                                        .currencyIndian,
+                          //       rechargeAmount:
+                          //           (apiData?.amount ?? amountController.text)
+                          //               .currencyIndian,
 
-                                transactionId: apiData?.txnid ?? "",
+                          //       transactionId: apiData?.txnid ?? "",
 
-                                dateTime: apiData?.requestDatetime ?? "",
-                              ),
-                            );
-                          }
+                          //       dateTime: apiData?.requestDatetime ?? "",
+                          //     ),
+                          //   );
+                          // }
+
+
+                          final rechargeData = controller.rechargeResponse.value;
+final apiData = rechargeData?.data?.apiResponse;
+
+if (success && rechargeData != null) {
+  Get.to(
+    () => SuccessRechargePage(
+      rechargeId: rechargeData.data?.recharge?.id?.toString() ?? "",
+      productName: apiData?.operatorName ?? confirmData?.productName ?? "",
+      operatorLogo: apiData?.logo ?? "",
+      operatorInitial:
+          (apiData?.operatorName?.isNotEmpty ?? false)
+              ? apiData!.operatorName![0]
+              : "J",
+      operatorColor: Colors.green,
+      transactionNo: apiData?.mobileno ?? mobileNumber,
+      rechargeAmount:
+          (apiData?.amount ?? amountController.text).currencyIndian,
+      transactionId: apiData?.txnid ?? "",
+      dateTime: apiData?.requestDatetime ?? "",
+    ),
+  );
+} else {
+  Get.to(
+    () => FailedRechargePage(
+      rechargeId: rechargeData?.data?.recharge?.id?.toString() ?? "",
+      productName: apiData?.operatorName ?? confirmData?.productName ?? "",
+      operatorLogo: apiData?.logo ?? "",
+      operatorInitial:
+          (apiData?.operatorName?.isNotEmpty ?? false)
+              ? apiData!.operatorName![0]
+              : "J",
+      operatorColor: Colors.red,
+      transactionNo: apiData?.mobileno ?? mobileNumber,
+      rechargeAmount:
+          (apiData?.amount ?? amountController.text).currencyIndian,
+      transactionId: apiData?.txnid ?? "",
+      dateTime: apiData?.requestDatetime ?? "",
+    ),
+  );
+}
                         },
                 ),
               ),

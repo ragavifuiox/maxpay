@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:maxpay/controllers/download_controller.dart';
 import 'package:maxpay/controllers/earning_controller.dart';
 import 'package:maxpay/controllers/homepage_controller.dart';
 import 'package:maxpay/controllers/profile_controller.dart';
@@ -18,7 +19,6 @@ import 'package:maxpay/core/constants/snackbar.dart';
 import 'package:maxpay/core/di/service_locator.dart';
 import 'package:maxpay/core/extensions/currency.dart';
 import 'package:maxpay/global_widget/commom_button.dart';
-import 'package:screenshot/screenshot.dart';
 
 import 'package:pdf/widgets.dart' as pw;
 
@@ -31,7 +31,7 @@ class DthSuccessPage extends StatelessWidget {
   final String transactionId;
   final String dateTime;
   // final String operatorLogo; // image URL
-  final ScreenshotController screenshotController = ScreenshotController();
+  
   DthSuccessPage({
     super.key,
     required this.productName,
@@ -51,7 +51,7 @@ class DthSuccessPage extends StatelessWidget {
     final ProfileController profileController = Get.put(
       ProfileController(getProfileUseCase: sl(), profileUpdateUseCase: sl()),
     );
-    final ScreenshotController screenshotController = ScreenshotController();
+   
 
     final bool isMobileOrDTH =
         productName.toLowerCase().contains('jio') ||
@@ -234,8 +234,8 @@ class DthSuccessPage extends StatelessWidget {
       builder: (context) {
         final profile = profileController.profileData.value?.data;
 
-        return Screenshot(
-          controller: screenshotController,
+        return Dialog(
+         
           child: Dialog(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15.r),
@@ -363,48 +363,9 @@ class DthSuccessPage extends StatelessWidget {
                         child: SizedBox(
                           height: 42.h,
                           child: ElevatedButton(
-                            onPressed: () async {
-                              await Future.delayed(
-                                const Duration(milliseconds: 300),
-                              );
-
-                              final image = await screenshotController
-                                  .capture();
-
-                              if (image == null) {
-                                CustomToast.error("Failed to capture screen");
-                                return;
-                              }
-
-                              final pdf = pw.Document();
-                              final pdfImage = pw.MemoryImage(image);
-
-                              pdf.addPage(
-                                pw.Page(
-                                  build: (pw.Context context) {
-                                    return pw.Center(child: pw.Image(pdfImage));
-                                  },
-                                ),
-                              );
-
-                              final dir = Directory(
-                                '/storage/emulated/0/Download',
-                              );
-
-                              if (!await dir.exists()) {
-                                await dir.create(recursive: true);
-                              }
-
-                              final file = File(
-                                "${dir.path}/transaction_${DateTime.now().millisecondsSinceEpoch}.pdf",
-                              );
-
-                              await file.writeAsBytes(await pdf.save());
-
-                              Get.back();
-
-                              CustomToast.success("PDF saved in Downloads");
-                            },
+                            onPressed: () {
+   
+  },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.red,
                               elevation: 0,

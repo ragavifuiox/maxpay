@@ -117,6 +117,10 @@ class AppPages {
             mobileRechargeUseCase: sl(),
             plantabusecase: sl(),
             tabdetailusecase: sl(),
+            downloadusecase: sl(), 
+            checkOperatorUsecase: sl(), 
+            offerRechargeUsecase: sl(),
+            
           ),
 
           fenix: true,
@@ -326,7 +330,8 @@ class AppPages {
             dthtabUseCase: sl(),
             searchdthusecase: sl(),
             confirmdthUsecase: sl(),
-            dthrechargeusecase: sl(),
+            dthrechargeusecase: sl(), customerInfoUsecase: sl(),
+            
           ),
 
           fenix: true,
@@ -350,6 +355,8 @@ class AppPages {
             mobileRechargeUseCase: sl(),
             plantabusecase: sl(),
             tabdetailusecase: sl(),
+            downloadusecase: sl(), checkOperatorUsecase: sl(),
+             offerRechargeUsecase: sl(),
           ),
 
           fenix: true,
@@ -421,6 +428,9 @@ class AppPages {
             mobileRechargeUseCase: sl(),
             plantabusecase: sl(),
             tabdetailusecase: sl(),
+            downloadusecase: sl(), 
+            checkOperatorUsecase: sl(),
+            offerRechargeUsecase: sl(),
           ),
 
           fenix: true,

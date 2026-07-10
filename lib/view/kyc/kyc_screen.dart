@@ -166,55 +166,52 @@ class UploadCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: theme.colorScheme.outline),
+  width: double.infinity,
+  height: 130,
+  decoration: BoxDecoration(
+    borderRadius: BorderRadius.circular(12),
+    border: Border.all(color: theme.colorScheme.outline),
+  ),
+  clipBehavior: Clip.antiAlias,
+  child: hasFile
+      ? (selectedFile != null
+          ? Image.file(
+              selectedFile!,
+              fit: BoxFit.cover,
+              width: double.infinity,
+              height: double.infinity,
+            )
+          : Image.network(
+              imageUrl,
+              fit: BoxFit.cover,
+              width: double.infinity,
+              height: double.infinity,
+              loadingBuilder: (context, child, progress) {
+                if (progress == null) return child;
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              },
+              errorBuilder: (context, error, stackTrace) {
+                return const Center(
+                  child: Icon(Icons.broken_image, size: 50),
+                );
+              },
+            ))
+      : InkWell(
+          onTap: onTap,
+          child: const Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.cloud_upload_outlined, size: 42),
+                SizedBox(height: 10),
+                Text("Browse and choose files"),
+              ],
+            ),
+          ),
         ),
-        child: hasFile
-            ? Column(
-                children: [
-                  SizedBox(
-                    height: 120,
-                    width: 120,
-                    child: selectedFile != null
-                        ? Image.file(selectedFile!, fit: BoxFit.cover)
-                        : Image.network(
-                            fileName,
-                            fit: BoxFit.cover,
-                            loadingBuilder: (context, child, progress) {
-                              if (progress == null) return child;
-                              return const Center(
-                                child: CircularProgressIndicator(),
-                              );
-                            },
-                            errorBuilder: (context, error, stackTrace) {
-                              debugPrint("Image Error: $error");
-                              debugPrint("Image URL: $fileName");
-                              return const Icon(Icons.broken_image, size: 50);
-                            },
-                          ),
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    selectedFile != null
-                        ? selectedFile!.path.split('/').last
-                        : fileName.split('/').last,
-                  ),
-                ],
-              )
-            : Column(
-                children: [
-                  const Icon(Icons.cloud_upload_outlined, size: 42),
-                  const SizedBox(height: 10),
-                  const Text(
-                    "Browse and choose files",
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
-      ),
+)
     );
   }
 }

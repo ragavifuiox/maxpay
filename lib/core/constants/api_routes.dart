@@ -66,5 +66,9 @@ class ApiRoutes {
   static const refundcount = "/refund_count";
   static const todaycredit = "/today_credit_amount";
   static const dueamount = "/due_amount";
+  static const download = "/receipt_download/";
+  static const checkoperator = "/check_operator";
+  static const offer = "/rechargeOffers";
+  static const customerInfo = "/dthInfo";
   
 }

@@ -24,6 +24,14 @@ class MenuScreen extends StatelessWidget {
   final BannerController bannerController = Get.put(
     BannerController(bannerUsecase: sl(), advusecase: sl()),
   );
+Future<void> _refreshPage() async {
+  await Future.wait([
+  controller.fetchProductTypes(),
+ 
+]);
+
+}
+
 
   /// ✅ SAFE URL HELPER — handles both full URLs and relative paths
   String _toImageUrl(String? path) {
@@ -52,9 +60,12 @@ class MenuScreen extends StatelessWidget {
 
           final productList = controller.productTypeData.value?.data ?? [];
 
-          return SingleChildScrollView(
-            child: Column(
-              children: [
+         return RefreshIndicator(
+  onRefresh: _refreshPage,
+  child: SingleChildScrollView(
+    physics: const AlwaysScrollableScrollPhysics(),
+    child: Column(
+      children: [
                 const HomeHeaderSection(),
 
                 Padding(
@@ -176,28 +187,70 @@ class MenuScreen extends StatelessWidget {
 
                       SizedBox(height: 18.h),
 
-                      /// SERVICES TITLE
-                      Container(
-                        width: double.infinity,
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 14.w,
-                          vertical: 12.h,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.clrPrimary,
-                          borderRadius: BorderRadius.circular(10.r),
-                        ),
-                        child: Text(
-                          "Services",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 15.sp,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
+                      
 
-                      SizedBox(height: 20.h),
+/// STATUS CARDS
+Row(
+  children: [
+    Expanded(
+      child: _statusCard(
+              image: AssetImages.successIcon,
+
+        value: "5000",
+        bgColor: const Color(0xffDDF8E6),
+     
+        textColor: const Color(0xff22C55E),
+      ),
+    ),
+    SizedBox(width: 12.w),
+    Expanded(
+      child: _statusCard(
+         image: AssetImages.processIcon,
+        value: "5000",
+        bgColor: const Color(0xffFCEFD9),
+    
+        textColor: Colors.orange,
+      ),
+    ),
+    SizedBox(width: 12.w),
+    Expanded(
+      child: _statusCard(
+        image: AssetImages.failedIcon,
+        value: "5000",
+        bgColor: const Color(0xffFCE2E6),
+      
+        textColor: Colors.red,
+      ),
+    ),
+  ],
+),
+
+SizedBox(height: 18.h),
+
+/// SERVICES TITLE
+Row(
+  children: [
+    Text(
+      "Services",
+      style: TextStyle(
+        color: AppColors.clrPrimary,
+        fontSize: 18.sp,
+        fontWeight: FontWeight.bold,
+      ),
+    ),
+    SizedBox(width: 8.w),
+    Expanded(
+      child: Divider(
+        color: AppColors.clrPrimary,
+        thickness: 1.2,
+      ),
+    ),
+  ],
+),
+
+SizedBox(height: 16.h),
+
+                    
 
                       /// ✅ SMART LAYOUT: Ad = Image1, No Ad = Image2
                       Obx(() {
@@ -221,7 +274,9 @@ class MenuScreen extends StatelessWidget {
                 ),
               ],
             ),
+  )
           );
+         
         }),
       ),
     );
@@ -590,4 +645,38 @@ class MenuScreen extends StatelessWidget {
         break;
     }
   }
+
+ Widget _statusCard({
+  required String image,
+  required String value,
+  required Color bgColor,
+  required Color textColor,
+}) {
+  return Container(
+    height: 52.h,
+    decoration: BoxDecoration(
+      color: bgColor,
+      borderRadius: BorderRadius.circular(12.r),
+    ),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        SvgPicture.asset(
+          image,
+          width: 20.w,
+          height: 20.h,
+        ),
+        SizedBox(width: 8.w),
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: 14.sp,
+            fontWeight: FontWeight.bold,
+            color: textColor,
+          ),
+        ),
+      ],
+    ),
+  );
+}
 }

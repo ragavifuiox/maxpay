@@ -1,10 +1,14 @@
 import 'package:intl/intl.dart';
 
 extension CurrencyHelper on String {
-  String get currencyIndian => NumberFormat.currency(
-    locale: "en_IN",
-    symbol: "₹ ",
+  String get currencyIndian {
+    final cleanedAmount = trim().replaceAll(RegExp(r'[^0-9.-]'), '');
+    final parsedAmount = double.tryParse(cleanedAmount);
 
-    decimalDigits: 2,
-  ).format(double.tryParse(this));
+    return NumberFormat.currency(
+      locale: "en_IN",
+      symbol: "\u20B9 ",
+      decimalDigits: 2,
+    ).format(parsedAmount ?? 0);
+  }
 }

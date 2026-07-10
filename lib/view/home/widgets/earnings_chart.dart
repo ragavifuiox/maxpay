@@ -353,7 +353,7 @@ class EarningsChart extends StatelessWidget {
                   LineChartBarData(
                     isCurved: false,
                     color: Colors.blue,
-                    barWidth: 2.5,
+                    barWidth: 2,
                     isStrokeCapRound: true,
                     curveSmoothness: 0,
                     belowBarData: BarAreaData(show: false),
@@ -368,27 +368,49 @@ class EarningsChart extends StatelessWidget {
                       FlSpot(7, .5),
                       FlSpot(8, 1.5),
                     ],
+                    // dotData: FlDotData(
+                    //   show: true,
+                    //   checkToShowDot: (spot, barData) {
+                    //     final sortedSpots = List<FlSpot>.from(barData.spots);
+                    //     sortedSpots.sort((a, b) => b.y.compareTo(a.y));
+                    //     final topSpots = sortedSpots.take(2).toList();
+                    //     return topSpots.any(
+                    //       (s) => s.x == spot.x && s.y == spot.y,
+                    //     );
+                    //   },
+                    //   getDotPainter: (spot, a, b, c) {
+                    //     return FlDotCirclePainter(
+                    //       radius: 2,
+                    //       color: isDark
+                    //           ? AppColors.darkFilterBorder
+                    //           : Colors.white,
+                    //       strokeWidth: 1.5,
+                    //       strokeColor: Colors.blue,
+                    //     );
+                    //   },
+                    // ),
+
                     dotData: FlDotData(
-                      show: true,
-                      checkToShowDot: (spot, barData) {
-                        final sortedSpots = List<FlSpot>.from(barData.spots);
-                        sortedSpots.sort((a, b) => b.y.compareTo(a.y));
-                        final topSpots = sortedSpots.take(2).toList();
-                        return topSpots.any(
-                          (s) => s.x == spot.x && s.y == spot.y,
-                        );
-                      },
-                      getDotPainter: (spot, a, b, c) {
-                        return FlDotCirclePainter(
-                          radius: 4,
-                          color: isDark
-                              ? AppColors.darkFilterBorder
-                              : Colors.white,
-                          strokeWidth: 1.5,
-                          strokeColor: Colors.blue,
-                        );
-                      },
-                    ),
+  show: true,
+  checkToShowDot: (spot, barData) {
+    final sortedSpots = List<FlSpot>.from(barData.spots);
+    sortedSpots.sort((a, b) => b.y.compareTo(a.y));
+
+    final topSpots = sortedSpots.take(2).toList();
+
+    return topSpots.any(
+      (s) => s.x == spot.x && s.y == spot.y,
+    );
+  },
+  getDotPainter: (spot, a, b, c) {
+    return FlDotCirclePainter(
+      radius: 2,
+      color: Colors.blue,
+      strokeWidth: 1.5,
+      strokeColor: Colors.blue,
+    );
+  },
+),
                   ),
 
                   /// SUCCESS
@@ -420,14 +442,16 @@ class EarningsChart extends StatelessWidget {
                         );
                       },
                       getDotPainter: (spot, a, b, c) {
+
+
+
+                        
                         return FlDotCirclePainter(
-                          radius: 4,
-                          color: isDark
-                              ? AppColors.darkFilterBorder
-                              : Colors.white,
-                          strokeWidth: 1.5,
-                          strokeColor: Colors.green,
-                        );
+      radius: 2,
+      color: Colors.green,
+      strokeWidth: 1.5,
+      strokeColor: Colors.green,
+    );
                       },
                     ),
                   ),
@@ -461,14 +485,12 @@ class EarningsChart extends StatelessWidget {
                         );
                       },
                       getDotPainter: (spot, a, b, c) {
-                        return FlDotCirclePainter(
-                          radius: 4,
-                          color: isDark
-                              ? AppColors.darkFilterBorder
-                              : Colors.white,
-                          strokeWidth: 1.5,
-                          strokeColor: Colors.red,
-                        );
+                         return FlDotCirclePainter(
+      radius: 2,
+      color: Colors.red,
+      strokeWidth: 1.5,
+      strokeColor: Colors.red,
+    );
                       },
                     ),
                   ),
@@ -482,9 +504,9 @@ class EarningsChart extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _Legend(color: Colors.blue, title: "Purchase", isDark: isDark),
-              _Legend(color: Colors.green, title: "Success", isDark: isDark),
-              _Legend(color: Colors.red, title: "Failed", isDark: isDark),
+              _Legend(color: Colors.blue, title: "Add Wallet", isDark: isDark),
+              _Legend(color: Colors.green, title: "Transaction", isDark: isDark),
+              _Legend(color: Colors.red, title: "Balance", isDark: isDark),
             ],
           ),
         ],

@@ -200,7 +200,7 @@ class ProfileScreen extends GetView<ProfileController> {
                 _buildTextField(context, addresscontroller),
 
                 const SizedBox(height: 18),
-                _buildTitle(context, "Whatsapp no"),
+                _buildTitle(context, "WhatsApp no"),
 
                 const SizedBox(height: 8),
 

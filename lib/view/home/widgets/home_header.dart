@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:ionicons/ionicons.dart';
+import 'package:flutter_ionicons/flutter_ionicons.dart';
 import 'package:maxpay/controllers/profile_controller.dart';
 import 'package:maxpay/core/constants/extension.dart';
 import 'package:maxpay/core/constants/routes_path.dart';

@@ -3,6 +3,7 @@ import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:get/get_state_manager/src/simple/get_view.dart';
 import 'package:maxpay/controllers/login_history_controller.dart';
 import 'package:maxpay/core/constants/colors.dart';
+import 'package:maxpay/core/constants/extension.dart';
 import 'package:maxpay/core/data/model/login_history_model.dart';
 import 'package:maxpay/core/utils/texthelper.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
@@ -206,16 +207,14 @@ class _LoginHistoryCard extends StatelessWidget {
 
                   const SizedBox(height: 5),
 
-                  Text(item.loginTime ?? "-",
-
-                    style:
-                        TextHelper.max1
-                            .copyWith(
-                      color: theme
-                          .colorScheme
-                          .onSurfaceVariant,
-                    ),
-                  ),
+                 Text(
+  item.loginTime != null
+      ? formatTransactionDate(item.loginTime!)
+      : "-",
+  style: TextHelper.max1.copyWith(
+    color: theme.colorScheme.onSurfaceVariant,
+  ),
+),
                 ],
               ),
             ],

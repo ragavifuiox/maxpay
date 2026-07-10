@@ -7,6 +7,7 @@ import 'package:maxpay/view/nav_page/navbar.dart';
 import 'package:maxpay/view/nav_page/navbar_provider.dart';
 import 'package:maxpay/view/report/report_page.dart';
 import 'package:maxpay/view/settings/settings_page.dart';
+import 'package:maxpay/view/support/supoort_screen.dart';
 import 'package:maxpay/view/wallet_request/wallet_request_screen.dart';
 
 class NavPageScreen extends StatefulWidget {
@@ -39,7 +40,7 @@ Widget build(BuildContext context) {
     const HomePageScreen(),
     const ReportPage(),
     WalletRequestScreen(),
-    const ReportPage(),
+     SupportScreen(),
     const SettingsPage(),
   ];
 

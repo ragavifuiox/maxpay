@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:ionicons/ionicons.dart';
+import 'package:flutter_ionicons/flutter_ionicons.dart';
 import 'package:maxpay/core/constants/colors.dart';
 
 class ScreenProfileEdit extends StatefulWidget {
@@ -66,7 +66,9 @@ class _ScreenProfileEditState extends State<ScreenProfileEdit> {
                         height: 45.w,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          border: Border.all(color: Colors.grey.withValues(alpha: 0.3)),
+                          border: Border.all(
+                            color: Colors.grey.withValues(alpha: 0.3),
+                          ),
                           color: theme.colorScheme.surface,
                         ),
                         child: const Center(
@@ -143,8 +145,18 @@ class _ScreenProfileEditState extends State<ScreenProfileEdit> {
                 _buildTextField('Full name', _nameController, isDark),
                 _buildTextField('Date of birth', _dobController, isDark),
                 _buildTextField('Designation', _designationController, isDark),
-                _buildTextField('Phone number', _phoneNumberController, isDark, isReadOnly: true),
-                _buildTextField('Bio/About me', _bioController, isDark, maxLines: 4),
+                _buildTextField(
+                  'Phone number',
+                  _phoneNumberController,
+                  isDark,
+                  isReadOnly: true,
+                ),
+                _buildTextField(
+                  'Bio/About me',
+                  _bioController,
+                  isDark,
+                  maxLines: 4,
+                ),
 
                 SizedBox(height: 20.h),
 
@@ -239,7 +251,9 @@ class _ScreenProfileEditState extends State<ScreenProfileEdit> {
           SizedBox(height: 8.h),
           Container(
             decoration: BoxDecoration(
-              color: isDark ? AppColors.darkplceholder : AppColors.clrplceholder,
+              color: isDark
+                  ? AppColors.darkplceholder
+                  : AppColors.clrplceholder,
               borderRadius: BorderRadius.circular(12.r),
             ),
             child: TextField(
@@ -294,7 +308,10 @@ class _ScreenProfileEditState extends State<ScreenProfileEdit> {
               GestureDetector(
                 onTap: onEditTap,
                 child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 4.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 12.w,
+                    vertical: 4.h,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.green.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(20),

@@ -52,36 +52,41 @@ class StatCard extends StatelessWidget {
 
           children: [
             /// IMAGE / ICON
-            imageWidget,
-            if (needSpacingbwImage) SizedBox(height: 10.h),
+           SizedBox(
+  height: 40.h,
+  child: Center(
+    child: imageWidget,
+  ),
+),
+if (needSpacingbwImage) SizedBox(height: 2.h),
 
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontFamily: 'Poppins',
-                fontWeight: FontWeight.w700,
-                letterSpacing: 0,
-                fontSize: 10.sp,
-                color: textColor ?? theme.colorScheme.onSurface,
-              ),
-            ),
+Text(
+  title,
+  textAlign: TextAlign.center,
+  maxLines: 2,
+  style: TextStyle(
+    fontFamily: 'Poppins',
+    fontWeight: FontWeight.w700,
+    fontSize: 10.sp,
+    color: textColor ?? theme.colorScheme.onSurface,
+  ),
+),
 
-            /// VALUE
-            if (value != null) ...[
-              SizedBox(height: 2.h),
-
-              Text(
-                value!,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontFamily: 'Poppins',
-                  fontWeight: FontWeight.w600,
-                  fontSize: 11.sp,
-                  color: valueColor ?? theme.textTheme.bodyLarge?.color,
-                ),
-              ),
-            ],
+if (value != null) ...[
+  SizedBox(height: 2.h),
+ Text(
+  value!,
+  textAlign: TextAlign.center,
+  maxLines: 2,
+  style: TextStyle(
+    fontFamily: 'Poppins',
+    fontWeight: FontWeight.w600,
+    fontSize: 10.sp,
+    height: 1.2,
+    color: valueColor ?? theme.textTheme.bodyLarge?.color,
+  ),
+),
+],
           ],
         ),
       ),
