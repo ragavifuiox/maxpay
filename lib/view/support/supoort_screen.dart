@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:maxpay/controllers/support_controller.dart';
 import 'package:maxpay/core/di/service_locator.dart';
-import 'package:maxpay/global_widget/custom_app.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SupportScreen extends StatelessWidget {
@@ -57,11 +55,11 @@ class SupportScreen extends StatelessWidget {
                     : Colors.white,
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(
-                  color: Colors.grey.withOpacity(.15),
+                  color: Colors.grey.withValues(alpha: .15),
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(.05),
+                    color: Colors.black.withValues(alpha: .05),
                     blurRadius: 10,
                     offset: const Offset(0, 2),
                   ),
@@ -149,7 +147,6 @@ class _SupportButton extends StatelessWidget {
   final Color backgroundColor;
 
   const _SupportButton({
-    super.key,
     required this.icon,
     required this.onTap,
     required this.backgroundColor,

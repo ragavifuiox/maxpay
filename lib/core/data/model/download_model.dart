@@ -10,16 +10,16 @@ class Download {
     success = json['success'];
     data = json['data'];
     message = json['message'];
-    code = json['code'] != null ? new Code.fromJson(json['code']) : null;
+    code = json['code'] != null ? Code.fromJson(json['code']) : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['success'] = this.success;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['success'] = success;
     data['data'] = this.data;
-    data['message'] = this.message;
-    if (this.code != null) {
-      data['code'] = this.code!.toJson();
+    data['message'] = message;
+    if (code != null) {
+      data['code'] = code!.toJson();
     }
     return data;
   }
@@ -35,8 +35,8 @@ class Code {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['receipt_url'] = this.receiptUrl;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['receipt_url'] = receiptUrl;
     return data;
   }
 }

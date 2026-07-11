@@ -94,7 +94,7 @@ class _BorderDotPainter extends CustomPainter {
       canvas,
       rrect,
       Paint()
-        ..color = Colors.blue.withOpacity(0.20)
+        ..color = Colors.blue.withValues(alpha: 0.20)
         ..style = PaintingStyle.stroke
         ..strokeWidth = 2.5
         ..strokeCap = StrokeCap.round,
@@ -133,8 +133,8 @@ class _BorderDotPainter extends CustomPainter {
         Paint()
           ..shader = RadialGradient(
             colors: [
-              const Color(0xFF3B82F6).withOpacity(0.50),
-              const Color(0xFF3B82F6).withOpacity(0.00),
+              const Color(0xFF3B82F6).withValues(alpha: 0.50),
+              const Color(0xFF3B82F6).withValues(alpha: 0.00),
             ],
           ).createShader(Rect.fromCircle(center: dot, radius: 11))
           ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4),
@@ -201,298 +201,307 @@ class HomePageScreen extends GetView<HomePageController> {
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
-      
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              
-              const HomeHeaderSection(),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const HomeHeaderSection(),
 
-              Expanded(
-  child: Padding(
-    padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
-    child: Column(
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                     EarningsChart(),
-SizedBox(height: 8.h),
+                    EarningsChart(),
+                    SizedBox(height: 8.h),
 
-const NewsTicker(),
-SizedBox(height: 2.h),
+                    const NewsTicker(),
+                    SizedBox(height: 2.h),
 
-Expanded(
-  child: GridView.count(
-    crossAxisCount: 3,
-    physics: const NeverScrollableScrollPhysics(),
-    mainAxisSpacing: 8.h,
-    crossAxisSpacing: 8.w,
-    childAspectRatio: 1.05,
-    padding: EdgeInsets.zero,
-    children: [
-                        StatCard(
-                          onTap: () => Get.toNamed(AppRoutes.addwallet),
-                          title: 'Add Wallet',
-                          borderColor: isDark
-                              ? AppColors.clrPrimary
-                              : Color.fromRGBO(73, 91, 255, 0.4),
-
-                          bgColor: AppColors.darkBlue.withValues(alpha: 0.04),
-                          imageWidget: SvgPicture.asset(
-                            AssetImages.addWallet,
-                            height: 32.h,
-                          ),
-                        ),
-
-                        Obx(() {
-                          final balance =
-                              controller.walletBalance.value?.data?.balance ??
-                              0.0;
-                          return StatCard(
-                            title: 'Wallet Balance',
+                    Expanded(
+                      child: GridView.count(
+                        crossAxisCount: 3,
+                        clipBehavior: .none,
+                        physics: const NeverScrollableScrollPhysics(),
+                        mainAxisSpacing: 8.h,
+                        crossAxisSpacing: 8.w,
+                        childAspectRatio: 1.05,
+                        padding: EdgeInsets.zero,
+                        children: [
+                          StatCard(
+                            onTap: () => Get.toNamed(AppRoutes.addwallet),
+                            title: 'Add Wallet',
                             borderColor: isDark
                                 ? AppColors.clrPrimary
-                                : Color(0x66495BFF),
-                            onTap: () => Get.toNamed(AppRoutes.walletbal),
-                            value: '₹${balance.toStringAsFixed(2)}',
+                                : Color.fromRGBO(73, 91, 255, 0.4),
+
                             bgColor: AppColors.darkBlue.withValues(alpha: 0.04),
                             imageWidget: SvgPicture.asset(
-                              AssetImages.walletBalance,
+                              AssetImages.addWallet,
+                              height: 32.h,
                             ),
-                          );
-                        }),
+                          ),
 
-                        // ✅ TRANSACTIONS — animated border dot + zoom
-                        BlinkingZoomCard(
-                          child: Container(
-                            padding: EdgeInsets.all(3), // Border thickness
-                            decoration: BoxDecoration(
-                              color:
-                                  Theme.of(context).brightness ==
-                                      Brightness.dark
-                                  ? Colors.white
-                                  : Colors.red,
-                              borderRadius: BorderRadius.circular(15.r),
-                            ),
-                            child: StatCard(
-                              onTap: () =>
-                                  Get.find<NavbarController>().openMenu(),
-                              title: 'Transactions',
-                              bgColor: AppColors.clrPrimary,
-                              textColor: Colors.white,
-                              valueColor: Colors.white,
-                              borderColor:
-                                  Colors.transparent, // Hide StatCard border
+                          Obx(() {
+                            final balance =
+                                controller.walletBalance.value?.data?.balance ??
+                                0.0;
+                            return StatCard(
+                              title: 'Wallet Balance',
+                              borderColor: isDark
+                                  ? AppColors.clrPrimary
+                                  : Color(0x66495BFF),
+                              onTap: () => Get.toNamed(AppRoutes.walletbal),
+                              value: '₹${balance.toStringAsFixed(2)}',
+                              bgColor: AppColors.darkBlue.withValues(
+                                alpha: 0.04,
+                              ),
                               imageWidget: SvgPicture.asset(
-                                AssetImages.transactions,
-                                height: 32.h,
+                                AssetImages.walletBalance,
+                              ),
+                            );
+                          }),
+
+                          // ✅ TRANSACTIONS — animated border dot + zoom
+                          BlinkingZoomCard(
+                            child: Container(
+                              padding: EdgeInsets.all(3), // Border thickness
+                              decoration: BoxDecoration(
+                                color:
+                                    Theme.of(context).brightness ==
+                                        Brightness.dark
+                                    ? Colors.white
+                                    : Colors.red,
+                                borderRadius: BorderRadius.circular(15.r),
+                              ),
+                              child: StatCard(
+                                onTap: () =>
+                                    Get.find<NavbarController>().openMenu(),
+                                title: 'Transactions',
+                                bgColor: AppColors.clrPrimary,
+                                textColor: Colors.white,
+                                valueColor: Colors.white,
+                                borderColor:
+                                    Colors.transparent, // Hide StatCard border
+                                imageWidget: SvgPicture.asset(
+                                  AssetImages.transactions,
+                                  height: 32.h,
+                                ),
                               ),
                             ),
                           ),
-                        ),
 
-                        Obx(() {
-                          final amount =
-                              controller
-                                  .todaycredit
-                                  .value
-                                  ?.code
-                                  ?.todayCreditAmount ??
-                              0;
+                          Obx(() {
+                            final amount =
+                                controller
+                                    .todaycredit
+                                    .value
+                                    ?.code
+                                    ?.todayCreditAmount ??
+                                0;
 
-                          return StatCard(
-                            title: 'Todays Credit',
-                            value: amount.toString().currencyIndian,
-                            borderColor: isDark
-                                ? AppColors.clrPrimary
-                                : Color(0x66495BFF),
-                            textColor:
-                                Theme.of(context).brightness == Brightness.dark
-                                ? const Color.fromARGB(255, 171, 171, 171)
-                                : AppColors.darktextclr,
-                            bgColor: AppColors.darkBlue.withValues(alpha: 0.04),
-                            imageWidget: SvgPicture.asset(
-                              AssetImages.todaysCredit,
-                              height: 32.h,
-                            ),
-                          );
-                        }),
+                            return StatCard(
+                              title: 'Todays Credit',
+                              value: amount.toString().currencyIndian,
+                              borderColor: isDark
+                                  ? AppColors.clrPrimary
+                                  : Color(0x66495BFF),
+                              textColor:
+                                  Theme.of(context).brightness ==
+                                      Brightness.dark
+                                  ? const Color.fromARGB(255, 171, 171, 171)
+                                  : AppColors.darktextclr,
+                              bgColor: AppColors.darkBlue.withValues(
+                                alpha: 0.04,
+                              ),
+                              imageWidget: SvgPicture.asset(
+                                AssetImages.todaysCredit,
+                                height: 32.h,
+                              ),
+                            );
+                          }),
 
-                        Obx(() {
-                          final refundAmount =
-                              controller
-                                  .refundcount
-                                  .value
-                                  ?.code
-                                  ?.refundAmount ??
-                              0;
+                          Obx(() {
+                            final refundAmount =
+                                controller
+                                    .refundcount
+                                    .value
+                                    ?.code
+                                    ?.refundAmount ??
+                                0;
 
-                          return StatCard(
-                            title: 'Refunded',
-                            value: refundAmount.toString(),
-                            borderColor: isDark
-                                ? AppColors.clrPrimary
-                                : Color(0x66495BFF),
-                            imageWidget: SvgPicture.asset(
-                              AssetImages.refunded,
-                              height: 32.h,
-                            ),
-                            bgColor: AppColors.darkBlue.withValues(alpha: 0.04),
-                          );
-                        }),
+                            return StatCard(
+                              title: 'Refunded',
+                              value: refundAmount.toString(),
+                              borderColor: isDark
+                                  ? AppColors.clrPrimary
+                                  : Color(0x66495BFF),
+                              imageWidget: SvgPicture.asset(
+                                AssetImages.refunded,
+                                height: 32.h,
+                              ),
+                              bgColor: AppColors.darkBlue.withValues(
+                                alpha: 0.04,
+                              ),
+                            );
+                          }),
 
-                        Obx(() {
-                          final complaintCount =
-                              controller
-                                  .complaints
-                                  .value
-                                  ?.data
-                                  ?.complaintCount ??
-                              0;
-                          return StatCard(
-                            title: 'Complaints',
-                            value: complaintCount.toString(),
-                            borderColor: isDark
-                                ? AppColors.clrPrimary
-                                : Color(0x66495BFF),
-                            imageWidget: SvgPicture.asset(
-                              AssetImages.complaints,
-                            ),
-                            textColor:
-                                Theme.of(context).brightness == Brightness.dark
-                                ? const Color.fromARGB(255, 171, 171, 171)
-                                : AppColors.darktextclr,
-                            bgColor: AppColors.darkBlue.withValues(alpha: 0.04),
-                          );
-                        }),
+                          Obx(() {
+                            final complaintCount =
+                                controller
+                                    .complaints
+                                    .value
+                                    ?.data
+                                    ?.complaintCount ??
+                                0;
+                            return StatCard(
+                              title: 'Complaints',
+                              value: complaintCount.toString(),
+                              borderColor: isDark
+                                  ? AppColors.clrPrimary
+                                  : Color(0x66495BFF),
+                              imageWidget: SvgPicture.asset(
+                                AssetImages.complaints,
+                              ),
+                              textColor:
+                                  Theme.of(context).brightness ==
+                                      Brightness.dark
+                                  ? const Color.fromARGB(255, 171, 171, 171)
+                                  : AppColors.darktextclr,
+                              bgColor: AppColors.darkBlue.withValues(
+                                alpha: 0.04,
+                              ),
+                            );
+                          }),
 
-                        Obx(() {
-                          final success =
-                              controller.transactionData.value?.data?.success;
+                          Obx(() {
+                            final success =
+                                controller.transactionData.value?.data?.success;
 
-                          final amount = (success?.amount ?? 0).toDouble();
-                          final count = success?.count ?? 0;
+                            final amount = (success?.amount ?? 0).toDouble();
+                            final count = success?.count ?? 0;
 
-                          return StatCard(
-                            bgColor: AppColors.success,
-                            onTap: () {
-                              final controller = Get.put(
-                                TransReportController(
-                                  transreportUsecase: sl(),
-                                  producttypeUseCase: sl(),
-                                  submitDisputeUsecase: sl(),
-                                ),
-                              );
-                              controller.clearFilters();
+                            return StatCard(
+                              bgColor: AppColors.success,
+                              onTap: () {
+                                final controller = Get.put(
+                                  TransReportController(
+                                    transreportUsecase: sl(),
+                                    producttypeUseCase: sl(),
+                                    submitDisputeUsecase: sl(),
+                                  ),
+                                );
+                                controller.clearFilters();
 
-                              Get.toNamed(
-                                AppRoutes.transaction,
-                                arguments: TransactionStatus.success,
-                              );
-                            },
-                            title: 'Success',
-                            value:
-                                '${amount.toString().currencyIndian} /\n$count Nos',
-                            imageWidget: SvgPicture.asset(
-                              AssetImages.success,
-                              height: 45.h,
-                            ),
-                            valueColor: Colors.black,
-                            borderColor: Colors.transparent,
-                            textColor: Colors.green,
-                          );
-                        }),
+                                Get.toNamed(
+                                  AppRoutes.transaction,
+                                  arguments: TransactionStatus.success,
+                                );
+                              },
+                              title: 'Success',
+                              value:
+                                  '${amount.toString().currencyIndian} /\n$count Nos',
+                              imageWidget: SvgPicture.asset(
+                                AssetImages.success,
+                                height: 45.h,
+                              ),
+                              valueColor: Colors.black,
+                              borderColor: Colors.transparent,
+                              textColor: Colors.green,
+                            );
+                          }),
 
-                        Obx(() {
-                          final processing = controller
-                              .transactionData
-                              .value
-                              ?.data
-                              ?.processing;
+                          Obx(() {
+                            final processing = controller
+                                .transactionData
+                                .value
+                                ?.data
+                                ?.processing;
 
-                          final amount = (processing?.amount ?? 0).toDouble();
-                          final count = processing?.count ?? 0;
+                            final amount = (processing?.amount ?? 0).toDouble();
+                            final count = processing?.count ?? 0;
 
-                          return StatCard(
-                            bgColor: AppColors.pending,
-                            onTap: () {
-                              final controller = Get.put<TransReportController>(
-                                TransReportController(
-                                  transreportUsecase: sl(),
-                                  producttypeUseCase: sl(),
-                                  submitDisputeUsecase: sl(),
-                                ),
-                              );
+                            return StatCard(
+                              bgColor: AppColors.pending,
+                              onTap: () {
+                                final controller =
+                                    Get.put<TransReportController>(
+                                      TransReportController(
+                                        transreportUsecase: sl(),
+                                        producttypeUseCase: sl(),
+                                        submitDisputeUsecase: sl(),
+                                      ),
+                                    );
 
-                              controller.clearFilters();
+                                controller.clearFilters();
 
-                              Get.toNamed(
-                                AppRoutes.transaction,
-                                arguments: TransactionStatus.pending,
-                              );
-                            },
-                            title: 'Processing',
-                            value:
-                                '${amount.toString().currencyIndian} /\n$count Nos',
-                            needSpacingbwImage: false,
-                            imageWidget: SvgPicture.asset(
-                              AssetImages.processing,
-                              height: 45.h,
-                            ),
-                            valueColor: Colors.black,
-                            textColor: Colors.orange,
-                            borderColor: Colors.transparent,
-                          );
-                        }),
+                                Get.toNamed(
+                                  AppRoutes.transaction,
+                                  arguments: TransactionStatus.pending,
+                                );
+                              },
+                              title: 'Processing',
+                              value:
+                                  '${amount.toString().currencyIndian} /\n$count Nos',
+                              needSpacingbwImage: false,
+                              imageWidget: SvgPicture.asset(
+                                AssetImages.processing,
+                                height: 45.h,
+                              ),
+                              valueColor: Colors.black,
+                              textColor: Colors.orange,
+                              borderColor: Colors.transparent,
+                            );
+                          }),
 
-                        Obx(() {
-                          final failed =
-                              controller.transactionData.value?.data?.failed;
+                          Obx(() {
+                            final failed =
+                                controller.transactionData.value?.data?.failed;
 
-                          final amount = (failed?.amount ?? 0).toDouble();
-                          final count = failed?.count ?? 0;
+                            final amount = (failed?.amount ?? 0).toDouble();
+                            final count = failed?.count ?? 0;
 
-                          return StatCard(
-                            bgColor: AppColors.failed,
-                            onTap: () {
-                              final controller = Get.put<TransReportController>(
-                                TransReportController(
-                                  transreportUsecase: sl(),
-                                  producttypeUseCase: sl(),
-                                  submitDisputeUsecase: sl(),
-                                ),
-                              );
-                              controller.clearFilters();
+                            return StatCard(
+                              bgColor: AppColors.failed,
+                              onTap: () {
+                                final controller =
+                                    Get.put<TransReportController>(
+                                      TransReportController(
+                                        transreportUsecase: sl(),
+                                        producttypeUseCase: sl(),
+                                        submitDisputeUsecase: sl(),
+                                      ),
+                                    );
+                                controller.clearFilters();
 
-                              Get.toNamed(
-                                AppRoutes.transaction,
-                                arguments: TransactionStatus.failed,
-                              );
-                            },
-                            title: 'Failed',
-                            value:
-                                '${amount.toString().currencyIndian} /\n$count Nos',
-                            needSpacingbwImage: false,
-                            imageWidget: SvgPicture.asset(
-                              AssetImages.failedAll,
-                              height: 45.h,
-                            ),
-                            valueColor: Colors.black,
-                            textColor: Colors.red,
-                            borderColor: Colors.transparent,
-                          );
-                        }),
-                      ],
+                                Get.toNamed(
+                                  AppRoutes.transaction,
+                                  arguments: TransactionStatus.failed,
+                                );
+                              },
+                              title: 'Failed',
+                              value:
+                                  '${amount.toString().currencyIndian} /\n$count Nos',
+                              needSpacingbwImage: false,
+                              imageWidget: SvgPicture.asset(
+                                AssetImages.failedAll,
+                                height: 45.h,
+                              ),
+                              valueColor: Colors.black,
+                              textColor: Colors.red,
+                              borderColor: Colors.transparent,
+                            );
+                          }),
+                        ],
+                      ),
                     ),
-),
-                   
                   ],
                 ),
               ),
-              )
-            ],
-          ),
+            ),
+          ],
         ),
-      );
-    
+      ),
+    );
   }
 }

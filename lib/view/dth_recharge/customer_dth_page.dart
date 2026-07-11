@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:maxpay/controllers/dth_controller.dart';
-import 'package:maxpay/controllers/prepaid_controller.dart';
 import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/core/extensions/currency.dart';
 import 'package:maxpay/core/utils/logg_helper.dart';
@@ -12,7 +11,6 @@ import 'package:maxpay/global_widget/commom_button.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
 import 'package:maxpay/view/dth_recharge/dth_failed_recharge_screen.dart';
 import 'package:maxpay/view/dth_recharge/dth_success_page.dart';
-import 'package:maxpay/view/recharge/success_recharge_page.dart';
 
 class CustomerDthPage extends GetView<DthController> {
   CustomerDthPage({super.key});

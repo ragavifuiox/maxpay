@@ -33,7 +33,7 @@ class _DTHRechargePageState extends State<DTHRechargePage>
     with SingleTickerProviderStateMixin {
   Data? selectedOperatorObj;
   String customerHint = "Enter Customer ID";
-bool? isPaymentReceived = null;
+bool? isPaymentReceived;
   bool showCustomerInfo = false;
 
   final PrePaidController controller = Get.put(

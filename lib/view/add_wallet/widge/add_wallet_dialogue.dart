@@ -3,9 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:maxpay/controllers/add_wallet_controller.dart';
-import 'package:maxpay/core/constants/asset_images.dart';
 import 'package:maxpay/core/extensions/currency.dart';
-import 'package:maxpay/core/utils/texthelper.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 class AddWalletPopup extends StatelessWidget {

@@ -52,7 +52,7 @@ class InsufficientBalancePage extends StatelessWidget {
                 height: 120.r,
                 decoration: BoxDecoration(
                   color: isDark
-                      ? Colors.red.withOpacity(0.15)
+                      ? Colors.red.withValues(alpha: 0.15)
                       : const Color(0xffFFECEF),
                   shape: BoxShape.circle,
                 ),
@@ -115,7 +115,7 @@ class InsufficientBalancePage extends StatelessWidget {
                   fontFamily: 'Poppins',
                   fontWeight: FontWeight.w400,
                   fontSize: 13.sp,
-                  color: colorScheme.onSurface.withOpacity(0.6),
+                  color: colorScheme.onSurface.withValues(alpha: 0.6),
                   height: 1.5,
                 ),
               ),
@@ -133,7 +133,7 @@ class InsufficientBalancePage extends StatelessWidget {
                   border: Border.all(
                     color: isDark
                         ? AppColors.darkFilterBorder
-                        : Colors.grey.withOpacity(0.2),
+                        : Colors.grey.withValues(alpha: 0.2),
                   ),
                 ),
                 child: Column(
@@ -156,7 +156,7 @@ class InsufficientBalancePage extends StatelessWidget {
                       child: Divider(
                         color: isDark
                             ? AppColors.darkFilterBorder
-                            : Colors.grey.withOpacity(0.3),
+                            : Colors.grey.withValues(alpha: 0.3),
                         height: 1,
                         thickness: 1,
                       ),
@@ -200,7 +200,7 @@ class InsufficientBalancePage extends StatelessWidget {
                     fontFamily: 'Poppins',
                     fontWeight: FontWeight.w600,
                     fontSize: 14.sp,
-                    color: colorScheme.onSurface.withOpacity(0.7),
+                    color: colorScheme.onSurface.withValues(alpha: 0.7),
                   ),
                 ),
               ),
@@ -229,7 +229,7 @@ class InsufficientBalancePage extends StatelessWidget {
             fontFamily: 'Poppins',
             fontSize: isBold ? 14.sp : 13.sp,
             fontWeight: isBold ? FontWeight.w600 : FontWeight.w500,
-            color: theme.colorScheme.onSurface.withOpacity(isBold ? 0.9 : 0.5),
+            color: theme.colorScheme.onSurface.withValues(alpha: isBold ? 0.9 : 0.5),
           ),
         ),
         Text(

@@ -110,7 +110,7 @@ class _PinCodeEnterPageState extends State<PinCodeEnterPage> {
                     fontFamily: 'Poppins',
                     fontWeight: FontWeight.w400,
                     fontSize: isTablet ? 18.sp : 13.sp,
-                    color: colorScheme.onSurface.withOpacity(0.6),
+                    color: colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
                 ),
 
@@ -135,7 +135,7 @@ class _PinCodeEnterPageState extends State<PinCodeEnterPage> {
                         borderRadius: BorderRadius.circular(12.r),
                         boxShadow: [
                           BoxShadow(
-                            color: AppColors.clrPrimary.withOpacity(0.15),
+                            color: AppColors.clrPrimary.withValues(alpha: 0.15),
                             blurRadius: 10,
                             offset: const Offset(0, 4),
                           ),
@@ -155,7 +155,7 @@ class _PinCodeEnterPageState extends State<PinCodeEnterPage> {
                         color: AppColors.clrPrimary,
                         borderRadius: BorderRadius.circular(12.r),
                         border: Border.all(
-                          color: colorScheme.primary.withOpacity(0.5),
+                          color: colorScheme.primary.withValues(alpha: 0.5),
                           width: 2,
                         ),
                       ),

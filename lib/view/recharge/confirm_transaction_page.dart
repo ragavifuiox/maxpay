@@ -1,5 +1,7 @@
 // ignore_for_file: must_be_immutable
 
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -23,14 +25,13 @@ class ConfirmTransactionPage extends GetView<PrePaidController> {
 
   TextEditingController amountController = TextEditingController();
   ConfirmTransactionPage({super.key});
-late String productdetid;
+  late String productdetid;
 
-
-final args = Get.arguments ?? {}; // already exists at top of build()
-String get productDetIdForRecharge => args['productdetid']?.toString() ?? '';
-String get enteredAmount => (args["amount"] ?? "").toString();
+  final args = Get.arguments ?? {}; // already exists at top of build()
+  String get productDetIdForRecharge => args['productdetid']?.toString() ?? '';
+  String get enteredAmount => (args["amount"] ?? "").toString();
   String get type => args["type"] ?? "mobile";
-String get paymentStatus => args['paymentStatus'] ?? "Pending";
+  String get paymentStatus => args['paymentStatus'] ?? "Pending";
   void setProductId(String id) {
     productdetid = id;
   }
@@ -47,15 +48,27 @@ String get paymentStatus => args['paymentStatus'] ?? "Pending";
 
     return Obx(() {
       final confirmData = controller.transConfirmData.value?.data;
-     
+      final isFromTranactionPage = args['isFromTranactionPage'] ?? false;
 
       if (controller.isLoading.value) {
         return const Scaffold(body: Center(child: CircularProgressIndicator()));
       }
 
-      if (confirmData == null) {
+      if (confirmData == null && !isFromTranactionPage) {
         return const Scaffold(body: Center(child: Text("No Data Found")));
       }
+
+      final String productName =
+          confirmData?.productName ?? args['operator'] ?? '';
+      final String logoUrl = confirmData?.logo ?? args['logo'] ?? '';
+
+      final String availableBalanceStr = confirmData?.availableBalance ?? '0';
+      final String transactionAmountStr = enteredAmount.isNotEmpty
+          ? enteredAmount
+          : (confirmData?.transactionAmount ?? args['amount'] ?? "0")
+                .toString();
+      final String commissionStr = confirmData?.commision ?? '0';
+      final String remainingBalanceStr = confirmData?.remainingBalance ?? '0';
 
       return Scaffold(
         backgroundColor: theme.scaffoldBackgroundColor,
@@ -69,7 +82,7 @@ String get paymentStatus => args['paymentStatus'] ?? "Pending";
 
                 Container(
                   padding: EdgeInsets.all(15.w),
-                  margin: .symmetric(horizontal: 20.w),
+                  margin: EdgeInsets.symmetric(horizontal: 20.w),
                   decoration: BoxDecoration(
                     color: isDark
                         ? AppColors.darkplceholder
@@ -97,12 +110,34 @@ String get paymentStatus => args['paymentStatus'] ?? "Pending";
                                 fontSize: 14.sp,
                               ),
                             ),
+                            Text(
+                              productName,
+                              style: TextStyle(
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: 12.h),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Operator',
+                              style: TextStyle(
+                                color: Colors.grey,
+                                fontSize: 14.sp,
+                              ),
+                            ),
                             Container(
                               width: 40.w,
                               height: 30.h,
                               alignment: Alignment.centerRight,
                               child: Image.network(
-                                confirmData.logo ?? '',
+                                logoUrl,
                                 fit: BoxFit.contain,
                                 errorBuilder: (context, error, stackTrace) {
                                   return const Icon(Icons.image_not_supported);
@@ -113,14 +148,14 @@ String get paymentStatus => args['paymentStatus'] ?? "Pending";
                         ),
                       ),
 
-                     _buildDetailRow(
-  context,
-  'Payment Status',
-  paymentStatus,
-  valueColor: paymentStatus == "Paid"
-      ? Colors.green
-      : Colors.red,
-),
+                      _buildDetailRow(
+                        context,
+                        'Payment Status',
+                        paymentStatus,
+                        valueColor: paymentStatus == "Paid"
+                            ? Colors.green
+                            : Colors.red,
+                      ),
 
                       _buildDetailRow(context, 'Transaction No', mobileNumber),
 
@@ -129,28 +164,25 @@ String get paymentStatus => args['paymentStatus'] ?? "Pending";
                       _buildAmountBox(
                         context,
                         'Available Balance',
-                        (confirmData.availableBalance ?? '0').currencyIndian,
+                        availableBalanceStr.currencyIndian,
                         Colors.blue,
                         const Color(0xffE8EEFF),
                         const Color(0xffE0E4FF),
                       ),
 
-                  _buildAmountBox(
-  context,
-  'Transaction Amount',
-  (enteredAmount.isNotEmpty
-          ? enteredAmount
-          : (confirmData.transactionAmount ?? "0"))
-      .currencyIndian,
-  Colors.red,
-  const Color(0xffFFE5E5),
-  const Color(0xffFFE4E8),
-),
+                      _buildAmountBox(
+                        context,
+                        'Transaction Amount',
+                        transactionAmountStr.currencyIndian,
+                        Colors.red,
+                        const Color(0xffFFE5E5),
+                        const Color(0xffFFE4E8),
+                      ),
 
                       _buildAmountBox(
                         context,
                         'Commission',
-                        (confirmData.commision ?? '0').currencyIndian,
+                        commissionStr.currencyIndian,
                         Colors.green,
                         const Color(0xffE4FFF1),
                         const Color(0xffE6FFF3),
@@ -159,7 +191,7 @@ String get paymentStatus => args['paymentStatus'] ?? "Pending";
                       _buildAmountBox(
                         context,
                         'Remaining Balance',
-                        (confirmData.remainingBalance ?? '0').currencyIndian,
+                        remainingBalanceStr.currencyIndian,
                         Colors.blue,
                         const Color(0xffE8EEFF),
                         const Color(0xffE0E4FF),
@@ -248,16 +280,18 @@ String get paymentStatus => args['paymentStatus'] ?? "Pending";
 
                         return;
                       }
-  // Validate transaction amount
-  final entered = double.tryParse(enteredAmount.trim()) ?? 0.0;
-  final reEntered = double.tryParse(amountController.text.trim()) ?? 0.0;
+                      // Validate transaction amount
+                      final entered =
+                          double.tryParse(enteredAmount.trim()) ?? 0.0;
+                      final reEntered =
+                          double.tryParse(amountController.text.trim()) ?? 0.0;
 
-  if (entered != reEntered) {
-    CustomToast.error(
-      "Re-entered amount does not match the transaction amount",
-    );
-    return;
-  }
+                      if (entered != reEntered) {
+                        CustomToast.error(
+                          "Re-entered amount does not match the transaction amount",
+                        );
+                        return;
+                      }
 
                       if (amountController.text.trim().isEmpty) {
                         CustomToast.error("Please enter amount");
@@ -271,18 +305,17 @@ String get paymentStatus => args['paymentStatus'] ?? "Pending";
                         arguments: {
                           "mobileNumber": mobileNumber,
                           "productdetid": args['productdetid'],
-                          "productName": confirmData.productName ?? '',
-                          
+                          "productName": productName,
+
                           "transactionNo": mobileNumber,
                           "transactionAmount": amountController.text,
                           "whatsappNumber": whatsappController.text,
-                          "operatorInitial":
-                              (confirmData.productName ?? '').isNotEmpty
-                              ? confirmData.productName![0]
+                          "operatorInitial": productName.isNotEmpty
+                              ? productName[0]
                               : '',
                           "operatorColor": Colors.red,
-                          "operatorLogo": confirmData.logo ?? '',
-                             "paymentStatus": paymentStatus,
+                          "operatorLogo": logoUrl,
+                          "paymentStatus": paymentStatus,
                         },
                       );
                     },
@@ -312,17 +345,17 @@ String get paymentStatus => args['paymentStatus'] ?? "Pending";
                               //   );
                               //   return;
                               // }
-// if (amountController.text.trim().isEmpty) {
-//   CustomToast.error("Please re-enter amount");
-//   return;
-// }
+                              // if (amountController.text.trim().isEmpty) {
+                              //   CustomToast.error("Please re-enter amount");
+                              //   return;
+                              // }
 
-// if (amountController.text.trim() != enteredAmount.trim()) {
-//   CustomToast.error(
-//     "Re-entered amount does not match the transaction amount",
-//   );
-//   return;
-// }
+                              // if (amountController.text.trim() != enteredAmount.trim()) {
+                              //   CustomToast.error(
+                              //     "Re-entered amount does not match the transaction amount",
+                              //   );
+                              //   return;
+                              // }
                               if (amountController.text.trim().isEmpty) {
                                 Get.snackbar(
                                   "Validation",
@@ -330,32 +363,42 @@ String get paymentStatus => args['paymentStatus'] ?? "Pending";
                                 );
                                 return;
                               }
-final entered = double.tryParse(enteredAmount.trim()) ?? 0.0;
-final reEntered = double.tryParse(amountController.text.trim()) ?? 0.0;
+                              final entered =
+                                  double.tryParse(enteredAmount.trim()) ?? 0.0;
+                              final reEntered =
+                                  double.tryParse(
+                                    amountController.text.trim(),
+                                  ) ??
+                                  0.0;
 
-if (entered != reEntered) {
-  CustomToast.error(
-    "Re-entered amount does not match the transaction amount",
-  );
-  return;
-}
+                              if (entered != reEntered) {
+                                CustomToast.error(
+                                  "Re-entered amount does not match the transaction amount",
+                                );
+                                return;
+                              }
                               AppLogger.debugPrint(
                                 "👉 FINAL PRODUCT ID: ${controller.productdetid}",
                               );
-final String backendStatus =
-    paymentStatus.toLowerCase() == "paid"
-        ? "received"
-        : "not_received";
+                              final String backendStatus =
+                                  paymentStatus.toLowerCase() == "paid"
+                                  ? "received"
+                                  : "not_received";
 
-                         print("Selected Operator : ${controller.selectedPlan.value?.name}");
-                       print("Selected Product Id : ${controller.selectedPlan.value?.id}");
-                       print("Controller Product Id : ${controller.productdetid}");
+                              print(
+                                "Selected Operator : ${controller.selectedPlan.value?.name}",
+                              );
+                              print(
+                                "Selected Product Id : ${controller.selectedPlan.value?.id}",
+                              );
+                              print(
+                                "Controller Product Id : ${controller.productdetid}",
+                              );
                               final success = await controller.mobilerecharge(
-                                productDetIdForRecharge, 
+                                productDetIdForRecharge,
                                 mobileNumber,
                                 amountController.text.trim(),
-                             backendStatus,
-
+                                backendStatus,
                               );
 
                               AppLogger.debugPrint("AFTER API CALL");
@@ -395,72 +438,87 @@ final String backendStatus =
                               //   );
                               // }
 
+                              //                               final rechargeData = controller.rechargeResponse.value;
 
-//                               final rechargeData = controller.rechargeResponse.value;
+                              // if (success && rechargeData != null) {
+                              //   final apiData = rechargeData.data?.apiResponse;
 
-// if (success && rechargeData != null) {
-//   final apiData = rechargeData.data?.apiResponse;
+                              //   Get.to(
+                              //     () => SuccessRechargePage(
+                              //       rechargeId: rechargeData.data?.recharge?.id?.toString() ?? "",
+                              //       productName: apiData?.logo ?? confirmData.productName ?? "",
+                              //       operatorLogo: apiData?.logo ?? "",
+                              //       operatorInitial:
+                              //           (apiData?.operatorName?.isNotEmpty ?? false)
+                              //               ? apiData!.operatorName![0]
+                              //               : "J",
+                              //       operatorColor: Colors.red,
+                              //       transactionNo: apiData?.mobileno ?? mobileNumber,
+                              //       rechargeAmount:
+                              //           (apiData?.amount ?? amountController.text).currencyIndian,
+                              //       transactionId: apiData?.txnid ?? "",
+                              //       dateTime: apiData?.requestDatetime ?? "",
+                              //     ),
+                              //   );
+                              // }
 
-//   Get.to(
-//     () => SuccessRechargePage(
-//       rechargeId: rechargeData.data?.recharge?.id?.toString() ?? "",
-//       productName: apiData?.logo ?? confirmData.productName ?? "",
-//       operatorLogo: apiData?.logo ?? "",
-//       operatorInitial:
-//           (apiData?.operatorName?.isNotEmpty ?? false)
-//               ? apiData!.operatorName![0]
-//               : "J",
-//       operatorColor: Colors.red,
-//       transactionNo: apiData?.mobileno ?? mobileNumber,
-//       rechargeAmount:
-//           (apiData?.amount ?? amountController.text).currencyIndian,
-//       transactionId: apiData?.txnid ?? "",
-//       dateTime: apiData?.requestDatetime ?? "",
-//     ),
-//   );
-// }
+                              final rechargeData =
+                                  controller.rechargeResponse.value;
+                              final apiData = rechargeData?.data?.apiResponse;
 
-
-final rechargeData = controller.rechargeResponse.value;
-final apiData = rechargeData?.data?.apiResponse;
-
-if (success && rechargeData != null) {
-  Get.to(
-    () => SuccessRechargePage(
-      rechargeId: rechargeData.data?.recharge?.id?.toString() ?? "",
-      productName: apiData?.operatorName ?? confirmData.productName ?? "",
-      operatorLogo: apiData?.logo ?? "",
-      operatorInitial:
-          (apiData?.operatorName?.isNotEmpty ?? false)
-              ? apiData!.operatorName![0]
-              : "J",
-      operatorColor: Colors.green,
-      transactionNo: apiData?.mobileno ?? mobileNumber,
-      rechargeAmount:
-          (apiData?.amount ?? amountController.text).currencyIndian,
-      transactionId: apiData?.txnid ?? "",
-      dateTime: apiData?.requestDatetime ?? "",
-    ),
-  );
-} else {
-  Get.to(
-    () => FailedRechargePage(
-      rechargeId: rechargeData?.data?.recharge?.id?.toString() ?? "",
-      productName: apiData?.operatorName ?? confirmData.productName ?? "",
-      operatorLogo: apiData?.logo ?? "",
-      operatorInitial:
-          (apiData?.operatorName?.isNotEmpty ?? false)
-              ? apiData!.operatorName![0]
-              : "J",
-      operatorColor: Colors.red,
-      transactionNo: apiData?.mobileno ?? mobileNumber,
-      rechargeAmount:
-          (apiData?.amount ?? amountController.text).currencyIndian,
-      transactionId: apiData?.txnid ?? "",
-      dateTime: apiData?.requestDatetime ?? "",
-    ),
-  );
-}
+                              if (success && rechargeData != null) {
+                                Get.to(
+                                  () => SuccessRechargePage(
+                                    rechargeId:
+                                        rechargeData.data?.recharge?.id
+                                            ?.toString() ??
+                                        "",
+                                    productName:
+                                        apiData?.operatorName ?? productName,
+                                    operatorLogo: apiData?.logo ?? logoUrl,
+                                    operatorInitial:
+                                        (apiData?.operatorName?.isNotEmpty ??
+                                            false)
+                                        ? apiData!.operatorName![0]
+                                        : "J",
+                                    operatorColor: Colors.green,
+                                    transactionNo:
+                                        apiData?.mobileno ?? mobileNumber,
+                                    rechargeAmount:
+                                        (apiData?.amount ??
+                                                amountController.text)
+                                            .currencyIndian,
+                                    transactionId: apiData?.txnid ?? "",
+                                    dateTime: apiData?.requestDatetime ?? "",
+                                  ),
+                                );
+                              } else {
+                                Get.to(
+                                  () => FailedRechargePage(
+                                    rechargeId:
+                                        rechargeData?.data?.recharge?.id
+                                            ?.toString() ??
+                                        "",
+                                    productName:
+                                        apiData?.operatorName ?? productName,
+                                    operatorLogo: apiData?.logo ?? logoUrl,
+                                    operatorInitial:
+                                        (apiData?.operatorName?.isNotEmpty ??
+                                            false)
+                                        ? apiData!.operatorName![0]
+                                        : "J",
+                                    operatorColor: Colors.red,
+                                    transactionNo:
+                                        apiData?.mobileno ?? mobileNumber,
+                                    rechargeAmount:
+                                        (apiData?.amount ??
+                                                amountController.text)
+                                            .currencyIndian,
+                                    transactionId: apiData?.txnid ?? "",
+                                    dateTime: apiData?.requestDatetime ?? "",
+                                  ),
+                                );
+                              }
                             },
                     ),
                   ),

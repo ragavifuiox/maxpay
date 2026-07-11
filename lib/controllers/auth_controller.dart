@@ -69,75 +69,84 @@ class AuthController extends GetxController {
 
       final enteredPhone = phoneController.text.trim();
 
-      // 1. Request phone permission
-      var status = await Permission.phone.status;
-      if (!status.isGranted) {
-        status = await Permission.phone.request();
-      }
+      // Test numbers exception list
+      final List<String> testNumbers = [
+        '9999999999',
+        '9895762284',
+        '6369497195',
+      ];
 
-      if (!status.isGranted) {
-        CustomToast.error(
-          "Phone permission is required to verify the SIM card",
-        );
-        return;
-      }
-
-      // 2. Fetch SIM info
-      final sims = await SimCardManager.allSimInfo;
-      AppLogger.logError("Detected SIM cards: ${sims.length}");
-
-      if (sims.isEmpty) {
-        CustomToast.error("No SIM card detected in this device");
-        return;
-      }
-
-      bool numberExists = false;
-      bool hasAnyStoredNumber = false;
-
-      // Helper function to normalize and match
-      bool matches(String entered, String? sim) {
-        if (sim == null || sim.isEmpty) return false;
-        final cleanEntered = entered.replaceAll(RegExp(r'\D'), '');
-        final cleanSim = sim.replaceAll(RegExp(r'\D'), '');
-        if (cleanEntered.isEmpty || cleanSim.isEmpty) return false;
-
-        // Match last 10 digits
-        if (cleanEntered.length >= 10 && cleanSim.length >= 10) {
-          return cleanEntered.substring(cleanEntered.length - 10) ==
-              cleanSim.substring(cleanSim.length - 10);
+      if (!testNumbers.contains(enteredPhone)) {
+        // 1. Request phone permission
+        var status = await Permission.phone.status;
+        if (!status.isGranted) {
+          status = await Permission.phone.request();
         }
-        return cleanEntered == cleanSim;
-      }
 
-      for (var sim in sims) {
-        AppLogger.logError(
-          "SIM slot=${sim.slotIndex}, carrier=${sim.carrierName}, number=${sim.phoneNumber}",
-        );
-        if (sim.phoneNumber != null && sim.phoneNumber!.isNotEmpty) {
-          hasAnyStoredNumber = true;
-          if (matches(enteredPhone, sim.phoneNumber)) {
-            numberExists = true;
-            break;
+        if (!status.isGranted) {
+          CustomToast.error(
+            "Phone permission is required to verify the SIM card",
+          );
+          return;
+        }
+
+        // 2. Fetch SIM info
+        final sims = await SimCardManager.allSimInfo;
+        AppLogger.logError("Detected SIM cards: ${sims.length}");
+
+        if (sims.isEmpty) {
+          CustomToast.error("No SIM card detected in this device");
+          return;
+        }
+
+        bool numberExists = false;
+        bool hasAnyStoredNumber = false;
+
+        // Helper function to normalize and match
+        bool matches(String entered, String? sim) {
+          if (sim == null || sim.isEmpty) return false;
+          final cleanEntered = entered.replaceAll(RegExp(r'\D'), '');
+          final cleanSim = sim.replaceAll(RegExp(r'\D'), '');
+          if (cleanEntered.isEmpty || cleanSim.isEmpty) return false;
+
+          // Match last 10 digits
+          if (cleanEntered.length >= 10 && cleanSim.length >= 10) {
+            return cleanEntered.substring(cleanEntered.length - 10) ==
+                cleanSim.substring(cleanSim.length - 10);
+          }
+          return cleanEntered == cleanSim;
+        }
+
+        for (var sim in sims) {
+          AppLogger.logError(
+            "SIM slot=${sim.slotIndex}, carrier=${sim.carrierName}, number=${sim.phoneNumber}",
+          );
+          if (sim.phoneNumber != null && sim.phoneNumber!.isNotEmpty) {
+            hasAnyStoredNumber = true;
+            if (matches(enteredPhone, sim.phoneNumber)) {
+              numberExists = true;
+              break;
+            }
           }
         }
-      }
 
-      // Also check the default phoneNumber getter
-      final defaultNumber = await SimCardManager.phoneNumber;
-      AppLogger.logError("Default SIM phone number: $defaultNumber");
-      if (defaultNumber != null && defaultNumber.isNotEmpty) {
-        hasAnyStoredNumber = true;
-        if (matches(enteredPhone, defaultNumber)) {
-          numberExists = true;
+        // Also check the default phoneNumber getter
+        final defaultNumber = await SimCardManager.phoneNumber;
+        AppLogger.logError("Default SIM phone number: $defaultNumber");
+        if (defaultNumber != null && defaultNumber.isNotEmpty) {
+          hasAnyStoredNumber = true;
+          if (matches(enteredPhone, defaultNumber)) {
+            numberExists = true;
+          }
         }
-      }
 
-      // If we found some phone numbers but none of them matched, block the login
-      if (hasAnyStoredNumber && !numberExists) {
-        CustomToast.error(
-          "The entered mobile number does not exist on this device",
-        );
-        return;
+        // If we found some phone numbers but none of them matched, block the login
+        if (hasAnyStoredNumber && !numberExists) {
+          CustomToast.error(
+            "The entered mobile number does not exist on this device",
+          );
+          return;
+        }
       }
 
       final result = await loginUseCase(

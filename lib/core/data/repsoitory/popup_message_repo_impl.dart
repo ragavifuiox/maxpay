@@ -5,7 +5,6 @@ import 'package:maxpay/core/domain/repository/popup_message_repository.dart';
 import 'package:maxpay/core/error/failure.dart';
 import 'package:maxpay/core/services/api_services.dart';
 
-
 class PopupMessageRepoImpl implements PopupMessageRepository {
   final ApiService apiService;
   PopupMessageRepoImpl(this.apiService);

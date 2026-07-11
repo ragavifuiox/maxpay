@@ -8,19 +8,19 @@ class Graph {
 
   Graph.fromJson(Map<String, dynamic> json) {
     success = json['success'];
-    data = json['data'] != null ? new Data.fromJson(json['data']) : null;
+    data = json['data'] != null ? Data.fromJson(json['data']) : null;
     message = json['message'];
     code = json['code'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['success'] = this.success;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['success'] = success;
     if (this.data != null) {
       data['data'] = this.data!.toJson();
     }
-    data['message'] = this.message;
-    data['code'] = this.code;
+    data['message'] = message;
+    data['code'] = code;
     return data;
   }
 }
@@ -45,11 +45,11 @@ class Data {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['labels'] = this.labels;
-    data['wallet_credit'] = this.walletCredit;
-    data['success_recharge'] = this.successRecharge;
-    data['failed_recharge'] = this.failedRecharge;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['labels'] = labels;
+    data['wallet_credit'] = walletCredit;
+    data['success_recharge'] = successRecharge;
+    data['failed_recharge'] = failedRecharge;
     return data;
   }
 }

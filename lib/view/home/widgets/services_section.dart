@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -10,6 +12,7 @@ import 'package:maxpay/core/constants/asset_images.dart';
 import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/core/di/service_locator.dart';
+import 'package:maxpay/core/extensions/currency.dart';
 import 'package:maxpay/view/fastag_recharge/fastag_recharge_page.dart';
 import 'package:maxpay/view/home/widgets/home_header.dart';
 import 'package:maxpay/core/constants/extension.dart';
@@ -25,22 +28,22 @@ class MenuScreen extends StatelessWidget {
   final BannerController bannerController = Get.put(
     BannerController(bannerUsecase: sl(), advusecase: sl()),
   );
-Future<void> _refreshPage() async {
-  await Future.wait([
-  controller.fetchProductTypes(),
- 
-]);
-
-}
-
+  Future<void> _refreshPage() async {
+    await Future.wait([controller.fetchProductTypes()]);
+  }
 
   /// ✅ SAFE URL HELPER — handles both full URLs and relative paths
   String _toImageUrl(String? path) {
     if (path == null || path.isEmpty) return "";
-    if (path.startsWith("http://") || path.startsWith("https://")) {
-      return path; // Already full URL, return as-is
+
+    // Replace spaces with %20 so Image.network can load them
+    String formattedPath = path.replaceAll(' ', '%20');
+
+    if (formattedPath.startsWith("http://") ||
+        formattedPath.startsWith("https://")) {
+      return formattedPath; // Already full URL, return as-is
     }
-    return path.addToBase(); // Relative path, add base
+    return formattedPath.addToBase(); // Relative path, add base
   }
 
   @override
@@ -61,223 +64,233 @@ Future<void> _refreshPage() async {
 
           final productList = controller.productTypeData.value?.data ?? [];
 
-         return RefreshIndicator(
-  onRefresh: _refreshPage,
-  child: SingleChildScrollView(
-    physics: const AlwaysScrollableScrollPhysics(),
-    child: Column(
-      children: [
-                const HomeHeaderSection(),
+          return RefreshIndicator(
+            onRefresh: _refreshPage,
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: Column(
+                children: [
+                  const HomeHeaderSection(),
 
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 16.w,
-                    vertical: 12.h,
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      /// WALLET CARD
-                      Container(
-                        width: double.infinity,
-                        padding: EdgeInsets.symmetric(vertical: 18.h),
-                        decoration: BoxDecoration(
-                          color: AppColors.clrPrimary,
-                          borderRadius: BorderRadius.circular(14.r),
-                        ),
-                        child: Column(
-                          children: [
-                            Text(
-                              "Wallet Balance",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 14.sp,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                            SizedBox(height: 6.h),
-                            Obx(() {
-                              final balance =
-                                  Get.find<HomePageController>()
-                                      .walletBalance
-                                      .value;
-                              return Text(
-                                "₹ ${balance?.data?.balance ?? "0.00"}",
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 12.h,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        /// WALLET CARD
+                        Container(
+                          width: double.infinity,
+                          padding: EdgeInsets.symmetric(vertical: 18.h),
+                          decoration: BoxDecoration(
+                            color: AppColors.clrPrimary,
+                            borderRadius: BorderRadius.circular(14.r),
+                          ),
+                          child: Column(
+                            children: [
+                              Text(
+                                "Wallet Balance",
                                 style: TextStyle(
                                   color: Colors.white,
-                                  fontSize: 24.sp,
-                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14.sp,
+                                  fontWeight: FontWeight.w600,
                                 ),
-                              );
-                            }),
-                          ],
+                              ),
+                              SizedBox(height: 6.h),
+                              Obx(() {
+                                final balance = Get.find<HomePageController>()
+                                    .walletBalance
+                                    .value;
+                                return Text(
+                                  balance?.data?.balance
+                                          ?.toString()
+                                          .currencyIndian ??
+                                      '0.00',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 24.sp,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                );
+                              }),
+                            ],
+                          ),
                         ),
-                      ),
 
-                      SizedBox(height: 16.h),
+                        SizedBox(height: 16.h),
 
-                      /// TOP BANNER
-                      Obx(() {
-                        final list =
-                            bannerController.bannerData.value?.data ?? [];
+                        /// TOP BANNER
+                        Obx(() {
+                          final list =
+                              bannerController.bannerData.value?.data ?? [];
 
-                        if (bannerController.isLoading.value) {
-                          return const Center(
-                              child: CircularProgressIndicator());
-                        }
-                        if (list.isEmpty) return const SizedBox.shrink();
+                          if (bannerController.isLoading.value) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          }
+                          if (list.isEmpty) return const SizedBox.shrink();
 
-                        return Column(
-                          children: [
-                            SizedBox(
-                              height: 150.h,
-                              child: PageView.builder(
-                                controller: bannerController.pageController,
-                                itemCount: list.length,
-                                onPageChanged: (index) {
-                                  bannerController.currentIndex.value = index;
-                                },
-                                itemBuilder: (context, index) {
-                                  /// ✅ FIXED: using _toImageUrl
-                                  final imageUrl =
-                                      _toImageUrl(list[index].image);
-                                  return ClipRRect(
-                                    borderRadius: BorderRadius.circular(16.r),
-                                    child: Image.network(
-                                      imageUrl,
-                                      fit: BoxFit.cover,
-                                      errorBuilder: (_, _, _) => Container(
-                                        color: Colors.grey.shade300,
-                                        child: const Icon(Icons.broken_image),
+                          return Column(
+                            children: [
+                              SizedBox(
+                                height: 150.h,
+                                child: PageView.builder(
+                                  controller: bannerController.pageController,
+                                  itemCount: list.length,
+                                  onPageChanged: (index) {
+                                    bannerController.currentIndex.value = index;
+                                  },
+                                  itemBuilder: (context, index) {
+                                    /// ✅ FIXED: using _toImageUrl
+                                    final imageUrl = _toImageUrl(
+                                      list[index].image,
+                                    );
+                                    log(imageUrl);
+                                    return ClipRRect(
+                                      borderRadius: BorderRadius.circular(16.r),
+                                      child: Image.network(
+                                        imageUrl,
+                                        fit: BoxFit.cover,
+                                        errorBuilder: (_, _, _) => Container(
+                                          color: Colors.grey.shade300,
+                                          child: const Icon(Icons.broken_image),
+                                        ),
                                       ),
-                                    ),
-                                  );
-                                },
+                                    );
+                                  },
+                                ),
+                              ),
+                              SizedBox(height: 8.h),
+                              Obx(() {
+                                return Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: List.generate(list.length, (index) {
+                                    final isActive =
+                                        bannerController.currentIndex.value ==
+                                        index;
+                                    return AnimatedContainer(
+                                      duration: const Duration(
+                                        milliseconds: 300,
+                                      ),
+                                      margin: EdgeInsets.symmetric(
+                                        horizontal: 4.w,
+                                      ),
+                                      height: 6.w,
+                                      width: isActive ? 18.w : 6.w,
+                                      decoration: BoxDecoration(
+                                        color: isActive
+                                            ? AppColors.clrPrimary
+                                            : Colors.grey.shade400,
+                                        borderRadius: BorderRadius.circular(
+                                          20.r,
+                                        ),
+                                      ),
+                                    );
+                                  }),
+                                );
+                              }),
+                            ],
+                          );
+                        }),
+
+                        SizedBox(height: 18.h),
+
+                        /// STATUS CARDS
+                        Row(
+                          children: [
+                            Expanded(
+                              child: _statusCard(
+                                image: AssetImages.successIcon,
+
+                                value: "5000",
+                                bgColor: const Color(0xffDDF8E6),
+
+                                textColor: const Color(0xff22C55E),
                               ),
                             ),
-                            SizedBox(height: 8.h),
-                            Obx(() {
-                              return Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children:
-                                    List.generate(list.length, (index) {
-                                  final isActive =
-                                      bannerController.currentIndex.value ==
-                                          index;
-                                  return AnimatedContainer(
-                                    duration:
-                                        const Duration(milliseconds: 300),
-                                    margin:
-                                        EdgeInsets.symmetric(horizontal: 4.w),
-                                    height: 6.w,
-                                    width: isActive ? 18.w : 6.w,
-                                    decoration: BoxDecoration(
-                                      color: isActive
-                                          ? AppColors.clrPrimary
-                                          : Colors.grey.shade400,
-                                      borderRadius:
-                                          BorderRadius.circular(20.r),
-                                    ),
-                                  );
-                                }),
-                              );
-                            }),
+                            SizedBox(width: 12.w),
+                            Expanded(
+                              child: _statusCard(
+                                image: AssetImages.processIcon,
+                                value: "5000",
+                                bgColor: const Color(0xffFCEFD9),
+
+                                textColor: Colors.orange,
+                              ),
+                            ),
+                            SizedBox(width: 12.w),
+                            Expanded(
+                              child: _statusCard(
+                                image: AssetImages.failedIcon,
+                                value: "5000",
+                                bgColor: const Color(0xffFCE2E6),
+
+                                textColor: Colors.red,
+                              ),
+                            ),
                           ],
-                        );
-                      }),
+                        ),
 
-                      SizedBox(height: 18.h),
+                        SizedBox(height: 18.h),
 
-                      
+                        /// SERVICES TITLE
+                        Row(
+                          children: [
+                            Text(
+                              "Services",
+                              style: TextStyle(
+                                color: AppColors.clrPrimary,
+                                fontSize: 18.sp,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(width: 8.w),
+                            Expanded(
+                              child: Divider(
+                                color: AppColors.clrPrimary,
+                                thickness: 1.2,
+                              ),
+                            ),
+                          ],
+                        ),
 
-/// STATUS CARDS
-Row(
-  children: [
-    Expanded(
-      child: _statusCard(
-              image: AssetImages.successIcon,
+                        SizedBox(height: 16.h),
 
-        value: "5000",
-        bgColor: const Color(0xffDDF8E6),
-     
-        textColor: const Color(0xff22C55E),
-      ),
-    ),
-    SizedBox(width: 12.w),
-    Expanded(
-      child: _statusCard(
-         image: AssetImages.processIcon,
-        value: "5000",
-        bgColor: const Color(0xffFCEFD9),
-    
-        textColor: Colors.orange,
-      ),
-    ),
-    SizedBox(width: 12.w),
-    Expanded(
-      child: _statusCard(
-        image: AssetImages.failedIcon,
-        value: "5000",
-        bgColor: const Color(0xffFCE2E6),
-      
-        textColor: Colors.red,
-      ),
-    ),
-  ],
-),
+                        /// ✅ SMART LAYOUT: Ad = Image1, No Ad = Image2
+                        Obx(() {
+                          final advList =
+                              bannerController
+                                  .advdata
+                                  .value
+                                  ?.data
+                                  ?.advertisements ??
+                              [];
+                          final hasAdImage =
+                              advList.isNotEmpty &&
+                              (advList.first.adImage ?? "").isNotEmpty;
 
-SizedBox(height: 18.h),
+                          if (hasAdImage) {
+                            return _buildLayoutWithAds(
+                              context,
+                              productList,
+                              advList,
+                            );
+                          } else {
+                            return _buildCleanGrid(context, productList);
+                          }
+                        }),
 
-/// SERVICES TITLE
-Row(
-  children: [
-    Text(
-      "Services",
-      style: TextStyle(
-        color: AppColors.clrPrimary,
-        fontSize: 18.sp,
-        fontWeight: FontWeight.bold,
-      ),
-    ),
-    SizedBox(width: 8.w),
-    Expanded(
-      child: Divider(
-        color: AppColors.clrPrimary,
-        thickness: 1.2,
-      ),
-    ),
-  ],
-),
-
-SizedBox(height: 16.h),
-
-                    
-
-                      /// ✅ SMART LAYOUT: Ad = Image1, No Ad = Image2
-                      Obx(() {
-                        final advList = bannerController
-                                .advdata.value?.data?.advertisements ??
-                            [];
-                        final hasAdImage = advList.isNotEmpty &&
-                            (advList.first.adImage ?? "").isNotEmpty;
-
-                        if (hasAdImage) {
-                          return _buildLayoutWithAds(
-                              context, productList, advList);
-                        } else {
-                          return _buildCleanGrid(context, productList);
-                        }
-                      }),
-
-                      SizedBox(height: 20.h),
-                    ],
+                        SizedBox(height: 20.h),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-  )
           );
-         
         }),
       ),
     );
@@ -285,7 +298,10 @@ SizedBox(height: 16.h),
 
   /// ✅ IMAGE 1 LAYOUT — with ad banners between icons
   Widget _buildLayoutWithAds(
-      BuildContext context, List<Data> productList, List advList) {
+    BuildContext context,
+    List<Data> productList,
+    List advList,
+  ) {
     /// ✅ FIXED: using _toImageUrl instead of .addToBase()
     final adImageUrl = _toImageUrl(advList.first.adImage);
 
@@ -435,7 +451,7 @@ SizedBox(height: 16.h),
   void _showFullImage(BuildContext context, String imageUrl) {
     showDialog(
       context: context,
-      barrierColor: Colors.black.withOpacity(0.9),
+      barrierColor: Colors.black.withValues(alpha: 0.9),
       builder: (_) {
         return GestureDetector(
           onTap: () => Get.back(),
@@ -460,13 +476,13 @@ SizedBox(height: 16.h),
     );
   }
 
-  Widget _dynamicServiceItem(BuildContext context, Data item,
-      [int index = 0]) {
+  Widget _dynamicServiceItem(BuildContext context, Data item, [int index = 0]) {
     return _serviceItem(
       context,
       item.name ?? "",
       _getImage(item.name ?? ""),
-      [AppColors.box1, AppColors.box2, AppColors.box3, AppColors.box4][index % 4],
+      [AppColors.box1, AppColors.box2, AppColors.box3, AppColors.box4][index %
+          4],
       onTap: () => _handleNavigation(item),
     );
   }
@@ -642,47 +658,42 @@ SizedBox(height: 16.h),
         );
         break;
 
-     case 'fastag':
-  Get.to(() => const FastagRechargePage());
-  break;
-
+      case 'fastag':
+        Get.to(() => const FastagRechargePage());
+        break;
 
       default:
         break;
     }
   }
 
- Widget _statusCard({
-  required String image,
-  required String value,
-  required Color bgColor,
-  required Color textColor,
-}) {
-  return Container(
-    height: 52.h,
-    decoration: BoxDecoration(
-      color: bgColor,
-      borderRadius: BorderRadius.circular(12.r),
-    ),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        SvgPicture.asset(
-          image,
-          width: 20.w,
-          height: 20.h,
-        ),
-        SizedBox(width: 8.w),
-        Text(
-          value,
-          style: TextStyle(
-            fontSize: 14.sp,
-            fontWeight: FontWeight.bold,
-            color: textColor,
+  Widget _statusCard({
+    required String image,
+    required String value,
+    required Color bgColor,
+    required Color textColor,
+  }) {
+    return Container(
+      height: 52.h,
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(12.r),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SvgPicture.asset(image, width: 20.w, height: 20.h),
+          SizedBox(width: 8.w),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 14.sp,
+              fontWeight: FontWeight.bold,
+              color: textColor,
+            ),
           ),
-        ),
-      ],
-    ),
-  );
-}
+        ],
+      ),
+    );
+  }
 }

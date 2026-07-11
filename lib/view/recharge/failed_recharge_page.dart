@@ -1,4 +1,3 @@
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 
@@ -14,14 +13,9 @@ import 'package:maxpay/controllers/wallet_credit_controller.dart';
 import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/core/constants/extension.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
-import 'package:maxpay/core/constants/snackbar.dart';
 import 'package:maxpay/core/di/service_locator.dart';
 import 'package:maxpay/core/extensions/currency.dart';
 import 'package:maxpay/global_widget/commom_button.dart';
-import 'package:media_store_plus/media_store_plus.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:pdf/pdf.dart';
-import 'package:pdf/widgets.dart' as pw;
 
 
 class FailedRechargePage extends StatelessWidget {
@@ -35,7 +29,7 @@ class FailedRechargePage extends StatelessWidget {
   final String operatorLogo; // image URL
   final String rechargeId;
   
-  FailedRechargePage({
+  const FailedRechargePage({
     super.key,
     required this.productName,
     required this.operatorInitial,
