@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:maxpay/controllers/homepage_controller.dart';
 import 'package:maxpay/controllers/prepaid_controller.dart';
@@ -17,7 +16,6 @@ import 'package:maxpay/core/utils/logg_helper.dart';
 import 'package:maxpay/view/mobile_recharge/contact_list_page.dart';
 import 'package:maxpay/view/mobile_recharge/webview.dart';
 import 'package:permission_handler/permission_handler.dart' as ph;
-import 'package:url_launcher/url_launcher.dart';
 
 class MobileRechargePage extends StatefulWidget {
   final String productId;
@@ -67,14 +65,13 @@ class _MobileRechargePageState extends State<MobileRechargePage>
 
     selectedOperator = widget.productName;
     selectedProductId = widget.productId;
-controller.productId.value = widget.productId;
+    controller.productId.value = widget.productId;
     try {
       loadTabs();
     } catch (e) {
-      _tabController = TabController(length: 2, vsync: this);
+      AppLogger.logError(e.toString());
     }
     controller.getPlans(productid: widget.productId);
-    controller.getPlanTabs();
   }
 
   Future<void> loadTabs() async {
@@ -248,10 +245,7 @@ controller.productId.value = widget.productId;
                       },
                       child: Container(
                         padding: const EdgeInsets.all(10),
-                        child: const Icon(
-                          Icons.language,
-                          color: Colors.blue,
-                        ),
+                        child: const Icon(Icons.language, color: Colors.blue),
                       ),
                     );
                   }),
@@ -276,10 +270,7 @@ controller.productId.value = widget.productId;
                     },
                     child: const Text(
                       "Terms",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
-                      ),
+                      style: TextStyle(color: Colors.white, fontSize: 12),
                     ),
                   ),
                 ],
@@ -426,9 +417,7 @@ controller.productId.value = widget.productId;
                                       height: 40,
                                     ),
                                   const SizedBox(width: 10),
-                                  Expanded(
-                                    child: Text(operator.name ?? ""),
-                                  ),
+                                  Expanded(child: Text(operator.name ?? "")),
                                 ],
                               ),
                             );
@@ -468,17 +457,12 @@ controller.productId.value = widget.productId;
                   decoration: BoxDecoration(
                     color: isDark ? AppColors.darkplceholder : Colors.white,
                     borderRadius: BorderRadius.circular(10.r),
-                    border: Border.all(
-                      color: Colors.grey.shade300,
-                      width: 1,
-                    ),
+                    border: Border.all(color: Colors.grey.shade300, width: 1),
                   ),
                   child: TextField(
                     controller: amountController,
                     keyboardType: TextInputType.number,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.digitsOnly,
-                    ],
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     onChanged: (value) {
                       setState(() {
                         showNextButton = value.trim().isNotEmpty;
@@ -486,10 +470,7 @@ controller.productId.value = widget.productId;
                     },
                     decoration: InputDecoration(
                       hintText: "Enter Amount",
-                      hintStyle: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 14.sp,
-                      ),
+                      hintStyle: TextStyle(color: Colors.grey, fontSize: 14.sp),
                       border: InputBorder.none,
                       contentPadding: EdgeInsets.only(
                         left: 20.w,
@@ -512,10 +493,7 @@ controller.productId.value = widget.productId;
                 width: double.infinity,
                 padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
                 decoration: BoxDecoration(
-                  border: Border.all(
-                    color: const Color(0xff19A7CE),
-                    width: 1,
-                  ),
+                  border: Border.all(color: const Color(0xff19A7CE), width: 1),
                   borderRadius: BorderRadius.circular(10.r),
                 ),
                 child: Stack(
@@ -641,7 +619,9 @@ controller.productId.value = widget.productId;
 
                           if (mobile.length != 10) {
                             print("Invalid Mobile Number");
-                            CustomToast.error("Please enter valid mobile number");
+                            CustomToast.error(
+                              "Please enter valid mobile number",
+                            );
                             return;
                           }
 
@@ -672,14 +652,26 @@ controller.productId.value = widget.productId;
                         String mobile = mobileController.text.trim();
                         String amount = amountController.text.trim();
 
-                        print("========== Recharge Validation ==========");
-                        print("Mobile Number      : $mobile");
-                        print("Amount             : $amount");
-                        print("Selected ProductID : $selectedProductId");
-                        print("Selected Operator  : $selectedOperator");
-                        print("Selected Plan      : ${controller.selectedPlan.value}");
-                        print("Payment Received   : $isPaymentReceived");
-                        print("=========================================");
+                        AppLogger.debugPrint(
+                          "========== Recharge Validation ==========",
+                        );
+                        AppLogger.debugPrint("Mobile Number      : $mobile");
+                        AppLogger.debugPrint("Amount             : $amount");
+                        AppLogger.debugPrint(
+                          "Selected ProductID : $selectedProductId",
+                        );
+                        AppLogger.debugPrint(
+                          "Selected Operator  : $selectedOperator",
+                        );
+                        AppLogger.debugPrint(
+                          "Selected Plan      : ${controller.selectedPlan.value}",
+                        );
+                        AppLogger.debugPrint(
+                          "Payment Received   : $isPaymentReceived",
+                        );
+                        AppLogger.debugPrint(
+                          "=========================================",
+                        );
 
                         // Mobile validation
                         if (mobile.isEmpty) {
@@ -708,7 +700,26 @@ controller.productId.value = widget.productId;
                         print(
                           "Calling confirmtrans() with Product ID: $selectedProductId",
                         );
+                        final requiredAmount = double.tryParse(amount) ?? 0.0;
 
+                        final currentBalance =
+                            Get.find<HomePageController>()
+                                .walletBalance
+                                .value
+                                ?.data
+                                ?.balance ??
+                            0.0;
+
+                        if (requiredAmount > currentBalance) {
+                          Get.toNamed(
+                            AppRoutes.insufficientBalance,
+                            arguments: {
+                              'currentBalance': currentBalance,
+                              'requiredAmount': requiredAmount,
+                            },
+                          );
+                          return;
+                        }
                         await controller.confirmtrans(selectedProductId);
 
                         Get.toNamed(
@@ -717,8 +728,9 @@ controller.productId.value = widget.productId;
                             "mobileNumber": mobile,
                             "productdetid": selectedProductId,
                             "amount": amount,
-                            "paymentStatus":
-                                isPaymentReceived == true ? "Paid" : "Pending",
+                            "paymentStatus": isPaymentReceived == true
+                                ? "Paid"
+                                : "Pending",
                           },
                         );
                       },
@@ -735,7 +747,7 @@ controller.productId.value = widget.productId;
                           "Proceed",
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: 15.sp,
+                            fontSize: 14.sp,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
@@ -751,14 +763,18 @@ controller.productId.value = widget.productId;
                 (_tabController == null ||
                         controller.planTabs.isEmpty ||
                         _tabController!.length != controller.planTabs.length)
-                    ? const Center(child: CircularProgressIndicator())
+                    ? (controller.isLoading.value
+                          ? const Center(child: CircularProgressIndicator())
+                          : const SizedBox.shrink())
                     : TabBar(
                         controller: _tabController!,
                         isScrollable: true,
-                        indicatorColor:
-                            isDark ? Colors.orange : AppColors.clrSecondary,
-                        labelColor:
-                            isDark ? Colors.orange : AppColors.clrSecondary,
+                        indicatorColor: isDark
+                            ? Colors.orange
+                            : AppColors.clrSecondary,
+                        labelColor: isDark
+                            ? Colors.orange
+                            : AppColors.clrSecondary,
                         unselectedLabelColor: Colors.grey,
                         dividerColor: Colors.transparent,
                         tabAlignment: TabAlignment.start,
@@ -981,9 +997,9 @@ controller.productId.value = widget.productId;
                               fontWeight: FontWeight.w500,
                               color:
                                   Theme.of(context).brightness ==
-                                          Brightness.dark
-                                      ? Colors.white
-                                      : Colors.black,
+                                      Brightness.dark
+                                  ? Colors.white
+                                  : Colors.black,
                             ),
                           ),
                           TextSpan(
@@ -994,9 +1010,9 @@ controller.productId.value = widget.productId;
                               fontWeight: FontWeight.w500,
                               color:
                                   Theme.of(context).brightness ==
-                                          Brightness.dark
-                                      ? Colors.white
-                                      : Colors.black,
+                                      Brightness.dark
+                                  ? Colors.white
+                                  : Colors.black,
                             ),
                           ),
                         ],
@@ -1189,9 +1205,7 @@ controller.productId.value = widget.productId;
 
           SizedBox(height: 14.h),
 
-          Divider(
-            color: isDark ? Colors.white24 : Colors.black12,
-          ),
+          Divider(color: isDark ? Colors.white24 : Colors.black12),
 
           SizedBox(height: 10.h),
 
@@ -1262,8 +1276,7 @@ controller.productId.value = widget.productId;
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
           content: const SingleChildScrollView(
-            child: Text(
-              '''
+            child: Text('''
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
 
 • Please verify the mobile number before proceeding.
@@ -1279,12 +1292,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor i
 • For any issues, please contact customer support.
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-            ''',
-              style: TextStyle(
-                fontSize: 14,
-                height: 1.5,
-              ),
-            ),
+            ''', style: TextStyle(fontSize: 14, height: 1.5)),
           ),
           actions: [
             ElevatedButton(
@@ -1294,10 +1302,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: const Text(
-                "Close",
-                style: TextStyle(color: Colors.white),
-              ),
+              child: const Text("Close", style: TextStyle(color: Colors.white)),
             ),
           ],
         );

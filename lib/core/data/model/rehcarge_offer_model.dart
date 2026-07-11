@@ -11,25 +11,25 @@ class RechargeOffer {
         ? json['status']
         : (json['status']?.toString().toLowerCase() == 'true');
     lookup =
-        json['lookup'] != null ? new Lookup.fromJson(json['lookup']) : null;
+        json['lookup'] != null ? Lookup.fromJson(json['lookup']) : null;
     product = json['product'] != null
-        ? new Product.fromJson(json['product'])
+        ? Product.fromJson(json['product'])
         : null;
     offers =
-        json['offers'] != null ? new Offers.fromJson(json['offers']) : null;
+        json['offers'] != null ? Offers.fromJson(json['offers']) : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['status'] = this.status;
-    if (this.lookup != null) {
-      data['lookup'] = this.lookup!.toJson();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['status'] = status;
+    if (lookup != null) {
+      data['lookup'] = lookup!.toJson();
     }
-    if (this.product != null) {
-      data['product'] = this.product!.toJson();
+    if (product != null) {
+      data['product'] = product!.toJson();
     }
-    if (this.offers != null) {
-      data['offers'] = this.offers!.toJson();
+    if (offers != null) {
+      data['offers'] = offers!.toJson();
     }
     return data;
   }
@@ -46,18 +46,18 @@ class Lookup {
     // Convert defensively: API may send tel as a number
     tel = json['tel']?.toString();
     records = json['records'] != null
-        ? new Records.fromJson(json['records'])
+        ? Records.fromJson(json['records'])
         : null;
     status = json['status']?.toString();
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['tel'] = this.tel;
-    if (this.records != null) {
-      data['records'] = this.records!.toJson();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['tel'] = tel;
+    if (records != null) {
+      data['records'] = records!.toJson();
     }
-    data['status'] = this.status;
+    data['status'] = status;
     return data;
   }
 }
@@ -89,12 +89,12 @@ class Records {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['status'] = this.status;
-    data['operator'] = this.operator;
-    data['circle'] = this.circle;
-    data['comcircle'] = this.comcircle;
-    data['circlecode'] = this.circlecode;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['status'] = status;
+    data['operator'] = operator;
+    data['circle'] = circle;
+    data['comcircle'] = comcircle;
+    data['circlecode'] = circlecode;
     return data;
   }
 }
@@ -178,9 +178,9 @@ class OfferRecords {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['rs'] = this.rs;
-    data['desc'] = this.desc;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['rs'] = rs;
+    data['desc'] = desc;
     return data;
   }
 }

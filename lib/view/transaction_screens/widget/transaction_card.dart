@@ -11,17 +11,13 @@ import 'package:maxpay/view/transaction_screens/widget/daispute_dialogue..dart';
 class TransactionCard extends StatelessWidget {
   final TransrepData data;
 
-  const TransactionCard({
-    super.key,
-    required this.data,
-  });
+  const TransactionCard({super.key, required this.data});
 
   @override
   Widget build(BuildContext context) {
-        final theme = Theme.of(context);
+    final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    final status =
-        (data.status ?? "").toLowerCase();
+    final status = (data.status ?? "").toLowerCase();
 
     Color statusColor;
     Color bgColor;
@@ -46,19 +42,13 @@ class TransactionCard extends StatelessWidget {
       ),
       child: Column(
         children: [
-
-
-
-
-           Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
                 child: Text(
                   "Transaction ID: ${data.transactionId ?? '-'}",
-                 style: TextHelper.max1.copyWith(
-                    color: AppColors.darktextclr,
-                  ),
+                  style: TextHelper.max1.copyWith(color: AppColors.darktextclr),
                 ),
               ),
               Column(
@@ -72,25 +62,23 @@ class TransactionCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 5),
                   Text(
-  data.dateTime != null && data.dateTime!.isNotEmpty
-      ? formatTransactionDate(data.dateTime!)
-      : "-",
-  style: TextHelper.max1.copyWith(
-    color: AppColors.darktextclr,
-  ),
-),
+                    data.dateTime != null && data.dateTime!.isNotEmpty
+                        ? formatTransactionDate(data.dateTime!)
+                        : "-",
+                    style: TextHelper.max1.copyWith(
+                      color: AppColors.darktextclr,
+                    ),
+                  ),
                 ],
               ),
             ],
           ),
-          /// Header
-//         
 
+          /// Header
+          //
           const SizedBox(height: 10),
 
-          Divider(
-            color: Colors.grey.shade300,
-          ),
+          Divider(color: Colors.grey.shade300),
 
           const SizedBox(height: 10),
 
@@ -100,16 +88,13 @@ class TransactionCard extends StatelessWidget {
               /// Logo
               if ((data.logo ?? '').isNotEmpty)
                 ClipRRect(
-                  borderRadius:
-                      BorderRadius.circular(0),
+                  borderRadius: BorderRadius.circular(0),
                   child: Image.network(
                     data.logo!,
                     width: 30,
                     height: 30,
                     fit: BoxFit.cover,
-                    errorBuilder:
-                        (_, _, _) =>
-                            _defaultLogo(),
+                    errorBuilder: (_, _, _) => _defaultLogo(),
                   ),
                 )
               else
@@ -119,66 +104,53 @@ class TransactionCard extends StatelessWidget {
 
               Expanded(
                 child: Column(
-                  crossAxisAlignment:
-                      CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       data.operator ?? "",
                       style: const TextStyle(
-                        fontWeight:
-                            FontWeight.w600,
-                             color: Colors.black
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black,
                       ),
                     ),
                     const SizedBox(height: 3),
                     Text(
                       "Number : ${data.mobile ?? ''}",
-                      style: const TextStyle(
-                        fontSize: 12,
-                         color: Colors.black
-                      ),
+                      style: const TextStyle(fontSize: 12, color: Colors.black),
                     ),
                   ],
                 ),
               ),
 
               Column(
-                crossAxisAlignment:
-                    CrossAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
                     data.amount ?? '0',
                     style: const TextStyle(
                       fontSize: 20,
-                      fontWeight:
-                          FontWeight.bold,
-                           color: Colors.black
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
                     ),
                   ),
 
                   const SizedBox(height: 5),
 
                   Container(
-                    padding:
-                        const EdgeInsets.symmetric(
+                    padding: const EdgeInsets.symmetric(
                       horizontal: 10,
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
                       color: statusColor,
-                      borderRadius:
-                          BorderRadius.circular(
-                        5,
-                      ),
+                      borderRadius: BorderRadius.circular(5),
                     ),
                     child: Text(
                       data.status ?? "",
                       style: const TextStyle(
-                        
                         fontSize: 10,
-                        fontWeight:
-                            FontWeight.w600,
-                             color: Colors.black
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black,
                       ),
                     ),
                   ),
@@ -191,65 +163,39 @@ class TransactionCard extends StatelessWidget {
 
           /// Bottom Buttons
           Row(
-            mainAxisAlignment:
-                MainAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.end,
             children: [
               if (status == "success") ...[
-                _button(
-  "Dispute",
-  Colors.red,
-  () {
-    showDialog(
-      context: context,
-      builder: (_) => DisputeDialog(
-        rechargeId:(data.id ?? 0).toString(),
-      ),
-    );
-  },
-),
+                _button("Dispute", Colors.red, () {
+                  showDialog(
+                    context: context,
+                    builder: (_) =>
+                        DisputeDialog(rechargeId: (data.id ?? 0).toString()),
+                  );
+                }),
                 const SizedBox(width: 6),
-                _button(
-                  "View",
-                  Colors.blue,
-                  () {},
-                ),
+                _button("View", Colors.blue, () {}),
                 const SizedBox(width: 6),
-                _button(
-                  "Share",
-                  Colors.green,
-                  () {},
-                ),
+                _button("Share", Colors.green, () {}),
               ],
 
               if (status == "pending")
-                _button(
-                  "Processing",
-                  Colors.orange,
-                  () {},
-                ),
+                _button("Processing", Colors.orange, () {}),
 
               if (status == "failed") ...[
-                _button(
-                  "View",
-                  Colors.blue,
-                  () {},
-                ),
+                _button("View", Colors.blue, () {}),
                 const SizedBox(width: 6),
-              _button(
-  "Resend",
-  Colors.green,
-  () {
-     print("========== RESEND ==========");
-    print("ID: ${data.id}");
-    print("Transaction ID: ${data.transactionId}");
-    print("Product Type: ${data.producttype}");
-    print("Mobile: ${data.mobile}");
-    print("Amount: ${data.amount}");
-    print("Status: ${data.status}");
-    print("Logo: ${data.logo}");
-    _onResend(context);
-  },
-),
+                _button("Resend", Colors.green, () {
+                  print("========== RESEND ==========");
+                  print("ID: ${data.id}");
+                  print("Transaction ID: ${data.transactionId}");
+                  print("Product Type: ${data.producttype}");
+                  print("Mobile: ${data.mobile}");
+                  print("Amount: ${data.amount}");
+                  print("Status: ${data.status}");
+                  print("Logo: ${data.logo}");
+                  _onResend(context);
+                }),
               ],
             ],
           ),
@@ -269,74 +215,54 @@ class TransactionCard extends StatelessWidget {
       alignment: Alignment.center,
       child: const Text(
         "J",
-        style: TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.bold,
-        ),
+        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
       ),
     );
   }
 
-  Widget _button(
-    String title,
-    Color color,
-    VoidCallback onTap,
-  ) {
+  Widget _button(String title, Color color, VoidCallback onTap) {
     return SizedBox(
       height: 28,
       child: ElevatedButton(
         onPressed: onTap,
         style: ElevatedButton.styleFrom(
           backgroundColor: color,
-          padding:
-              const EdgeInsets.symmetric(
-            horizontal: 12,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 12),
           minimumSize: Size.zero,
-          tapTargetSize:
-              MaterialTapTargetSize.shrinkWrap,
-          shape: RoundedRectangleBorder(
-            borderRadius:
-                BorderRadius.circular(6),
-          ),
+          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
         ),
         child: Text(
           title,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 10,
-          ),
+          style: const TextStyle(color: Colors.white, fontSize: 10),
         ),
       ),
     );
   }
 
   void _onResend(BuildContext context) {
-  final productType = (data.producttype ?? "").toLowerCase();
+    final productType = (data.producttype ?? "").toLowerCase();
 
-  if (productType == "prepaid") {
-    Get.toNamed(
-      AppRoutes.transconfirm,
-      arguments: {
-        "mobileNumber": data.mobile,
-        "amount": data.amount,
-        "productdetid": data.id.toString(),
-      },
-    );
-  } else if (productType == "dth") {
-    Get.toNamed(
-      AppRoutes.confirmdth,
-      arguments: {
-        "customerId": data.mobile,
-        "amount": data.amount,
-        "productdetid": data.id.toString(),
-      },
-    );
-  } else {
-    Get.snackbar(
-      "Error",
-      "Unknown product type",
-    );
+    if (productType == "prepaid") {
+      Get.toNamed(
+        AppRoutes.transconfirm,
+        arguments: {
+          "mobileNumber": data.mobile,
+          "amount": data.amount,
+          "productdetid": data.id.toString(),
+        },
+      );
+    } else if (productType == "dth") {
+      Get.toNamed(
+        AppRoutes.confirmdth,
+        arguments: {
+          "customerId": data.mobile,
+          "amount": data.amount,
+          "productdetid": data.id.toString(),
+        },
+      );
+    } else {
+      Get.snackbar("Error", "Unknown product type");
+    }
   }
-}
 }

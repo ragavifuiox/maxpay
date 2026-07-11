@@ -9,6 +9,7 @@ import 'package:maxpay/core/data/model/wallet_credit_type_model..dart';
 import 'package:maxpay/core/domain/usecase/credit_usecase.dart';
 import 'package:maxpay/core/domain/usecase/wallet_credit_search_usecase.dart';
 import 'package:maxpay/core/domain/usecase/wallet_credit_usecase.dart';
+import 'package:maxpay/core/utils/logg_helper.dart';
 
 class WalletCreditController extends GetxController {
   final WalletCreditTypeUsecase walletcredittypeusecase;
@@ -60,10 +61,10 @@ class WalletCreditController extends GetxController {
 
   Future<void> fetchcredittype() async {
     isLoading.value = true;
-print("search = $search");
-print("credit = $creditData");
-print("fromdate = $fromDate");
-print("todate = $toDate");
+    print("search = $search");
+    print("credit = $creditData");
+    print("fromdate = $fromDate");
+    print("todate = $toDate");
     final result = await walletcredittypeusecase();
 
     result.fold(
@@ -80,37 +81,41 @@ print("todate = $toDate");
     );
   }
 
- Future<void> searchcredit({
-  required String search,
-  required String credit,
-  required String fromdate,
-  required String todate,
-}) async {
-  print("========== API REQUEST ==========");
-  print("search : $search");
-  print("credit : $credit");
-  print("fromdate : $fromdate");
-  print("todate : $todate");
+  Future<void> searchcredit({
+    required String search,
+    required String credit,
+    required String fromdate,
+    required String todate,
+  }) async {
+    try {
+      print("========== API REQUEST ==========");
+      print("search : $search");
+      print("credit : $credit");
+      print("fromdate : $fromdate");
+      print("todate : $todate");
 
-  final result = await walletcreditsearchsecase(
-    search: search,
-    credit: credit,
-    fromdate: fromdate,
-    todate: todate,
-  );
+      final result = await walletcreditsearchsecase(
+        search: search,
+        credit: credit,
+        fromdate: fromdate,
+        todate: todate,
+      );
 
-  result.fold(
-    (failure) {
-      print("API ERROR : ${failure.message}");
-    },
-    (response) {
-      print("API RESPONSE : ${response.toJson()}");
-      print("TOTAL RECORDS : ${response.data?.length}");
+      result.fold(
+        (failure) {
+          print("API ERROR : ${failure.message}");
+        },
+        (response) {
+          print("API RESPONSE : ${response.toJson()}");
+          print("TOTAL RECORDS : ${response.data?.length}");
 
-      Searchcredit.assignAll(response.data ?? []);
-    },
-  );
-}
+          Searchcredit.assignAll(response.data ?? []);
+        },
+      );
+    } catch (e, stackTrace) {
+      AppLogger.logError("🔥 Exception in searchcredit: $e\n$stackTrace");
+    }
+  }
 
   Future<void> selectFromDate(BuildContext context) async {
     DateTime? pickedDate = await showDatePicker(
@@ -168,14 +173,12 @@ print("todate = $toDate");
     search = value;
     debugPrint("😊Search = $search");
 
-    
-      searchcredit(
-        search: search,
+    searchcredit(
+      search: search,
 
-        credit: selectedcreditname.value,
-        fromdate: fromDate,
-        todate: toDate,
-      );
-    
+      credit: selectedcreditname.value,
+      fromdate: fromDate,
+      todate: toDate,
+    );
   }
 }

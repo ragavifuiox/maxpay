@@ -6,12 +6,12 @@ class CustomerInfo {
 
   CustomerInfo.fromJson(Map<String, dynamic> json) {
     status = json['status'];
-    data = json['data'] != null ? new Data.fromJson(json['data']) : null;
+    data = json['data'] != null ? Data.fromJson(json['data']) : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['status'] = this.status;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['status'] = status;
     if (this.data != null) {
       data['data'] = this.data!.toJson();
     }
@@ -20,7 +20,7 @@ class CustomerInfo {
 }
 
 class Data {
-  Null? tel;
+  Null tel;
   String? operator;
   List<Records>? records;
   int? status;
@@ -33,20 +33,20 @@ class Data {
     if (json['records'] != null) {
       records = <Records>[];
       json['records'].forEach((v) {
-        records!.add(new Records.fromJson(v));
+        records!.add(Records.fromJson(v));
       });
     }
     status = json['status'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['tel'] = this.tel;
-    data['operator'] = this.operator;
-    if (this.records != null) {
-      data['records'] = this.records!.map((v) => v.toJson()).toList();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['tel'] = tel;
+    data['operator'] = operator;
+    if (records != null) {
+      data['records'] = records!.map((v) => v.toJson()).toList();
     }
-    data['status'] = this.status;
+    data['status'] = status;
     return data;
   }
 }
@@ -83,15 +83,15 @@ class Records {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['monthlyrecharge'] = this.monthlyrecharge;
-    data['balance'] = this.balance;
-    data['customername'] = this.customername;
-    data['status'] = this.status;
-    data['nextrechargedate'] = this.nextrechargedate;
-    data['lastrechargedate'] = this.lastrechargedate;
-    data['lastrechargeamount'] = this.lastrechargeamount;
-    data['planname'] = this.planname;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['monthlyrecharge'] = monthlyrecharge;
+    data['balance'] = balance;
+    data['customername'] = customername;
+    data['status'] = status;
+    data['nextrechargedate'] = nextrechargedate;
+    data['lastrechargedate'] = lastrechargedate;
+    data['lastrechargeamount'] = lastrechargeamount;
+    data['planname'] = planname;
     return data;
   }
 }

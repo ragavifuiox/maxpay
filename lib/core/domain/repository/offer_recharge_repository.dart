@@ -1,5 +1,4 @@
 import 'package:dartz/dartz.dart';
-import 'package:maxpay/core/data/model/payment_status_model.dart';
 import 'package:maxpay/core/data/model/rehcarge_offer_model.dart';
 
 import 'package:maxpay/core/error/failure.dart';

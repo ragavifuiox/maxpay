@@ -229,7 +229,7 @@ class BorderDotPainter extends CustomPainter {
       point,
       8,
       Paint()
-        ..color = Colors.orange.withOpacity(0.3)
+        ..color = Colors.orange.withValues(alpha: 0.3)
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10),
     );
 

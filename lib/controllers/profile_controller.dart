@@ -15,44 +15,48 @@ import 'package:maxpay/global_widget/webview.dart';
 
 class ProfileController extends GetxController {
   final GetProfileUseCase getProfileUseCase;
- final ProfileUpdateUsecase profileUpdateUseCase;
-  ProfileController({required this.getProfileUseCase,required this.profileUpdateUseCase,
+  final ProfileUpdateUsecase profileUpdateUseCase;
+  ProfileController({
+    required this.getProfileUseCase,
+    required this.profileUpdateUseCase,
   });
 
   RxBool isLoading = false.obs;
 
   Rx<MyProfile?> profileData = Rx<MyProfile?>(null);
 
-Rx<File?> selectedImage = Rx<File?>(null);
+  Rx<File?> selectedImage = Rx<File?>(null);
 
   @override
   void onInit() {
     fetchProfile();
     super.onInit();
   }
-Future<void> fetchProfile() async {
-  isLoading.value = true;
 
-  final result = await getProfileUseCase();
+  Future<void> fetchProfile() async {
+    isLoading.value = true;
 
-  result.fold(
-    (failure) {
-      AppLogger.logError("PROFILE ERROR: ${failure.message}");
+    final result = await getProfileUseCase();
 
-      isLoading.value = false;
-      Get.snackbar('Error', failure.message);
-    },
-    (data) {
-      AppLogger.debugPrint("===== PROFILE RESPONSE =====");
+    result.fold(
+      (failure) {
+        AppLogger.logError("PROFILE ERROR: ${failure.message}");
 
-      AppLogger.debugPrint(data.toJson());
-    
-   profileData.value = data;
-profileData.refresh();
-      isLoading.value = false;
-    },
-  );
-}
+        isLoading.value = false;
+        Get.snackbar('Error', failure.message);
+      },
+      (data) {
+        AppLogger.debugPrint("===== PROFILE RESPONSE =====");
+
+        AppLogger.debugPrint(data.toJson());
+
+        profileData.value = data;
+        profileData.refresh();
+        isLoading.value = false;
+      },
+    );
+  }
+
   Future<void> fetchPrivacyPolicyLink() async {
     isLoading.value = true;
 
@@ -79,67 +83,61 @@ profileData.refresh();
     );
   }
 
+  Future<void> updateProfile({
+    required String name,
+    required String email,
+    required String mobile,
+    required String pincode,
+    File? profileImage,
+    required String address,
+    required String whatsappnumber,
+  }) async {
+    isLoading.value = true;
 
- Future<void> updateProfile({
-  required String name,
-  required String email,
-  required String mobile,
-  required String pincode,
-  File? profileImage,
-  required String address,
-  required String whatsappnumber,
-}) async {
-  isLoading.value = true;
+    final result = await profileUpdateUseCase(
+      pincode: pincode,
+      email: email,
+      mobilenumber: mobile,
+      name: name,
+      profileimage: profileImage,
+      whatsappnumber: whatsappnumber,
+      address: address,
+    );
 
-  final result = await profileUpdateUseCase(
-  pincode: pincode,
-  email: email,
-  mobilenumber: mobile,
-  name: name,
-  profileimage: profileImage,
-  whatsappnumber: whatsappnumber,
-  address: address,
-);
+    result.fold(
+      (failure) {
+        AppLogger.logError("UPDATE ERROR: ${failure.message}");
 
-  result.fold(
-    (failure) {
-      AppLogger.logError("UPDATE ERROR: ${failure.message}");
+        CustomToast.error(failure.message);
+      },
+      (response) async {
+        AppLogger.debugPrint("===== UPDATE RESPONSE =====");
 
+        AppLogger.debugPrint({
+          "retailer_name": response.data?.retailerName,
+          "message": response.message,
+        });
 
-     CustomToast.error(failure.message);
-    },
-    (response) async {
-      AppLogger.debugPrint("===== UPDATE RESPONSE =====");
+        await fetchProfile();
 
-      AppLogger.debugPrint({
-        "retailer_name": response.data?.retailerName,
-        "message": response.message,
-      });
+        selectedImage.value = null;
+        CustomToast.success(response.message ?? "Profile Updated Successfully");
+      },
+    );
 
-      await fetchProfile();
-
-         selectedImage.value = null;
-      CustomToast.success(
-        response.message ?? "Profile Updated Successfully",
-      );
-
-    },
-  );
-
-  isLoading.value = false;
-}
-
-
-Future<void> pickImage() async {
-  final picker = ImagePicker();
-
-  final XFile? image = await picker.pickImage(
-    source: ImageSource.gallery,
-    imageQuality: 70,
-  );
-
-  if (image != null) {
-    selectedImage.value = File(image.path);
+    isLoading.value = false;
   }
-}
+
+  Future<void> pickImage() async {
+    final picker = ImagePicker();
+
+    final XFile? image = await picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 70,
+    );
+
+    if (image != null) {
+      selectedImage.value = File(image.path);
+    }
+  }
 }

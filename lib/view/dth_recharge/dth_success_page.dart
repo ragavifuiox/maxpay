@@ -1,12 +1,10 @@
 // ignore_for_file: unused_local_variable
 
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:maxpay/controllers/download_controller.dart';
 import 'package:maxpay/controllers/earning_controller.dart';
 import 'package:maxpay/controllers/homepage_controller.dart';
 import 'package:maxpay/controllers/profile_controller.dart';
@@ -15,12 +13,10 @@ import 'package:maxpay/controllers/transaction_report_controller.dart';
 import 'package:maxpay/controllers/wallet_credit_controller.dart';
 import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
-import 'package:maxpay/core/constants/snackbar.dart';
 import 'package:maxpay/core/di/service_locator.dart';
 import 'package:maxpay/core/extensions/currency.dart';
 import 'package:maxpay/global_widget/commom_button.dart';
 
-import 'package:pdf/widgets.dart' as pw;
 
 class DthSuccessPage extends StatelessWidget {
   final String productName;
@@ -32,7 +28,7 @@ class DthSuccessPage extends StatelessWidget {
   final String dateTime;
   // final String operatorLogo; // image URL
   
-  DthSuccessPage({
+  const DthSuccessPage({
     super.key,
     required this.productName,
     required this.operatorInitial,
