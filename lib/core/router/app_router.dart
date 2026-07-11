@@ -29,6 +29,7 @@ import 'package:maxpay/view/add_wallet/add_wallet_screen.dart';
 import 'package:maxpay/view/cashback/cash_back_screen.dart';
 import 'package:maxpay/view/dispute/dispute_screen.dart';
 import 'package:maxpay/view/dth_recharge/confirm_dth_page.dart';
+import 'package:maxpay/view/dth_recharge/customer_dth_page.dart';
 import 'package:maxpay/view/dth_recharge/dth_recharge_page.dart';
 import 'package:maxpay/view/grade/grade_screen.dart';
 import 'package:maxpay/view/home/pages/home_page.dart';
@@ -100,6 +101,32 @@ class AppPages {
       }),
     ),
 
+
+
+
+ GetPage(
+      transition: Transition.fade,
+
+      name: AppRoutes.dthcustomer,
+
+      page: () => CustomerDthPage(),
+
+      binding: BindingsBuilder(() {
+        Get.lazyPut<DthController>(
+          () => DthController(
+            dthtabUseCase: sl(), 
+            searchdthusecase: sl(),
+             confirmdthUsecase: sl(),
+              dthrechargeusecase: sl(), 
+              customerInfoUsecase: sl()
+           
+            
+          ),
+
+          fenix: true,
+        );
+      }),
+    ),
     GetPage(
       transition: Transition.fade,
 
@@ -180,6 +207,7 @@ class AppPages {
             getPopupMessageUseCase: sl(),
             refundCountUsecase: sl(),
             todaycreditusecase: sl(),
+            graphUsecase: sl(),
           ),
 
           fenix: true,

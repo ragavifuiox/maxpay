@@ -43,26 +43,26 @@ class RechargeResponse {
   }
 }
 class RechargeDetails {
-  String? txnid;
+   String? tnxId;
   String? status;
   String? mobileno;
   String? amount;
   String? operatorcode;
   String? operatorName;
-  String? requestDatetime;
+   String? rechargeDate;
   String? refid;
   String? operatorid;
   String? message;
   double? remainamount;
 
   RechargeDetails({
-    this.txnid,
+    this.tnxId,
     this.status,
     this.mobileno,
     this.amount,
     this.operatorcode,
     this.operatorName,
-    this.requestDatetime,
+     this.rechargeDate,
     this.refid,
     this.operatorid,
     this.message,
@@ -70,13 +70,14 @@ class RechargeDetails {
   });
 
   RechargeDetails.fromJson(Map<String, dynamic> json) {
-    txnid = json['txnid'];
+    tnxId = json['tnx_id'];
+
     status = json['status'];
     mobileno = json['mobileno'];
     amount = json['amount']?.toString();
     operatorcode = json['operatorcode'];
     operatorName = json['operator_name'];
-    requestDatetime = json['request_datetime'];
+     rechargeDate = json['recharge_date'];
     refid = json['refid'];
     operatorid = json['operatorid'];
     message = json['message'];

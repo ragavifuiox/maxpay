@@ -9,6 +9,7 @@ abstract class DthRechargeRepository {
    
     required String mobile,
     required String amount,
+    required String paymentstatus,
    
   });
 

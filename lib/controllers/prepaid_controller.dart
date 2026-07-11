@@ -8,6 +8,7 @@ import 'package:maxpay/core/constants/snackbar.dart';
 import 'package:maxpay/core/data/model/download_model.dart';
 import 'package:maxpay/core/data/model/mobile_recharge.dart'
     show MobileRecharge;
+import 'package:maxpay/core/data/model/payment_status_model.dart';
 import 'package:maxpay/core/data/model/plan_detail_model.dart';
 import 'package:maxpay/core/data/model/plan_model.dart';
 import 'package:maxpay/core/data/model/plan_tab_model.dart';
@@ -79,7 +80,7 @@ RxList<OfferRecords> offerList = <OfferRecords>[].obs;
   String selectedTabId = "";
   Future<void> getPlans({required String productid}) async {
     try {
-
+ productId.value = productid;   // ✅ ADD THIS
       isLoading.value = true;
 
       plans.clear();
@@ -225,6 +226,10 @@ Future<void> getOffers(String mobile) async {
 Future<void> checkOperator(String mobile) async {
   try {
     isLoading.value = true;
+
+    if (plans.isEmpty) {
+  await getPlans(productid: productId.value);
+}
 
     final result = await checkOperatorUsecase(mobile);
 
@@ -450,6 +455,7 @@ Future<void> checkOperator(String mobile) async {
     String productdetid,
     String mobile,
     String amount,
+    String paymentstatus,
   ) async {
     try {
       AppLogger.logError("👉 Recharge API CALL STARTED");
@@ -470,7 +476,7 @@ Future<void> checkOperator(String mobile) async {
 
       AppLogger.logError("🚀 API CALL START");
 
-      final result = await mobileRechargeUseCase(productdetid, mobile, amount);
+      final result = await mobileRechargeUseCase(productdetid, mobile, amount,paymentstatus);
 
       AppLogger.logError(
         "✅ API RESPONSE RECEIVED in ${stopwatch.elapsedMilliseconds} ms",

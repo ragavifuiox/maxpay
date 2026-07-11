@@ -12,6 +12,7 @@ import 'package:maxpay/controllers/transaction_report_controller.dart';
 import 'package:maxpay/controllers/refund_controller.dart';
 import 'package:maxpay/controllers/wallet_credit_controller.dart';
 import 'package:maxpay/core/constants/colors.dart';
+import 'package:maxpay/core/constants/extension.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/core/constants/snackbar.dart';
 import 'package:maxpay/core/di/service_locator.dart';
@@ -96,7 +97,7 @@ final DownloadController downloadController = Get.put(
               SizedBox(height: 30.h),
 
               Text(
-                'Recharge Successful !!!',
+                'Recharge Failed !!!',
                 style: TextStyle(
                   color: isDark ? Colors.white : Colors.black,
                   fontSize: 18.sp,
@@ -135,13 +136,12 @@ final DownloadController downloadController = Get.put(
                       rechargeAmount,
                       context: context,
                     ),
-                    _buildSummaryRow(
-                      'Transaction ID',
-                      transactionId,
-                      context: context,
-                    ),
-                    _buildSummaryRow('Date & Time', dateTime, context: context),
-
+                  
+_buildSummaryRow(
+  'Date & Time',
+  formatTransactionDate(dateTime),
+  context: context,
+),
                     SizedBox(height: 10.h),
 
                    
@@ -190,7 +190,7 @@ final DownloadController downloadController = Get.put(
                   } catch (e) {
                     debugPrint("Error updating state: $e");
                   }
-                  Get.toNamed(AppRoutes.main);
+                  Get.offAllNamed(AppRoutes.main);
                 },
               ),
 

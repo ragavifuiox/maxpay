@@ -209,7 +209,7 @@ class DthSuccessPage extends StatelessWidget {
                   } catch (e) {
                     debugPrint("Error updating state: $e");
                   }
-                  Get.toNamed(AppRoutes.main);
+                  Get.offAllNamed(AppRoutes.main);
                 },
               ),
 

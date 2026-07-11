@@ -214,7 +214,7 @@ class HomePageScreen extends GetView<HomePageController> {
     child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const EarningsChart(),
+                     EarningsChart(),
 SizedBox(height: 8.h),
 
 const NewsTicker(),

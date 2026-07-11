@@ -61,23 +61,59 @@ class SettingsPage extends StatelessWidget {
       color: colorScheme.onSurface,
     ),
   ),
-  actions: [
-    Padding(
-      padding: EdgeInsets.only(right: 16.w),
-      child: InkWell(
-        onTap: () {
-          Get.toNamed(AppRoutes.webloginqr);
-        },
-        borderRadius: BorderRadius.circular(8.r),
-        child: Image.asset(
-          AssetImages.qrcode,
-          width: 26.w,
-          height: 26.w,
-          fit: BoxFit.contain,
-        ),
+ actions: [
+  InkWell(
+    onTap: () {
+      Share.share(
+        'http://139.59.91.7/test_paylinkonline.in/public/retailer/login',
+      );
+    },
+    child: Container(
+      margin: EdgeInsets.only(right: 8.w),
+      padding: EdgeInsets.symmetric(
+        horizontal: 8.w,
+        vertical: 5.h,
+      ),
+      decoration: BoxDecoration(
+        color: Colors.green,
+        borderRadius: BorderRadius.circular(5.r),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            "Link",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 10.sp,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          SizedBox(width: 3.w),
+          Icon(
+            Icons.reply_rounded,
+            color: Colors.white,
+            size: 14.sp,
+          ),
+        ],
       ),
     ),
-  ],
+  ),
+
+  InkWell(
+    onTap: () {
+      Get.toNamed(AppRoutes.webloginqr);
+    },
+    child: Padding(
+      padding: EdgeInsets.only(right: 16.w),
+      child: Image.asset(
+        AssetImages.qrcode,
+        width: 26.w,
+        height: 26.w,
+      ),
+    ),
+  ),
+],
 ),
           body: SafeArea(
             child: SingleChildScrollView(
@@ -163,78 +199,7 @@ class SettingsPage extends StatelessWidget {
                   //   },
                   //   SvgPicture.asset(AssetImages.webSignup, width: 24.w),
                   // ),
-                  _buildMenuTile(
-                    context,
-                    'Web Login',
-                    () {
-                      Get.toNamed(AppRoutes.webloginqr);
-                    },
-                    SvgPicture.asset(AssetImages.webLogin, width: 24.w),
-
-                    trailingWidget: FittedBox(
-                      fit: BoxFit.scaleDown,
-
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-
-                        children: [
-                         InkWell(
-  onTap: () {
-    Share.share(
-      'http://139.59.91.7/test_paylinkonline.in/public/retailer/login',
-    );
-  },
-  child: Container(
-    padding: EdgeInsets.symmetric(
-      horizontal: 6.w,
-      vertical: 2.h,
-    ),
-    decoration: BoxDecoration(
-      color: Colors.green,
-      borderRadius: BorderRadius.circular(4.r),
-    ),
-    child: Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-          'Link',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 9.sp,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        SizedBox(width: 2.w),
-        Icon(
-          Icons.reply_rounded,
-          color: Colors.white,
-          size: 10.sp,
-        ),
-      ],
-    ),
-  ),
-),
-
-                          SizedBox(width: 6.w),
-
-                          Image.asset(
-                            AssetImages.qrcode,
-                            width: 24.w,
-                            height: 24.w,
-                            fit: BoxFit.contain,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  _buildMenuTile(
-                    context,
-                    'Support',
-                    () {
-                      Get.toNamed(AppRoutes.support);
-                    },
-                    SvgPicture.asset(AssetImages.support, width: 24.w),
-                  ),
+                
 
                   /// 🔹 LOGOUT BUTTONS
                   Padding(

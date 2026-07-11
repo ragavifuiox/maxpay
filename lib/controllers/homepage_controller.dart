@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:maxpay/core/data/model/graph_model.dart';
 import 'package:maxpay/core/data/model/refund_count_model.dart';
 import 'package:maxpay/core/data/model/today_credit_model.dart';
+import 'package:maxpay/core/domain/usecase/graph_usecase.dart';
 import 'package:maxpay/core/domain/usecase/refund_count_usecase.dart';
 import 'package:maxpay/core/domain/usecase/today_credit_usecase.dart';
 import 'package:maxpay/core/utils/logg_helper.dart';
@@ -28,6 +30,7 @@ class HomePageController extends GetxController {
   final GetPopupMessageUseCase getPopupMessageUseCase;
   final RefundCountUsecase refundCountUsecase;
   final TodayCreditUsecase todaycreditusecase;
+  final GraphUsecase graphUsecase;
 
   HomePageController({
     required this.getNewsUseCase,
@@ -37,6 +40,7 @@ class HomePageController extends GetxController {
     required this.getPopupMessageUseCase,
     required this.refundCountUsecase,
     required this.todaycreditusecase,
+    required this.graphUsecase,
   });
 
   Rxn<TransactionResponse> transactionData = Rxn<TransactionResponse>();
@@ -46,6 +50,7 @@ class HomePageController extends GetxController {
   final Rx<RefundCount?> refundcount = Rx<RefundCount?>(null);
   final Rx<TodayCredit?> todaycredit = Rx<TodayCredit?>(null);
   final Rx<News?> news = Rx<News?>(null);
+final Rx<Graph?> graphData = Rx<Graph?>(null);
 
   RxBool isLoading = false.obs;
 
@@ -60,6 +65,8 @@ class HomePageController extends GetxController {
       await getTransactionSummary();
       await fetchRefundCount();
       await fetchtodaycredit();
+          await fetchGraph(); // Add this
+
       // await fetchpopupmessage();
     });
   }
@@ -86,6 +93,27 @@ class HomePageController extends GetxController {
     }
   }
 
+
+Future<void> fetchGraph() async {
+  try {
+    isLoading.value = true;
+
+    final result = await graphUsecase();
+
+    result.fold(
+      (failure) {
+        Get.snackbar('Error', failure.message);
+      },
+      (data) {
+        graphData.value = data;
+      },
+    );
+  } catch (e) {
+    AppLogger.logError("fetchGraph error: $e");
+  } finally {
+    isLoading.value = false;
+  }
+}
   // ---------------- POPUP ----------------
   Future<void> fetchpopupmessage(String currentScreen) async {
     try {

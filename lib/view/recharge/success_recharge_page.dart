@@ -202,8 +202,7 @@ final DownloadController downloadController = Get.put(
                   } catch (e) {
                     debugPrint("Error updating state: $e");
                   }
-                  Get.toNamed(AppRoutes.main);
-                },
+Get.offAllNamed(AppRoutes.main);                },
               ),
 
               SizedBox(height: 40.h),
@@ -217,216 +216,213 @@ final DownloadController downloadController = Get.put(
   /// ---------------- DETAILS POPUP ----------------
 
   void _showTransactionDetails(
-    BuildContext context,
-    ProfileController profileController,
-  ) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final DownloadController downloadController = Get.put(
-      DownloadController(downloadUseCase: sl()),
-    );
+  BuildContext context,
+  ProfileController profileController,
+) {
+  final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    showDialog(
-      context: context,
-      builder: (context) {
-        final profile = profileController.profileData.value?.data;
+  final profile = profileController.profileData.value?.data;
 
-        return Dialog(
-          
-          child: Dialog(
-            shape: RoundedRectangleBorder(
+  final DownloadController downloadController = Get.put(
+    DownloadController(downloadUseCase: sl()),
+  );
+
+  showDialog(
+    context: context,
+    builder: (_) {
+      return Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15.r),
+        ),
+        child: SingleChildScrollView(
+          child: Container(
+            width: 340.w,
+            padding: EdgeInsets.all(16.r),
+            decoration: BoxDecoration(
+              color: isDark ? AppColors.darkplceholder : Colors.white,
               borderRadius: BorderRadius.circular(15.r),
             ),
-            child: Container(
-              padding: EdgeInsets.all(16.r),
-              decoration: BoxDecoration(
-                color: isDark ? AppColors.darkplceholder : Colors.white,
-                borderRadius: BorderRadius.circular(15.r),
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    width: double.infinity,
-                    padding: EdgeInsets.symmetric(vertical: 10.h),
-                    decoration: BoxDecoration(
-                      color: AppColors.clrPrimary,
-                      borderRadius: BorderRadius.circular(6.r),
-                    ),
-                    child: Center(
-                      child: Text(
-                        "Transaction Details",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.w600,
-                          fontFamily: 'Poppins',
-                        ),
-                      ),
-                    ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.symmetric(vertical: 10.h),
+                  decoration: BoxDecoration(
+                    color: AppColors.clrPrimary,
+                    borderRadius: BorderRadius.circular(6.r),
                   ),
-
-                  SizedBox(height: 15.h),
-
-                  Align(
-                    alignment: Alignment.centerLeft,
+                  child: Center(
                     child: Text(
-                      "Transaction ID : $transactionId",
+                      "Transaction Details",
                       style: TextStyle(
-                        fontSize: 12.sp,
-                        fontWeight: FontWeight.w500,
-                        fontFamily: 'Poppins',
-                        color: AppColors.totalborder1,
+                        color: Colors.white,
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ),
+                ),
 
-                  SizedBox(height: 4.h),
+                SizedBox(height: 15.h),
 
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      "Date & Time : $dateTime",
-                      style: TextStyle(
-                        fontSize: 12.sp,
-                        fontWeight: FontWeight.w500,
-                        fontFamily: 'Poppins',
-                        color: AppColors.totalborder1,
-                      ),
-                    ),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    "Transaction ID : $transactionId",
+                    style: TextStyle(fontSize: 12.sp),
                   ),
+                ),
 
-                  SizedBox(height: 12.h),
+                SizedBox(height: 5.h),
 
-                  const Divider(),
-
-                  _detailRow(
-                    context,
-                    "Transaction",
-                    "Success",
-                    valueColor: Colors.green,
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    "Date & Time : $dateTime",
+                    style: TextStyle(fontSize: 12.sp),
                   ),
+                ),
 
-                  _detailRow(context, "Transaction No", transactionNo),
+                SizedBox(height: 12.h),
 
-                  _detailRow(
-                    context,
-                    "Transaction Amount",
-                    rechargeAmount.currencyIndian,
+                Divider(),
+
+                _detailRow(
+                  context,
+                  "Transaction",
+                  "Success",
+                  valueColor: Colors.green,
+                ),
+
+                _detailRow(
+                  context,
+                  "Transaction No",
+                  transactionNo,
+                ),
+
+                _detailRow(
+                  context,
+                  "Transaction Amount",
+                  rechargeAmount.currencyIndian,
+                ),
+
+                _detailRow(
+                  context,
+                  "Product Type",
+                  "Mobile Prepaid",
+                ),
+
+                _logoRow(
+                  "Product",
+                  operatorLogo,
+                  context,
+                ),
+
+                _detailRow(
+                  context,
+                  "Product Ref Id",
+                  transactionId,
+                ),
+
+                SizedBox(height: 12.h),
+
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.all(12.r),
+                  decoration: BoxDecoration(
+                    color: AppColors.clrPrimary,
+                    borderRadius: BorderRadius.circular(8.r),
                   ),
-
-                  _detailRow(context, "Product Type", "Mobile Prepaid"),
-
-                  _logoRow("Product", operatorLogo, context),
-
-                  _detailRow(context, "Product Ref Id", transactionId),
-
-                  SizedBox(height: 10.h),
-
-                  Container(
-                    width: double.infinity,
-                    padding: EdgeInsets.all(12.r),
-                    decoration: BoxDecoration(
-                      color: AppColors.clrPrimary,
-                      borderRadius: BorderRadius.circular(8.r),
-                    ),
-                    child: Column(
-                      children: [
-                        _detailRow(
-                          context,
-                          "Retailer Name",
-                          profile?.name ?? "N/A",
-                        ),
-                        _detailRow(
-                          context,
-                          "Contact No",
-                          profile?.phoneNumber ?? "N/A",
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  SizedBox(height: 10.h),
-
-                  Text(
-                    "T & C Apply",
-                    style: TextStyle(color: Colors.blue, fontSize: 12.sp),
-                  ),
-
-                  SizedBox(height: 15.h),
-
-                  Row(
+                  child: Column(
                     children: [
-                      Expanded(
-                        child: SizedBox(
-                          height: 42.h,
-                          child: ElevatedButton(
-                       onPressed: () {
-  downloadController.downloadReceipt(rechargeId);
-},
-style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.red,
-                              elevation: 0,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(6.r),
+                      _detailRow(
+                        context,
+                        "Retailer Name",
+                        profile?.name ?? "N/A",
+                        textColor: Colors.white,
+                      ),
+                      _detailRow(
+                        context,
+                        "Contact No",
+                        profile?.phoneNumber ?? "N/A",
+                        textColor: Colors.white,
+                      ),
+                    ],
+                  ),
+                ),
+
+                SizedBox(height: 15.h),
+
+                Text(
+                  "T & C Apply",
+                  style: TextStyle(
+                    color: Colors.blue,
+                    fontSize: 12.sp,
+                  ),
+                ),
+
+                SizedBox(height: 20.h),
+
+                Row(
+                  children: [
+                    Expanded(
+                      flex: 2,
+                      child: SizedBox(
+                        height: 42.h,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            downloadController.downloadReceipt(rechargeId);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red,
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "Download",
+                                style: TextStyle(color: Colors.white),
                               ),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  "Download",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 13.sp,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                                SizedBox(width: 6.w),
-                                Icon(
-                                  Icons.download,
-                                  color: Colors.white,
-                                  size: 18.sp,
-                                ),
-                              ],
-                            ),
+                              SizedBox(width: 5.w),
+                              Icon(
+                                Icons.download,
+                                color: Colors.white,
+                                size: 18.sp,
+                              ),
+                            ],
                           ),
                         ),
                       ),
+                    ),
 
-                      SizedBox(width: 10.w),
+                    SizedBox(width: 12.w),
 
-                      SizedBox(
-                        width: 80.w,
+                    Expanded(
+                      child: SizedBox(
                         height: 42.h,
                         child: ElevatedButton(
                           onPressed: () => Get.back(),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blue.shade900,
-                            elevation: 0,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(6.r),
-                            ),
+                            backgroundColor: Colors.blue,
                           ),
-                          child: Text(
+                          child: const Text(
                             "Ok",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 13.sp,
-                              fontWeight: FontWeight.w500,
-                            ),
+                            style: TextStyle(color: Colors.white),
                           ),
                         ),
                       ),
-                    ],
-                  ),
-                ],
-              ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
-        );
-      },
-    );
-  }
+        ),
+      );
+    },
+  );
+}
 
   Widget _logoRow(String title, String imageUrl, BuildContext context) {
     return Padding(
@@ -546,65 +542,57 @@ style: ElevatedButton.styleFrom(
   /// ---------------- DETAIL ROW ----------------
 
   Widget _detailRow(
-    BuildContext context,
-    String title,
-    String value, {
-    Color? valueColor,
-    Color? textColor,
-  }) {
-    return Padding(
-      padding: EdgeInsets.symmetric(vertical: 6.h),
-      child: Row(
-        children: [
-          Expanded(
-            flex: 4,
-            child: Text(
-              title,
-              style: TextStyle(
-                color:
-                    textColor ??
-                    (Theme.of(context).brightness == Brightness.dark
-                        ? Colors.white
-                        : Colors.black87),
-                fontSize: 13.sp,
-                fontWeight: FontWeight.w400,
-                fontFamily: 'Poppins',
-              ),
+  BuildContext context,
+  String title,
+  String value, {
+  Color? valueColor,
+  Color? textColor,
+}) {
+  final color = textColor ??
+      (Theme.of(context).brightness == Brightness.dark
+          ? Colors.white
+          : Colors.black);
+
+  return Padding(
+    padding: EdgeInsets.symmetric(vertical: 6.h),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(
+          width: 120.w,
+          child: Text(
+            title,
+            style: TextStyle(
+              color: color,
+              fontSize: 13.sp,
+              fontWeight: FontWeight.w500,
             ),
           ),
-          Text(
+        ),
+
+        SizedBox(
+          width: 10.w,
+          child: Text(
             ":",
             style: TextStyle(
-              color:
-                  textColor ??
-                  (Theme.of(context).brightness == Brightness.dark
-                      ? Colors.white
-                      : Colors.black87),
+              color: color,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+
+        Expanded(
+          child: Text(
+            value,
+            textAlign: TextAlign.end,
+            style: TextStyle(
+              color: valueColor ?? color,
               fontSize: 13.sp,
-              fontWeight: FontWeight.w700,
-              fontFamily: 'Poppins',
+              fontWeight: FontWeight.w600,
             ),
           ),
-          SizedBox(width: 10.w),
-          Expanded(
-            flex: 5,
-            child: Text(
-              value,
-              textAlign: TextAlign.end,
-              style: TextStyle(
-                color:
-                    valueColor ??
-                    textColor ??
-                    (Theme.of(context).brightness == Brightness.dark
-                        ? Colors.white
-                        : Colors.black),
-                fontWeight: FontWeight.w700,
-                fontSize: 13.sp,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
+        ),
+      ],
+    ),
+  );
+}}
