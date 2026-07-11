@@ -13,11 +13,13 @@ class DthRechargeUsecase {
     String productdetid,
     String mobile,
     String amount,
+    String paymenstatus,
   ) {
     return repository.Dthrecharge(
       productdetid: productdetid,
       mobile: mobile,
       amount: amount,
+      paymentstatus: paymenstatus,
     );
   }
 }

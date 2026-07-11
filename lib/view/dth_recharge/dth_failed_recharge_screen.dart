@@ -79,7 +79,7 @@ class DthFailedRechargeScreen extends StatelessWidget {
                   width: 100.w,
                   height: 100.w,
                   decoration: BoxDecoration(
-                    color: Colors.green.withValues(alpha: 0.2),
+                    color: Colors.red.withValues(alpha: 0.2),
                     shape: BoxShape.circle,
                   ),
                   child: Center(
@@ -87,7 +87,7 @@ class DthFailedRechargeScreen extends StatelessWidget {
                       width: 70.w,
                       height: 70.w,
                       decoration: const BoxDecoration(
-                        color: Colors.green,
+                        color: Colors.red,
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
@@ -142,11 +142,7 @@ class DthFailedRechargeScreen extends StatelessWidget {
                       rechargeAmount,
                       context: context,
                     ),
-                    _buildSummaryRow(
-                      'Transaction ID',
-                      transactionId,
-                      context: context,
-                    ),
+                 
                     _buildSummaryRow('Date & Time', dateTime, context: context),
 
                     SizedBox(height: 10.h),
@@ -197,7 +193,7 @@ class DthFailedRechargeScreen extends StatelessWidget {
                   } catch (e) {
                     debugPrint("Error updating state: $e");
                   }
-                  Get.toNamed(AppRoutes.main);
+                  Get.offAllNamed(AppRoutes.main);
                 },
               ),
 

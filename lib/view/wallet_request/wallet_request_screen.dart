@@ -228,7 +228,7 @@ class WalletRequestScreen extends StatelessWidget {
                     DropdownMenuItem(
                       value: "received",
                       child:
-                          Text("received"),
+                          Text("Paid"),
                     ),
 
                     DropdownMenuItem(
@@ -236,7 +236,7 @@ class WalletRequestScreen extends StatelessWidget {
                           "not_received",
 
                       child: Text(
-                        "not received",
+                        "Pending",
                       ),
                     ),
                   ],

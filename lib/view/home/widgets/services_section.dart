@@ -10,6 +10,7 @@ import 'package:maxpay/core/constants/asset_images.dart';
 import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/core/di/service_locator.dart';
+import 'package:maxpay/view/fastag_recharge/fastag_recharge_page.dart';
 import 'package:maxpay/view/home/widgets/home_header.dart';
 import 'package:maxpay/core/constants/extension.dart';
 import '../../../core/data/model/product_type.dart';
@@ -640,6 +641,11 @@ SizedBox(height: 16.h),
           },
         );
         break;
+
+     case 'fastag':
+  Get.to(() => const FastagRechargePage());
+  break;
+
 
       default:
         break;

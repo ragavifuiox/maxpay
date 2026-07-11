@@ -26,7 +26,8 @@ class CustomerTransConfirmationScreen extends GetView<PrePaidController> {
     final operatorlogo = confirmData?.logo ?? '';
 
     final productName = args['productName'] ?? '';
-    final paymentStatus = args['paymentStatus'] ?? '';
+ 
+final paymentStatus = args["paymentStatus"] ?? "";
     final transactionNo = args['transactionNo'] ?? '';
     final transactionAmount = args['transactionAmount'] ?? '';
     final whatsappNumber = args['whatsappNumber'] ?? '';
@@ -153,11 +154,15 @@ class CustomerTransConfirmationScreen extends GetView<PrePaidController> {
                           AppLogger.debugPrint(
                             "👉 FINAL PRODUCT ID: ${controller.productdetid}",
                           );
-
+final String backendStatus =
+    paymentStatus.toLowerCase() == "paid"
+        ? "received"
+        : "not_received";
                           final success = await controller.mobilerecharge(
                             controller.productdetid,
                             mobileNumber,
                             transactionAmount,
+                            backendStatus,
                           );
 
                           AppLogger.debugPrint("AFTER API CALL");

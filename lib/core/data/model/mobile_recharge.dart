@@ -89,23 +89,23 @@ class Recharge {
       this.createdAt,
       this.updatedAt,});
 
-  Recharge.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    userId = json['user_id'];
-    userName = json['user_name'];
-    productId = json['product_id'];
-    apiId = json['api_id'];
-    mappingId = json['mapping_id'];
-    mobile = json['mobile'];
-    amount = json['amount'];
-    status = json['status'];
-    apiResponse = json['api_response'];
-    userType = json['user_type'];
-    time = json['time'];
-    requestTime = json['request_time'];
-    createdAt = json['created_at'];
-    updatedAt = json['updated_at'];
-  }
+ Recharge.fromJson(Map<String, dynamic> json) {
+  id = json['id'];
+  userId = json['user_id']?.toString();
+  userName = json['user_name']?.toString();
+  productId = json['product_id'];
+  apiId = json['api_id'];
+  mappingId = json['mapping_id'];
+  mobile = json['mobile']?.toString();
+  amount = json['amount']?.toString();
+  status = json['status']?.toString();
+  apiResponse = json['api_response']?.toString();
+  userType = json['user_type']?.toString();
+  time = json['time']?.toString();
+  requestTime = json['request_time']?.toString();
+  createdAt = json['created_at']?.toString();
+  updatedAt = json['updated_at']?.toString();
+}
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
@@ -157,19 +157,26 @@ class ApiResponse {
       this.logo});
 
   ApiResponse.fromJson(Map<String, dynamic> json) {
-    txnid = json['txnid'];
-    status = json['status'];
-    mobileno = json['mobileno'];
-    amount = json['amount'];
-    operatorcode = json['operatorcode'];
-    operatorName = json['operator_name'];
-    requestDatetime = json['request_datetime'];
-    refid = json['refid'];
-    operatorid = json['operatorid'];
-    message = json['message'];
-    remainamount = json['remainamount'];
-    logo = json['logo'];
-  }
+  txnid = (json['txnid'] ?? json['tnx_id'])?.toString();
+  status = json['status']?.toString();
+  mobileno = (json['mobileno'] ?? json['mobile_no'])?.toString();
+  amount = json['amount']?.toString();
+  operatorcode = json['operatorcode']?.toString();
+  operatorName = (json['operator_name'] ?? json['operatorName'])?.toString();
+  requestDatetime =
+      (json['request_datetime'] ??
+       json['createdAt'] ??
+       json['recharge_date'])?.toString();
+  refid = json['refid']?.toString();
+  operatorid = json['operatorid']?.toString();
+  message = (json['message'] ?? json['response'])?.toString();
+
+  remainamount = json['remainamount'] != null
+      ? double.tryParse(json['remainamount'].toString())
+      : null;
+
+  logo = json['logo']?.toString();
+}
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};

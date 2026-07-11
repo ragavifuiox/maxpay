@@ -25,10 +25,12 @@ class ConfirmTransactionPage extends GetView<PrePaidController> {
   ConfirmTransactionPage({super.key});
 late String productdetid;
 
-final args = Get.arguments ?? {};
+
+final args = Get.arguments ?? {}; // already exists at top of build()
+String get productDetIdForRecharge => args['productdetid']?.toString() ?? '';
 String get enteredAmount => (args["amount"] ?? "").toString();
   String get type => args["type"] ?? "mobile";
-
+String get paymentStatus => args['paymentStatus'] ?? "Pending";
   void setProductId(String id) {
     productdetid = id;
   }
@@ -111,12 +113,14 @@ String get enteredAmount => (args["amount"] ?? "").toString();
                         ),
                       ),
 
-                      _buildDetailRow(
-                        context,
-                        'Payment Status',
-                        confirmData.paymentStatus ?? '',
-                        valueColor: Colors.green,
-                      ),
+                     _buildDetailRow(
+  context,
+  'Payment Status',
+  paymentStatus,
+  valueColor: paymentStatus == "Paid"
+      ? Colors.green
+      : Colors.red,
+),
 
                       _buildDetailRow(context, 'Transaction No', mobileNumber),
 
@@ -244,6 +248,16 @@ String get enteredAmount => (args["amount"] ?? "").toString();
 
                         return;
                       }
+  // Validate transaction amount
+  final entered = double.tryParse(enteredAmount.trim()) ?? 0.0;
+  final reEntered = double.tryParse(amountController.text.trim()) ?? 0.0;
+
+  if (entered != reEntered) {
+    CustomToast.error(
+      "Re-entered amount does not match the transaction amount",
+    );
+    return;
+  }
 
                       if (amountController.text.trim().isEmpty) {
                         CustomToast.error("Please enter amount");
@@ -258,7 +272,7 @@ String get enteredAmount => (args["amount"] ?? "").toString();
                           "mobileNumber": mobileNumber,
                           "productdetid": args['productdetid'],
                           "productName": confirmData.productName ?? '',
-                          "paymentStatus": confirmData.paymentStatus ?? '',
+                          
                           "transactionNo": mobileNumber,
                           "transactionAmount": amountController.text,
                           "whatsappNumber": whatsappController.text,
@@ -268,6 +282,7 @@ String get enteredAmount => (args["amount"] ?? "").toString();
                               : '',
                           "operatorColor": Colors.red,
                           "operatorLogo": confirmData.logo ?? '',
+                             "paymentStatus": paymentStatus,
                         },
                       );
                     },
@@ -327,11 +342,20 @@ if (entered != reEntered) {
                               AppLogger.debugPrint(
                                 "👉 FINAL PRODUCT ID: ${controller.productdetid}",
                               );
+final String backendStatus =
+    paymentStatus.toLowerCase() == "paid"
+        ? "received"
+        : "not_received";
 
+                         print("Selected Operator : ${controller.selectedPlan.value?.name}");
+                       print("Selected Product Id : ${controller.selectedPlan.value?.id}");
+                       print("Controller Product Id : ${controller.productdetid}");
                               final success = await controller.mobilerecharge(
-                                controller.productdetid,
+                                productDetIdForRecharge, 
                                 mobileNumber,
                                 amountController.text.trim(),
+                             backendStatus,
+
                               );
 
                               AppLogger.debugPrint("AFTER API CALL");

@@ -130,6 +130,7 @@ Rx<ConfirmDth?> confirmdth = Rx<ConfirmDth?>(null);
     String productdetid,
     String mobile,
     String amount,
+    String paymentstatus,
   ) async {
     try {
       AppLogger.logError("👉 Recharge API CALL STARTED");
@@ -145,12 +146,13 @@ Rx<ConfirmDth?> confirmdth = Rx<ConfirmDth?>(null);
       AppLogger.logError("productdetid: $productdetid");
       AppLogger.logError("mobile: $mobile");
       AppLogger.logError("amount: $amount");
+         AppLogger.logError("paymentstatus: $paymentstatus");
 
       final stopwatch = Stopwatch()..start();
 
       AppLogger.logError("🚀 API CALL START");
 
-      final result = await dthrechargeusecase(productdetid, mobile, amount);
+      final result = await dthrechargeusecase(productdetid, mobile, amount,paymentstatus);
 
       AppLogger.logError("✅ API RESPONSE RECEIVED in ${stopwatch.elapsedMilliseconds} ms");
 

@@ -70,5 +70,6 @@ class ApiRoutes {
   static const checkoperator = "/check_operator";
   static const offer = "/rechargeOffers";
   static const customerInfo = "/dthInfo";
+  static const graph = "/graph";
   
 }

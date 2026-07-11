@@ -16,18 +16,20 @@ class MobileRechargeRepoImpl implements MobileRechargeRepository {
     required String productdetid,
     required String mobile,
     required String amount,
+    required String paymentstatus,
   }) async {
     try {
       final response = await apiService.post(
         ApiRoutes.mobilerecharge,
-        data: {"product_id": productdetid, "mobile": mobile, "amount": amount},
+        data: {"product_id": productdetid, "mobile": mobile, "amount": amount, "payment_status": paymentstatus},
       );
 
       AppLogger.logError("=========== 👍REQUEST BODY ===========");
       AppLogger.logError({
-        "productdetid": productdetid,
+        "product_id": productdetid,
         "mobile": mobile,
         "amount": amount,
+        "payment_status": paymentstatus,
       });
 
       AppLogger.logError("=========== 👍RAW RESPONSE ===========");

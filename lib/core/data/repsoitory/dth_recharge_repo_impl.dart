@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:maxpay/core/constants/api_routes.dart';
 import 'package:maxpay/core/data/model/dth_recharge_model.dart';
+import 'package:maxpay/core/data/model/payment_status_model.dart';
 import 'package:maxpay/core/domain/repository/dth_recharge_repository.dart';
 import 'package:maxpay/core/error/failure.dart';
 import 'package:maxpay/core/services/api_services.dart';
@@ -16,11 +17,19 @@ class DthRechargeRepoImpl implements DthRechargeRepository {
     required String productdetid,
     required String mobile,
     required String amount,
+    required String paymentstatus,
+
+   
   }) async {
     try {
       final response = await apiService.post(
         ApiRoutes.Dthrecharge,
-        data: {"product_id": productdetid, "number": mobile, "amount": amount},
+        data: {
+          "product_id": productdetid,
+           "number": mobile,
+            "amount": amount,
+             "payment_status": paymentstatus,
+            },
       );
 
       AppLogger.logError("=========== 👍REQUEST BODY ===========");

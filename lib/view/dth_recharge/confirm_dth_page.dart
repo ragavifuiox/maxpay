@@ -21,7 +21,7 @@ class ConfirmDthPage extends GetView<DthController> {
 
   TextEditingController amountController = TextEditingController();
   ConfirmDthPage({super.key});
-
+String get paymentStatus => args['paymentStatus'] ?? '';
   late String productdetid;
   final args = Get.arguments ?? {};
   String get type => args["type"] ?? "mobile";
@@ -29,6 +29,17 @@ class ConfirmDthPage extends GetView<DthController> {
   void setProductId(String id) {
     productdetid = id;
   }
+
+
+  String get convertedPaymentStatus {
+  final status = paymentStatus.toLowerCase();
+
+  if (status == "paid") {
+    return "received";
+  } else {
+    return "not received";
+  }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -122,13 +133,13 @@ print("Product ID: ${args['productdetid']}");
                           ),
                         ),
 
-                        _buildDetailRow(
-                          context,
-                          'Payment Status',
-                          confirmData.paymentStatus ?? '',
-                          valueColor: Colors.green,
-                        ),
-
+                      _buildDetailRow(
+  context,
+  'Payment Status',
+  paymentStatus,
+  valueColor:
+      paymentStatus == "Paid" ? Colors.green : Colors.red,
+),
                         _buildDetailRow(context, 'Transaction No', customerId),
 
                         SizedBox(height: 10.h),
@@ -220,12 +231,12 @@ if (amountController.text.trim() != selectedAmount.trim()) {
                         final args = Get.arguments ?? {};
 
                         Get.toNamed(
-                          AppRoutes.customertrans,
+                          AppRoutes.dthcustomer,
                           arguments: {
                             "mobileNumber": customerId,
                             "productdetid": args['productdetid'],
                             "productName": confirmData.productName ?? '',
-                            "paymentStatus": confirmData.paymentStatus ?? '',
+                          "paymentStatus": convertedPaymentStatus,
                             "transactionNo": customerId,
 "transactionAmount": amountController.text.trim().isNotEmpty
     ? amountController.text.trim()
@@ -290,6 +301,7 @@ if (amountController.text.trim() != selectedAmount.trim()) {
                                   args['productdetid'].toString(),
                                   customerId,
                                   amountController.text.trim(),
+                                  convertedPaymentStatus,
                                 );
 
                                 AppLogger.debugPrint("AFTER API CALL");
@@ -315,8 +327,8 @@ if (amountController.text.trim() != selectedAmount.trim()) {
         rechargeAmount:
             (apiData?.amount ?? amountController.text)
                 .currencyIndian,
-        transactionId: apiData?.txnid ?? "",
-        dateTime: apiData?.requestDatetime ?? "",
+        transactionId: apiData?.tnxId ?? "",
+        dateTime: apiData?.rechargeDate ?? "",
       ),
     );
   } else {
@@ -332,8 +344,8 @@ if (amountController.text.trim() != selectedAmount.trim()) {
         rechargeAmount:
             (apiData?.amount ?? amountController.text)
                 .currencyIndian,
-        transactionId: apiData?.txnid ?? "",
-        dateTime: apiData?.requestDatetime ?? "",
+        transactionId: apiData?.tnxId ?? "",
+        dateTime: apiData?.rechargeDate ?? "",
       ),
     );
   }
