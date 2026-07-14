@@ -50,4 +50,6 @@ class AppRoutes {
   static const String walletreport='/walletreport';
   static const String statement='/statement';
   static const String dthcustomer='/dthcustomer';
+  static const String transferdetail='/transferdetail';
+  static const String electricity='/electricity';
 }

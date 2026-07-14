@@ -31,6 +31,7 @@ import 'package:maxpay/view/dispute/dispute_screen.dart';
 import 'package:maxpay/view/dth_recharge/confirm_dth_page.dart';
 import 'package:maxpay/view/dth_recharge/customer_dth_page.dart';
 import 'package:maxpay/view/dth_recharge/dth_recharge_page.dart';
+import 'package:maxpay/view/electricity_bill/electricity_bill_page.dart';
 import 'package:maxpay/view/grade/grade_screen.dart';
 import 'package:maxpay/view/home/pages/home_page.dart';
 import 'package:maxpay/view/home/widgets/services_section.dart';
@@ -64,6 +65,7 @@ import 'package:maxpay/view/statement/state_readmore.dart';
 import 'package:maxpay/view/statement/statement_screen.dart';
 import 'package:maxpay/view/support/supoort_screen.dart';
 import 'package:maxpay/view/transaction_screens/transaction_success_screen.dart';
+import 'package:maxpay/view/transfer_detail/transfer_detial.dart';
 import 'package:maxpay/view/update_pin/verify_pin_screen.dart';
 import 'package:maxpay/view/wallet%20balance/wallet_balance.dart';
 import 'package:maxpay/view/wallet-credit/wallet_credit_screen.dart';
@@ -78,7 +80,8 @@ class AppPages {
     GetPage(name: AppRoutes.splash, page: () => const MainSplashScreen()),
     GetPage(name: AppRoutes.intro, page: () => const IntroPage()),
     GetPage(name: AppRoutes.welcome, page: () => const WelcomePage()),
-
+    GetPage(name: AppRoutes.transferdetail, page: () => const TransferDetial()),
+    GetPage(name: AppRoutes.electricity, page: () => const ElectricityBillPage()),
     GetPage(
       transition: Transition.fade,
 
@@ -579,7 +582,10 @@ class AppPages {
         );
       }),
     ),
+
     // GetPage(name: AppRoutes.webloginqr, page: () => const WebLoginScreen()),
+
+    
     GetPage(
       transition: Transition.fade,
 
@@ -589,12 +595,12 @@ class AppPages {
 
       binding: BindingsBuilder(() {
         Get.lazyPut<PaymentStatusController>(
-          () => PaymentStatusController(paymentStatusUsecase: sl()),
-
+          () => PaymentStatusController(paymentStatusUsecase: sl(), paymentStatusTypeUsecase: sl(),),
           fenix: true,
-        );
-      }),
+           );
+        }),
     ),
+
 
     GetPage(
       transition: Transition.fade,
@@ -662,7 +668,7 @@ class AppPages {
           () => TransReportController(
             transreportUsecase: sl(),
             producttypeUseCase: sl(),
-            submitDisputeUsecase: sl(),
+            submitDisputeUsecase: sl(), cashbackTypeUsecase: sl(),
           ),
           fenix: true,
         );

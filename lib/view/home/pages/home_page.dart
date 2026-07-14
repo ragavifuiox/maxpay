@@ -388,7 +388,8 @@ class HomePageScreen extends GetView<HomePageController> {
                                   TransReportController(
                                     transreportUsecase: sl(),
                                     producttypeUseCase: sl(),
-                                    submitDisputeUsecase: sl(),
+                                    submitDisputeUsecase: sl(), cashbackTypeUsecase: sl(),
+                                    
                                   ),
                                 );
                                 controller.clearFilters();
@@ -430,6 +431,7 @@ class HomePageScreen extends GetView<HomePageController> {
                                         transreportUsecase: sl(),
                                         producttypeUseCase: sl(),
                                         submitDisputeUsecase: sl(),
+                                        cashbackTypeUsecase: sl()
                                       ),
                                     );
 
@@ -470,6 +472,7 @@ class HomePageScreen extends GetView<HomePageController> {
                                         transreportUsecase: sl(),
                                         producttypeUseCase: sl(),
                                         submitDisputeUsecase: sl(),
+                                        cashbackTypeUsecase: sl()
                                       ),
                                     );
                                 controller.clearFilters();

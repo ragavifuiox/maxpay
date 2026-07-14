@@ -47,9 +47,7 @@ final productdetid = args['productdetid'] ?? '';
           children: [
             SizedBox(height: 20.h),
 
-            /// DETAILS CARD
-            /// DETAILS CARD
-            RotatedBox(
+          RotatedBox(
               quarterTurns: 2,
               child: Container(
                 width: double.infinity,
@@ -249,7 +247,7 @@ final productdetid = args['productdetid'] ?? '';
 
 
                       rechargeAmount:
-                          (apiData?.amount ??
+                 (apiData?.amount ??
                                   transactionAmount)
                               .toString()
                               .currencyIndian,

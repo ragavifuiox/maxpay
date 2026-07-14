@@ -12,6 +12,7 @@ class ElectricityBillPage extends StatefulWidget {
 class _ElectricityBillPageState extends State<ElectricityBillPage> {
   String _selectedBoard = 'Kerala State Electricity';
   bool _isBillFetched = false;
+bool _showDetails = false;
 
   final List<String> _boards = [
     'Kerala State Electricity',
@@ -20,6 +21,9 @@ class _ElectricityBillPageState extends State<ElectricityBillPage> {
     'BESCOM',
     'MSEDCL',
   ];
+
+
+
 
   void _showBoardSelector(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;

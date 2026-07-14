@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:maxpay/controllers/auth_controller.dart';
 import 'package:maxpay/controllers/profile_controller.dart';
+import 'package:maxpay/controllers/update_pin_controller.dart';
 import 'package:maxpay/controllers/web_login_controller.dart';
 import 'package:maxpay/core/constants/asset_images.dart';
 import 'package:maxpay/core/constants/colors.dart';
@@ -20,7 +21,9 @@ class SettingsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeController = Get.find<ThemeController>();
     final authController = Get.find<AuthController>();
+    final updatePinController = Get.put(UpdatePinController(updatepinusecase: sl(), updateSendOtpUsecase: sl(), updateotpusecase: sl()));
    final webcontroller = Get.isRegistered<WebLoginController>()
+   
     ? Get.find<WebLoginController>()
     : Get.put(
         WebLoginController(
@@ -140,14 +143,17 @@ class SettingsPage extends StatelessWidget {
                   _buildMenuTile(context, 'KYC', () {
                     Get.toNamed(AppRoutes.kyc);
                   }, SvgPicture.asset(AssetImages.kyc, width: 24.w)),
-                  _buildMenuTile(
-                    context,
-                    'Update M-Pin',
-                    () {
-                      Get.toNamed(AppRoutes.verify, arguments: true);
-                    },
-                    SvgPicture.asset(AssetImages.updatePin, width: 24.w),
-                  ),
+                 _buildMenuTile(
+  context,
+  'Update M-Pin',
+  () {
+    updatePinController.sendUpdatePinOtp();
+  },
+  SvgPicture.asset(
+    AssetImages.updatePin,
+    width: 24.w,
+  ),
+),
                   _buildMenuTile(
                     context,
                     authController.isFingerPrint.value == 1

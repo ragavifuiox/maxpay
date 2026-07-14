@@ -13,6 +13,7 @@ import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/core/di/service_locator.dart';
 import 'package:maxpay/core/extensions/currency.dart';
+import 'package:maxpay/view/electricity_bill/electricity_bill_page.dart';
 import 'package:maxpay/view/fastag_recharge/fastag_recharge_page.dart';
 import 'package:maxpay/view/home/widgets/home_header.dart';
 import 'package:maxpay/core/constants/extension.dart';
@@ -198,41 +199,46 @@ class MenuScreen extends StatelessWidget {
 
                         SizedBox(height: 18.h),
 
-                        /// STATUS CARDS
-                        Row(
-                          children: [
-                            Expanded(
-                              child: _statusCard(
-                                image: AssetImages.successIcon,
+                      
 
-                                value: "5000",
-                                bgColor: const Color(0xffDDF8E6),
+/// STATUS CARDS
+Obx(() {
+  final transaction = homeController.transactionData.value;
 
-                                textColor: const Color(0xff22C55E),
-                              ),
-                            ),
-                            SizedBox(width: 12.w),
-                            Expanded(
-                              child: _statusCard(
-                                image: AssetImages.processIcon,
-                                value: "5000",
-                                bgColor: const Color(0xffFCEFD9),
-
-                                textColor: Colors.orange,
-                              ),
-                            ),
-                            SizedBox(width: 12.w),
-                            Expanded(
-                              child: _statusCard(
-                                image: AssetImages.failedIcon,
-                                value: "5000",
-                                bgColor: const Color(0xffFCE2E6),
-
-                                textColor: Colors.red,
-                              ),
-                            ),
-                          ],
-                        ),
+  return Row(
+    children: [
+      Expanded(
+        child: _statusCard(
+          image: AssetImages.successIcon,
+          value:
+              "₹${transaction?.data?.success?.amount?.toString() ?? "0"}",
+          bgColor: const Color(0xffDDF8E6),
+          textColor: const Color(0xff22C55E),
+        ),
+      ),
+      SizedBox(width: 12.w),
+      Expanded(
+        child: _statusCard(
+          image: AssetImages.processIcon,
+          value:
+              "₹${transaction?.data?.processing?.amount?.toString() ?? "0"}",
+          bgColor: const Color(0xffFCEFD9),
+          textColor: Colors.orange,
+        ),
+      ),
+      SizedBox(width: 12.w),
+      Expanded(
+        child: _statusCard(
+          image: AssetImages.failedIcon,
+          value:
+              "₹${transaction?.data?.failed?.amount?.toString() ?? "0"}",
+          bgColor: const Color(0xffFCE2E6),
+          textColor: Colors.red,
+        ),
+      ),
+    ],
+  );
+}),
 
                         SizedBox(height: 18.h),
 
@@ -607,7 +613,7 @@ class MenuScreen extends StatelessWidget {
       case 'fastag':
         return AppColors.box3;
       case 'gas':
-        return AppColors.box4;
+        return const Color.fromRGBO(255, 225, 180, 1);
       case 'electricity':
         return AppColors.box3;
       case 'water':
@@ -661,6 +667,12 @@ class MenuScreen extends StatelessWidget {
       case 'fastag':
         Get.to(() => const FastagRechargePage());
         break;
+
+
+        case 'electricity':
+        Get.to(() => const ElectricityBillPage());
+        break;
+
 
       default:
         break;

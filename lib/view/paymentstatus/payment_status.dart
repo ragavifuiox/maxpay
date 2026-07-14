@@ -50,23 +50,15 @@ class PaymentStatusScreen extends GetView<PaymentStatusController> {
                     final item =
                         controller.paymentstatus[index];
 
-                    return PaymentCard(
-                      status:
-                          item.paymentStatus ?? '',
-                      statusColor:
-                          _getStatusColor(
-                        item.paymentStatus ?? '',
-                      ),
-                      operatorName:
-                          item.productName ?? '',
-                      amount:
-                          "₹ ${item.amount ?? '0'}",
-                      dateTime:
-                          item.dateTime ?? '',
-                      mobile:
-                          item.mobile ?? '',
-                      productLogo: item.productLogo ?? '',
-                    );
+                  return PaymentCard(
+  status: _getDisplayStatus(item.paymentStatus ?? ''),
+  statusColor: _getStatusColor(item.paymentStatus ?? ''),
+  operatorName: item.productName ?? '',
+  amount: "₹ ${item.amount ?? '0'}",
+  dateTime: item.dateTime ?? '',
+  mobile: item.mobile ?? '',
+  productLogo: item.productLogo ?? '',
+);
                   },
                 );
               }),
@@ -77,21 +69,40 @@ class PaymentStatusScreen extends GetView<PaymentStatusController> {
     );
   }
 
-  Color _getStatusColor(String status) {
-    switch (status.toLowerCase()) {
-      case "success":
-        return Colors.green;
+  
 
-      case "pending":
-        return Colors.orange;
+ String _getDisplayStatus(String status) {
+  switch (status.toLowerCase()) {
+    case "success":
+      return "Paid";
 
-      case "failed":
-        return Colors.red;
+    case "failed":
+      return "Pending";
 
-      default:
-        return Colors.blue;
-    }
+    case "pending":
+      return "Pending";
+
+    default:
+      return status;
   }
+}
+
+Color _getStatusColor(String status) {
+  switch (status.toLowerCase()) {
+    case "success":
+      return Colors.green;
+
+    case "failed":
+    case "pending":
+      return Colors.orange;
+
+    default:
+      return Colors.blue;
+  }
+}
+
+
+  
 }
 class PaymentCard extends StatelessWidget {
   final String status;
