@@ -13,7 +13,6 @@ import 'package:maxpay/global_widget/commom_button.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
 import 'package:maxpay/view/dth_recharge/dth_failed_recharge_screen.dart';
 import 'package:maxpay/view/dth_recharge/dth_success_page.dart';
-import 'package:maxpay/core/data/model/confirm_dth_model.dart';
 
 import 'package:get/get.dart';
 
