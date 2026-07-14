@@ -13,9 +13,8 @@ import 'package:maxpay/core/domain/usecase/verify_pin_usecase.dart';
 import 'package:maxpay/core/services/local_storage_service.dart';
 import 'package:maxpay/core/utils/device_info.dart';
 import 'package:maxpay/core/utils/logg_helper.dart';
+import 'package:maxpay/core/utils/sim_util.dart';
 import 'package:maxpay/view/nav_page/navbar_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:sim_card_code/sim_card_code.dart';
 
 class AuthController extends GetxController {
   final LoginUseCase loginUseCase;
@@ -69,84 +68,13 @@ class AuthController extends GetxController {
 
       final enteredPhone = phoneController.text.trim();
 
-      // Test numbers exception list
-      final List<String> testNumbers = [
-        '9999999999',
-        '9895762284',
-        '6369497195',
-      ];
-
-      if (!testNumbers.contains(enteredPhone)) {
-        // 1. Request phone permission
-        var status = await Permission.phone.status;
-        if (!status.isGranted) {
-          status = await Permission.phone.request();
-        }
-
-        if (!status.isGranted) {
-          CustomToast.error(
-            "Phone permission is required to verify the SIM card",
-          );
-          return;
-        }
-
-        // 2. Fetch SIM info
-        final sims = await SimCardManager.allSimInfo;
-        AppLogger.logError("Detected SIM cards: ${sims.length}");
-
-        if (sims.isEmpty) {
-          CustomToast.error("No SIM card detected in this device");
-          return;
-        }
-
-        bool numberExists = false;
-        bool hasAnyStoredNumber = false;
-
-        // Helper function to normalize and match
-        bool matches(String entered, String? sim) {
-          if (sim == null || sim.isEmpty) return false;
-          final cleanEntered = entered.replaceAll(RegExp(r'\D'), '');
-          final cleanSim = sim.replaceAll(RegExp(r'\D'), '');
-          if (cleanEntered.isEmpty || cleanSim.isEmpty) return false;
-
-          // Match last 10 digits
-          if (cleanEntered.length >= 10 && cleanSim.length >= 10) {
-            return cleanEntered.substring(cleanEntered.length - 10) ==
-                cleanSim.substring(cleanSim.length - 10);
-          }
-          return cleanEntered == cleanSim;
-        }
-
-        for (var sim in sims) {
-          AppLogger.logError(
-            "SIM slot=${sim.slotIndex}, carrier=${sim.carrierName}, number=${sim.phoneNumber}",
-          );
-          if (sim.phoneNumber != null && sim.phoneNumber!.isNotEmpty) {
-            hasAnyStoredNumber = true;
-            if (matches(enteredPhone, sim.phoneNumber)) {
-              numberExists = true;
-              break;
-            }
-          }
-        }
-
-        // Also check the default phoneNumber getter
-        final defaultNumber = await SimCardManager.phoneNumber;
-        AppLogger.logError("Default SIM phone number: $defaultNumber");
-        if (defaultNumber != null && defaultNumber.isNotEmpty) {
-          hasAnyStoredNumber = true;
-          if (matches(enteredPhone, defaultNumber)) {
-            numberExists = true;
-          }
-        }
-
-        // If we found some phone numbers but none of them matched, block the login
-        if (hasAnyStoredNumber && !numberExists) {
-          CustomToast.error(
-            "The entered mobile number does not exist on this device",
-          );
-          return;
-        }
+      // Verify SIM presence (will automatically show toast and return false if failed)
+      final bool isSimValid = await SimUtil.verifySimPresent(
+        enteredPhone,
+        showToasts: true,
+      );
+      if (!isSimValid) {
+        return;
       }
 
       final result = await loginUseCase(
@@ -259,6 +187,7 @@ class AuthController extends GetxController {
 
             AppLogger.logError("NETWORK => ${storage.getString("network")}");
             await storage.saveString("auth_token", response.data?.token ?? "");
+            await storage.saveString("logged_in_phone", phoneNumber.value);
 
             await storage.saveInt("user_id", response.data?.userId ?? 0);
 
@@ -630,6 +559,31 @@ class AuthController extends GetxController {
       CustomToast.error(e.toString());
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  /// Forces a complete local logout and attempts to call the backend logout API.
+  /// This ensures that even if the API fails (e.g. no internet), local tokens are wiped securely.
+  Future<void> forceLogout() async {
+    try {
+      AppLogger.logError("Attempting forced backend logout...");
+      await loginUseCase.repository.logout();
+    } catch (e) {
+      AppLogger.logError("Forced backend logout failed: $e");
+    } finally {
+      // Regardless of API success, clear local tokens completely
+      await storage.clear();
+      phoneController.clear();
+
+      AppLogger.logError("Local tokens completely wiped.");
+
+      Get.offAllNamed(AppRoutes.intro);
+
+      try {
+        if (Get.isRegistered<NavbarController>()) {
+          Get.find<NavbarController>().setIndex(0);
+        }
+      } catch (_) {}
     }
   }
 

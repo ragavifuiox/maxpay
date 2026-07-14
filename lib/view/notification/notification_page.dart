@@ -6,8 +6,7 @@ import 'package:maxpay/global_widget/custom_app.dart';
 class NotificationPage extends StatelessWidget {
   NotificationPage({super.key});
 
-  final NotificationController controller =
-      Get.put(NotificationController());
+  final NotificationController controller = Get.put(NotificationController());
 
   @override
   Widget build(BuildContext context) {
@@ -15,9 +14,7 @@ class NotificationPage extends StatelessWidget {
       appBar: CommonAppBar(title: "Notification"),
       body: Obx(
         () => controller.notifications.isEmpty
-            ? const Center(
-                child: Text("No Notifications"),
-              )
+            ? const Center(child: Text("No Notifications"))
             : ListView.builder(
                 padding: const EdgeInsets.all(12),
                 itemCount: controller.notifications.length,
@@ -40,7 +37,7 @@ class NotificationPage extends StatelessWidget {
                             color: Colors.grey.withValues(alpha: 0.1),
                             blurRadius: 5,
                             offset: const Offset(0, 3),
-                          )
+                          ),
                         ],
                       ),
                       child: Row(

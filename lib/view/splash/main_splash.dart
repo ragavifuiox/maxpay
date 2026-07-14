@@ -102,6 +102,9 @@ import 'package:maxpay/core/constants/asset_images.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/core/services/local_storage_service.dart';
 import 'package:maxpay/core/utils/logg_helper.dart';
+import 'package:maxpay/core/utils/sim_util.dart';
+import 'package:maxpay/controllers/auth_controller.dart';
+import 'package:maxpay/core/constants/snackbar.dart';
 
 class MainSplashScreen extends StatefulWidget {
   const MainSplashScreen({super.key});
@@ -195,6 +198,7 @@ class _MainSplashScreenState extends State<MainSplashScreen>
   final token = storage.getString("auth_token");
   final isPin = storage.getInt("is_pin") ?? 0;
   final isFingerPrint = storage.getInt("is_fingerprint") ?? 0;
+  final loggedInPhone = storage.getString("logged_in_phone");
 
   AppLogger.logError("TOKEN : $token");
   AppLogger.logError("IS PIN : $isPin");
@@ -208,6 +212,23 @@ class _MainSplashScreenState extends State<MainSplashScreen>
   if (token == null || token.isEmpty) {
     Get.offAllNamed(AppRoutes.intro);
     return;
+  }
+
+  /// Verify SIM Binding
+  if (loggedInPhone != null && loggedInPhone.isNotEmpty) {
+    final bool isSimValid = await SimUtil.verifySimPresent(loggedInPhone);
+    if (!isSimValid) {
+      AppLogger.logError("SIM Binding Failed. Calling backend logout API and clearing data.");
+      CustomToast.error("The already logged number doesn't exist in device");
+      
+      if (Get.isRegistered<AuthController>()) {
+        await Get.find<AuthController>().forceLogout();
+      } else {
+        await storage.clear();
+        Get.offAllNamed(AppRoutes.intro);
+      }
+      return;
+    }
   }
 
   /// Old User -> PIN Created

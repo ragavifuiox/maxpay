@@ -3,6 +3,9 @@ import 'package:get/get.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/core/services/local_storage_service.dart';
 import 'package:maxpay/core/utils/logg_helper.dart';
+import 'package:maxpay/core/utils/sim_util.dart';
+import 'package:maxpay/controllers/auth_controller.dart';
+import 'package:maxpay/core/constants/snackbar.dart';
 
 class AppLifecycleController extends GetxController
     with WidgetsBindingObserver {
@@ -68,8 +71,27 @@ class AppLifecycleController extends GetxController
         "Saved last active time: ${DateTime.now().toIso8601String()}",
       );
     } else if (state == AppLifecycleState.resumed) {
-      // Check if a logout boundary was crossed when resuming
       final token = storage.getString("auth_token");
+      final loggedInPhone = storage.getString("logged_in_phone");
+
+      // 1. Verify SIM binding if user is logged in
+      if (token != null && token.isNotEmpty && loggedInPhone != null && loggedInPhone.isNotEmpty) {
+        final bool isSimValid = await SimUtil.verifySimPresent(loggedInPhone);
+        if (!isSimValid) {
+          AppLogger.logError("SIM Binding Failed on Resume. Calling backend logout API and clearing data.");
+          CustomToast.error("The already logged number doesn't exist in device");
+          
+          if (Get.isRegistered<AuthController>()) {
+            await Get.find<AuthController>().forceLogout();
+          } else {
+            await storage.clear();
+            Get.offAllNamed(AppRoutes.intro);
+          }
+          return; // Stop further checks
+        }
+      }
+
+      // 2. Check if a logout boundary was crossed when resuming
       final isPin = storage.getInt("is_pin") ?? 0;
       final isFingerPrint = storage.getInt("is_fingerprint") ?? 0;
 
