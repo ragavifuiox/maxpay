@@ -77,6 +77,7 @@ class AssetImages {
   static const processIcon = "assets/images/ser-processing - Copy.svg";
  
   static const failedIcon = "assets/images/close-circle.svg";
+  static const transfer = "assets/images/transfer.svg";
 }
 
 SizedBox adjustWidth(double width) {

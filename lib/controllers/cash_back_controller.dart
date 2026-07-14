@@ -1,14 +1,18 @@
 import 'package:get/get.dart';
 import 'package:maxpay/core/constants/snackbar.dart';
 import 'package:maxpay/core/data/model/cash_back_model.dart';
-import 'package:maxpay/core/data/model/product_type.dart';
+import 'package:maxpay/core/data/model/payment_product_model.dart';
+
+
+
 import 'package:maxpay/core/domain/usecase/cash_back_usecase.dart';
+import 'package:maxpay/core/domain/usecase/payment_status_type_usecase.dart';
 import 'package:maxpay/core/domain/usecase/product_type_usecase.dart';
 import 'package:maxpay/core/utils/logg_helper.dart';
 
 
 class CashbackController extends GetxController {
-  final ProductTypeUseCase allPlanUsecase;
+  final CashbackTypeUsecase allPlanUsecase;
   final CashBackUsecase cashbackUsecase;
 
   CashbackController({
@@ -18,7 +22,7 @@ class CashbackController extends GetxController {
 RxString selectedProductId = ''.obs;
   RxBool isLoading = false.obs;
 
-  Rx<ProductType?> allPlan = Rx<ProductType?>(null);
+  Rx<CashbackProductType?> allPlan = Rx<CashbackProductType?>(null);
   Rx<CashBack?> cashBack = Rx<CashBack?>(null);
 
   RxString selectedProductType = ''.obs;

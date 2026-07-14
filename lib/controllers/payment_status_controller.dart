@@ -1,16 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:maxpay/core/constants/snackbar.dart';
+import 'package:maxpay/core/data/model/payment_product_model.dart';
 import 'package:maxpay/core/data/model/payment_status_model.dart';
+import 'package:maxpay/core/domain/usecase/payment_status_type_usecase.dart';
 import 'package:maxpay/core/domain/usecase/payment_status_usecase.dart';
 
 class PaymentStatusController extends GetxController {
   final PaymentStatusUsecase paymentStatusUsecase;
+  final CashbackTypeUsecase paymentStatusTypeUsecase;
 
   PaymentStatusController({
     required this.paymentStatusUsecase,
+    required this.paymentStatusTypeUsecase,
   });
 
+  Rx<CashbackProductType?> productTypeData =
+      Rx<CashbackProductType?>(null);
   RxBool isLoading = false.obs;
   RxList<PaymentStatusData> paymentstatus =
       <PaymentStatusData>[].obs;
@@ -102,5 +108,29 @@ class PaymentStatusController extends GetxController {
         toDate.isNotEmpty) {
       getPaymentStatus();
     }
+  }
+
+
+  Future<void> fetchPaymentProductTypes() async {
+    isLoading.value = true;
+
+    final result =
+        await paymentStatusTypeUsecase();
+
+    result.fold(
+      (failure) {
+        isLoading.value = false;
+
+        Get.snackbar(
+          'Error',
+          failure.message,
+        );
+      },
+      (data) {
+        productTypeData.value = data;
+
+        isLoading.value = false;
+      },
+    );
   }
 }

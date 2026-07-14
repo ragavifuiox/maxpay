@@ -71,5 +71,8 @@ class ApiRoutes {
   static const offer = "/rechargeOffers";
   static const customerInfo = "/dthInfo";
   static const graph = "/graph";
+  static const sendotp = "/send_update_pin_otp";
+  static const updateotp = "/verify_update_pin_otp";
+  static const paymentstatustype = "/get_product_type";
   
 }

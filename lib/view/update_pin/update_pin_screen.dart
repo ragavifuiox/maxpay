@@ -12,7 +12,7 @@ class UpdatePinPage extends StatelessWidget {
   UpdatePinPage({super.key});
 
   final UpdatePinController controller = Get.put(
-    UpdatePinController(updatepinusecase: sl()),
+    UpdatePinController(updatepinusecase: sl(), updateSendOtpUsecase: sl(), updateotpusecase: sl()),
   );
 
   final TextEditingController newPinController = TextEditingController();

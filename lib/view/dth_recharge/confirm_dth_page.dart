@@ -110,35 +110,14 @@ class ConfirmDthPage extends GetView<DthController> {
                   ),
                   child: Column(
                     children: [
-                      Padding(
-                        padding: EdgeInsets.only(bottom: 12.h),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'Product ',
-                              style: TextStyle(
-                                color: Colors.grey,
-                                fontSize: 14.sp,
-                              ),
-                            ),
-                            Text(
-                              productName,
-                              style: TextStyle(
-                                fontSize: 16.sp,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+                     
                       Padding(
                         padding: EdgeInsets.symmetric(vertical: 12.h),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              'Operator',
+                              'Product',
                               style: TextStyle(
                                 color: Colors.grey,
                                 fontSize: 14.sp,

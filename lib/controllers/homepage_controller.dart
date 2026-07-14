@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:maxpay/core/constants/snackbar.dart';
 import 'package:maxpay/core/data/model/graph_model.dart';
 import 'package:maxpay/core/data/model/refund_count_model.dart';
 import 'package:maxpay/core/data/model/today_credit_model.dart';
@@ -81,10 +82,7 @@ class HomePageController extends GetxController {
 
       result.fold(
         (failure) {
-          AppLogger.logError(
-            "❌ [API CALL FAILED] fetchNews: ${failure.message}",
-          );
-          Get.snackbar('Error', failure.message);
+         CustomToast.error(failure.message);
         },
         (data) {
           AppLogger.debugPrint("✅ [API CALL SUCCESS] fetchNews");
@@ -105,25 +103,20 @@ class HomePageController extends GetxController {
 
       final result = await graphUsecase();
 
-      result.fold(
-        (failure) {
-          AppLogger.logError(
-            "❌ [API CALL FAILED] fetchGraph: ${failure.message}",
-          );
-          Get.snackbar('Error', failure.message);
-        },
-        (data) {
-          AppLogger.debugPrint("✅ [API CALL SUCCESS] fetchGraph");
-          graphData.value = data;
-        },
-      );
-    } catch (e) {
-      AppLogger.logError("🔥 [API CALL EXCEPTION] fetchGraph error: $e");
-    } finally {
-      isLoading.value = false;
-    }
+    result.fold(
+      (failure) {
+       CustomToast.error(failure.message);
+      },
+      (data) {
+        graphData.value = data;
+      },
+    );
+  } catch (e) {
+    AppLogger.logError("fetchGraph error: $e");
+  } finally {
+    isLoading.value = false;
   }
-
+}
   // ---------------- POPUP ----------------
   Future<void> fetchpopupmessage(String currentScreen) async {
     try {

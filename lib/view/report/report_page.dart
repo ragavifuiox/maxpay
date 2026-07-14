@@ -72,9 +72,8 @@ class ReportPage extends StatelessWidget {
                     context,
                     'Transfer Detail',
                     () {
-                      Get.toNamed(AppRoutes.refund);
+                      Get.toNamed(AppRoutes.transferdetail);
                     },
-
                     SvgPicture.asset(AssetImages.refunds, width: 24.w),
                   ),
                   _buildMenuTile(

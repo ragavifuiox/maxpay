@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:maxpay/controllers/cash_back_controller.dart';
+import 'package:maxpay/core/data/model/payment_product_model.dart';
 import 'package:maxpay/core/data/model/product_type.dart';
 import 'package:maxpay/core/constants/colors.dart';
 
@@ -75,7 +76,7 @@ class CashbackScreen extends GetView<CashbackController> {
         ),
         child: Obx(
           () => DropdownButtonHideUnderline(
-            child: DropdownButton<Data>(
+            child:DropdownButton<CashbackProductData>(
               isExpanded: true,
               hint: Text(
                 controller.selectedProductName.value.isEmpty
@@ -90,7 +91,7 @@ class CashbackScreen extends GetView<CashbackController> {
                 color: theme.colorScheme.onSurface,
               ),
               items: controller.allPlan.value?.data?.map(
-                    (item) => DropdownMenuItem<Data>(
+                    (item) =>DropdownMenuItem<CashbackProductData>(
                       value: item,
                       child: Text(item.name ?? ''),
                     ),

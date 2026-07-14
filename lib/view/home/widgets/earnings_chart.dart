@@ -1,5 +1,3 @@
-
-
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -7,6 +5,132 @@ import 'package:maxpay/core/constants/colors.dart';
 
 class EarningsChart extends StatelessWidget {
   const EarningsChart({super.key});
+
+  // Data for each series
+  static const List<FlSpot> _purchaseSpots = [
+    FlSpot(0, .4),
+    FlSpot(1, .9),
+    FlSpot(2, .6),
+    FlSpot(3, 1),
+    FlSpot(4, 1.5),
+    FlSpot(5, .4),
+    FlSpot(6, 0),
+    FlSpot(7, .5),
+    FlSpot(8, 1.5),
+  ];
+
+  static const List<FlSpot> _successSpots = [
+    FlSpot(0, .1),
+    FlSpot(1, 1.2),
+    FlSpot(2, 1.4),
+    FlSpot(3, .6),
+    FlSpot(4, 2.6),
+    FlSpot(5, 3.4),
+    FlSpot(6, 2.6),
+    FlSpot(7, 3.3),
+    FlSpot(8, 1.9),
+  ];
+
+  static const List<FlSpot> _failedSpots = [
+    FlSpot(0, 1.6),
+    FlSpot(1, 2.4),
+    FlSpot(2, 1.8),
+    FlSpot(3, 2.6),
+    FlSpot(4, 3.5),
+    FlSpot(5, 1.4),
+    FlSpot(6, .5),
+    FlSpot(7, 1.7),
+    FlSpot(8, 3.4),
+  ];
+
+  // The exact x-indices that get a visible dot, on every line —
+  // matches the reference screenshot: first point, peak point, last point.
+  static const Set<int> _dottedIndices = {1, 4, 8};
+
+  bool _isShownDot(FlSpot spot) => _dottedIndices.contains(spot.x.toInt());
+
+  void _showDummyDataDialog(
+    BuildContext context, {
+    required String seriesName,
+    required Color color,
+    required FlSpot spot,
+    required bool isDark,
+  }) {
+    // Replace this with a real data lookup keyed by spot.x if you have one.
+    final dummyDate = "Day ${spot.x.toInt() + 1}";
+    final dummyValue = "${(spot.y * 1000).toStringAsFixed(0)} pts";
+    final dummyCount = "${(spot.y * 12).round()} txns";
+
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        return AlertDialog(
+          backgroundColor: isDark ? AppColors.darkFilterBorder : Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.r),
+          ),
+          title: Row(
+            children: [
+              Container(
+                width: 12,
+                height: 12,
+                decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+              ),
+              SizedBox(width: 8.w),
+              Text(
+                seriesName,
+                style: TextStyle(
+                  color: isDark ? Colors.white : AppColors.chart,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _dialogRow("Date", dummyDate, isDark),
+              _dialogRow("Value", dummyValue, isDark),
+              _dialogRow("Transactions", dummyCount, isDark),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: const Text("Close"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _dialogRow(String label, String value, bool isDark) {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 4.h),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              color: isDark ? Colors.white70 : Colors.black54,
+              fontSize: 13.sp,
+            ),
+          ),
+          Text(
+            value,
+            style: TextStyle(
+              color: isDark ? Colors.white : AppColors.chart,
+              fontSize: 13.sp,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +145,7 @@ class EarningsChart extends StatelessWidget {
       ),
       child: Column(
         children: [
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           SizedBox(
             height: 120.h,
             child: LineChart(
@@ -105,8 +229,56 @@ class EarningsChart extends StatelessWidget {
                   ),
                 ),
 
+                // Tap handling: only react when the tapped point is one of
+                // the visible dots (x = 1, 4, or 8) on any of the 3 lines.
+                lineTouchData: LineTouchData(
+                  enabled: true,
+                  handleBuiltInTouches: false,
+                  touchTooltipData: LineTouchTooltipData(
+                    getTooltipItems: (_) => [],
+                  ),
+                  touchCallback: (FlTouchEvent event, LineTouchResponse? response) {
+                    if (event is! FlTapUpEvent) return;
+                    if (response == null || response.lineBarSpots == null) return;
+
+                    for (final barSpot in response.lineBarSpots!) {
+                      final spot = FlSpot(barSpot.x, barSpot.y);
+                      if (!_isShownDot(spot)) continue;
+
+                      late final String seriesName;
+                      late final Color color;
+
+                      switch (barSpot.barIndex) {
+                        case 0:
+                          seriesName = "Add Wallet";
+                          color = Colors.blue;
+                          break;
+                        case 1:
+                          seriesName = "Transaction";
+                          color = Colors.green;
+                          break;
+                        case 2:
+                          seriesName = "Balance";
+                          color = Colors.red;
+                          break;
+                        default:
+                          continue;
+                      }
+
+                      _showDummyDataDialog(
+                        context,
+                        seriesName: seriesName,
+                        color: color,
+                        spot: spot,
+                        isDark: isDark,
+                      );
+                      break; // only handle the first matching dot
+                    }
+                  },
+                ),
+
                 lineBarsData: [
-                  /// PURCHASE
+                  /// PURCHASE (Add Wallet)
                   LineChartBarData(
                     isCurved: false,
                     color: Colors.blue,
@@ -114,140 +286,61 @@ class EarningsChart extends StatelessWidget {
                     isStrokeCapRound: true,
                     curveSmoothness: 0,
                     belowBarData: BarAreaData(show: false),
-                    spots: const [
-                      FlSpot(0, .4),
-                      FlSpot(1, .9),
-                      FlSpot(2, .6),
-                      FlSpot(3, 1),
-                      FlSpot(4, 1.5),
-                      FlSpot(5, .4),
-                      FlSpot(6, 0),
-                      FlSpot(7, .5),
-                      FlSpot(8, 1.5),
-                    ],
-                    // dotData: FlDotData(
-                    //   show: true,
-                    //   checkToShowDot: (spot, barData) {
-                    //     final sortedSpots = List<FlSpot>.from(barData.spots);
-                    //     sortedSpots.sort((a, b) => b.y.compareTo(a.y));
-                    //     final topSpots = sortedSpots.take(2).toList();
-                    //     return topSpots.any(
-                    //       (s) => s.x == spot.x && s.y == spot.y,
-                    //     );
-                    //   },
-                    //   getDotPainter: (spot, a, b, c) {
-                    //     return FlDotCirclePainter(
-                    //       radius: 2,
-                    //       color: isDark
-                    //           ? AppColors.darkFilterBorder
-                    //           : Colors.white,
-                    //       strokeWidth: 1.5,
-                    //       strokeColor: Colors.blue,
-                    //     );
-                    //   },
-                    // ),
-
+                    spots: _purchaseSpots,
                     dotData: FlDotData(
-  show: true,
-  checkToShowDot: (spot, barData) {
-    final sortedSpots = List<FlSpot>.from(barData.spots);
-    sortedSpots.sort((a, b) => b.y.compareTo(a.y));
-
-    final topSpots = sortedSpots.take(2).toList();
-
-    return topSpots.any(
-      (s) => s.x == spot.x && s.y == spot.y,
-    );
-  },
-  getDotPainter: (spot, a, b, c) {
-    return FlDotCirclePainter(
-      radius: 2,
-      color: Colors.blue,
-      strokeWidth: 1.5,
-      strokeColor: Colors.blue,
-    );
-  },
-),
+                      show: true,
+                      checkToShowDot: (spot, barData) => _isShownDot(spot),
+                      getDotPainter: (spot, a, b, c) {
+                        return FlDotCirclePainter(
+                          radius: 4,
+                          color: Colors.blue,
+                          strokeWidth: 0.1,
+                          strokeColor: Colors.blue,
+                        );
+                      },
+                    ),
                   ),
 
-                  /// SUCCESS
+                  
                   LineChartBarData(
                     isCurved: false,
                     color: Colors.green,
                     barWidth: 2.5,
                     isStrokeCapRound: true,
                     belowBarData: BarAreaData(show: false),
-                    spots: const [
-                      FlSpot(0, .1),
-                      FlSpot(1, 1.2),
-                      FlSpot(2, 1.4),
-                      FlSpot(3, .6),
-                      FlSpot(4, 2.6),
-                      FlSpot(5, 3.4),
-                      FlSpot(6, 2.6),
-                      FlSpot(7, 3.3),
-                      FlSpot(8, 1.9),
-                    ],
+                    spots: _successSpots,
                     dotData: FlDotData(
                       show: true,
-                      checkToShowDot: (spot, barData) {
-                        final sortedSpots = List<FlSpot>.from(barData.spots);
-                        sortedSpots.sort((a, b) => b.y.compareTo(a.y));
-                        final topSpots = sortedSpots.take(3).toList();
-                        return topSpots.any(
-                          (s) => s.x == spot.x && s.y == spot.y,
-                        );
-                      },
+                      checkToShowDot: (spot, barData) => _isShownDot(spot),
                       getDotPainter: (spot, a, b, c) {
-
-
-
-                        
                         return FlDotCirclePainter(
-      radius: 2,
-      color: Colors.green,
-      strokeWidth: 1.5,
-      strokeColor: Colors.green,
-    );
+                          radius: 4,
+                          color: Colors.green,
+                         strokeWidth: 0.1,
+                          strokeColor: Colors.green,
+                        );
                       },
                     ),
                   ),
 
-                  /// FAILED
+                  /// FAILED (Balance)
                   LineChartBarData(
                     isCurved: false,
                     color: Colors.red,
                     barWidth: 2.5,
                     isStrokeCapRound: true,
                     belowBarData: BarAreaData(show: false),
-                    spots: const [
-                      FlSpot(0, 1.6),
-                      FlSpot(1, 2.4),
-                      FlSpot(2, 1.8),
-                      FlSpot(3, 2.6),
-                      FlSpot(4, 3.5),
-                      FlSpot(5, 1.4),
-                      FlSpot(6, .5),
-                      FlSpot(7, 1.7),
-                      FlSpot(8, 3.4),
-                    ],
+                    spots: _failedSpots,
                     dotData: FlDotData(
                       show: true,
-                      checkToShowDot: (spot, barData) {
-                        final sortedSpots = List<FlSpot>.from(barData.spots);
-                        sortedSpots.sort((a, b) => b.y.compareTo(a.y));
-                        final topSpots = sortedSpots.take(3).toList();
-                        return topSpots.any(
-                          (s) => s.x == spot.x && s.y == spot.y,
-                        );
-                      },
+                      checkToShowDot: (spot, barData) => _isShownDot(spot),
                       getDotPainter: (spot, a, b, c) {
-                         return FlDotCirclePainter(
-      radius: 2,
-      color: Colors.red,
-      strokeWidth: 1.5,
-      strokeColor: Colors.red,
-    );
+                        return FlDotCirclePainter(
+                          radius: 4,
+                          color: Colors.red,
+                         strokeWidth: 0.1,
+                          strokeColor: Colors.red,
+                        );
                       },
                     ),
                   ),

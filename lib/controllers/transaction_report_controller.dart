@@ -4,9 +4,11 @@ import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:maxpay/core/constants/snackbar.dart';
+import 'package:maxpay/core/data/model/payment_product_model.dart';
 import 'package:maxpay/core/data/model/product_type.dart';
 import 'package:maxpay/core/data/model/submit_dispute_model.dart';
 import 'package:maxpay/core/data/model/transaction_report_model.dart';
+import 'package:maxpay/core/domain/usecase/payment_status_type_usecase.dart';
 import 'package:maxpay/core/domain/usecase/product_type_usecase.dart';
 import 'package:maxpay/core/domain/usecase/submit_dispute_usecase.dart';
 import 'package:maxpay/core/domain/usecase/trans_report_usecase.dart';
@@ -16,11 +18,13 @@ class TransReportController extends GetxController {
   final TransReportUsecase transreportUsecase;
   final ProductTypeUseCase producttypeUseCase;
   final SubmitDisputeUsecase submitDisputeUsecase;
+  final CashbackTypeUsecase cashbackTypeUsecase;
 
   TransReportController({
     required this.transreportUsecase,
     required this.producttypeUseCase,
     required this.submitDisputeUsecase,
+    required this.cashbackTypeUsecase,
   });
 
   RxString selectedProductName = ''.obs;
@@ -31,7 +35,7 @@ final TextEditingController fromDateController = TextEditingController();
 final TextEditingController toDateController = TextEditingController();
   RxList<TransrepData> transreportList = <TransrepData>[].obs;
   Rx<SubmitDisputeData?> disputeData = Rx<SubmitDisputeData?>(null);
-  Rx<ProductType?> producttype = Rx<ProductType?>(null);
+  Rx<CashbackProductType?> producttype = Rx<CashbackProductType?>(null);
   String fromDate = '';
 String toDate = '';
 String search = '';
@@ -65,7 +69,7 @@ void clearFilters() {
 Future<void> fetchplan() async {
   isLoading.value = true;
 
-  final result = await producttypeUseCase();
+  final result = await cashbackTypeUsecase();
 
   result.fold(
     (failure) {

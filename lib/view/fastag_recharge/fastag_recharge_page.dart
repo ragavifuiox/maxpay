@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:maxpay/core/constants/colors.dart';
+import 'package:maxpay/view/fastag_recharge/confirm_fastag_page.dart';
 
 class FastagRechargePage extends StatefulWidget {
   const FastagRechargePage({super.key});
@@ -159,18 +162,7 @@ class _FastagRechargePageState extends State<FastagRechargePage> {
                 height: 50.h,
                 child: ElevatedButton(
                   onPressed: () {
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(
-                    //     builder: (context) => ConfirmTransactionPage(
-                    //       productName: 'FASTag',
-                    //       operatorInitial: 'F',
-                    //       operatorColor: Colors.blue,
-                    //       transactionNo: 'TXN${DateTime.now().millisecondsSinceEpoch}',
-                    //       amount: '₹${_amountController.text.isEmpty ? "1000.00" : _amountController.text}',
-                    //     ),
-                    //   ),
-                    // );
+                    Get.to(ConfirmFastagPage());
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.clrPrimary,
@@ -178,6 +170,7 @@ class _FastagRechargePageState extends State<FastagRechargePage> {
                       borderRadius: BorderRadius.circular(10.r),
                     ),
                   ),
+                  
                   child: Text(
                     'Continue',
                     style: TextStyle(
