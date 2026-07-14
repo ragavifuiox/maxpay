@@ -40,7 +40,7 @@ class _NewsTickerState extends State<NewsTicker> {
     final maxScrollExtent = scrollController.position.maxScrollExtent;
 
     if (maxScrollExtent <= 0) {
-      Future.delayed(const Duration(seconds: 1), () {
+      Future.delayed(const Duration(seconds: 15), () {
         if (mounted) {
           startScrolling();
         }
@@ -51,7 +51,7 @@ class _NewsTickerState extends State<NewsTicker> {
     scrollController
         .animateTo(
           maxScrollExtent,
-          duration: const Duration(seconds: 1),
+          duration: const Duration(seconds: 15),
           curve: Curves.linear,
         )
         .then((_) {
