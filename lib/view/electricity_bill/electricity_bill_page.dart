@@ -12,7 +12,7 @@ class ElectricityBillPage extends StatefulWidget {
 class _ElectricityBillPageState extends State<ElectricityBillPage> {
   String _selectedBoard = 'Kerala State Electricity';
   bool _isBillFetched = false;
-bool _showDetails = false;
+final bool _showDetails = false;
 
   final List<String> _boards = [
     'Kerala State Electricity',

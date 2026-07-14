@@ -114,7 +114,7 @@ class TransferdetailFilter extends StatelessWidget {
           /// working dropdown wired back to the parent via onFilterChanged.
           DropdownButtonHideUnderline(
             child: DropdownButtonFormField<TransferFilterType>(
-              value: selectedFilter,
+              initialValue: selectedFilter,
               isExpanded: true,
               icon: Icon(
                 Icons.chevron_right,
