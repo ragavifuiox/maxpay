@@ -69,7 +69,7 @@ bool? isPaymentReceived;
   final FocusNode _amountFocusNode = FocusNode();
   final GlobalKey _customerIdKey = GlobalKey();
   final GlobalKey _amountKey = GlobalKey();
-
+bool showClear = false;
   
   bool showNextButton = false;
 
@@ -87,12 +87,17 @@ bool? isPaymentReceived;
     AppLogger.debugPrint("Arguments => ${Get.arguments}");
 
     final args = Get.arguments;
-
+ customerIdController.addListener(() {
+    setState(() {
+      showClear = customerIdController.text.isNotEmpty;
+    });
+  });
     productId = args["productId"]?.toString() ?? "";
     final String selectedAmount = args['amount'] ?? '';
     AppLogger.debugPrint("ARGUMENT PRODUCT ID => $productId");
     AppLogger.debugPrint("ProductId => $productId");
 print("Before getPlans");
+
 print("ProductId = $productId");
     controller.getPlans(productid: productId);
 
@@ -363,45 +368,45 @@ print("After getPlans");
               SizedBox(height: 15.h),
 
               /// 🔹 CUSTOMER ID / MOBILE NUMBER INPUT
-              Container(
-                key: _customerIdKey,
-                decoration: BoxDecoration(
-                  color: isDark
-                      ? AppColors.darkplceholder
-                      : AppColors.clrplceholder,
-                  borderRadius: BorderRadius.circular(10.r),
-                ),
-                child: TextField(
-                  controller: customerIdController,
-                  focusNode: _customerIdFocusNode,
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    color: isDark ? Colors.white : Colors.black,
-                  ),
-                  decoration: InputDecoration(
-                    hintText: customerHint,
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.symmetric(
-                      horizontal: 16.w,
-                      vertical: 12.h,
-                    ),
-                    suffixIcon: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.cancel,
-                          color: Colors.red.withValues(alpha: 0.5),
-                          size: 20.sp,
-                        ),
-                        SizedBox(width: 10.w),
-                        SizedBox(width: 10.w),
-                      ],
-                    ),
-                  ),
-                ),
+             Container(
+  decoration: BoxDecoration(
+    color: isDark
+        ? AppColors.darkplceholder
+        : AppColors.clrplceholder,
+    borderRadius: BorderRadius.circular(10.r),
+  ),
+  child: TextField(
+    controller: customerIdController,
+    focusNode: _customerIdFocusNode,
+    keyboardType: TextInputType.number,
+    inputFormatters: [
+      FilteringTextInputFormatter.digitsOnly,
+    ],
+    decoration: InputDecoration(
+      hintText: customerHint,
+      border: InputBorder.none,
+      contentPadding: EdgeInsets.symmetric(
+        horizontal: 16.w,
+        vertical: 12.h,
+      ),
+      suffixIcon: showClear
+          ? IconButton(
+              icon: Icon(
+                Icons.cancel,
+                color: Colors.red,
+                size: 20.sp,
               ),
+              onPressed: () {
+                customerIdController.clear();
+                setState(() {
+                  showClear = false;
+                });
+              },
+            )
+          : null,
+    ),
+  ),
+),
               SizedBox(height: 15.h),
 
               /// 🔹 AMOUNT INPUT
