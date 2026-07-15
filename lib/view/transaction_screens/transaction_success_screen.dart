@@ -137,7 +137,8 @@ class TransactionScreen extends GetView<TransReportController> {
 
                   const SizedBox(height: 10),
 
-                  
+                  /// Show Total Transaction Amount only for Success & Failed
+
                  
 
                   /// DATE FIELDif (!isPending) ...[
@@ -206,7 +207,40 @@ if (!isPending) ...[
                   : Colors.white24,
             ),
             const SizedBox(height: 15),
-
+if (!isPending) ...[
+  Container(
+    width: double.infinity,
+    padding: const EdgeInsets.symmetric(vertical: 14),
+    decoration: BoxDecoration(
+      color:AppColors.clrPrimary,
+      borderRadius: BorderRadius.circular(10),
+    ),
+    child: Column(
+      children: [
+        Text(
+          "Total Transaction",
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+            fontFamily: 'Poppins'
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          "₹56.00",
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            fontFamily: 'Poppins'
+          ),
+        ),
+      ],
+    ),
+  ),
+  const SizedBox(height: 15),
+],
             /// TRANSACTION LIST
             Expanded(
               child: Obx(() {

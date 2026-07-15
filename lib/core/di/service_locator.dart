@@ -17,6 +17,7 @@ import 'package:maxpay/core/data/repsoitory/dth_recharge_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/dth_tab_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/due_amount_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/earning_repo_impl.dart';
+import 'package:maxpay/core/data/repsoitory/faq_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/finger_print_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/get_bank_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/get_kyc_repo_impl.dart';
@@ -83,6 +84,7 @@ import 'package:maxpay/core/domain/repository/dth_recharge_repository.dart';
 import 'package:maxpay/core/domain/repository/dth_tab_repository.dart';
 import 'package:maxpay/core/domain/repository/due_amount_repository.dart';
 import 'package:maxpay/core/domain/repository/earning_repository.dart';
+import 'package:maxpay/core/domain/repository/faq_repsoitory.dart';
 import 'package:maxpay/core/domain/repository/finger_print_repository.dart';
 import 'package:maxpay/core/domain/repository/get_bank_repository.dart';
 import 'package:maxpay/core/domain/repository/get_kyc_repository.dart';
@@ -150,6 +152,7 @@ import 'package:maxpay/core/domain/usecase/dth_recharge_usecase.dart';
 import 'package:maxpay/core/domain/usecase/dth_tab_usecase.dart';
 import 'package:maxpay/core/domain/usecase/due_amount_usecase.dart';
 import 'package:maxpay/core/domain/usecase/earning_usecase.dart';
+import 'package:maxpay/core/domain/usecase/faq_usecase.dart';
 import 'package:maxpay/core/domain/usecase/finger_print_usecase.dart';
 import 'package:maxpay/core/domain/usecase/get_bank_usecase.dart';
 import 'package:maxpay/core/domain/usecase/get_kyc_usecase.dart';
@@ -347,6 +350,7 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton<UpdateSendOtpRepository>(() => UpdateSendOtpImpl(sl()));
   sl.registerLazySingleton<UpdateOtpRepository>(() => UpdateOtpRepoImpl(sl()));
   sl.registerLazySingleton<CashbackTypeRepository>(() => CashbackTypeRepoImpl(sl()));
+  sl.registerLazySingleton<FaqRepsoitory>(() => FaqRepoImpl(sl()));
 
 
   sl.registerLazySingleton<WalletCreateQrRepo>(
@@ -419,6 +423,7 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton<OfferRechargeUsecase>(() => OfferRechargeUsecase(sl()));
   sl.registerLazySingleton<CustomerInfoUsecase>(() => CustomerInfoUsecase(sl()));
   sl.registerLazySingleton<GraphUsecase>(() => GraphUsecase(sl()));
+  sl.registerLazySingleton<FaqUsecase>(() => FaqUsecase(sl()));
   sl.registerLazySingleton<WalletCreditSearchUsecase>(
     () => WalletCreditSearchUsecase(sl()),
   );

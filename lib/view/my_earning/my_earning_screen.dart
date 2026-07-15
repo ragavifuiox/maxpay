@@ -65,14 +65,14 @@ class MyEarningsScreen extends GetView<EarningController> {
                       ),
                     ),
                     const SizedBox(height: 4),
-                    Text(
-                      "₹ ${controller.earningsData.value?.data?.totalEarnings ?? 0}",
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                  Text(
+  "₹ ${(controller.earningsData.value?.data?.totalEarnings ?? 0).toDouble().toStringAsFixed(2)}",
+  style: const TextStyle(
+    color: Colors.white,
+    fontSize: 18,
+    fontWeight: FontWeight.bold,
+  ),
+),
                   ],
                 ),
               ),

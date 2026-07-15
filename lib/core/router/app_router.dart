@@ -210,7 +210,7 @@ class AppPages {
             getPopupMessageUseCase: sl(),
             refundCountUsecase: sl(),
             todaycreditusecase: sl(),
-            graphUsecase: sl(),
+            graphUsecase: sl(), faqUsecase: sl(),
           ),
 
           fenix: true,

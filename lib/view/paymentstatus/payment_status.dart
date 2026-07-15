@@ -68,10 +68,9 @@ class PaymentStatusScreen extends GetView<PaymentStatusController> {
       ),
     );
   }
-
   
 
- String _getDisplayStatus(String status) {
+String _getDisplayStatus(String status) {
   switch (status.toLowerCase()) {
     case "success":
       return "Paid";
@@ -100,9 +99,6 @@ Color _getStatusColor(String status) {
       return Colors.blue;
   }
 }
-
-
-  
 }
 class PaymentCard extends StatelessWidget {
   final String status;

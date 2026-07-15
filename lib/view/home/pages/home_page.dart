@@ -205,7 +205,6 @@ class HomePageScreen extends GetView<HomePageController> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const HomeHeaderSection(),
-
             Expanded(
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 8.h),

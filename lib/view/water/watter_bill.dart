@@ -5,6 +5,7 @@ import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
 import 'package:maxpay/view/electricity_bill/confirm_electricity.dart';
+import 'package:maxpay/view/water/water_confirm_screen.dart';
 
 
 
@@ -15,14 +16,14 @@ class _BillColors {
   static const fieldGreyDark = Color(0xFF2A2E33);
 }
 
-class ElectricityBillPage extends StatefulWidget {
-  const ElectricityBillPage({super.key});
+class WatterBill extends StatefulWidget {
+  const WatterBill({super.key});
 
   @override
-  State<ElectricityBillPage> createState() => _ElectricityBillPageState();
+  State<WatterBill> createState() => _ElectricityBillPageState();
 }
 
-class _ElectricityBillPageState extends State<ElectricityBillPage> {
+class _ElectricityBillPageState extends State<WatterBill> {
   String _selectedBoard = 'Kerala State Electricity';
   bool _isBillFetched = false;
 
@@ -164,7 +165,7 @@ class _ElectricityBillPageState extends State<ElectricityBillPage> {
                   height: 42.h,
                   child: ElevatedButton(
                     onPressed: (){
-                      Get.to(ConfirmElectricity());
+                      Get.to(WaterConfirmScreen());
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor:AppColors.clrPrimary,
