@@ -4,11 +4,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:maxpay/core/constants/colors.dart';
-import 'package:maxpay/core/domain/usecase/customer_info_usecase.dart';
 import 'package:maxpay/global_widget/commom_button.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
 import 'package:maxpay/view/fastag_recharge/fastag_customer.dart';
-import 'package:maxpay/view/recharge/success_recharge_page.dart';
 
 class ConfirmFastagPage extends StatelessWidget {
   final String productName;

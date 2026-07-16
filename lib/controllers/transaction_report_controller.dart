@@ -5,7 +5,6 @@ import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:maxpay/core/constants/snackbar.dart';
 import 'package:maxpay/core/data/model/payment_product_model.dart';
-import 'package:maxpay/core/data/model/product_type.dart';
 import 'package:maxpay/core/data/model/submit_dispute_model.dart';
 import 'package:maxpay/core/data/model/transaction_report_model.dart';
 import 'package:maxpay/core/domain/usecase/payment_status_type_usecase.dart';

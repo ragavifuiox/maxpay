@@ -7,7 +7,6 @@ import 'package:maxpay/core/data/model/payment_product_model.dart';
 
 import 'package:maxpay/core/domain/usecase/cash_back_usecase.dart';
 import 'package:maxpay/core/domain/usecase/payment_status_type_usecase.dart';
-import 'package:maxpay/core/domain/usecase/product_type_usecase.dart';
 import 'package:maxpay/core/utils/logg_helper.dart';
 
 

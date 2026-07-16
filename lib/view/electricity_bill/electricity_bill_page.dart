@@ -26,6 +26,7 @@ class _ElectricityBillPageState extends State<ElectricityBillPage> {
   String _selectedBoard = 'Kerala State Electricity';
   bool _isBillFetched = false;
 
+
   // Payment status toggle: true = Received, false = Not Received
   bool _isReceived = true;
 
@@ -34,6 +35,7 @@ class _ElectricityBillPageState extends State<ElectricityBillPage> {
       TextEditingController(text: '9876543213');
   final TextEditingController _amountController =
       TextEditingController(text: '500.00');
+
 
   final List<String> _boards = [
     'Kerala State Electricity',

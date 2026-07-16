@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:maxpay/controllers/cash_back_controller.dart';
 import 'package:maxpay/core/data/model/payment_product_model.dart';
-import 'package:maxpay/core/data/model/product_type.dart';
 import 'package:maxpay/core/constants/colors.dart';
 
 import 'package:maxpay/core/utils/texthelper.dart';
