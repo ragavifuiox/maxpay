@@ -1,42 +1,91 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:maxpay/controllers/add_staff_controller.dart';
+import 'package:maxpay/core/utils/logg_helper.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
 import 'package:maxpay/view/staff/widget/trans_fileter_report.dart';
 
-class TransactionReportScreen extends StatelessWidget {
-  const TransactionReportScreen({super.key});
+class TransactionReportScreen extends StatefulWidget {
+  final String mobileNumber;
+  const TransactionReportScreen({super.key, required this.mobileNumber});
+
+  @override
+  State<TransactionReportScreen> createState() =>
+      _TransactionReportScreenState();
+}
+
+class _TransactionReportScreenState extends State<TransactionReportScreen> {
+  @override
+  void initState() {
+    super.initState();
+    AppLogger.logError("Mobile Number: ${widget.mobileNumber}");
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      Get.find<AddStaffController>().getStaffTransactionReport(
+        prdt: "",
+        search: widget.mobileNumber,
+        fromdate: "",
+        todate: "",
+        status: "",
+      );
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.find<AddStaffController>();
     return Scaffold(
-      appBar: CommonAppBar(
-        title: "Transaction Report",
-      ),
+      appBar: CommonAppBar(title: "Transaction Report"),
       body: Padding(
         padding: const EdgeInsets.all(15),
         child: ListView(
-          
-          children: const [
-
-            
+          children: [
             SizedBox(height: 10),
-TransactionFilterWidget(),
-            TransactionCard(
-              bgColor: Color(0xFFD1FFE8),
-              status: "success",
+            TransactionFilterWidget(
+              onFilter: (status, fromDate, toDate, search, prdtId) {
+                AppLogger.logError("Status: $status");
+                AppLogger.logError("From: $fromDate");
+                AppLogger.logError("To: $toDate");
+                AppLogger.logError("Search: $search");
+                // Call your API or controller method to filter the data here!
+                Get.find<AddStaffController>().getStaffTransactionReport(
+                  prdt: prdtId,
+                  search: search,
+                  fromdate: fromDate,
+
+                  todate: toDate,
+                  status: status,
+                );
+              },
             ),
 
-            SizedBox(height: 12),
+            SizedBox(height: 10),
+            Expanded(
+              child: Obx(() {
+                if (controller.isLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                }
 
-            TransactionCard(
-              bgColor: Color(0xFFFFE4E8),
-              status: "failed",
-            ),
+                if ((controller.transReport.value.data ?? []).isEmpty) {
+                  return const Center(child: Text("No Data Found"));
+                }
 
-            SizedBox(height: 12),
-
-            TransactionCard(
-              bgColor: Color(0xFFFFF1DB),
-              status: "processing",
+                return ListView.builder(
+                  itemCount: (controller.transReport.value.data ?? []).length,
+                  itemBuilder: (context, index) {
+                    return TransactionCard(
+                      bgColor:
+                          controller.transReport.value.data![index].status ==
+                              "success"
+                          ? Color(0xFFD1FFE8)
+                          : controller.transReport.value.data![index].status ==
+                                "failed"
+                          ? Color(0xFFFFE4E8)
+                          : Color(0xFFFFF1DB),
+                      status: controller.transReport.value.data![index].status!,
+                    );
+                  },
+                );
+              }),
             ),
           ],
         ),
@@ -57,7 +106,7 @@ class TransactionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-     final theme = Theme.of(context);
+    final theme = Theme.of(context);
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -66,25 +115,24 @@ class TransactionCard extends StatelessWidget {
       ),
       child: Column(
         children: [
-
           /// HEADER
           Row(
             children: [
-               Expanded(
+              Expanded(
                 child: Text(
                   "Transaction ID: TXN6453564",
-                 style: TextStyle(
-                  fontSize: 11,
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
                 ),
               ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
-                children:  [
+                children: [
                   Text(
                     "Date & Time:",
-                     style: TextStyle(
+                    style: TextStyle(
                       fontSize: 10,
                       color: theme.colorScheme.onSurfaceVariant,
                     ),
@@ -105,17 +153,16 @@ class TransactionCard extends StatelessWidget {
           const SizedBox(height: 10),
 
           Divider(
-  color: Theme.of(context).brightness == Brightness.light
-      ? Colors.black12
-      : Colors.white24,
-),
+            color: Theme.of(context).brightness == Brightness.light
+                ? Colors.black12
+                : Colors.white24,
+          ),
 
           const SizedBox(height: 12),
 
           /// BODY
           Row(
             children: [
-
               /// LOGO
               Container(
                 width: 35,
@@ -125,16 +172,13 @@ class TransactionCard extends StatelessWidget {
                   shape: BoxShape.circle,
                 ),
                 alignment: Alignment.center,
-                child:  Text(
+                child: Text(
                   "Jio",
-                   style: TextStyle(
-                   color:
-            Theme.of(context).brightness ==
-                    Brightness.dark
-                ? Colors.white
-                : Colors.white,
-                    
-                
+                  style: TextStyle(
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? Colors.white
+                        : Colors.white,
+
                     fontWeight: FontWeight.bold,
                     fontSize: 11,
                   ),
@@ -144,7 +188,7 @@ class TransactionCard extends StatelessWidget {
               const SizedBox(width: 12),
 
               /// DETAILS
-               Expanded(
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -153,23 +197,19 @@ class TransactionCard extends StatelessWidget {
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
                         fontSize: 14,
-                        color:
-            Theme.of(context).brightness ==
-                    Brightness.dark
-                ? Colors.black
-                : Colors.black,
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.black
+                            : Colors.black,
                       ),
                     ),
                     SizedBox(height: 4),
                     Text(
                       "Number: 9865647823",
-                       style: TextStyle(
+                      style: TextStyle(
                         fontSize: 11,
-                        color:
-            Theme.of(context).brightness ==
-                    Brightness.dark
-                ? Colors.black
-                : Colors.black,
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.black
+                            : Colors.black,
                       ),
                     ),
                   ],
@@ -177,17 +217,15 @@ class TransactionCard extends StatelessWidget {
               ),
 
               /// AMOUNT
-               Text(
+              Text(
                 "₹ 365.00",
-                 style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                      color:
-            Theme.of(context).brightness ==
-                    Brightness.dark
-                ? Colors.black
-                : Colors.black,
-                    ),
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.black
+                      : Colors.black,
+                ),
               ),
             ],
           ),
@@ -200,41 +238,22 @@ class TransactionCard extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-
                 if (status == "success") ...[
-                  _button(
-                    title: "Dispute",
-                    color: Colors.red,
-                  ),
+                  _button(title: "Dispute", color: Colors.red),
                   const SizedBox(width: 6),
-                  _button(
-                    title: "View",
-                    color: Colors.blue,
-                  ),
+                  _button(title: "View", color: Colors.blue),
                   const SizedBox(width: 6),
-                  _button(
-                    title: "Share",
-                    color: Colors.green,
-                  ),
+                  _button(title: "Share", color: Colors.green),
                 ],
 
                 if (status == "failed") ...[
-                  _button(
-                    title: "Failed",
-                    color: Colors.red,
-                  ),
+                  _button(title: "Failed", color: Colors.red),
                   const SizedBox(width: 6),
-                  _button(
-                    title: "View",
-                    color: Colors.blue,
-                  ),
+                  _button(title: "View", color: Colors.blue),
                 ],
 
                 if (status == "processing")
-                  _button(
-                    title: "Processing",
-                    color: Colors.orange,
-                  ),
+                  _button(title: "Processing", color: Colors.orange),
               ],
             ),
           ),
@@ -243,17 +262,11 @@ class TransactionCard extends StatelessWidget {
     );
   }
 
-  static Widget _button({
-    required String title,
-    required Color color,
-  }) {
+  static Widget _button({required String title, required Color color}) {
     return InkWell(
       onTap: () {},
       child: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 12,
-          vertical: 5,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
         decoration: BoxDecoration(
           color: color,
           borderRadius: BorderRadius.circular(4),

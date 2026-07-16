@@ -18,8 +18,9 @@ class AddWalletPopup extends StatelessWidget {
     required this.txtionId,
   });
 
-  static const MethodChannel _upiChannel =
-      MethodChannel('com.maxpay.app/upi_chooser');
+  static const MethodChannel _upiChannel = MethodChannel(
+    'com.paylink.retailor/upi_chooser',
+  );
 
   Future<void> _openUpiApp() async {
     if (url.trim().isEmpty) {
@@ -181,9 +182,7 @@ class AddWalletPopup extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: Colors.grey.shade100,
                         borderRadius: BorderRadius.circular(8),
-                        border: Border.all(
-                          color: Colors.grey.shade300,
-                        ),
+                        border: Border.all(color: Colors.grey.shade300),
                       ),
                       child: Text(
                         amount.currencyIndian,

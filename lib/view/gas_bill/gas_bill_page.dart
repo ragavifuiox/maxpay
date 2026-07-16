@@ -4,9 +4,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
-import 'package:maxpay/view/electricity_bill/confirm_electricity.dart';
 import 'package:maxpay/view/gas_bill/gas_confirm_screen.dart';
-import 'package:maxpay/view/water/water_confirm_screen.dart';
 
 
 

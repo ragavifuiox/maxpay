@@ -81,7 +81,10 @@ class AppPages {
     GetPage(name: AppRoutes.intro, page: () => const IntroPage()),
     GetPage(name: AppRoutes.welcome, page: () => const WelcomePage()),
     GetPage(name: AppRoutes.transferdetail, page: () => const TransferDetial()),
-    GetPage(name: AppRoutes.electricity, page: () => const ElectricityBillPage()),
+    GetPage(
+      name: AppRoutes.electricity,
+      page: () => const ElectricityBillPage(),
+    ),
     GetPage(
       transition: Transition.fade,
 
@@ -104,10 +107,7 @@ class AppPages {
       }),
     ),
 
-
-
-
- GetPage(
+    GetPage(
       transition: Transition.fade,
 
       name: AppRoutes.dthcustomer,
@@ -117,13 +117,11 @@ class AppPages {
       binding: BindingsBuilder(() {
         Get.lazyPut<DthController>(
           () => DthController(
-            dthtabUseCase: sl(), 
+            dthtabUseCase: sl(),
             searchdthusecase: sl(),
-             confirmdthUsecase: sl(),
-              dthrechargeusecase: sl(), 
-              customerInfoUsecase: sl()
-           
-            
+            confirmdthUsecase: sl(),
+            dthrechargeusecase: sl(),
+            customerInfoUsecase: sl(),
           ),
 
           fenix: true,
@@ -147,10 +145,9 @@ class AppPages {
             mobileRechargeUseCase: sl(),
             plantabusecase: sl(),
             tabdetailusecase: sl(),
-            downloadusecase: sl(), 
-            checkOperatorUsecase: sl(), 
+            downloadusecase: sl(),
+            checkOperatorUsecase: sl(),
             offerRechargeUsecase: sl(),
-            
           ),
 
           fenix: true,
@@ -210,7 +207,8 @@ class AppPages {
             getPopupMessageUseCase: sl(),
             refundCountUsecase: sl(),
             todaycreditusecase: sl(),
-            graphUsecase: sl(), faqUsecase: sl(),
+            graphUsecase: sl(),
+            faqUsecase: sl(),
           ),
 
           fenix: true,
@@ -361,8 +359,8 @@ class AppPages {
             dthtabUseCase: sl(),
             searchdthusecase: sl(),
             confirmdthUsecase: sl(),
-            dthrechargeusecase: sl(), customerInfoUsecase: sl(),
-            
+            dthrechargeusecase: sl(),
+            customerInfoUsecase: sl(),
           ),
 
           fenix: true,
@@ -386,8 +384,9 @@ class AppPages {
             mobileRechargeUseCase: sl(),
             plantabusecase: sl(),
             tabdetailusecase: sl(),
-            downloadusecase: sl(), checkOperatorUsecase: sl(),
-             offerRechargeUsecase: sl(),
+            downloadusecase: sl(),
+            checkOperatorUsecase: sl(),
+            offerRechargeUsecase: sl(),
           ),
 
           fenix: true,
@@ -459,7 +458,7 @@ class AppPages {
             mobileRechargeUseCase: sl(),
             plantabusecase: sl(),
             tabdetailusecase: sl(),
-            downloadusecase: sl(), 
+            downloadusecase: sl(),
             checkOperatorUsecase: sl(),
             offerRechargeUsecase: sl(),
           ),
@@ -481,6 +480,7 @@ class AppPages {
           () => AddStaffController(
             addStaffUsecase: sl(),
             staffListUseCase: sl(),
+            staffTrnsTeportListUseCase: sl(),
             searchStaffUsecase: sl(),
             walletTransferUsecase: sl(),
             walletReportUsecase: sl(),
@@ -518,6 +518,7 @@ class AppPages {
           () => AddStaffController(
             addStaffUsecase: sl(),
             staffListUseCase: sl(),
+            staffTrnsTeportListUseCase: sl(),
             searchStaffUsecase: sl(),
             walletTransferUsecase: sl(),
             walletReportUsecase: sl(),
@@ -584,8 +585,6 @@ class AppPages {
     ),
 
     // GetPage(name: AppRoutes.webloginqr, page: () => const WebLoginScreen()),
-
-    
     GetPage(
       transition: Transition.fade,
 
@@ -595,12 +594,14 @@ class AppPages {
 
       binding: BindingsBuilder(() {
         Get.lazyPut<PaymentStatusController>(
-          () => PaymentStatusController(paymentStatusUsecase: sl(), paymentStatusTypeUsecase: sl(),),
+          () => PaymentStatusController(
+            paymentStatusUsecase: sl(),
+            paymentStatusTypeUsecase: sl(),
+          ),
           fenix: true,
-           );
-        }),
+        );
+      }),
     ),
-
 
     GetPage(
       transition: Transition.fade,
@@ -643,6 +644,7 @@ class AppPages {
           () => AddStaffController(
             staffListUseCase: sl(),
             addStaffUsecase: sl(),
+            staffTrnsTeportListUseCase: sl(),
             searchStaffUsecase: sl(),
             walletTransferUsecase: sl(),
             walletReportUsecase: sl(),
@@ -668,7 +670,8 @@ class AppPages {
           () => TransReportController(
             transreportUsecase: sl(),
             producttypeUseCase: sl(),
-            submitDisputeUsecase: sl(), cashbackTypeUsecase: sl(),
+            submitDisputeUsecase: sl(),
+            cashbackTypeUsecase: sl(),
           ),
           fenix: true,
         );

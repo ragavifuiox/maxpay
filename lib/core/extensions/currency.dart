@@ -11,4 +11,5 @@ extension CurrencyHelper on String {
       decimalDigits: 2,
     ).format(parsedAmount ?? 0);
   }
+
 }

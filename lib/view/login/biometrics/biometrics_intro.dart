@@ -13,7 +13,9 @@ class BiometricsIntroPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeController = Get.find<ThemeController>();
+
     final controller = Get.find<AuthController>();
+    final isUpdate = Get.arguments['is_update'];
 
     return Obx(() {
       final theme = Theme.of(context);
@@ -85,7 +87,9 @@ class BiometricsIntroPage extends StatelessWidget {
                   spacing: 20.h,
                   children: [
                     CommonButton(
-                      title: "Enable Fingerprint",
+                      title: isUpdate
+                          ? "Update Fingerprint"
+                          : "Enable Fingerprint",
                       onTap: () {
                         Get.toNamed(AppRoutes.biometricsScanning);
                       },
@@ -93,17 +97,47 @@ class BiometricsIntroPage extends StatelessWidget {
 
                     GestureDetector(
                       onTap: () async {
-                        // await controller.fingerprint(0);
+                        if (isUpdate) {
+                          final confirm = await Get.dialog<bool>(
+                            AlertDialog(
+                              title: const Text("Disable Fingerprint"),
+                              content: const Text(
+                                "Are you sure you want to remove fingerprint authentication? "
+                                "You will have to enter your MPIN every time you log in.",
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Get.back(result: false),
+                                  child: const Text("Cancel"),
+                                ),
+                                TextButton(
+                                  onPressed: () => Get.back(result: true),
+                                  child: const Text(
+                                    "Disable",
+                                    style: TextStyle(color: Colors.red),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
 
-                        Get.offAndToNamed(AppRoutes.main);
+                          if (confirm == true) {
+                            await controller.fingerprint(0);
+                            Get.offAndToNamed(AppRoutes.main);
+                          }
+                        } else {
+                          Get.offAndToNamed(AppRoutes.main);
+                        }
                       },
                       child: Text(
-                        "Skip For Now",
+                        isUpdate ? "Disable" : "Skip For Now",
                         style: TextStyle(
                           fontFamily: 'Poppins',
                           fontWeight: FontWeight.w600,
                           fontSize: 16.sp,
-                          color: AppColors.clrPrimary,
+                          color: isUpdate
+                              ? AppColors.redClr
+                              : AppColors.clrPrimary,
                         ),
                       ),
                     ),

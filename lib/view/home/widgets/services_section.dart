@@ -199,46 +199,45 @@ class MenuScreen extends StatelessWidget {
 
                         SizedBox(height: 18.h),
 
-                      
+                        /// STATUS CARDS
+                        Obx(() {
+                          final transaction =
+                              homeController.transactionData.value;
 
-/// STATUS CARDS
-Obx(() {
-  final transaction = homeController.transactionData.value;
-
-  return Row(
-    children: [
-      Expanded(
-        child: _statusCard(
-          image: AssetImages.successIcon,
-          value:
-              "₹${transaction?.data?.success?.amount?.toString() ?? "0"}",
-          bgColor: const Color(0xffDDF8E6),
-          textColor: const Color(0xff22C55E),
-        ),
-      ),
-      SizedBox(width: 12.w),
-      Expanded(
-        child: _statusCard(
-          image: AssetImages.processIcon,
-          value:
-              "₹${transaction?.data?.processing?.amount?.toString() ?? "0"}",
-          bgColor: const Color(0xffFCEFD9),
-          textColor: Colors.orange,
-        ),
-      ),
-      SizedBox(width: 12.w),
-      Expanded(
-        child: _statusCard(
-          image: AssetImages.failedIcon,
-          value:
-              "₹${transaction?.data?.failed?.amount?.toString() ?? "0"}",
-          bgColor: const Color(0xffFCE2E6),
-          textColor: Colors.red,
-        ),
-      ),
-    ],
-  );
-}),
+                          return Row(
+                            children: [
+                              Expanded(
+                                child: _statusCard(
+                                  image: AssetImages.successIcon,
+                                  value:
+                                      "₹${transaction?.data?.success?.amount?.toString() ?? "0"}",
+                                  bgColor: const Color(0xffDDF8E6),
+                                  textColor: const Color(0xff22C55E),
+                                ),
+                              ),
+                              SizedBox(width: 12.w),
+                              Expanded(
+                                child: _statusCard(
+                                  image: AssetImages.processIcon,
+                                  value:
+                                      "₹${transaction?.data?.processing?.amount?.toString() ?? "0"}",
+                                  bgColor: const Color(0xffFCEFD9),
+                                  textColor: Colors.orange,
+                                ),
+                              ),
+                              SizedBox(width: 12.w),
+                              Expanded(
+                                child: _statusCard(
+                                  image: AssetImages.failedIcon,
+                                  value:
+                                      "₹${transaction?.data?.failed?.amount?.toString() ?? "0"}",
+                                  bgColor: const Color(0xffFCE2E6),
+                                  textColor: Colors.red,
+                                ),
+                              ),
+                            ],
+                          );
+                        }),
 
                         SizedBox(height: 18.h),
 
@@ -668,11 +667,9 @@ Obx(() {
         Get.to(() => const FastagRechargePage());
         break;
 
-
-        case 'electricity':
+      case 'electricity':
         Get.to(() => const ElectricityBillPage());
         break;
-
 
       default:
         break;

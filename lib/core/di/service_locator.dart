@@ -233,14 +233,11 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton<TransactionSucFailRepository>(
     () => TransactionSucFailRepoImpl(sl()),
   );
-   sl.registerLazySingleton<CheckOperatorRepository>(
+  sl.registerLazySingleton<CheckOperatorRepository>(
     () => CheckOperatorRepoImpl(sl()),
   );
-    sl.registerLazySingleton<DownloadRepository>(
-    () => DownloadRepoImpl(sl()),
-  );
+  sl.registerLazySingleton<DownloadRepository>(() => DownloadRepoImpl(sl()));
 
-  
   sl.registerLazySingleton<GetProfileRepository>(
     () => GetProfileRepoImpl(sl()),
   );
@@ -285,7 +282,7 @@ Future<void> initDependencies() async {
     () => SearchStaffRepoImpl(sl()),
   );
 
-   sl.registerLazySingleton<OfferRechargeRepository>(
+  sl.registerLazySingleton<OfferRechargeRepository>(
     () => OfferRechargeRepoImpl(sl()),
   );
   sl.registerLazySingleton<PlanTabRepository>(() => PlanTabRepoImpl(sl()));
@@ -342,16 +339,25 @@ Future<void> initDependencies() async {
     () => LoginHistoryImpl(sl()),
   );
   sl.registerLazySingleton<WebLoginRepository>(() => WebLoginRepoImpl(sl()));
-  sl.registerLazySingleton< CashBackRepository>(() => CashBackRepoImpl(sl()));
-  sl.registerLazySingleton< WebLogoutRepository>(() => WebLogoutRepoImpl(sl()));
-  sl.registerLazySingleton<RefundCountRepository>(() => RefundCountRepoImpl(sl()));
-  sl.registerLazySingleton<TodayCreditRepository>(() => TodayCreditRepoImpl(sl()));
-  sl.registerLazySingleton<CustomerInfoRepository>(() => CustomerInfoRepoImpl(sl()));
-  sl.registerLazySingleton<UpdateSendOtpRepository>(() => UpdateSendOtpImpl(sl()));
+  sl.registerLazySingleton<CashBackRepository>(() => CashBackRepoImpl(sl()));
+  sl.registerLazySingleton<WebLogoutRepository>(() => WebLogoutRepoImpl(sl()));
+  sl.registerLazySingleton<RefundCountRepository>(
+    () => RefundCountRepoImpl(sl()),
+  );
+  sl.registerLazySingleton<TodayCreditRepository>(
+    () => TodayCreditRepoImpl(sl()),
+  );
+  sl.registerLazySingleton<CustomerInfoRepository>(
+    () => CustomerInfoRepoImpl(sl()),
+  );
+  sl.registerLazySingleton<UpdateSendOtpRepository>(
+    () => UpdateSendOtpImpl(sl()),
+  );
   sl.registerLazySingleton<UpdateOtpRepository>(() => UpdateOtpRepoImpl(sl()));
-  sl.registerLazySingleton<CashbackTypeRepository>(() => CashbackTypeRepoImpl(sl()));
+  sl.registerLazySingleton<CashbackTypeRepository>(
+    () => CashbackTypeRepoImpl(sl()),
+  );
   sl.registerLazySingleton<FaqRepsoitory>(() => FaqRepoImpl(sl()));
-
 
   sl.registerLazySingleton<WalletCreateQrRepo>(
     () => WalletCreateQrRepoImpl(sl()),
@@ -380,6 +386,9 @@ Future<void> initDependencies() async {
   );
   sl.registerLazySingleton<AddStaffUsecase>(() => AddStaffUsecase(sl()));
   sl.registerLazySingleton<StaffListUseCase>(() => StaffListUseCase(sl()));
+  sl.registerLazySingleton<StaffTrnsTeportListUseCase>(
+    () => StaffTrnsTeportListUseCase(sl()),
+  );
   sl.registerLazySingleton<GetPopupMessageUseCase>(
     () => GetPopupMessageUseCase(sl()),
   );
@@ -403,7 +412,9 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton<AddKycUsecase>(() => AddKycUsecase(sl()));
   sl.registerLazySingleton<VerifyPinUsecase>(() => VerifyPinUsecase(sl()));
   sl.registerLazySingleton<DthTabUsecase>(() => DthTabUsecase(sl()));
-  sl.registerLazySingleton<CheckOperatorUsecase>(() => CheckOperatorUsecase(sl()));
+  sl.registerLazySingleton<CheckOperatorUsecase>(
+    () => CheckOperatorUsecase(sl()),
+  );
   sl.registerLazySingleton<SearchDthUsecase>(() => SearchDthUsecase(sl()));
   sl.registerLazySingleton<ConfirmDthUsecase>(() => ConfirmDthUsecase(sl()));
   sl.registerLazySingleton<DthRechargeUsecase>(() => DthRechargeUsecase(sl()));
@@ -412,7 +423,9 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton<GradeUsecase>(() => GradeUsecase(sl()));
   sl.registerLazySingleton<DisputeUsecase>(() => DisputeUsecase(sl()));
   sl.registerLazySingleton<RefundCountUsecase>(() => RefundCountUsecase(sl()));
-  sl.registerLazySingleton<UpdateSendOtpUsecase>(() => UpdateSendOtpUsecase(sl()));
+  sl.registerLazySingleton<UpdateSendOtpUsecase>(
+    () => UpdateSendOtpUsecase(sl()),
+  );
   sl.registerLazySingleton<UpdateOtpUsecase>(() => UpdateOtpUsecase(sl()));
   sl.registerLazySingleton<PaymentStatusUsecase>(
     () => PaymentStatusUsecase(sl()),
@@ -420,8 +433,12 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton<RefundUsecase>(() => RefundUsecase(sl()));
   sl.registerLazySingleton<AllPlanUsecase>(() => AllPlanUsecase(sl()));
   sl.registerLazySingleton<UpdatePinUsecase>(() => UpdatePinUsecase(sl()));
-  sl.registerLazySingleton<OfferRechargeUsecase>(() => OfferRechargeUsecase(sl()));
-  sl.registerLazySingleton<CustomerInfoUsecase>(() => CustomerInfoUsecase(sl()));
+  sl.registerLazySingleton<OfferRechargeUsecase>(
+    () => OfferRechargeUsecase(sl()),
+  );
+  sl.registerLazySingleton<CustomerInfoUsecase>(
+    () => CustomerInfoUsecase(sl()),
+  );
   sl.registerLazySingleton<GraphUsecase>(() => GraphUsecase(sl()));
   sl.registerLazySingleton<FaqUsecase>(() => FaqUsecase(sl()));
   sl.registerLazySingleton<WalletCreditSearchUsecase>(
@@ -441,10 +458,9 @@ Future<void> initDependencies() async {
   );
   sl.registerLazySingleton<ProfileUpdateUsecase>(
     () => ProfileUpdateUsecase(sl()),
-  );sl.registerLazySingleton<DownloadUsecase>(
-    () => DownloadUsecase(sl()),
   );
-  
+  sl.registerLazySingleton<DownloadUsecase>(() => DownloadUsecase(sl()));
+
   sl.registerLazySingleton<StatementUsecase>(() => StatementUsecase(sl()));
   sl.registerLazySingleton<BannerUsecase>(() => BannerUsecase(sl()));
   sl.registerLazySingleton<AdvertisementUsecase>(
@@ -457,13 +473,13 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton<WebLoginUsecase>(() => WebLoginUsecase(sl()));
   sl.registerLazySingleton<CashBackUsecase>(() => CashBackUsecase(sl()));
   sl.registerLazySingleton<WebLogoutUsecase>(() => WebLogoutUsecase(sl()));
-  sl.registerLazySingleton<CashbackTypeUsecase>(() => CashbackTypeUsecase(sl()));
+  sl.registerLazySingleton<CashbackTypeUsecase>(
+    () => CashbackTypeUsecase(sl()),
+  );
   sl.registerLazySingleton<WalletCreateQrUsecase>(
     () => WalletCreateQrUsecase(sl()),
   );
-sl.registerLazySingleton<TodayCreditUsecase>(
-    () => TodayCreditUsecase(sl()),
-  );
+  sl.registerLazySingleton<TodayCreditUsecase>(() => TodayCreditUsecase(sl()));
   // sl.registerLazySingleton<GetPrivacyPolicyUseCase>(
   //   () => GetPrivacyPolicyUseCase(sl()),
   // );

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -54,21 +55,16 @@ class HomeHeaderSection extends StatelessWidget {
                           return CircleAvatar(
                             radius: 20,
                             backgroundColor: Colors.red.withValues(alpha: 0.2),
-                            child: ClipOval(
-                              child:
-                                  imageUrl.isNotEmpty &&
-                                      imageUrl != "".addToBase()
-                                  ? Image.network(
-                                      imageUrl,
-                                      fit: BoxFit.cover,
-                                      errorBuilder:
-                                          (context, error, stackTrace) {
-                                            print("❌ Image Error: $error");
-                                            return const Icon(Icons.person);
-                                          },
-                                    )
-                                  : const Icon(Icons.person),
-                            ),
+                            backgroundImage:
+                                imageUrl.isNotEmpty &&
+                                    imageUrl != "".addToBase()
+                                ? CachedNetworkImageProvider(imageUrl)
+                                : null,
+                            child:
+                                imageUrl.isNotEmpty &&
+                                    imageUrl != "".addToBase()
+                                ? null
+                                : const Icon(Icons.person),
                           );
                         }),
 

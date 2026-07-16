@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get_utils/src/extensions/string_extensions.dart';
 import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/core/extensions/currency.dart';
 import 'package:maxpay/core/utils/texthelper.dart';
@@ -21,9 +22,7 @@ Widget walletcard({
           ? AppColors.darkplceholder
           : AppColors.background,
       borderRadius: BorderRadius.circular(10),
-      border: Border.all(
-        color: Colors.grey.shade300,
-      ),
+      border: Border.all(color: Colors.grey.shade300),
     ),
     child: Column(
       children: [
@@ -55,10 +54,7 @@ Widget walletcard({
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  "Status",
-                  style: TextHelper.max12(context),
-                ),
+                Text("Status", style: TextHelper.max12(context)),
                 const SizedBox(height: 5),
                 Container(
                   padding: const EdgeInsets.symmetric(
@@ -70,7 +66,7 @@ Widget walletcard({
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: Text(
-                    status,
+                    status.capitalize ?? '',
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 10,
@@ -83,15 +79,9 @@ Widget walletcard({
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text(
-                  "Amount",
-                  style: TextHelper.max12(context),
-                ),
+                Text("Amount", style: TextHelper.max12(context)),
                 const SizedBox(height: 5),
-                Text(
-                  amount.currencyIndian,
-                  style: TextHelper.max10(context),
-                ),
+                Text(amount.currencyIndian, style: TextHelper.max10(context)),
               ],
             ),
           ],
