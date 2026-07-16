@@ -139,60 +139,59 @@ class TransactionScreen extends GetView<TransReportController> {
 
                   /// Show Total Transaction Amount only for Success & Failed
 
-                 
-
                   /// DATE FIELDif (!isPending) ...[
-  /// DATE FIELD
-if (!isPending) ...[
-  /// DATE FIELD
-  Row(
-    children: [
-      Expanded(
-        child: GestureDetector(
-          onTap: () => controller.selectFromDate(context),
-          child: GetBuilder<TransReportController>(
-            id: "fromDate",
-            builder: (controller) {
-              return customField(
-                context,
-                controller: controller.fromDateController,
-                readOnly: true,
-                onTap: () => controller.selectFromDate(context),
-                hint: '',
-              );
-            },
-          ),
-        ),
-      ),
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8),
-        child: Icon(
-          Icons.arrow_forward,
-          color: theme.colorScheme.onSurface,
-        ),
-      ),
-      Expanded(
-        child: GestureDetector(
-          onTap: () => controller.selectToDate(context),
-          child: GetBuilder<TransReportController>(
-            id: "toDate",
-            builder: (_) {
-              return customField(
-                context,
-                controller: controller.toDateController,
-                hint: "End Date",
-                readOnly: true,
-                onTap: () => controller.selectToDate(context),
-              );
-            },
-          ),
-        ),
-      ),
-    ],
-  ),
-  const SizedBox(height: 10),
-],
-  const SizedBox(height: 10),
+                  /// DATE FIELD
+                  if (!isPending) ...[
+                    /// DATE FIELD
+                    Row(
+                      children: [
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () => controller.selectFromDate(context),
+                            child: GetBuilder<TransReportController>(
+                              id: "fromDate",
+                              builder: (controller) {
+                                return customField(
+                                  context,
+                                  controller: controller.fromDateController,
+                                  readOnly: true,
+                                  onTap: () =>
+                                      controller.selectFromDate(context),
+                                  hint: '',
+                                );
+                              },
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          child: Icon(
+                            Icons.arrow_forward,
+                            color: theme.colorScheme.onSurface,
+                          ),
+                        ),
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () => controller.selectToDate(context),
+                            child: GetBuilder<TransReportController>(
+                              id: "toDate",
+                              builder: (_) {
+                                return customField(
+                                  context,
+                                  controller: controller.toDateController,
+                                  hint: "End Date",
+                                  readOnly: true,
+                                  onTap: () => controller.selectToDate(context),
+                                );
+                              },
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                  ],
+                  const SizedBox(height: 10),
 
                   /// SEARCH FIELD
                   customField(context, hint: "Search", prefix: Icons.search),
@@ -207,40 +206,41 @@ if (!isPending) ...[
                   : Colors.white24,
             ),
             const SizedBox(height: 15),
-if (!isPending) ...[
-  Container(
-    width: double.infinity,
-    padding: const EdgeInsets.symmetric(vertical: 14),
-    decoration: BoxDecoration(
-      color:AppColors.clrPrimary,
-      borderRadius: BorderRadius.circular(10),
-    ),
-    child: Column(
-      children: [
-        Text(
-          "Total Transaction",
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
-            fontFamily: 'Poppins'
-          ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          "₹56.00",
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            fontFamily: 'Poppins'
-          ),
-        ),
-      ],
-    ),
-  ),
-  const SizedBox(height: 15),
-],
+            if (!isPending) ...[
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                decoration: BoxDecoration(
+                  color: AppColors.clrPrimary,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Column(
+                  children: [
+                    Text(
+                      "Total Transaction",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Poppins',
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      "₹56.00",
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'Poppins',
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 15),
+            ],
+
             /// TRANSACTION LIST
             Expanded(
               child: Obx(() {

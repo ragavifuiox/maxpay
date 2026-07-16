@@ -42,7 +42,6 @@ class _VerifyPinPageState extends State<VerifyPinPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       appBar: const CommonAppBar(title: " "),
       body: SafeArea(
         child: Padding(
@@ -67,10 +66,7 @@ class _VerifyPinPageState extends State<VerifyPinPage> {
                   const Text(
                     "Please type the verification code\nsent to +91 000 000 0000",
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey,
-                    ),
+                    style: TextStyle(fontSize: 14, color: Colors.grey),
                   ),
 
                   const SizedBox(height: 40),
@@ -99,59 +95,59 @@ class _VerifyPinPageState extends State<VerifyPinPage> {
 
                   const SizedBox(height: 30),
 
-             Obx(() {
-  return controller.canResendOtp.value
-      ? GestureDetector(
-          onTap: () async {
-            await controller.sendUpdatePinOtp();
-          },
-          child: const Text(
-            "Resend OTP",
-            style: TextStyle(
-              color: Colors.blue,
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-              decoration: TextDecoration.underline,
-            ),
-          ),
-        )
-      : Text(
-          "Resend OTP in ${controller.remainingSeconds.value}s",
-          style: const TextStyle(
-            color: Colors.grey,
-            fontSize: 15,
-            fontWeight: FontWeight.w500,
-          ),
-        );
-}),
+                  Obx(() {
+                    return controller.canResendOtp.value
+                        ? GestureDetector(
+                            onTap: () async {
+                              await controller.sendUpdatePinOtp();
+                            },
+                            child: const Text(
+                              "Resend OTP",
+                              style: TextStyle(
+                                color: Colors.blue,
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                decoration: TextDecoration.underline,
+                              ),
+                            ),
+                          )
+                        : Text(
+                            "Resend OTP in ${controller.remainingSeconds.value}s",
+                            style: const TextStyle(
+                              color: Colors.grey,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          );
+                  }),
 
                   const Spacer(),
 
-                 Obx(
-  () => SizedBox(
-    width: 170,
-    height: 50,
-    child: CommonButton(
-      title: "Continue",
-      width: 170,
-      isLoading: controller.isLoading.value,
-      onTap: () async {
-        if (otpController.text.trim().length != 4) {
-          CustomToast.error("Please enter a valid OTP");
-          return;
-        }
+                  Obx(
+                    () => SizedBox(
+                      width: 170,
+                      height: 50,
+                      child: CommonButton(
+                        title: "Continue",
+                        width: 170,
+                        isLoading: controller.isLoading.value,
+                        onTap: () async {
+                          if (otpController.text.trim().length != 4) {
+                            CustomToast.error("Please enter a valid OTP");
+                            return;
+                          }
 
-        final success = await controller.verifyOtp(
-          otpController.text.trim(),
-        );
+                          final success = await controller.verifyOtp(
+                            otpController.text.trim(),
+                          );
 
-        if (success) {
-          Get.to(() => UpdatePinPage());
-        }
-      },
-    ),
-  ),
-),
+                          if (success) {
+                            Get.to(() => UpdatePinPage());
+                          }
+                        },
+                      ),
+                    ),
+                  ),
 
                   const SizedBox(height: 30),
                 ],

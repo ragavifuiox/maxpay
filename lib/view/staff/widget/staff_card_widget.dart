@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
+import 'package:get/instance_manager.dart';
+import 'package:maxpay/controllers/add_staff_controller.dart';
+import 'package:maxpay/controllers/transaction_report_controller.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
+import 'package:maxpay/core/di/service_locator.dart';
 import 'package:maxpay/core/extensions/currency.dart';
 import 'package:maxpay/core/utils/texthelper.dart';
 import 'package:maxpay/core/data/model/staff_lsit_model.dart';
@@ -57,7 +61,20 @@ class StaffCardWidget extends StatelessWidget {
                 title: "Transaction Report",
                 color: Colors.blue,
                 onTap: () {
-                  Get.to(() => TransactionReportScreen());
+                  Get.put(
+                    TransReportController(
+                      transreportUsecase: sl(),
+                      producttypeUseCase: sl(),
+                      submitDisputeUsecase: sl(),
+
+                      cashbackTypeUsecase: sl(),
+                    ),
+                  );
+                  Get.to(
+                    () => TransactionReportScreen(
+                      mobileNumber: data.mobile ?? "",
+                    ),
+                  );
                 },
               ),
 
@@ -67,22 +84,19 @@ class StaffCardWidget extends StatelessWidget {
                 title: "Wallet Report",
                 color: Colors.red,
                 onTap: () {
-                Get.toNamed(AppRoutes.walletreport);
+                  Get.toNamed(AppRoutes.walletreport);
                 },
               ),
 
               SizedBox(width: 8.w), // Gap
 
               _buttonWidget(
-  title: "Add Wallet",
-  color: Colors.green,
-  onTap: () {
-    Get.toNamed(
-      AppRoutes.wallettrnsfer,
-      arguments: data,
-    );
-  },
-),
+                title: "Add Wallet",
+                color: Colors.green,
+                onTap: () {
+                  Get.toNamed(AppRoutes.wallettrnsfer, arguments: data);
+                },
+              ),
             ],
           ),
         ],
@@ -98,20 +112,20 @@ class StaffCardWidget extends StatelessWidget {
       children: [
         Text(title, style: TextHelper.max16(context)),
 
-       Text(
-  title == "Staff Name"
-      ? (value.isNotEmpty
-            ? value[0].toUpperCase() + value.substring(1)
-            : value)
-      : value,
-  style: TextStyle(
-    fontSize: 13.sp,
-    fontWeight: FontWeight.w600,
-    color: title == "Staff Name"
-        ? Colors.green
-        : theme.colorScheme.onSurface,
-  ),
-),
+        Text(
+          title == "Staff Name"
+              ? (value.isNotEmpty
+                    ? value[0].toUpperCase() + value.substring(1)
+                    : value)
+              : value,
+          style: TextStyle(
+            fontSize: 13.sp,
+            fontWeight: FontWeight.w600,
+            color: title == "Staff Name"
+                ? Colors.green
+                : theme.colorScheme.onSurface,
+          ),
+        ),
       ],
     );
   }

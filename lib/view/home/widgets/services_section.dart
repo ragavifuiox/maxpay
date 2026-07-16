@@ -700,7 +700,6 @@ case 'gas':
         Get.to(() => const ElectricityBillPage());
         break;
 
-
       default:
         break;
     }

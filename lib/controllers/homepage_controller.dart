@@ -34,7 +34,7 @@ class HomePageController extends GetxController {
   final RefundCountUsecase refundCountUsecase;
   final TodayCreditUsecase todaycreditusecase;
   final GraphUsecase graphUsecase;
-  final  FaqUsecase faqUsecase;
+  final FaqUsecase faqUsecase;
 
   HomePageController({
     required this.getNewsUseCase,
@@ -80,63 +80,64 @@ class HomePageController extends GetxController {
       await fetchtodaycredit();
       await fetchGraph();
       await fetchFaq();
-      // await fetchpopupmessage();
     });
   }
 
-Future<void> fetchFaq() async {
-  print("🚀 fetchFaq() Called");
+  Future<void> fetchFaq() async {
+    print("🚀 fetchFaq() Called");
 
-  try {
-    isLoading.value = true;
+    try {
+      isLoading.value = true;
 
-    final result = await faqUsecase();
+      final result = await faqUsecase();
 
-    result.fold(
-      (failure) {
-        print("❌ API Failed: ${failure.message}");
-        CustomToast.error(failure.message);
-      },
-      (data) async {
-        print("✅ API Success");
-        print("📦 Data Count: ${data.data?.length}");
+      result.fold(
+        (failure) {
+          print("❌ API Failed: ${failure.message}");
+          CustomToast.error(failure.message);
+        },
+        (data) async {
+          print("✅ API Success");
+          print("📦 Data Count: ${data.data?.length}");
 
-        faq.value = data;
+          faq.value = data;
 
-        // Only proceed when the backend actually returned FAQ data.
-        if (data.data == null || data.data!.isEmpty) {
-          print("⚠️ FAQ Data is Empty");
-          return;
-        }
+          // Only proceed when the backend actually returned FAQ data.
+          if (data.data == null || data.data!.isEmpty) {
+            print("⚠️ FAQ Data is Empty");
+            return;
+          }
 
-        final faqData = data.data!.first;
+          final faqData = data.data!.first;
 
-        print("📅 From Date: ${faqData.liveFromDate}");
-        print("📅 To Date: ${faqData.liveToDate}");
+          print("📅 From Date: ${faqData.liveFromDate}");
+          print("📅 To Date: ${faqData.liveToDate}");
 
-        final now = DateTime.now();
-        final fromDate = DateTime.parse(faqData.liveFromDate!);
-        final toDate =
-            DateTime.parse(faqData.liveToDate!).add(const Duration(days: 1));
+          final now = DateTime.now();
+          final fromDate = faqData.liveFromDate ?? DateTime.now();
+          final toDate = (faqData.liveFromDate ?? DateTime.now()).add(
+            const Duration(days: 1),
+          );
 
-        print("🕒 Current Time: $now");
+          print("🕒 Current Time: $now");
 
-        if (now.isAfter(fromDate.subtract(const Duration(seconds: 1))) &&
-            now.isBefore(toDate)) {
-          print("🎉 Showing FAQ Popup");
-          await _showFaqPopup(faqData);
-        } else {
-          print("🚫 Date Condition Failed");
-        }
-      },
-    );
-  } catch (e) {
-    print("🔥 Exception: $e");
-  } finally {
-    isLoading.value = false;
-    print("🏁 fetchFaq() Completed");
+          if (now.isAfter(fromDate.subtract(const Duration(seconds: 1))) &&
+              now.isBefore(toDate)) {
+            print("🎉 Showing FAQ Popup");
+            await _showFaqPopup(faqData);
+          } else {
+            print("🚫 Date Condition Failed");
+          }
+        },
+      );
+    } catch (e) {
+      print("🔥 Exception: $e");
+    } finally {
+      isLoading.value = false;
+      print("🏁 fetchFaq() Completed");
+    }
   }
-}
+
   // ---------------- NEWS ----------------
   Future<void> fetchNews() async {
     try {
@@ -147,7 +148,7 @@ Future<void> fetchFaq() async {
 
       result.fold(
         (failure) {
-         CustomToast.error(failure.message);
+          CustomToast.error(failure.message);
         },
         (data) {
           AppLogger.debugPrint("✅ [API CALL SUCCESS] fetchNews");
@@ -168,20 +169,21 @@ Future<void> fetchFaq() async {
 
       final result = await graphUsecase();
 
-    result.fold(
-      (failure) {
-       CustomToast.error(failure.message);
-      },
-      (data) {
-        graphData.value = data;
-      },
-    );
-  } catch (e) {
-    AppLogger.logError("fetchGraph error: $e");
-  } finally {
-    isLoading.value = false;
+      result.fold(
+        (failure) {
+          CustomToast.error(failure.message);
+        },
+        (data) {
+          graphData.value = data;
+        },
+      );
+    } catch (e) {
+      AppLogger.logError("fetchGraph error: $e");
+    } finally {
+      isLoading.value = false;
+    }
   }
-}
+
   // ---------------- POPUP ----------------
   Future<void> fetchpopupmessage(String currentScreen) async {
     try {
@@ -265,7 +267,9 @@ Future<void> fetchFaq() async {
                         width: 250,
                         padding: const EdgeInsets.all(18),
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: Theme.of(
+                            navigator?.context ?? Get.context!,
+                          ).scaffoldBackgroundColor,
                           borderRadius: BorderRadius.circular(14),
                         ),
                         child: Text(
@@ -424,13 +428,10 @@ Future<void> fetchFaq() async {
       AppLogger.logError("🔥 [API CALL EXCEPTION] transaction error: $e");
     }
   }
-
-
-
 }
 
 Future<void> _showFaqPopup(Data faqData) async {
-    print("🎈 _showFaqPopup() Called");
+  print("🎈 _showFaqPopup() Called");
   final prefs = await SharedPreferences.getInstance();
 
   String today =
@@ -459,149 +460,143 @@ Future<void> _showFaqPopup(Data faqData) async {
   HomePageController.isPopupOpen = true;
 
   Get.dialog(
-  barrierDismissible: false,
-  Dialog(
-    insetPadding: const EdgeInsets.symmetric(horizontal: 18),
-    backgroundColor: Colors.transparent,
-    elevation: 0,
-    child: Stack(
-      clipBehavior: Clip.none,
-      children: [
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              /// Banner Image
-              if ((faqData.image ?? "").isNotEmpty)
-                ClipRRect(
-                  borderRadius: const BorderRadius.vertical(
-                    top: Radius.circular(16),
-                  ),
-                  child: Image.network(
-                    faqData.image!,
-                    width: double.infinity,
-                    height: 280,
-                    fit: BoxFit.cover,
-                  ),
-                ),
-
-              Padding(
-                padding: const EdgeInsets.all(15),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      "Enter Comments",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500,
-                      ),
+    barrierDismissible: false,
+    Dialog(
+      insetPadding: const EdgeInsets.symmetric(horizontal: 18),
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                /// Banner Image
+                if ((faqData.image ?? "").isNotEmpty)
+                  ClipRRect(
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(16),
                     ),
+                    child: Image.network(
+                      faqData.image!,
+                      width: double.infinity,
+                      height: 280,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
 
-                    const SizedBox(height: 10),
-
-                    TextField(
-                      maxLines: 4,
-                      decoration: InputDecoration(
-                        hintText: "Interest",
-                        filled: true,
-                        fillColor: Colors.grey.shade100,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide:
-                              BorderSide(color: Colors.grey.shade300),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
-                          borderSide:
-                              BorderSide(color: Colors.grey.shade300),
+                Padding(
+                  padding: const EdgeInsets.all(15),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        "Enter Comments",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
-                    ),
 
-                    const SizedBox(height: 18),
+                      const SizedBox(height: 10),
 
-                    Row(
-                      children: [
-                        Expanded(
-                          child: SizedBox(
-                            height: 48,
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.red,
-                                foregroundColor: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                              ),
-                              onPressed: () {
-                                HomePageController.isPopupOpen = false;
-                                Get.back();
-                              },
-                              child: const Text("Replay 1"),
-                            ),
+                      TextField(
+                        maxLines: 4,
+                        decoration: InputDecoration(
+                          hintText: "Interest",
+                          filled: true,
+                          fillColor: Colors.grey.shade100,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: BorderSide(color: Colors.grey.shade300),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: BorderSide(color: Colors.grey.shade300),
                           ),
                         ),
+                      ),
 
-                        const SizedBox(width: 15),
+                      const SizedBox(height: 18),
 
-                        Expanded(
-                          child: SizedBox(
-                            height: 48,
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.teal,
-                                foregroundColor: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: SizedBox(
+                              height: 48,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.red,
+                                  foregroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
                                 ),
+                                onPressed: () {
+                                  HomePageController.isPopupOpen = false;
+                                  Get.back();
+                                },
+                                child: const Text("Replay 1"),
                               ),
-                              onPressed: () {
-                                HomePageController.isPopupOpen = false;
-                                Get.back();
-                              },
-                              child: const Text("Replay 2"),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
+
+                          const SizedBox(width: 15),
+
+                          Expanded(
+                            child: SizedBox(
+                              height: 48,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.teal,
+                                  foregroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                ),
+                                onPressed: () {
+                                  HomePageController.isPopupOpen = false;
+                                  Get.back();
+                                },
+                                child: const Text("Replay 2"),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
 
-        /// Close Button
-        Positioned(
-          top: -12,
-          right: -12,
-          child: InkWell(
-            onTap: () {
-              HomePageController.isPopupOpen = false;
-              Get.back();
-            },
-            child: Container(
-              decoration: const BoxDecoration(
-                color: Colors.red,
-                shape: BoxShape.circle,
-              ),
-              padding: const EdgeInsets.all(5),
-              child: const Icon(
-                Icons.close,
-                color: Colors.white,
-                size: 22,
+          /// Close Button
+          Positioned(
+            top: -12,
+            right: -12,
+            child: InkWell(
+              onTap: () {
+                HomePageController.isPopupOpen = false;
+                Get.back();
+              },
+              child: Container(
+                decoration: const BoxDecoration(
+                  color: Colors.red,
+                  shape: BoxShape.circle,
+                ),
+                padding: const EdgeInsets.all(5),
+                child: const Icon(Icons.close, color: Colors.white, size: 22),
               ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     ),
-  ),
-);
+  );
 }

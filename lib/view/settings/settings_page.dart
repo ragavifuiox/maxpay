@@ -21,17 +21,19 @@ class SettingsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeController = Get.find<ThemeController>();
     final authController = Get.find<AuthController>();
-    final updatePinController = Get.put(UpdatePinController(updatepinusecase: sl(), updateSendOtpUsecase: sl(), updateotpusecase: sl()));
-   final webcontroller = Get.isRegistered<WebLoginController>()
-   
-    ? Get.find<WebLoginController>()
-    : Get.put(
-        WebLoginController(
-          webloginusecase: sl(),
-          webLogoutUsecase: sl(),
-        ),
-        permanent: true,
-      );
+    final updatePinController = Get.put(
+      UpdatePinController(
+        updatepinusecase: sl(),
+        updateSendOtpUsecase: sl(),
+        updateotpusecase: sl(),
+      ),
+    );
+    final webcontroller = Get.isRegistered<WebLoginController>()
+        ? Get.find<WebLoginController>()
+        : Get.put(
+            WebLoginController(webloginusecase: sl(), webLogoutUsecase: sl()),
+            permanent: true,
+          );
     final isTablet = Responsive.isTablet(context);
 
     return Obx(() {
@@ -50,74 +52,71 @@ class SettingsPage extends StatelessWidget {
         ),
         child: Scaffold(
           backgroundColor: Colors.transparent,
-           appBar: AppBar(
-  surfaceTintColor: Colors.transparent,
-  backgroundColor: Colors.transparent,
-  elevation: 0,
-  centerTitle: false,
-  title: Text(
-    'Settings',
-    style: TextStyle(
-      fontFamily: 'Poppins',
-      fontWeight: FontWeight.w600,
-      fontSize: isTablet ? 24.sp : 20.sp,
-      color: colorScheme.onSurface,
-    ),
-  ),
- actions: [
-  InkWell(
-    onTap: () {
-      Share.share(
-        'http://139.59.91.7/test_paylinkonline.in/public/retailer/login',
-      );
-    },
-    child: Container(
-      margin: EdgeInsets.only(right: 12.w),
-      padding: EdgeInsets.symmetric(
-        horizontal: 8.w,
-        vertical: 5.h,
-      ),
-      decoration: BoxDecoration(
-        color: Colors.green,
-        borderRadius: BorderRadius.circular(5.r),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            "Link",
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 10.sp,
-              fontWeight: FontWeight.w600,
+          appBar: AppBar(
+            surfaceTintColor: Colors.transparent,
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            centerTitle: false,
+            title: Text(
+              'Settings',
+              style: TextStyle(
+                fontFamily: 'Poppins',
+                fontWeight: FontWeight.w600,
+                fontSize: isTablet ? 24.sp : 20.sp,
+                color: colorScheme.onSurface,
+              ),
             ),
-          ),
-          SizedBox(width: 3.w),
-          Icon(
-            Icons.reply_rounded,
-            color: Colors.white,
-            size: 14.sp,
-          ),
-        ],
-      ),
-    ),
-  ),
+            actions: [
+              InkWell(
+                onTap: () {
+                  Share.share(
+                    'http://139.59.91.7/test_paylinkonline.in/public/retailer/login',
+                  );
+                },
+                child: Container(
+                  margin: EdgeInsets.only(right: 8.w),
+                  padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 5.h),
+                  decoration: BoxDecoration(
+                    color: Colors.green,
+                    borderRadius: BorderRadius.circular(5.r),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        "Link",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 10.sp,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      SizedBox(width: 3.w),
+                      Icon(
+                        Icons.reply_rounded,
+                        color: Colors.white,
+                        size: 14.sp,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
 
-  InkWell(
-    onTap: () {
-      Get.toNamed(AppRoutes.webloginqr);
-    },
-    child: Padding(
-      padding: EdgeInsets.only(right: 39.w),
-      child: Image.asset(
-        AssetImages.qrcode,
-        width: 26.w,
-        height: 26.w,
-      ),
-    ),
-  ),
-],
-),
+              InkWell(
+                onTap: () {
+                  Get.toNamed(AppRoutes.webloginqr);
+                },
+                child: Padding(
+                  padding: EdgeInsets.only(right: 16.w),
+                  child: Image.asset(
+                    AssetImages.qrcode,
+                    width: 26.w,
+                    height: 26.w,
+                  ),
+                ),
+              ),
+            ],
+          ),
           body: SafeArea(
             child: SingleChildScrollView(
               padding: EdgeInsets.only(left: 20.w, right: 20.w, bottom: 46.h),
@@ -131,7 +130,7 @@ class SettingsPage extends StatelessWidget {
                     },
                     SvgPicture.asset(AssetImages.profile, width: 24.w),
                   ),
-                   _buildMenuTile(
+                  _buildMenuTile(
                     context,
                     'Cashback',
                     () {
@@ -139,56 +138,59 @@ class SettingsPage extends StatelessWidget {
                     },
                     SvgPicture.asset(AssetImages.cashback, width: 24.w),
                   ),
-                  
+
                   _buildMenuTile(context, 'KYC', () {
                     Get.toNamed(AppRoutes.kyc);
                   }, SvgPicture.asset(AssetImages.kyc, width: 24.w)),
-                _buildMenuTile(
-  context,
-  'Update M-Pin',
-  () {
-    Get.defaultDialog(
-      title: "Confirm",
-      titleStyle: TextStyle(
-        fontSize: 18.sp,
-        fontWeight: FontWeight.w700,
-        fontFamily: 'Poppins',
-        color: Theme.of(context).colorScheme.onSurface,
-      ),
-      middleText: "Are you sure you want to update your M-PIN?",
-      middleTextStyle: TextStyle(
-        fontSize: 14.sp,
-        fontWeight: FontWeight.w400,
-        fontFamily: 'Poppins',
-        color: Theme.of(context).colorScheme.onSurface,
-      ),
-      textCancel: "No",
-      textConfirm: "Yes",
-      confirmTextColor: Colors.white,
-      cancelTextColor: Colors.grey,
-      buttonColor: AppColors.clrPrimary,
-      barrierDismissible: false,
-      onCancel: () {
-        Get.back();
-      },
-      onConfirm: () {
-        Get.back(); // Close dialog
-        updatePinController.sendUpdatePinOtp();
-      },
-    );
-  },
-  SvgPicture.asset(
-    AssetImages.updatePin,
-    width: 24.w,
-  ),
-),
+                  _buildMenuTile(
+                    context,
+                    'Update M-Pin',
+                    () {
+                      Get.defaultDialog(
+                        title: "Confirm",
+                        titleStyle: TextStyle(
+                          fontSize: 18.sp,
+                          fontWeight: FontWeight.w700,
+                          fontFamily: 'Poppins',
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                        middleText:
+                            "Are you sure you want to update your M-PIN?",
+                        middleTextStyle: TextStyle(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w400,
+                          fontFamily: 'Poppins',
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                        textCancel: "No",
+                        textConfirm: "Yes",
+                        confirmTextColor: Colors.white,
+                        cancelTextColor: Colors.grey,
+                        buttonColor: AppColors.clrPrimary,
+                        barrierDismissible: false,
+                        onCancel: () {
+                          Get.back();
+                        },
+                        onConfirm: () {
+                          Get.back(); // Close dialog
+                          updatePinController.sendUpdatePinOtp();
+                        },
+                      );
+                    },
+                    SvgPicture.asset(AssetImages.updatePin, width: 24.w),
+                  ),
                   _buildMenuTile(
                     context,
                     authController.isFingerPrint.value == 1
                         ? 'Update Fingerprint'
                         : 'Add Fingerprint',
                     () {
-                      Get.toNamed(AppRoutes.biometricsIntro);
+                      Get.toNamed(
+                        AppRoutes.biometricsIntro,
+                        arguments: {
+                          'is_update': authController.isFingerPrint.value == 1,
+                        },
+                      );
                     },
                     Icon(
                       Icons.fingerprint,
@@ -196,8 +198,6 @@ class SettingsPage extends StatelessWidget {
                       color: AppColors.clrPrimary,
                     ),
                   ),
-
-                 
 
                   _buildMenuTile(
                     context,
@@ -233,7 +233,6 @@ class SettingsPage extends StatelessWidget {
                   //   },
                   //   SvgPicture.asset(AssetImages.webSignup, width: 24.w),
                   // ),
-                
 
                   /// 🔹 LOGOUT BUTTONS
                   Padding(
@@ -243,90 +242,92 @@ class SettingsPage extends StatelessWidget {
                     ),
                     child: Row(
                       children: [
-                       Expanded(
-  child: _buildLogoutButton(
-    context,
-    'Logout',
-    Icons.logout_rounded,
-    () {
-      Get.defaultDialog(
-        title: "Confirm Logout",
-        titleStyle: TextStyle(
-          fontSize: 18.sp,
-          fontWeight: FontWeight.w700,
-          fontFamily: 'Poppins',
-          color: Theme.of(context).colorScheme.onSurface,
-        ),
+                        Expanded(
+                          child: _buildLogoutButton(
+                            context,
+                            'Logout',
+                            Icons.logout_rounded,
+                            () {
+                              Get.defaultDialog(
+                                title: "Confirm Logout",
+                                titleStyle: TextStyle(
+                                  fontSize: 18.sp,
+                                  fontWeight: FontWeight.w700,
+                                  fontFamily: 'Poppins',
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
+                                ),
 
-        middleText: "Do you want to logout?",
-        middleTextStyle: TextStyle(
-          fontSize: 14.sp,
-          fontWeight: FontWeight.w400,
-          fontFamily: 'Poppins',
-          color: Theme.of(context).colorScheme.onSurface,
-        ),
+                                middleText: "Do you want to logout?",
+                                middleTextStyle: TextStyle(
+                                  fontSize: 14.sp,
+                                  fontWeight: FontWeight.w400,
+                                  fontFamily: 'Poppins',
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
+                                ),
 
-        textCancel: "No",
-        textConfirm: "Yes",
+                                textCancel: "No",
+                                textConfirm: "Yes",
 
-        confirmTextColor: Colors.white,
-        cancelTextColor: Colors.grey,
-        buttonColor: AppColors.clrPrimary,
+                                confirmTextColor: Colors.white,
+                                cancelTextColor: Colors.grey,
+                                buttonColor: AppColors.clrPrimary,
 
-        barrierDismissible: false,
+                                barrierDismissible: false,
 
-        onCancel: () {
-          Get.back();
-        },
+                                onCancel: () {
+                                  Get.back();
+                                },
 
-        onConfirm: () {
-          Get.back(); // close dialog first
-          Get.find<AuthController>().logout(); 
-          // OR your web logout:
-          // webcontroller.WebLogout(isweb: "0");
-        },
-      );
-    },
-  ),
-),
+                                onConfirm: () {
+                                  Get.back(); // close dialog first
+                                  Get.find<AuthController>().logout();
+                                  // OR your web logout:
+                                  // webcontroller.WebLogout(isweb: "0");
+                                },
+                              );
+                            },
+                          ),
+                        ),
                         SizedBox(width: 15.w),
-                      Expanded(
-  child: _buildLogoutButton(
-    context,
-    'Web Logout',
-    Icons.logout_rounded,
-    () {
-      Get.defaultDialog(
-        title: "Confirm Logout",
-        titleStyle: TextStyle(
-          fontSize: 18.sp,
-          fontWeight: FontWeight.w700,
-          fontFamily: 'Poppins',
-         color:
-                              theme.colorScheme.onSurface,
-        ),
-        middleText: "Do you want to logout from Web?",
-        middleTextStyle: TextStyle(
-          fontSize: 14.sp,
-          fontWeight: FontWeight.w400,
-          fontFamily: 'Poppins',
-          color:
-                              theme.colorScheme.onSurface,
-        ),
-        textCancel: "No",
-        textConfirm: "Yes",
-        confirmTextColor: Colors.white,
-        buttonColor: AppColors.clrPrimary,
-        cancelTextColor: Colors.grey,
-        onConfirm: () {
-          Get.back();
-          webcontroller.WebLogout(isweb: "0");
-        },
-      );
-    },
-    true,
-  ),
-),
+                        Expanded(
+                          child: _buildLogoutButton(
+                            context,
+                            'Web Logout',
+                            Icons.logout_rounded,
+                            () {
+                              Get.defaultDialog(
+                                title: "Confirm Logout",
+                                titleStyle: TextStyle(
+                                  fontSize: 18.sp,
+                                  fontWeight: FontWeight.w700,
+                                  fontFamily: 'Poppins',
+                                  color: theme.colorScheme.onSurface,
+                                ),
+                                middleText: "Do you want to logout from Web?",
+                                middleTextStyle: TextStyle(
+                                  fontSize: 14.sp,
+                                  fontWeight: FontWeight.w400,
+                                  fontFamily: 'Poppins',
+                                  color: theme.colorScheme.onSurface,
+                                ),
+                                textCancel: "No",
+                                textConfirm: "Yes",
+                                confirmTextColor: Colors.white,
+                                buttonColor: AppColors.clrPrimary,
+                                cancelTextColor: Colors.grey,
+                                onConfirm: () {
+                                  Get.back();
+                                  webcontroller.WebLogout(isweb: "0");
+                                },
+                              );
+                            },
+                            true,
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -425,7 +426,4 @@ class SettingsPage extends StatelessWidget {
       ),
     );
   }
-
-
-  
 }

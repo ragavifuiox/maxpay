@@ -77,6 +77,7 @@ class ApiRoutes {
   static const updateotp = "/verify_update_pin_otp";
   static const paymentstatustype = "/get_product_type";
   static const faq = "/get_faq";
+  static const stafftransactionreport = "/staff_transaction_report";
   static const updatepaymentStatus = "/update_payment_status";
   static const wallettransferdetail = "/satff_wallet_history";
   static const staffwalletreverse = "/staff_wallet_reverse";
