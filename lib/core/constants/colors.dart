@@ -24,9 +24,9 @@ class AppColors {
   static const Color totalborder = Color(0xFFB5D4F4);
   static const Color sim1 = Color(0xFFDCFAFF);
   static const Color green = Color(0xFF34C759);
-  static const Color failed = Color(0xFFFFE4E8);
-  static const Color pending = Color(0xFFFFF0D8);
-  static const Color success = Color(0xFFDCFFEE);
+  static const Color failed = Color(0xFFFFCCD3);
+  static const Color pending = Color(0xFFFFE1B4);
+  static const Color success = Color(0xFFC0FFDF);
   static const Color totalborde2 = Color(0xffCFCFCF);
   static const Color graph = Color(0xffEAEBF1);
   static const Color chart = Color(0xff615E83);

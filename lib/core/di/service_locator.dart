@@ -46,6 +46,7 @@ import 'package:maxpay/core/data/repsoitory/search_earning_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/search_plan_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/search_staff_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/staff_lsit_repo_impl.dart';
+import 'package:maxpay/core/data/repsoitory/staff_wallet_reverse_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/statement_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/submit_dispute_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/tabdetail_repo_impl.dart';
@@ -54,6 +55,7 @@ import 'package:maxpay/core/data/repsoitory/trans_confirm_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/trans_fsuc_fail.dart';
 import 'package:maxpay/core/data/repsoitory/trans_report_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/update_otp_repo_impl.dart';
+import 'package:maxpay/core/data/repsoitory/update_payment_status_impl.dart';
 import 'package:maxpay/core/data/repsoitory/update_pin_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/update_profile_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/update_send_otp_impl.dart';
@@ -65,6 +67,7 @@ import 'package:maxpay/core/data/repsoitory/wallet_credit_type_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/wallet_report_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/wallet_request_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/wallet_transfer_repo_impl.dart';
+import 'package:maxpay/core/data/repsoitory/wallet_trnasfer_detail_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/web_login_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/web_logout_repo_impl.dart';
 import 'package:maxpay/core/domain/repository/add_staff_repository.dart';
@@ -114,6 +117,7 @@ import 'package:maxpay/core/domain/repository/search_earning_repository.dart';
 import 'package:maxpay/core/domain/repository/search_plan_repository.dart';
 import 'package:maxpay/core/domain/repository/search_staff_repository.dart';
 import 'package:maxpay/core/domain/repository/staff_list_repository.dart';
+import 'package:maxpay/core/domain/repository/staff_wallet_reverse_repository.dart';
 import 'package:maxpay/core/domain/repository/statement_repository.dart';
 import 'package:maxpay/core/domain/repository/submit_dsipute_repository.dart';
 import 'package:maxpay/core/domain/repository/support_repository.dart';
@@ -123,6 +127,7 @@ import 'package:maxpay/core/domain/repository/trans_confirm_repository.dart';
 import 'package:maxpay/core/domain/repository/trans_report_repository.dart';
 import 'package:maxpay/core/domain/repository/transaction_suc_fail_repository.dart';
 import 'package:maxpay/core/domain/repository/update_otp_repository.dart';
+import 'package:maxpay/core/domain/repository/update_payment_status_repository.dart';
 import 'package:maxpay/core/domain/repository/update_pin_repository.dart';
 import 'package:maxpay/core/domain/repository/update_send_otp_repository.dart';
 import 'package:maxpay/core/domain/repository/verify_pin_repository.dart';
@@ -133,6 +138,7 @@ import 'package:maxpay/core/domain/repository/wallet_credit_type_repository.dart
 import 'package:maxpay/core/domain/repository/wallet_report_repository.dart';
 import 'package:maxpay/core/domain/repository/wallet_request_repository.dart';
 import 'package:maxpay/core/domain/repository/wallet_transfer_repository.dart';
+import 'package:maxpay/core/domain/repository/wallet_trnsfer_detail_repository.dart';
 import 'package:maxpay/core/domain/repository/web_login_repository.dart';
 import 'package:maxpay/core/domain/repository/web_logout_repository.dart';
 import 'package:maxpay/core/domain/usecase/addd_staff_usecase.dart';
@@ -178,6 +184,7 @@ import 'package:maxpay/core/domain/usecase/product_type_usecase.dart';
 import 'package:maxpay/core/domain/usecase/profile_update_usecase.dart';
 import 'package:maxpay/core/domain/usecase/refund_count_usecase.dart';
 import 'package:maxpay/core/domain/usecase/refund_usecase.dart';
+import 'package:maxpay/core/domain/usecase/satff_wallet_reverse_usecase.dart';
 import 'package:maxpay/core/domain/usecase/search_dth_usecase.dart';
 import 'package:maxpay/core/domain/usecase/search_earnings_usecase.dart';
 import 'package:maxpay/core/domain/usecase/search_plan_usecase.dart';
@@ -191,6 +198,7 @@ import 'package:maxpay/core/domain/usecase/trans_confirm_usecase.dart';
 import 'package:maxpay/core/domain/usecase/trans_report_usecase.dart';
 import 'package:maxpay/core/domain/usecase/trans_suc_fail_usecase.dart';
 import 'package:maxpay/core/domain/usecase/update_otp_usecase.dart';
+import 'package:maxpay/core/domain/usecase/update_payment_status_usecase.dart';
 import 'package:maxpay/core/domain/usecase/update_pin_usecase.dart';
 import 'package:maxpay/core/domain/usecase/update_send_otp_usecase.dart';
 import 'package:maxpay/core/domain/usecase/verify_pin_usecase.dart';
@@ -200,6 +208,7 @@ import 'package:maxpay/core/domain/usecase/wallet_credit_usecase.dart';
 import 'package:maxpay/core/domain/usecase/wallet_report_usecase.dart';
 import 'package:maxpay/core/domain/usecase/wallet_request_usecase.dart';
 import 'package:maxpay/core/domain/usecase/wallet_transfer_usecase.dart';
+import 'package:maxpay/core/domain/usecase/wallet_trnasfer_detail_usecase.dart';
 import 'package:maxpay/core/domain/usecase/wallet_usecase.dart';
 import 'package:maxpay/core/domain/usecase/web_login_usecase.dart';
 import 'package:maxpay/core/domain/usecase/web_logout_usecase.dart';
@@ -351,6 +360,9 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton<UpdateOtpRepository>(() => UpdateOtpRepoImpl(sl()));
   sl.registerLazySingleton<CashbackTypeRepository>(() => CashbackTypeRepoImpl(sl()));
   sl.registerLazySingleton<FaqRepsoitory>(() => FaqRepoImpl(sl()));
+  sl.registerLazySingleton<UpdatePaymentStatusRepository>(() => UpdatePaymentStatusImpl(sl()));
+  sl.registerLazySingleton<WalletTrnsferDetailRepository>(() => WalletTrnasferDetailRepoImpl(sl()));
+  sl.registerLazySingleton<StaffWalletReverseRepository>(() => StaffWalletReverseRepoImpl(sl()));
 
 
   sl.registerLazySingleton<WalletCreateQrRepo>(
@@ -414,6 +426,7 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton<RefundCountUsecase>(() => RefundCountUsecase(sl()));
   sl.registerLazySingleton<UpdateSendOtpUsecase>(() => UpdateSendOtpUsecase(sl()));
   sl.registerLazySingleton<UpdateOtpUsecase>(() => UpdateOtpUsecase(sl()));
+  sl.registerLazySingleton<SatffWalletReverseUsecase>(() => SatffWalletReverseUsecase(sl()));
   sl.registerLazySingleton<PaymentStatusUsecase>(
     () => PaymentStatusUsecase(sl()),
   );
@@ -458,6 +471,8 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton<CashBackUsecase>(() => CashBackUsecase(sl()));
   sl.registerLazySingleton<WebLogoutUsecase>(() => WebLogoutUsecase(sl()));
   sl.registerLazySingleton<CashbackTypeUsecase>(() => CashbackTypeUsecase(sl()));
+  sl.registerLazySingleton<UpdatePaymentStatusUsecase>(() => UpdatePaymentStatusUsecase(sl()));
+  sl.registerLazySingleton<WalletTrnasferDetailUsecase>(() => WalletTrnasferDetailUsecase(sl()));
   sl.registerLazySingleton<WalletCreateQrUsecase>(
     () => WalletCreateQrUsecase(sl()),
   );

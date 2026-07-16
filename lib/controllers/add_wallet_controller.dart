@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:maxpay/controllers/homepage_controller.dart';
 import 'package:maxpay/core/constants/snackbar.dart';
@@ -16,7 +17,8 @@ class AddWalletController extends GetxController with WidgetsBindingObserver {
   }
   RxBool isLoading = false.obs;
   final TextEditingController amountController = TextEditingController();
-
+static const MethodChannel _channel =
+    MethodChannel("com.paylink.retailor/upi_choose");
   Timer? _timer;
   final RxInt remainingSeconds = 300.obs;
   String? _activeTxnId;
@@ -246,6 +248,38 @@ class AddWalletController extends GetxController with WidgetsBindingObserver {
     update();
   }
 
+Future<void> openSpecificUpiApp({
+  required String packageName,
+  required String url,
+}) async {
+  try {
+    await _channel.invokeMethod(
+      "openSpecificUpiApp",
+      {
+        "packageName": packageName,
+        "url": url,
+      },
+    );
+  } catch (e) {
+    Get.snackbar(
+      "Error",
+      e.toString(),
+    );
+  }
+}
+
+Future<List<Map<String, dynamic>>> getInstalledUpiApps() async {
+  try {
+    final List<dynamic> result =
+        await _channel.invokeMethod("getInstalledUpiApps");
+
+    return result
+        .map((e) => Map<String, dynamic>.from(e))
+        .toList();
+  } catch (e) {
+    return [];
+  }
+}
   @override
   void onClose() {
     WidgetsBinding.instance.removeObserver(this);

@@ -19,50 +19,9 @@ class AddWalletPopup extends StatelessWidget {
   });
 
   static const MethodChannel _upiChannel =
-      MethodChannel('com.maxpay.app/upi_chooser');
+      MethodChannel('com.paylink.retailor/upi_choose');
 
-  Future<void> _openUpiApp() async {
-    if (url.trim().isEmpty) {
-      Get.snackbar(
-        "Alert",
-        "UPI payment link is not available",
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
-      return;
-    }
-
-    try {
-      final bool? opened = await _upiChannel.invokeMethod<bool>(
-        'openUpiChooser',
-        {'url': url.trim()},
-      );
-
-      if (opened != true) {
-        Get.snackbar(
-          "Alert",
-          "No UPI app found. Please install GPay, PhonePe, Paytm, or any UPI app.",
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
-        );
-      }
-    } on PlatformException catch (_) {
-      Get.snackbar(
-        "Alert",
-        "No UPI app found. Please install GPay, PhonePe, Paytm, or any UPI app.",
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
-    } catch (_) {
-      Get.snackbar(
-        "Alert",
-        "Something went wrong while opening UPI apps.",
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
-    }
-  }
-
+  
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -83,46 +42,7 @@ class AddWalletPopup extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               /// Select Button
-              Align(
-                alignment: Alignment.topRight,
-                child: InkWell(
-                  onTap: _openUpiApp,
-                  borderRadius: BorderRadius.circular(6),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 6,
-                    ),
-                    decoration: BoxDecoration(
-                      color: const Color(0xff18A7C9),
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Text(
-                          "Select",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 13,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        const SizedBox(width: 6),
-                        SvgPicture.asset(
-                          'assets/images/share-wal.svg',
-                          width: 18,
-                          height: 18,
-                          colorFilter: const ColorFilter.mode(
-                            Colors.white,
-                            BlendMode.srcIn,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
+             
 
               const SizedBox(height: 8),
 
@@ -222,6 +142,78 @@ class AddWalletPopup extends StatelessWidget {
               }),
 
               const SizedBox(height: 16),
+
+              const SizedBox(height: 20),
+
+const Align(
+  alignment: Alignment.centerLeft,
+  child: Text(
+    "Pay Using",
+    style: TextStyle(
+      fontSize: 16,
+      fontWeight: FontWeight.w600,
+    ),
+  ),
+),
+
+const SizedBox(height: 12),
+
+FutureBuilder<List<Map<String, dynamic>>>(
+  future: Get.find<AddWalletController>().getInstalledUpiApps(),
+  builder: (context, snapshot) {
+    if (!snapshot.hasData) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+
+    final apps = snapshot.data!;
+
+    if (apps.isEmpty) {
+      return const Text("No UPI apps installed");
+    }
+
+    return Wrap(
+      spacing: 12,
+      runSpacing: 12,
+      children: apps.map((app) {
+        return InkWell(
+          onTap: () {
+            Get.find<AddWalletController>().openSpecificUpiApp(
+              packageName: app["packageName"],
+              url: url,
+            );
+          },
+          child: Container(
+            width: 70,
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey.shade300),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Image.memory(
+                  app["icon"],
+                  width: 40,
+                  height: 40,
+                ),
+                const SizedBox(height: 5),
+                Text(
+                  app["name"],
+                  overflow: TextOverflow.ellipsis,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontSize: 11),
+                ),
+              ],
+            ),
+          ),
+        );
+      }).toList(),
+    );
+  },
+),
             ],
           ),
         ),

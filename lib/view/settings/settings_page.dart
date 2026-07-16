@@ -72,7 +72,7 @@ class SettingsPage extends StatelessWidget {
       );
     },
     child: Container(
-      margin: EdgeInsets.only(right: 8.w),
+      margin: EdgeInsets.only(right: 12.w),
       padding: EdgeInsets.symmetric(
         horizontal: 8.w,
         vertical: 5.h,
@@ -108,7 +108,7 @@ class SettingsPage extends StatelessWidget {
       Get.toNamed(AppRoutes.webloginqr);
     },
     child: Padding(
-      padding: EdgeInsets.only(right: 16.w),
+      padding: EdgeInsets.only(right: 39.w),
       child: Image.asset(
         AssetImages.qrcode,
         width: 26.w,
@@ -143,11 +143,39 @@ class SettingsPage extends StatelessWidget {
                   _buildMenuTile(context, 'KYC', () {
                     Get.toNamed(AppRoutes.kyc);
                   }, SvgPicture.asset(AssetImages.kyc, width: 24.w)),
-                 _buildMenuTile(
+                _buildMenuTile(
   context,
   'Update M-Pin',
   () {
-    updatePinController.sendUpdatePinOtp();
+    Get.defaultDialog(
+      title: "Confirm",
+      titleStyle: TextStyle(
+        fontSize: 18.sp,
+        fontWeight: FontWeight.w700,
+        fontFamily: 'Poppins',
+        color: Theme.of(context).colorScheme.onSurface,
+      ),
+      middleText: "Are you sure you want to update your M-PIN?",
+      middleTextStyle: TextStyle(
+        fontSize: 14.sp,
+        fontWeight: FontWeight.w400,
+        fontFamily: 'Poppins',
+        color: Theme.of(context).colorScheme.onSurface,
+      ),
+      textCancel: "No",
+      textConfirm: "Yes",
+      confirmTextColor: Colors.white,
+      cancelTextColor: Colors.grey,
+      buttonColor: AppColors.clrPrimary,
+      barrierDismissible: false,
+      onCancel: () {
+        Get.back();
+      },
+      onConfirm: () {
+        Get.back(); // Close dialog
+        updatePinController.sendUpdatePinOtp();
+      },
+    );
   },
   SvgPicture.asset(
     AssetImages.updatePin,

@@ -32,6 +32,7 @@ import 'package:maxpay/view/dth_recharge/confirm_dth_page.dart';
 import 'package:maxpay/view/dth_recharge/customer_dth_page.dart';
 import 'package:maxpay/view/dth_recharge/dth_recharge_page.dart';
 import 'package:maxpay/view/electricity_bill/electricity_bill_page.dart';
+import 'package:maxpay/view/gas_bill/gas_bill_page.dart';
 import 'package:maxpay/view/grade/grade_screen.dart';
 import 'package:maxpay/view/home/pages/home_page.dart';
 import 'package:maxpay/view/home/widgets/services_section.dart';
@@ -70,6 +71,7 @@ import 'package:maxpay/view/update_pin/verify_pin_screen.dart';
 import 'package:maxpay/view/wallet%20balance/wallet_balance.dart';
 import 'package:maxpay/view/wallet-credit/wallet_credit_screen.dart';
 import 'package:maxpay/view/wallet_request/wallet_request_screen.dart';
+import 'package:maxpay/view/water/watter_bill.dart';
 import 'package:maxpay/view/web_sign_up/web_signup_otp_screen.dart';
 import 'package:maxpay/view/web_sign_up/web_signup_screen.dart';
 import 'package:maxpay/view/web_sign_up/web_signup_success_screen.dart';
@@ -220,6 +222,8 @@ class AppPages {
     GetPage(name: AppRoutes.home, page: () => const HomePageScreen()),
     GetPage(name: AppRoutes.verify, page: () => const VerifyPinPage()),
     GetPage(name: AppRoutes.enterPin, page: () => PinCodeEnterPage()),
+    GetPage(name: AppRoutes.water, page: () => WatterBill()),
+    GetPage(name: AppRoutes.gas, page: () =>GasBillPage()),
 
     // GetPage(name: AppRoutes.main, page: () => const NavPageScreen()),
     // GetPage(name: AppRoutes.myearning, page: () => const MyEarningsScreen()),
@@ -595,7 +599,7 @@ class AppPages {
 
       binding: BindingsBuilder(() {
         Get.lazyPut<PaymentStatusController>(
-          () => PaymentStatusController(paymentStatusUsecase: sl(), paymentStatusTypeUsecase: sl(),),
+          () => PaymentStatusController(paymentStatusUsecase: sl(), paymentStatusTypeUsecase: sl(), updatePaymentStatusUsecase: sl(),),
           fenix: true,
            );
         }),

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_instance/src/extension_instance.dart';
+import 'package:maxpay/controllers/wallet_trnasfer_detail_controller.dart';
 import 'package:maxpay/core/constants/asset_images.dart';
 import 'package:maxpay/core/constants/colors.dart';
 
@@ -7,8 +10,9 @@ import 'package:maxpay/view/transfer_detail/wallet_trnasfer.dart';
 
 class TransactionCard extends StatelessWidget {
   final WalletTransaction transaction;
-
-  const TransactionCard({super.key, required this.transaction});
+  final WalletTrnasferDetailController controller =
+      Get.find<WalletTrnasferDetailController>();
+   TransactionCard({super.key, required this.transaction});
 
   String _twoDigits(int n) => n.toString().padLeft(2, '0');
 
@@ -127,12 +131,25 @@ class TransactionCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
-                    onPressed: () {
+                    // onPressed: () {
                     
 
-                      Navigator.of(dialogContext).pop(); // close the dialog
-                      Navigator.of(context).pop(); // go back from this screen
-                    },
+                    //   Navigator.of(dialogContext).pop(); // close the dialog
+                    //   Navigator.of(context).pop(); // go back from this screen
+                    // },
+
+                    onPressed: () async {
+  await controller.staffWalletReverse(
+    id: transaction.id.toString(), // Pass transaction id
+  );
+
+  Navigator.of(dialogContext).pop(); // Close dialog
+
+  // If API is successful, go back
+  if (controller.reverseResponse.value?.success == true) {
+    Navigator.of(context).pop();
+  }
+},
                     child: const Text(
                       "Submit",
                       style: TextStyle(

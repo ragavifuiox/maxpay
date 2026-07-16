@@ -15,8 +15,10 @@ import 'package:maxpay/core/di/service_locator.dart';
 import 'package:maxpay/core/extensions/currency.dart';
 import 'package:maxpay/view/electricity_bill/electricity_bill_page.dart';
 import 'package:maxpay/view/fastag_recharge/fastag_recharge_page.dart';
+import 'package:maxpay/view/gas_bill/gas_bill_page.dart';
 import 'package:maxpay/view/home/widgets/home_header.dart';
 import 'package:maxpay/core/constants/extension.dart';
+import 'package:maxpay/view/water/watter_bill.dart';
 import '../../../core/data/model/product_type.dart';
 
 class MenuScreen extends StatelessWidget {
@@ -197,10 +199,29 @@ class MenuScreen extends StatelessWidget {
                           );
                         }),
 
-                        SizedBox(height: 18.h),
-
+                        SizedBox(height: 10.h),
+Row(
+                          children: [
+                             Expanded(
+                              child: Divider(
+                                color: AppColors.clrPrimary,
+                                thickness: 1.2,
+                              ),
+                            ),
+                            Text(
+                              "Today",
+                              style: TextStyle(
+                                color: AppColors.clrPrimary,
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(width: 8.w),
+                           
+                          ],
+                        ),
                       
-
+const SizedBox(height: 12,),
 /// STATUS CARDS
 Obx(() {
   final transaction = homeController.transactionData.value;
@@ -212,7 +233,7 @@ Obx(() {
           image: AssetImages.successIcon,
           value:
               "₹${transaction?.data?.success?.amount?.toString() ?? "0"}",
-          bgColor: const Color(0xffDDF8E6),
+          bgColor: const Color(0xffC0FFDF),
           textColor: const Color(0xff22C55E),
         ),
       ),
@@ -222,7 +243,7 @@ Obx(() {
           image: AssetImages.processIcon,
           value:
               "₹${transaction?.data?.processing?.amount?.toString() ?? "0"}",
-          bgColor: const Color(0xffFCEFD9),
+          bgColor: const Color(0xffFFE1B4),
           textColor: Colors.orange,
         ),
       ),
@@ -232,7 +253,7 @@ Obx(() {
           image: AssetImages.failedIcon,
           value:
               "₹${transaction?.data?.failed?.amount?.toString() ?? "0"}",
-          bgColor: const Color(0xffFCE2E6),
+          bgColor: const Color(0xffFFCCD3),
           textColor: Colors.red,
         ),
       ),
@@ -249,7 +270,7 @@ Obx(() {
                               "Services",
                               style: TextStyle(
                                 color: AppColors.clrPrimary,
-                                fontSize: 18.sp,
+                                fontSize: 14.sp,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -668,6 +689,12 @@ Obx(() {
         Get.to(() => const FastagRechargePage());
         break;
 
+ case 'water':
+        Get.to(() => const WatterBill());
+        break;
+case 'gas':
+        Get.to(() => const GasBillPage());
+        break;
 
         case 'electricity':
         Get.to(() => const ElectricityBillPage());
@@ -699,7 +726,7 @@ Obx(() {
           Text(
             value,
             style: TextStyle(
-              fontSize: 14.sp,
+              fontSize: 16.sp,
               fontWeight: FontWeight.bold,
               color: textColor,
             ),

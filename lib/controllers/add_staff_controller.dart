@@ -40,6 +40,8 @@ String search = '';
   final searchStaffData = <SearchStaffData>[].obs;
   final wallettransfer = <TransferData>[].obs;
 RxString selectedcreditname = ''.obs;
+
+RxString selectedPaymentType = "Wallet Transfer".obs;
 final List<String> walletTypes = [
   "Wallet Transfer",
   "Wallet Reverse",
@@ -164,48 +166,58 @@ Future<void> walletTransfer({
     isLoading = true;
     update();
 
-   final result = await walletTransferUsecase(
-  staffid,
-  paymenttype,
-  amount,
-);
+    print("===== Wallet Transfer API =====");
+    print("Staff ID: $staffid");
+    print("Amount: $amount");
+    print("Payment Type: $paymenttype");
 
-    AppLogger.debugPrint("API CALLED SUCCESSFULLY");
+    final result = await walletTransferUsecase(
+      staffid,
+      paymenttype,
+      amount,
+    );
+
+    print("API CALLED SUCCESSFULLY");
 
     result.fold(
       (failure) {
-        CustomToast.error(
-          failure.message,
-        );
+        print("API FAILED");
+        print("Error Message: ${failure.message}");
 
-        AppLogger.debugPrint(
-          "ERROR: ${failure.message}",
-        );
+        CustomToast.error(failure.message);
       },
-     (response) async {
-  if (response.success == true) {
+      (response) async {
+        print("API RESPONSE RECEIVED");
+        print("Success: ${response.success}");
+        print("Message: ${response.message}");
+        print("Response: $response");
 
-    CustomToast.success(
-      response.message ?? "Wallet Transfer Successful",
-    );
+        if (response.success == true) {
+          CustomToast.success(
+            response.message ?? "Wallet Transfer Successful",
+          );
 
-    // Wallet balance refresh
-    await Get.find<HomePageController>()
-        .fetchWalletBalance();
+          print("Refreshing Wallet Balance...");
 
-    update();
+          await Get.find<HomePageController>()
+              .fetchWalletBalance();
 
-  } else {
-    CustomToast.error(
-      response.message ?? "Transfer Failed",
-    );
-  }
-}
+          print("Wallet Balance Refreshed");
+
+          update();
+        } else {
+          print("Transfer Failed");
+
+          CustomToast.error(
+            response.message ?? "Transfer Failed",
+          );
+        }
+      },
     );
   } catch (e, stackTrace) {
-    AppLogger.debugPrint(
-      "EXCEPTION: $e\n$stackTrace",
-    );
+    print("EXCEPTION OCCURRED");
+    print(e);
+    print(stackTrace);
 
     CustomToast.error(
       "Something went wrong. Please try again.",
@@ -213,9 +225,10 @@ Future<void> walletTransfer({
   } finally {
     isLoading = false;
     update();
+
+    print("Loading Finished");
   }
 }
-  
 
 
 
