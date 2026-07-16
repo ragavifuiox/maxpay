@@ -58,6 +58,24 @@ class PaymentStatusScreen extends GetView<PaymentStatusController> {
   dateTime: item.dateTime ?? '',
   mobile: item.mobile ?? '',
   productLogo: item.productLogo ?? '',
+
+  selectedStatus: "Select",
+
+ statusList: const [
+  "Select",
+  "Paid",
+  "Pending",
+],
+ onChanged: (value) {
+  if (value == null || value == "Select") return;
+
+  _showStatusDialog(
+    context: context,
+    controller: controller,
+    rechargeId: item.id.toString(),
+    status: value,
+  );
+},
 );
                   },
                 );
@@ -72,10 +90,10 @@ class PaymentStatusScreen extends GetView<PaymentStatusController> {
 
 String _getDisplayStatus(String status) {
   switch (status.toLowerCase()) {
-    case "success":
+    case "received":
       return "Paid";
 
-    case "failed":
+    case "not_received":
       return "Pending";
 
     case "pending":
@@ -88,10 +106,10 @@ String _getDisplayStatus(String status) {
 
 Color _getStatusColor(String status) {
   switch (status.toLowerCase()) {
-    case "success":
+    case "received":
       return Colors.green;
 
-    case "failed":
+    case "not_received":
     case "pending":
       return Colors.orange;
 
@@ -99,6 +117,64 @@ Color _getStatusColor(String status) {
       return Colors.blue;
   }
 }
+}
+
+void _showStatusDialog({
+  required BuildContext context,
+  required PaymentStatusController controller,
+  required String rechargeId,
+  required String status,
+}) {
+  final isDark =
+      Theme.of(context).brightness == Brightness.dark;
+
+  Get.defaultDialog(
+    title: "Payment Status",
+    titleStyle: TextStyle(
+      fontSize: 18,
+      fontWeight: FontWeight.bold,
+      color: isDark ? Colors.white : Colors.black,
+    ),
+    middleText:
+        "Are you sure you want to change the payment status to '$status'?",
+    middleTextStyle: TextStyle(
+      fontSize: 12,
+      color: isDark ? Colors.white70 : Colors.black87,
+    ),
+    backgroundColor:
+        isDark ? const Color(0xFF2F3349) : Colors.white,
+    radius: 12,
+
+    textCancel: "Cancel",
+    textConfirm: "OK",
+
+    cancelTextColor: Colors.black,
+    confirmTextColor: Colors.white,
+
+    buttonColor:AppColors.clrPrimary,
+
+    onConfirm: () async {
+      Get.back();
+
+      String apiStatus;
+
+      switch (status) {
+        case "Paid":
+          apiStatus = "received";
+          break;
+        case "Pending":
+          apiStatus = "not_received";
+          break;
+        default:
+          apiStatus = status.toLowerCase();
+      }
+
+      await controller.updatePaymentStatus(
+        rechargeId: rechargeId,
+        status: apiStatus,
+      );
+    },
+  );
 }
 class PaymentCard extends StatelessWidget {
   final String status;
@@ -109,6 +185,10 @@ class PaymentCard extends StatelessWidget {
   final String mobile;
   final String productLogo;
 
+  final String selectedStatus;
+  final List<String> statusList;
+  final ValueChanged<String?> onChanged;
+
   const PaymentCard({
     super.key,
     required this.status,
@@ -118,6 +198,9 @@ class PaymentCard extends StatelessWidget {
     required this.dateTime,
     required this.mobile,
     required this.productLogo,
+    required this.selectedStatus,
+    required this.statusList,
+    required this.onChanged,
   });
 
   @override
@@ -133,15 +216,13 @@ class PaymentCard extends StatelessWidget {
             : AppColors.background,
         borderRadius: BorderRadius.circular(12.r),
         border: isDark
-            ? Border.all(
-                color: const Color(0xFF3C3F52),
-              )
+            ? Border.all(color: const Color(0xFF3C3F52))
             : null,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          /// DATE & STATUS
+          /// Date & Status
           Row(
             children: [
               Text(
@@ -151,9 +232,7 @@ class PaymentCard extends StatelessWidget {
                   color: Colors.grey,
                 ),
               ),
-
               SizedBox(width: 6.w),
-
               Expanded(
                 child: Text(
                   dateTime,
@@ -166,7 +245,6 @@ class PaymentCard extends StatelessWidget {
                   ),
                 ),
               ),
-
               Container(
                 padding: EdgeInsets.symmetric(
                   horizontal: 8.w,
@@ -190,32 +268,28 @@ class PaymentCard extends StatelessWidget {
 
           SizedBox(height: 12.h),
 
-          /// PRODUCT + AMOUNT
+          /// Product
           Row(
             children: [
-            Container(
-  width: 40.w,
-  height: 40.h,
-  decoration: BoxDecoration(
-    borderRadius: BorderRadius.circular(6.r),
-  ),
-  child: Image.network(
-    productLogo,
-    fit: BoxFit.contain,
-    errorBuilder: (context, error, stackTrace) {
-      return const Icon(
-        Icons.image_not_supported,
-      );
-    },
-  ),
-),
+              Container(
+                width: 40.w,
+                height: 40.h,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(6.r),
+                ),
+                child: Image.network(
+                  productLogo,
+                  fit: BoxFit.contain,
+                  errorBuilder: (_, __, ___) =>
+                      const Icon(Icons.image_not_supported),
+                ),
+              ),
 
               SizedBox(width: 10.w),
 
               Expanded(
                 child: Column(
-                  crossAxisAlignment:
-                      CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       operatorName,
@@ -224,17 +298,13 @@ class PaymentCard extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 13.sp,
                         fontWeight: FontWeight.w600,
-                        color: theme.colorScheme.onSurface,
                       ),
                     ),
-
                     SizedBox(height: 2.h),
-
                     Text(
                       "Transaction No: $mobile",
                       style: TextStyle(
                         fontSize: 11.sp,
-                        fontWeight: FontWeight.w500,
                         color: isDark
                             ? Colors.white70
                             : Colors.black87,
@@ -249,15 +319,59 @@ class PaymentCard extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 18.sp,
                   fontWeight: FontWeight.bold,
-                  color: theme.colorScheme.onSurface,
                 ),
               ),
             ],
           ),
 
-          SizedBox(height: 10.h),
+          SizedBox(height: 12.h),
 
-          
+          /// Dropdown
+          Row(
+            children: [
+              const Spacer(),
+
+              Text(
+                "Status",
+                style: TextStyle(
+                  fontSize: 13.sp,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+
+              SizedBox(width: 10.w),
+
+              SizedBox(
+                width: 120.w,
+                height: 36.h,
+                child: DropdownButtonFormField<String>(
+                  value: selectedStatus,
+                  isExpanded: true,
+                  decoration: InputDecoration(
+                    isDense: true,
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: 10.w,
+                      vertical: 8.h,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(6.r),
+                    ),
+                  ),
+                  icon: const Icon(Icons.keyboard_arrow_down),
+                  items: statusList.map((status) {
+                    return DropdownMenuItem<String>(
+                      value: status,
+                      child: Text(
+                        status,
+                        style: TextStyle(fontSize: 12.sp),
+                      ),
+                    );
+                  }).toList(),
+                  onChanged: onChanged,
+                ),
+              ),
+            ],
+          ),
         ],
       ),
     );

@@ -5,14 +5,17 @@ import 'package:maxpay/core/data/model/payment_product_model.dart';
 import 'package:maxpay/core/data/model/payment_status_model.dart';
 import 'package:maxpay/core/domain/usecase/payment_status_type_usecase.dart';
 import 'package:maxpay/core/domain/usecase/payment_status_usecase.dart';
+import 'package:maxpay/core/domain/usecase/update_payment_status_usecase.dart';
 
 class PaymentStatusController extends GetxController {
   final PaymentStatusUsecase paymentStatusUsecase;
   final CashbackTypeUsecase paymentStatusTypeUsecase;
+    final UpdatePaymentStatusUsecase updatePaymentStatusUsecase;
 
   PaymentStatusController({
     required this.paymentStatusUsecase,
     required this.paymentStatusTypeUsecase,
+     required this.updatePaymentStatusUsecase,
   });
 
   Rx<CashbackProductType?> productTypeData =
@@ -133,4 +136,59 @@ class PaymentStatusController extends GetxController {
       },
     );
   }
+
+  Future<void> updatePaymentStatus({
+  required String rechargeId,
+  required String status,
+}) async {
+  try {
+    isLoading.value = true;
+
+    print("========= UPDATE PAYMENT STATUS =========");
+    print("Recharge ID : $rechargeId");
+    print("Status      : $status");
+
+   final result = await updatePaymentStatusUsecase(
+  rechargeId: rechargeId,
+  status: status,
+);
+    print("API Called Successfully");
+
+    result.fold(
+      (failure) {
+        isLoading.value = false;
+
+        print("API Failed");
+        print("Error : ${failure.message}");
+
+        CustomToast.error(failure.message);
+      },
+      (response) async {
+        isLoading.value = false;
+
+        print("API Success");
+        print("Success : ${response.success}");
+        print("Message : ${response.message}");
+        print("Response : $response");
+
+        if (response.success == true) {
+          CustomToast.success(
+            response.message ?? "Status Updated",
+          );
+
+          await getPaymentStatus();
+        } else {
+          CustomToast.error(
+            response.message ?? "Failed",
+          );
+        }
+      },
+    );
+  } catch (e, stackTrace) {
+    isLoading.value = false;
+
+    print("Exception : $e");
+    print(stackTrace);
+  }
+}
 }

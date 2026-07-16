@@ -1,13 +1,18 @@
 package com.paylink.retailor
 
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
+import android.os.Build
 import io.flutter.embedding.android.FlutterFragmentActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
+import java.io.ByteArrayOutputStream
 
 class MainActivity : FlutterFragmentActivity() {
-    private val CHANNEL = "com.paylink.retailor/upi_chooser"
+    private val CHANNEL = "com.paylink.retailor/upi_choose"
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
@@ -36,6 +41,77 @@ class MainActivity : FlutterFragmentActivity() {
                             result.success(false)
                         }
                     }
+
+                    "getInstalledUpiApps" -> {
+                        try {
+                            val upiIntent = Intent(Intent.ACTION_VIEW, Uri.parse("upi://pay"))
+                            val resolveInfos = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                packageManager.queryIntentActivities(
+                                    upiIntent,
+                                    PackageManager.ResolveInfoFlags.of(PackageManager.MATCH_ALL.toLong())
+                                )
+                            } else {
+                                packageManager.queryIntentActivities(upiIntent, PackageManager.MATCH_ALL)
+                            }
+
+                            val apps = resolveInfos.map { info ->
+                                val packageName = info.activityInfo.packageName
+                                val appName = info.loadLabel(packageManager).toString()
+                                val iconDrawable = info.loadIcon(packageManager)
+                                val bitmap = if (iconDrawable is BitmapDrawable) {
+                                    iconDrawable.bitmap
+                                } else {
+                                    val bmp = Bitmap.createBitmap(
+                                        iconDrawable.intrinsicWidth.coerceAtLeast(1),
+                                        iconDrawable.intrinsicHeight.coerceAtLeast(1),
+                                        Bitmap.Config.ARGB_8888
+                                    )
+                                    val canvas = android.graphics.Canvas(bmp)
+                                    iconDrawable.setBounds(0, 0, canvas.width, canvas.height)
+                                    iconDrawable.draw(canvas)
+                                    bmp
+                                }
+
+                                val stream = ByteArrayOutputStream()
+                                bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
+                                val iconBytes = stream.toByteArray()
+
+                                mapOf(
+                                    "packageName" to packageName,
+                                    "name" to appName,
+                                    "icon" to iconBytes
+                                )
+                            }
+
+                            result.success(apps)
+                        } catch (e: Exception) {
+                            result.error("UPI_LIST_ERROR", e.message, null)
+                        }
+                    }
+
+                    "openSpecificUpiApp" -> {
+                        val packageName = call.argument<String>("packageName")
+                        val url = call.argument<String>("url")
+                        if (packageName.isNullOrBlank() || url.isNullOrBlank()) {
+                            result.success(false)
+                            return@setMethodCallHandler
+                        }
+                        try {
+                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                            intent.setPackage(packageName)
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+
+                            if (intent.resolveActivity(packageManager) != null) {
+                                startActivity(intent)
+                                result.success(true)
+                            } else {
+                                result.success(false)
+                            }
+                        } catch (e: Exception) {
+                            result.error("UPI_OPEN_ERROR", e.message, null)
+                        }
+                    }
+
                     else -> result.notImplemented()
                 }
             }

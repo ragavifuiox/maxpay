@@ -19,10 +19,10 @@ class WatterBill extends StatefulWidget {
   const WatterBill({super.key});
 
   @override
-  State<WatterBill> createState() => _ElectricityBillPageState();
+  State<WatterBill> createState() => _WatterBillageState();
 }
 
-class _ElectricityBillPageState extends State<WatterBill> {
+class _WatterBillageState extends State<WatterBill> {
   String _selectedBoard = 'Kerala State Electricity';
   bool _isBillFetched = false;
 
@@ -230,7 +230,7 @@ class _ElectricityBillPageState extends State<WatterBill> {
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
-      appBar: CommonAppBar(title: "Electricity Bill"),
+      appBar: CommonAppBar(title: "Water Bill"),
       body: SafeArea(
         child: Column(
           children: [

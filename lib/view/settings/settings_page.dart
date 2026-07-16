@@ -146,7 +146,36 @@ class SettingsPage extends StatelessWidget {
                     context,
                     'Update M-Pin',
                     () {
-                      updatePinController.sendUpdatePinOtp();
+                      Get.defaultDialog(
+                        title: "Confirm",
+                        titleStyle: TextStyle(
+                          fontSize: 18.sp,
+                          fontWeight: FontWeight.w700,
+                          fontFamily: 'Poppins',
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                        middleText:
+                            "Are you sure you want to update your M-PIN?",
+                        middleTextStyle: TextStyle(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w400,
+                          fontFamily: 'Poppins',
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                        textCancel: "No",
+                        textConfirm: "Yes",
+                        confirmTextColor: Colors.white,
+                        cancelTextColor: Colors.grey,
+                        buttonColor: AppColors.clrPrimary,
+                        barrierDismissible: false,
+                        onCancel: () {
+                          Get.back();
+                        },
+                        onConfirm: () {
+                          Get.back(); // Close dialog
+                          updatePinController.sendUpdatePinOtp();
+                        },
+                      );
                     },
                     SvgPicture.asset(AssetImages.updatePin, width: 24.w),
                   ),

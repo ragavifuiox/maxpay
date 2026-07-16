@@ -1,27 +1,28 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
+import 'package:maxpay/controllers/wallet_trnasfer_detail_controller.dart';
 import 'package:maxpay/core/constants/asset_images.dart';
 import 'package:maxpay/core/constants/colors.dart';
+import 'package:maxpay/core/di/service_locator.dart';
 import 'package:maxpay/core/utils/texthelper.dart';
-
 import 'package:maxpay/view/transfer_detail/wallet_trnasfer.dart';
 
 class TransferdetailFilter extends StatelessWidget {
- 
   final TransferFilterType? selectedFilter;
-
- 
   final ValueChanged<TransferFilterType?> onFilterChanged;
-
-
   final ValueChanged<String>? onSearchChanged;
 
-  const TransferdetailFilter({
+  TransferdetailFilter({
     super.key,
     required this.selectedFilter,
     required this.onFilterChanged,
     this.onSearchChanged,
   });
+
+  final WalletTrnasferDetailController controller =
+      Get.find<WalletTrnasferDetailController>();
 
   @override
   Widget build(BuildContext context) {
@@ -36,186 +37,249 @@ class TransferdetailFilter extends StatelessWidget {
         border: Border.all(
           color: isDark
               ? AppColors.darkFilterBorder
-              : AppColors.totalborde2.withValues(alpha: 0.1),
+              : AppColors.totalborde2.withValues(alpha: 0.2),
         ),
       ),
-      child: Column(
-        children: [
-          const SizedBox(height: 8),
+      child: 
+     Column(
+  children: [
 
-          /// DATE FIELD
-          Row(
-            children: [
-              _DateField(hint: "DD.MM.YYYY", style: TextHelper.max1),
-              const SizedBox(width: 8),
-              Icon(
-                Icons.arrow_forward,
-                size: 16,
-                color: theme.colorScheme.primary,
-              ),
-              const SizedBox(width: 8),
-              _DateField(hint: "DD.MM.YYYY", style: TextHelper.max1),
-            ],
-          ),
+    /// DATE RANGE
+    Row(
+      children: [
 
-          const SizedBox(height: 8),
-
-          /// SEARCH FIELD
-          TextField(
-            style: TextStyle(color: theme.colorScheme.onSurface),
-            onChanged: onSearchChanged,
-            decoration: InputDecoration(
-              prefixIcon: Padding(
-                padding: const EdgeInsets.all(12.0),
-                child: SvgPicture.asset(
-                  AssetImages.search,
-                  colorFilter: ColorFilter.mode(
-                    isDark
-                        ? AppColors.textclr
-                        : theme.colorScheme.onSurfaceVariant,
-                    BlendMode.srcIn,
-                  ),
-                ),
-              ),
-              hintText: "Search",
-              hintStyle: TextHelper.max1.copyWith(
-                color: isDark ? AppColors.textclr : AppColors.clrTextgrey,
-              ),
-              filled: true,
-              fillColor: isDark ? AppColors.darkplceholder : Colors.white,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(7),
-                borderSide: BorderSide(
-                  color: isDark
-                      ? AppColors.darkFilterBorder
-                      : AppColors.totalborde2,
-                ),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(7),
-                borderSide: BorderSide(
-                  color: isDark
-                      ? AppColors.darkFilterBorder
-                      : AppColors.totalborde2,
-                ),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(7),
-                borderSide: BorderSide(color: theme.colorScheme.primary),
-              ),
-              contentPadding: const EdgeInsets.symmetric(vertical: 0),
-            ),
-          ),
-
-          const SizedBox(height: 8),
-
-          /// FILTER TYPE DROPDOWN ("Reverse" / "Wallet Transfer")
-          /// This replaces the old static "Select" row with a real,
-          /// working dropdown wired back to the parent via onFilterChanged.
-          DropdownButtonHideUnderline(
-            child: DropdownButtonFormField<TransferFilterType>(
-              initialValue: selectedFilter,
-              isExpanded: true,
-              icon: Icon(
-                Icons.chevron_right,
-                color: isDark
-                    ? AppColors.textclr
-                    : theme.colorScheme.onSurfaceVariant,
-                size: 18,
-              ),
-              style: TextHelper.max1.copyWith(
-                color: isDark ? AppColors.textclr : AppColors.clrTextgrey,
-              ),
-              dropdownColor: isDark ? AppColors.darkplceholder : Colors.white,
-              decoration: InputDecoration(
-                filled: true,
-                fillColor: isDark ? AppColors.darkplceholder : Colors.white,
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 14,
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide(
-                    color: isDark
-                        ? AppColors.darkFilterBorder
-                        : AppColors.totalborde2,
-                  ),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide(
-                    color: isDark
-                        ? AppColors.darkFilterBorder
-                        : AppColors.totalborde2,
-                  ),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: BorderSide(color: theme.colorScheme.primary),
-                ),
-              ),
-              hint: Text(
-                "Select",
-                style: TextHelper.max1.copyWith(
-                  color: isDark ? AppColors.textclr : AppColors.clrTextgrey,
-                ),
-              ),
-              items: TransferFilterType.values
-                  .map(
-                    (type) => DropdownMenuItem<TransferFilterType>(
-                      value: type,
-                      child: Text(type.label),
+        Expanded(
+          child: GestureDetector(
+            onTap: () => controller.selectFromDate(context),
+            child: AbsorbPointer(
+              child: Container(
+                height: 45,
+                child: TextFormField(
+                  controller: controller.fromDateController,
+                  decoration: InputDecoration(
+                    hintText: "DD.MM.YYYY",
+                     hintStyle: TextHelper.max1.copyWith(
+          color: isDark
+              ? AppColors.textclr
+              : theme.colorScheme.onSurfaceVariant,
+        ),
+                    filled: true,
+                    fillColor: Colors.white,
+                    contentPadding:
+                        const EdgeInsets.symmetric(horizontal: 18),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(
+                        color: Colors.grey.shade300,
+                      ),
                     ),
-                  )
-                  .toList(),
-              onChanged: onFilterChanged,
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(
+                        color: Colors.grey.shade300,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             ),
           ),
-        ],
-      ),
-    );
-  }
-}
+        ),
 
-/// DATE FIELD
-class _DateField extends StatelessWidget {
-  final String hint;
-  final TextStyle? style;
 
-  const _DateField({required this.hint, this.style});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-        decoration: BoxDecoration(
-          color: isDark ? AppColors.darkplceholder : Colors.white,
-          borderRadius: BorderRadius.circular(7),
-          border: Border.all(
-            color: isDark ? AppColors.darkFilterBorder : AppColors.totalborde2,
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 14),
+          child: Icon(
+            Icons.arrow_forward,
+            color: Color(0xff17345F),
+            size: 30,
           ),
         ),
-        child: Text(
-          hint,
-          style:
-              style?.copyWith(
-                color: isDark
-                    ? AppColors.textclr
-                    : theme.colorScheme.onSurfaceVariant,
-              ) ??
-              TextStyle(
-                fontSize: 12,
-                color: isDark
-                    ? AppColors.textclr
-                    : theme.colorScheme.onSurfaceVariant,
-              ),
+
+
+        Expanded(
+          child: GestureDetector(
+            onTap: () => controller.selectToDate(context),
+            child: AbsorbPointer(
+              child: TextFormField(
+                controller: controller.toDateController,
+                decoration: InputDecoration(
+                  hintText: "DD.MM.YYYY",
+                  hintStyle: TextHelper.max1.copyWith(
+          color: isDark
+              ? AppColors.textclr
+              : theme.colorScheme.onSurfaceVariant,
         ),
+                  filled: true,
+                  fillColor: Colors.white,
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 18),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(
+                      color: Colors.grey.shade300,
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(
+                      color: Colors.grey.shade300,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    ),
+
+
+    const SizedBox(height: 14),
+    /// TRANSACTION TYPE
+    DropdownButtonFormField<TransferFilterType>(
+
+      value: selectedFilter,
+
+      isExpanded: true,
+
+      icon: const Icon(
+        Icons.keyboard_arrow_down,
+        size: 30,
       ),
+
+      decoration: InputDecoration(
+
+        hintText: "Transaction Type",
+        
+        filled: true,
+
+        fillColor: Colors.white,
+
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 18),
+
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(
+            color: Colors.grey.shade300,
+          ),
+        ),
+
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(
+            color: Colors.grey.shade300,
+          ),
+        ),
+
+      ),
+
+
+      items: TransferFilterType.values
+          .map(
+            (e)=>DropdownMenuItem(
+              value:e,
+              child:Text(e.label),
+            ),
+          )
+          .toList(),
+
+onChanged:(value) {
+
+  if(value == null) return;
+
+  onFilterChanged(value);
+
+  controller.selectedFilter.value = value;
+
+  controller.transactionType.value = value.label;
+
+
+  // API CALL IMMEDIATELY
+  controller.getWalletTransferDetail(
+    search: controller.search.value,
+    startDate: controller.fromDate,
+    endDate: controller.toDate,
+    transferType: controller.transactionType.value,
+  );
+
+},
+
+    ),
+
+ const SizedBox(height: 14),
+
+
+
+    /// SEARCH BOX
+    TextField(
+      onChanged: (value) {
+
+        controller.search.value = value;
+
+        if(onSearchChanged != null){
+          onSearchChanged!(value);
+        }
+
+      },
+      decoration: InputDecoration(
+
+        hintText: "Search",
+
+        hintStyle: const TextStyle(
+          color: Colors.grey,
+          fontSize: 16,
+        ),
+
+        prefixIcon: Padding(
+          padding: const EdgeInsets.all(12),
+          child: SvgPicture.asset(
+            AssetImages.search,
+            width: 20,
+            height: 20,
+            colorFilter: const ColorFilter.mode(
+              Colors.grey,
+              BlendMode.srcIn,
+            ),
+          ),
+        ),
+
+        filled: true,
+        fillColor: Colors.white,
+
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16),
+
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(
+            color: Colors.grey.shade300,
+          ),
+        ),
+
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(
+            color: Colors.grey.shade300,
+          ),
+        ),
+
+      ),
+    ),
+
+
+
+    const SizedBox(height: 14),
+
+
+
+    
+    
+
+
+  ],
+)
     );
   }
 }
