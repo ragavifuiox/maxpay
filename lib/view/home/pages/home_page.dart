@@ -320,30 +320,27 @@ class HomePageScreen extends GetView<HomePageController> {
                             );
                           }),
 
-                          Obx(() {
-                            final refundAmount =
-                                controller
-                                    .refundcount
-                                    .value
-                                    ?.code
-                                    ?.refundAmount ??
-                                0;
+                         Obx(() {
+  final refund = controller.refundcount.value?.code;
 
-                            return StatCard(
-                              title: 'Refunded',
-                              value: refundAmount.toString(),
-                              borderColor: isDark
-                                  ? AppColors.clrPrimary
-                                  : Color(0x66495BFF),
-                              imageWidget: SvgPicture.asset(
-                                AssetImages.refunded,
-                                height: 32.h,
-                              ),
-                              bgColor: AppColors.darkBlue.withValues(
-                                alpha: 0.04,
-                              ),
-                            );
-                          }),
+  final refundAmount = refund?.refundAmount ?? 0;
+  final count = refund?.count ?? 0;
+
+  return StatCard(
+    title: 'Refunded',
+    value: '${refundAmount.toString().currencyIndian}/\n$count No',
+    borderColor: isDark
+        ? AppColors.clrPrimary
+        : const Color(0x66495BFF),
+    imageWidget: SvgPicture.asset(
+      AssetImages.refunded,
+      height: 32.h,
+    ),
+    bgColor: AppColors.darkBlue.withValues(
+      alpha: 0.04,
+    ),
+  );
+}),
 
                           Obx(() {
                             final complaintCount =
@@ -402,8 +399,9 @@ class HomePageScreen extends GetView<HomePageController> {
                               value:
                                   '${amount.toString().currencyIndian} /\n$count Nos',
                               imageWidget: SvgPicture.asset(
-                                AssetImages.success,
-                                height: 45.h,
+                                AssetImages.successIcon,
+                                 height: 24.h,
+                                width: 24.w,
                               ),
                               valueColor: Colors.black,
                               borderColor: Colors.transparent,
@@ -446,8 +444,9 @@ class HomePageScreen extends GetView<HomePageController> {
                                   '${amount.toString().currencyIndian} /\n$count Nos',
                               needSpacingbwImage: false,
                               imageWidget: SvgPicture.asset(
-                                AssetImages.processing,
-                                height: 45.h,
+                                AssetImages.processIcon,
+                                 height: 24.h,
+                                width: 24.w,
                               ),
                               valueColor: Colors.black,
                               textColor: Colors.orange,
@@ -486,8 +485,9 @@ class HomePageScreen extends GetView<HomePageController> {
                                   '${amount.toString().currencyIndian} /\n$count Nos',
                               needSpacingbwImage: false,
                               imageWidget: SvgPicture.asset(
-                                AssetImages.failedAll,
-                                height: 45.h,
+                                AssetImages.failedIcon,
+                                height: 24.h,
+                                width: 24.w,
                               ),
                               valueColor: Colors.black,
                               textColor: Colors.red,

@@ -1,5 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_instance/src/extension_instance.dart';
+import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
+import 'package:maxpay/controllers/wallet_transfer_detil_controller.dart';
+import 'package:maxpay/controllers/wallet_trnasfer_detail_controller.dart';
 import 'package:maxpay/core/constants/colors.dart';
+import 'package:maxpay/core/data/model/wallet_trnasfer_detail.dart';
+import 'package:maxpay/core/di/service_locator.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
 
 import 'package:maxpay/view/transfer_detail/transaction_card.dart';
@@ -18,52 +25,10 @@ class TransferDetial extends StatefulWidget {
 class _TransferDetialState extends State<TransferDetial> {
   TransferFilterType? _selectedFilter;
   String _searchQuery = "";
+ final WalletTrnasferDetailController controller = Get.put(WalletTrnasferDetailController(walletTransferDetailUseCase: sl(), staffWalletReverseUsecase: sl()));
 
-  // TODO: Replace this with data from your API / repository.
-  final List<WalletTransaction> _allTransactions = [
-    WalletTransaction(
-      transactionId: "TXN6453564",
-      dateTime: DateTime(2026, 11, 29, 14, 38, 43),
-      type: TransferFilterType.reverse,
-      userType: "Retailer",
-      userName: "John",
-      regMobNo: "9087654321",
-      amount: 500.00,
-    ),
-    WalletTransaction(
-      transactionId: "TXN6453564",
-      dateTime: DateTime(2026, 11, 29, 14, 38, 43),
-      type: TransferFilterType.reverse,
-      userType: "Retailer",
-      userName: "John",
-      regMobNo: "9087654321",
-      amount: 500.00,
-    ),
-    WalletTransaction(
-      transactionId: "TXN6453565",
-      dateTime: DateTime(2026, 11, 29, 15, 10, 12),
-      type: TransferFilterType.walletTransfer,
-      userType: "Retailer",
-      userName: "John",
-      regMobNo: "9087654321",
-      amount: 500.00,
-    ),
-  ];
 
-  /// Applies both the dropdown filter and the search text.
-  List<WalletTransaction> get _filteredTransactions {
-    return _allTransactions.where((t) {
-      final matchesFilter =
-          _selectedFilter == null || t.type == _selectedFilter;
-      final matchesSearch = _searchQuery.isEmpty ||
-          t.transactionId.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-          t.userName.toLowerCase().contains(_searchQuery.toLowerCase());
-      return matchesFilter && matchesSearch;
-    }).toList();
-  }
-
-  double get _totalAmount =>
-      _filteredTransactions.fold(0.0, (sum, t) => sum + t.amount);
+  
 
   @override
   Widget build(BuildContext context) {
@@ -78,50 +43,93 @@ class _TransferDetialState extends State<TransferDetial> {
         padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
         child: Column(
           children: [
-            TransferdetailFilter(
-              selectedFilter: _selectedFilter,
-              onFilterChanged: (value) {
-                setState(() => _selectedFilter = value);
-              },
-              onSearchChanged: (value) {
-                setState(() => _searchQuery = value);
-              },
-            ),
+         TransferdetailFilter(
+  selectedFilter: _selectedFilter,
+  onFilterChanged: (value) {
+    setState(() {
+      _selectedFilter = value;
+    });
+
+    // update transaction type
+    controller.transactionType.value =
+        value == TransferFilterType.walletTransfer
+            ? "Wallet Transfer"
+            : "Wallet Reverse";
+
+    // API call
+    controller.getWalletTransferDetail(
+      search: controller.search.value,
+      startDate: controller.fromDate,
+      endDate: controller.toDate,
+      transferType: controller.transactionType.value,
+    );
+  },
+  onSearchChanged: (value) {
+    controller.search.value = value;
+
+    controller.getWalletTransferDetail(
+      search: value,
+      startDate: controller.fromDate,
+      endDate: controller.toDate,
+      transferType: controller.transactionType.value,
+    );
+  },
+),
 
             const SizedBox(height: 16),
 
            
-            if (_selectedFilter != null) ...[
-              TransferSummaryCard(
-                filterType: _selectedFilter,
-                amount: _totalAmount,
-              ),
-              const SizedBox(height: 16),
-            ],
+           if (_selectedFilter != null) ...[
+  Obx(() => TransferSummaryCard(
+        filterType: controller.selectedFilter.value,
+        amount: controller.totalAmount.value,
+      )),
+  const SizedBox(height: 16),
+],
 
             Divider(color: AppColors.darktextclr.withValues(alpha: 0.5)),
 
             const SizedBox(height: 16),
 
-            /// 🔹 List — automatically re-filters whenever _selectedFilter
-            /// or _searchQuery changes, because it reads from the getter.
-            Expanded(
-              child: _filteredTransactions.isEmpty
-                  ? Center(
-                      child: Text(
-                        "No transactions found",
-                        style: TextStyle(color: Colors.grey.shade600),
-                      ),
-                    )
-                  : ListView.builder(
-                      itemCount: _filteredTransactions.length,
-                      itemBuilder: (context, index) {
-                        return TransactionCard(
-                          transaction: _filteredTransactions[index],
-                        );
-                      },
-                    ),
-            ),
+           Expanded(
+  child: Obx(() {
+
+    if (controller.isLoading.value) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
+
+   if (controller.transferList.isEmpty) {
+      return const Center(
+        child: Text("No Transactions Found"),
+      );
+    }
+
+    return ListView.builder(
+      itemCount: controller.transferList.length,
+      itemBuilder: (context, index) {
+
+  final item = controller.transferList[index];
+
+        return TransactionCard(
+          transaction: WalletTransaction(
+             id: item.id ?? 0,
+            transactionId: item.txnId ?? "",
+            dateTime: DateTime.parse(item.createdAt ?? ""),
+          type: item.paymentType == "Wallet Reverse"
+    ? TransferFilterType.reverse
+    : TransferFilterType.walletTransfer,
+            userType: item.userType ?? "",
+            userName: item.name ?? "",
+            regMobNo: item.mobileNumber ?? "",
+            amount: double.tryParse(item.amount ?? "0") ?? 0,
+          ),
+        );
+      },
+    );
+  }),
+)
           ],
         ),
       ),

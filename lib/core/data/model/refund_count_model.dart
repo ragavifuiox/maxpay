@@ -27,16 +27,19 @@ class RefundCount {
 
 class Code {
   int? refundAmount;
+  int?count;
 
-  Code({this.refundAmount});
+  Code({this.refundAmount, this.count});
 
   Code.fromJson(Map<String, dynamic> json) {
     refundAmount = json['refund_amount'];
+    count = json['refund_count'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['refund_amount'] = refundAmount;
+    data['refund_count'] = count;
     return data;
   }
 }

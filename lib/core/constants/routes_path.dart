@@ -52,4 +52,6 @@ class AppRoutes {
   static const String dthcustomer='/dthcustomer';
   static const String transferdetail='/transferdetail';
   static const String electricity='/electricity';
+  static const String water='/water';
+  static const String gas='/gas';
 }

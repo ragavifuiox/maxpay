@@ -100,32 +100,34 @@ class WalletTransferScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
 
-                  DropdownButtonFormField<String>(
-                    initialValue: "Wallet Transfer",
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: const Color(0xffF4F4F4),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 15,
-                        vertical: 16,
-                      ),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide.none,
-                      ),
-                    ),
-                    items: const [
-                      DropdownMenuItem(
-                        value: "Wallet Transfer",
-                        child: Text("Wallet Transfer"),
-                      ),
-                      DropdownMenuItem(
-                        value: "Wallet Reverse",
-                        child: Text("Wallet Reverse"),
-                      ),
-                    ],
-                    onChanged: (value) {},
-                  ),
+                 Obx(
+  () => DropdownButtonFormField<String>(
+    value: controller.selectedPaymentType.value,
+    decoration: InputDecoration(
+      filled: true,
+      fillColor: const Color(0xffF4F4F4),
+      contentPadding: const EdgeInsets.symmetric(
+        horizontal: 15,
+        vertical: 16,
+      ),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: BorderSide.none,
+      ),
+    ),
+    items: controller.walletTypes.map((type) {
+      return DropdownMenuItem(
+        value: type,
+        child: Text(type),
+      );
+    }).toList(),
+    onChanged: (value) {
+      if (value != null) {
+        controller.selectedPaymentType.value = value;
+      }
+    },
+  ),
+),
 
                   const SizedBox(height: 20),
 
@@ -169,7 +171,7 @@ class WalletTransferScreen extends StatelessWidget {
                         await controller.walletTransfer(
                           staffid: staff.userId.toString(),
                           amount: amountController.text.trim(),
-                          paymenttype: "Wallet Transfer",
+                         paymenttype: controller.selectedPaymentType.value,
                         );
 
                         amountController.clear();
