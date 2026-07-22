@@ -316,24 +316,7 @@ class ConfirmTransactionPage extends GetView<PrePaidController> {
                       onTap: controller.isRechargeLoading.value
                           ? null
                           : () async {
-                              // if (whatsappController.text.trim().isEmpty) {
-                              //   Get.snackbar(
-                              //     "Validation",
-                              //     "Please enter WhatsApp number",
-                              //   );
-                              //   return;
-                              // }
-                              // if (amountController.text.trim().isEmpty) {
-                              //   CustomToast.error("Please re-enter amount");
-                              //   return;
-                              // }
-
-                              // if (amountController.text.trim() != enteredAmount.trim()) {
-                              //   CustomToast.error(
-                              //     "Re-entered amount does not match the transaction amount",
-                              //   );
-                              //   return;
-                              // }
+                             
                               if (amountController.text.trim().isEmpty) {
                                 Get.snackbar(
                                   "Validation",
@@ -380,65 +363,7 @@ class ConfirmTransactionPage extends GetView<PrePaidController> {
                               );
 
                               AppLogger.debugPrint("AFTER API CALL");
-                              // final rechargeData =
-                              //     controller.rechargeResponse.value;
-
-                              // if (success && rechargeData != null) {
-                              //   final apiData = rechargeData.data?.apiResponse;
-
-                              //   Get.to(
-                              //     () => SuccessRechargePage(
-                              //       productName:
-                              //           apiData?.logo ??
-                              //           confirmData.productName ??
-                              //           "",
-                              //       operatorLogo: apiData?.logo ?? "",
-                              //       operatorInitial:
-                              //           (apiData?.operatorName?.isNotEmpty ??
-                              //               false)
-                              //           ? apiData!.operatorName![0]
-                              //           : "J",
-
-                              //       operatorColor: Colors.red,
-                              //     rechargeId: response.data!.recharge!.id.toString(), // <-- add this
-                              //       transactionNo:
-                              //           apiData?.mobileno ?? mobileNumber,
-
-                              //       rechargeAmount:
-                              //           (apiData?.amount ??
-                              //                   amountController.text)
-                              //               .currencyIndian,
-
-                              //       transactionId: apiData?.txnid ?? "",
-
-                              //       dateTime: apiData?.requestDatetime ?? "",
-                              //     ),
-                              //   );
-                              // }
-
-                              //                               final rechargeData = controller.rechargeResponse.value;
-
-                              // if (success && rechargeData != null) {
-                              //   final apiData = rechargeData.data?.apiResponse;
-
-                              //   Get.to(
-                              //     () => SuccessRechargePage(
-                              //       rechargeId: rechargeData.data?.recharge?.id?.toString() ?? "",
-                              //       productName: apiData?.logo ?? confirmData.productName ?? "",
-                              //       operatorLogo: apiData?.logo ?? "",
-                              //       operatorInitial:
-                              //           (apiData?.operatorName?.isNotEmpty ?? false)
-                              //               ? apiData!.operatorName![0]
-                              //               : "J",
-                              //       operatorColor: Colors.red,
-                              //       transactionNo: apiData?.mobileno ?? mobileNumber,
-                              //       rechargeAmount:
-                              //           (apiData?.amount ?? amountController.text).currencyIndian,
-                              //       transactionId: apiData?.txnid ?? "",
-                              //       dateTime: apiData?.requestDatetime ?? "",
-                              //     ),
-                              //   );
-                              // }
+                            
 
                               final rechargeData =
                                   controller.rechargeResponse.value;
@@ -471,31 +396,32 @@ class ConfirmTransactionPage extends GetView<PrePaidController> {
                                   ),
                                 );
                               } else {
-                                Get.to(
-                                  () => FailedRechargePage(
-                                    rechargeId:
-                                        rechargeData?.data?.recharge?.id
-                                            ?.toString() ??
-                                        "",
-                                    productName:
-                                        apiData?.operatorName ?? productName,
-                                    operatorLogo: apiData?.logo ?? logoUrl,
-                                    operatorInitial:
-                                        (apiData?.operatorName?.isNotEmpty ??
-                                            false)
-                                        ? apiData!.operatorName![0]
-                                        : "J",
-                                    operatorColor: Colors.red,
-                                    transactionNo:
-                                        apiData?.mobileno ?? mobileNumber,
-                                    rechargeAmount:
-                                        (apiData?.amount ??
-                                                amountController.text)
-                                            .currencyIndian,
-                                    transactionId: apiData?.txnid ?? "",
-                                    dateTime: apiData?.requestDatetime ?? "",
-                                  ),
-                                );
+                               Get.to(
+  () => FailedRechargePage(
+    rechargeId:
+        rechargeData?.data?.recharge?.id?.toString() ?? "",
+    productName:
+        apiData?.operatorName ?? productName,
+    operatorLogo:
+        apiData?.logo ?? logoUrl,
+    operatorInitial:
+        (apiData?.operatorName?.isNotEmpty ?? false)
+            ? apiData!.operatorName![0]
+            : "J",
+    operatorColor: Colors.red,
+    transactionNo:
+        apiData?.mobileno ?? mobileNumber,
+    rechargeAmount:
+        (apiData?.amount ?? amountController.text)
+            .currencyIndian,
+    transactionId:
+        apiData?.txnid ?? "",
+    dateTime:
+        rechargeData?.data?.recharge?.requestTime ??
+        apiData?.requestDatetime ??
+        "",
+  ),
+);
                               }
                             },
                     ),

@@ -68,7 +68,7 @@ class ApiService {
 
           // ✅ Only handle 401 if internet is available
           if (e.response?.statusCode == 401) {
-            _handleUnauthorized();
+            // _handleUnauthorized();
           } else {
             // g.Get.snackbar(
             //   "Error",

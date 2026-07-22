@@ -64,7 +64,7 @@ class ReportPage extends StatelessWidget {
                     () {
                       Get.toNamed(AppRoutes.walletcredit);
                     },
-                    SvgPicture.asset(AssetImages.wallet, width: 24.w),
+                    SvgPicture.asset(AssetImages.walletcredit, width: 24.w),
                   ),
 
 
@@ -74,7 +74,7 @@ class ReportPage extends StatelessWidget {
                     () {
                       Get.toNamed(AppRoutes.transferdetail);
                     },
-                    SvgPicture.asset(AssetImages.refunds, width: 24.w),
+                    SvgPicture.asset(AssetImages.TransferDetial, width: 24.w),
                   ),
                   _buildMenuTile(
                     context,
@@ -103,6 +103,8 @@ class ReportPage extends StatelessWidget {
                     SvgPicture.asset(AssetImages.cashback, width: 24.w),
                   ),
 
+                 
+
 
                   
                   _buildMenuTile(
@@ -129,6 +131,7 @@ class ReportPage extends StatelessWidget {
                     },
                     SvgPicture.asset(AssetImages.grade, width: 21.w),
                   ),
+
                 ],
               ),
             ),

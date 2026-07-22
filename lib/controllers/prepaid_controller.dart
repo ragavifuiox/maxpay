@@ -234,7 +234,8 @@ class PrePaidController extends GetxController {
           CustomToast.error(failure.message);
         },
         (response) async {
-          final backendOperator = response.product?.name?.trim() ?? "";
+          final backendOperator =
+    response.lookup?.records?.operator?.trim() ?? "";
 
           operatorName.value = backendOperator;
           operatorWebsite.value = response.product?.description ?? "";

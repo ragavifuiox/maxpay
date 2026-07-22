@@ -25,7 +25,6 @@ class UpdatePinController extends GetxController {
   RxBool isLoading = false.obs;
  Rx<SendUpdatePinOtpResponse?> otpResponse =
       Rx<SendUpdatePinOtpResponse?>(null);
-
 RxInt remainingSeconds = 60.obs;
 RxBool canResendOtp = false.obs;
 

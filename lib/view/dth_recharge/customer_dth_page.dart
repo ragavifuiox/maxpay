@@ -185,7 +185,7 @@ final productdetid = args['productdetid'] ?? '';
 
                   Get.to(
                     () => DthSuccessPage(
-
+            rechargeId: rechargeData?.transactionId?.toString() ?? "",
                       productName:
                           confirmData?.productName ?? "",
 

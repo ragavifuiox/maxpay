@@ -324,12 +324,15 @@ class ConfirmDthPage extends GetView<DthController> {
                                   Get.to(
                                     () => DthSuccessPage(
                                       productName: productName,
+                                          rechargeId: rechargeData?.transactionId?.toString() ?? "",
+
                                       operatorInitial:
                                           (apiData?.operatorName?.isNotEmpty ??
                                               false)
                                           ? apiData!.operatorName![0]
                                           : "J",
                                       operatorColor: Colors.red,
+                                      
                                       transactionNo:
                                           apiData?.mobileno ?? customerId,
                                       rechargeAmount:

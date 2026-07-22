@@ -11,7 +11,6 @@ import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
 import 'package:maxpay/view/broadband/broadband_confirm_page.dart';
 import 'package:maxpay/view/electricity_bill/confirm_electricity.dart';
-import 'package:maxpay/view/fastag_recharge/confirm_fastag_page.dart';
 
 
 
@@ -22,14 +21,14 @@ class _BillColors {
   static const fieldGreyDark = Color(0xFF2A2E33);
 }
 
-class FastagRechargePage extends StatefulWidget {
-  const FastagRechargePage({super.key});
+class BroadBandPage extends StatefulWidget {
+  const BroadBandPage({super.key});
 
   @override
-  State<FastagRechargePage> createState() => _FastagPageState();
+  State<BroadBandPage> createState() => _BroadBankdPageState();
 }
 
-class _FastagPageState extends State<FastagRechargePage> {
+class _BroadBankdPageState extends State<BroadBandPage> {
   String _selectedBoard = 'Kerala State Electricity';
   bool _isBillFetched = false;
 
@@ -173,7 +172,7 @@ class _FastagPageState extends State<FastagRechargePage> {
                   height: 42.h,
                   child: ElevatedButton(
                     onPressed: (){
-                      Get.to(ConfirmFastagPage());
+                      Get.to(ConfirmElectricity());
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor:AppColors.clrPrimary,
@@ -239,7 +238,7 @@ class _FastagPageState extends State<FastagRechargePage> {
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
-      appBar: CommonAppBar(title: "Fastag Recharge"),
+      appBar: CommonAppBar(title: "BroadBand Bill"),
       body: SafeArea(
         child: Column(
           children: [

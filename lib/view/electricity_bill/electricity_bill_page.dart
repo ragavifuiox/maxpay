@@ -152,7 +152,7 @@ class _ElectricityBillPageState extends State<ElectricityBillPage> {
                       shape: BoxShape.circle,
                       border: Border.all(color: Colors.grey.withValues(alpha: 0.4)),
                     ),
-                    child: Icon(Icons.close, size: 12.sp, color: Colors.grey),
+                    child: Icon(Icons.close, size: 12.sp, color: Colors.red),
                   ),
                 ),
                 SizedBox(height: 4.h),
@@ -221,9 +221,7 @@ class _ElectricityBillPageState extends State<ElectricityBillPage> {
     );
   }
 
-  // ------------------------------------------------------------------
-  // BUILD
-  // ------------------------------------------------------------------
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -279,34 +277,37 @@ class _ElectricityBillPageState extends State<ElectricityBillPage> {
                     SizedBox(height: 20.h),
 
                     /// 🔹 BOARD SELECTION
-                    GestureDetector(
-                      onTap: () => _showBoardSelector(context),
-                      child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 15.h),
-                        decoration: BoxDecoration(
-                          color: fieldColor,
-                          borderRadius: BorderRadius.circular(10.r),
-                        ),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Text(
-                                _selectedBoard,
-                                style: TextStyle(
-                                  fontSize: 14.sp,
-                                  color: isDark ? Colors.white : Colors.black,
-                                ),
-                              ),
-                            ),
-                            Icon(
-                              Icons.cancel,
-                              color: Colors.grey.withValues(alpha: 0.5),
-                              size: 20.sp,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+                   Container(
+  padding: EdgeInsets.symmetric(horizontal: 12.w),
+  decoration: BoxDecoration(
+    color: fieldColor,
+    borderRadius: BorderRadius.circular(10.r),
+  ),
+  child: DropdownButtonHideUnderline(
+    child: DropdownButton<String>(
+      value: _selectedBoard,
+      isExpanded: true,
+      icon: const Icon(Icons.keyboard_arrow_down),
+      items: _boards.map((board) {
+        return DropdownMenuItem<String>(
+          value: board,
+          child: Text(
+            board,
+            style: TextStyle(
+              fontSize: 14.sp,
+              color: isDark ? Colors.white : Colors.black,
+            ),
+          ),
+        );
+      }).toList(),
+      onChanged: (value) {
+        setState(() {
+          _selectedBoard = value!;
+        });
+      },
+    ),
+  ),
+),
                     SizedBox(height: 15.h),
 
                     /// 🔹 CUSTOMER ID INPUT
