@@ -55,36 +55,41 @@ class ConfirmData {
     this.logo,
   });
 
-  ConfirmData.fromJson(Map<String, dynamic> json) {
-    planId = json['plan_id'];
-    productId = json['product_id'];
-    productName = json['product_name'];
-    amount = json['amount'];
-    planDetails = json['plan_details'];
-    paymentStatus = json['payment_status'];
-    transactionNo = json['transaction_no'];
-    availableBalance = json['available_balance']?.toString();
-    remainingBalance = json['remaining_balance']?.toString();
-    transactionAmount = json['transaction_amount'];
-    commision = json['commision'];
-    // remainingBalance = json['remaining_balance'];
-    logo = json['product_logp'];
-  }
+ ConfirmData.fromJson(Map<String, dynamic> json) {
+  planId = json['plan_id']?.toString();
+  productId = json['product_id'];
+  productName = json['product_name'];
+  amount = json['amount']?.toString();
+  planDetails = json['plan_details'];
+  paymentStatus = json['payment_status'];
+  transactionNo = json['transaction_no'];
+
+  availableBalance = json['available_balance']?.toString();
+  transactionAmount = json['transaction_amount']?.toString();
+
+  commision = json['commision']?.toString();
+
+  remainingBalance = json['remaining_balance']?.toString();
+
+  logo = json['product_logp'];
+}
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['plan_id'] = planId;
-    data['product_id'] = productId;
-    data['product_name'] = productName;
-    data['amount'] = amount;
-    data['plan_details'] = planDetails;
-    data['payment_status'] = paymentStatus;
-    data['transaction_no'] = transactionNo;
-    data['available_balance'] = availableBalance;
-    data['transaction_amount'] = transactionAmount;
-    data['commision'] = commision;
-    data['remaining_balance'] = remainingBalance;
-    data['product_logp'] = logo;
-    return data;
-  }
+  final Map<String, dynamic> data = <String, dynamic>{};
+
+  data['plan_id'] = planId;
+  data['product_id'] = productId;
+  data['product_name'] = productName;
+  data['amount'] = amount;
+  data['plan_details'] = planDetails;
+  data['payment_status'] = paymentStatus;
+  data['transaction_no'] = transactionNo;
+  data['available_balance'] = availableBalance;
+  data['transaction_amount'] = transactionAmount;
+  data['commision'] = commision;
+  data['remaining_balance'] = remainingBalance;
+  data['product_logp'] = logo;
+
+  return data;
+}
 }
