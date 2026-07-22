@@ -1,8 +1,3 @@
-
-
-
-import 'package:maxpay/core/data/model/update_payment_status.dart';
-
 class ApiRoutes {
   static const baseURL = "http://139.59.91.7/test_paylinkonline.in/public/api";
   static const login = "/retailer_login_sendotp";
@@ -81,5 +76,4 @@ class ApiRoutes {
   static const updatepaymentStatus = "/update_payment_status";
   static const wallettransferdetail = "/satff_wallet_history";
   static const staffwalletreverse = "/staff_wallet_reverse";
-  
 }
