@@ -4,6 +4,7 @@ import 'package:maxpay/core/data/model/graph_model.dart';
 import 'package:maxpay/core/domain/repository/graph_repository.dart';
 import 'package:maxpay/core/error/failure.dart';
 import 'package:maxpay/core/services/api_services.dart';
+import 'package:maxpay/core/utils/logg_helper.dart';
 
 
 class GraphRepoImpl implements GraphRepository {
@@ -17,6 +18,7 @@ class GraphRepoImpl implements GraphRepository {
       final model = Graph.fromJson(response);
       return Right(model);
     } catch (e) {
+       AppLogger.logError("Api ${ApiRoutes.graph}" + e.toString());
       return Left(ServerFailure(message: e.toString()));
     }
   }

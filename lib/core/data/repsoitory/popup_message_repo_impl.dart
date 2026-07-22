@@ -4,6 +4,7 @@ import 'package:maxpay/core/data/model/popup_message_mode.dart';
 import 'package:maxpay/core/domain/repository/popup_message_repository.dart';
 import 'package:maxpay/core/error/failure.dart';
 import 'package:maxpay/core/services/api_services.dart';
+import 'package:maxpay/core/utils/logg_helper.dart';
 
 class PopupMessageRepoImpl implements PopupMessageRepository {
   final ApiService apiService;
@@ -16,6 +17,7 @@ class PopupMessageRepoImpl implements PopupMessageRepository {
       final model = PopupMessage.fromJson(response);
       return Right(model);
     } catch (e) {
+     AppLogger.logError("Api ${ApiRoutes.popupMessage}" + e.toString());
       return Left(ServerFailure(message: e.toString()));
     }
   }

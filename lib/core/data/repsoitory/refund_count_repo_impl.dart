@@ -4,6 +4,7 @@ import 'package:maxpay/core/data/model/refund_count_model.dart';
 import 'package:maxpay/core/domain/repository/refund_count_repository.dart';
 import 'package:maxpay/core/error/failure.dart';
 import 'package:maxpay/core/services/api_services.dart';
+import 'package:maxpay/core/utils/logg_helper.dart';
 
 
 class RefundCountRepoImpl implements RefundCountRepository {
@@ -17,6 +18,7 @@ class RefundCountRepoImpl implements RefundCountRepository {
       final model = RefundCount.fromJson(response);
       return Right(model);
     } catch (e) {
+      AppLogger.logError("Api ${ApiRoutes.refundcount}" + e.toString());
       return Left(ServerFailure(message: e.toString()));
     }
   }

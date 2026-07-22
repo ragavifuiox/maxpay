@@ -4,7 +4,7 @@ import 'package:maxpay/core/data/model/compalints_model.dart';
 import 'package:maxpay/core/domain/repository/compalints_repository.dart';
 import 'package:maxpay/core/error/failure.dart';
 import 'package:maxpay/core/services/api_services.dart';
-
+import 'package:maxpay/core/utils/logg_helper.dart';
 
 class ComplaintsRepoImpl implements ComplaintsRepository {
   final ApiService apiService;
@@ -17,6 +17,7 @@ class ComplaintsRepoImpl implements ComplaintsRepository {
       final model = Complaints.fromJson(response);
       return Right(model);
     } catch (e) {
+     AppLogger.logError("Api ${ApiRoutes.complaints}" + e.toString());
       return Left(ServerFailure(message: e.toString()));
     }
   }
