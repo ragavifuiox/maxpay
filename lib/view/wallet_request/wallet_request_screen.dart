@@ -143,7 +143,7 @@ class WalletRequestScreen extends StatelessWidget {
 
                 Obx(() {
   return Text(
-    "₹ ${controller.dueamount.value?.code?.pendingAmount ?? 0}",
+    "₹ ${controller.dueamount.value?.data?.pendingAmount ?? 0}",
     style: TextStyle(
       color: Colors.white,
       fontSize: 18.sp,
@@ -151,7 +151,8 @@ class WalletRequestScreen extends StatelessWidget {
     ),
   );
 })
-                  ],
+
+            ],
                 ),
               ),
 
