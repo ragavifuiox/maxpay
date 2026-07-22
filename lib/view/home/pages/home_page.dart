@@ -523,6 +523,7 @@ import 'package:maxpay/controllers/transaction_report_controller.dart';
 import 'package:maxpay/core/constants/asset_images.dart';
 import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
+import 'package:maxpay/core/data/model/today_credit_model.dart';
 import 'package:maxpay/core/di/service_locator.dart';
 import 'package:maxpay/core/extensions/currency.dart';
 import 'package:maxpay/view/home/widgets/earnings_chart.dart';
@@ -836,18 +837,33 @@ class HomePageScreen extends GetView<HomePageController> {
                                 ),
                               ),
 
+                            
+
+
+                              
                               Obx(() {
                                 final amount =
                                     controller
                                         .todaycredit
                                         .value
-                                        ?.code
+                                        ?.data
                                         ?.todayCreditAmount ??
                                     0;
 
+                            
+                                final count = controller
+                                        .todaycredit
+                                        .value
+                                        ?.data
+                                        ?.totalcreditamount ??
+                                    0;
+
+
                                 return StatCard(
-                                  title: 'Todays Credit',
-                                  value: amount.toString().currencyIndian,
+                                   title: 'Todays Credit',
+                                    
+                                  value:
+                                      '${amount.toString().currencyIndian}/\n$count Nos',
                                   borderColor: isDark
                                       ? AppColors.clrPrimary
                                       : Color(0x66495BFF),
@@ -856,15 +872,16 @@ class HomePageScreen extends GetView<HomePageController> {
                                           Brightness.dark
                                       ? const Color.fromARGB(255, 171, 171, 171)
                                       : AppColors.darktextclr,
-                                  bgColor: AppColors.darkBlue.withValues(
-                                    alpha: 0.04,
-                                  ),
-                                  imageWidget: SvgPicture.asset(
+                                   imageWidget: SvgPicture.asset(
                                     AssetImages.todaysCredit,
                                     height: 32.h,
                                   ),
+                                   bgColor: AppColors.darkBlue.withValues(
+                                    alpha: 0.04,
+                                  ),
                                 );
                               }),
+
 
                               Obx(() {
                                 final refund = controller.refundcount.value?.code;

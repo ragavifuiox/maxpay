@@ -239,7 +239,8 @@ class AddKycController extends GetxController {
 
       result.fold(
         (failure) {
-          Get.snackbar('Error', failure.message);
+             CustomToast.error(failure.message);
+         
         },
         (data) {
           news.value = data;

@@ -148,14 +148,14 @@ class AddWalletScreen extends GetView<AddWalletController> {
                   return Center(child: CircularProgressIndicator());
                 }
 
-                if (controller.walletQrHistory.value.code?.isEmpty ?? true) {
+                if (controller.walletQrHistory.value.data?.isEmpty ?? true) {
                   return Center(child: Text("No Transactions"));
                 }
                 return Column(
                   spacing: 12,
                   crossAxisAlignment: .start,
                   children: [
-                    ...(controller.walletQrHistory.value.code ?? []).map(
+                    ...(controller.walletQrHistory.value.data ?? []).map(
                       (e) => transactionCard(
                         context: context,
                         txnId: e.txnId ?? '',

@@ -155,63 +155,114 @@ const Align(
 ),
 
 const SizedBox(height: 12),
+Obx(() {
+  final controller = Get.find<AddWalletController>();
 
-FutureBuilder<List<Map<String, dynamic>>>(
-  future: Get.find<AddWalletController>().getInstalledUpiApps(),
-  builder: (context, snapshot) {
-    if (!snapshot.hasData) {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
-    }
-
-    final apps = snapshot.data!;
-
-    if (apps.isEmpty) {
-      return const Text("No UPI apps installed");
-    }
-
-    return Wrap(
-      spacing: 12,
-      runSpacing: 12,
-      children: apps.map((app) {
-        return InkWell(
-          onTap: () {
-            Get.find<AddWalletController>().openSpecificUpiApp(
-              packageName: app["packageName"],
-              url: url,
-            );
-          },
-          child: Container(
-            width: 70,
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey.shade300),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Image.memory(
-                  app["icon"],
-                  width: 40,
-                  height: 40,
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  app["name"],
-                  overflow: TextOverflow.ellipsis,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: 11),
-                ),
-              ],
-            ),
-          ),
-        );
-      }).toList(),
+  if (controller.isLoadingUpiApps.value) {
+    return const Center(
+      child: CircularProgressIndicator(),
     );
-  },
-),
+  }
+
+  if (controller.upiApps.isEmpty) {
+    return const Text("No UPI apps installed");
+  }
+
+  return Wrap(
+    spacing: 12,
+    runSpacing: 12,
+    children: controller.upiApps.map((app) {
+      return InkWell(
+        onTap: () {
+          controller.openSpecificUpiApp(
+            packageName: app["packageName"],
+            url: url,
+          );
+        },
+        child: Container(
+          width: 70,
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.grey.shade300),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Column(
+            children: [
+              Image.memory(
+                app["icon"],
+                width: 40,
+                height: 40,
+              ),
+              const SizedBox(height: 5),
+              Text(
+                app["name"],
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 11),
+              ),
+            ],
+          ),
+        ),
+      );
+    }).toList(),
+  );
+})
+// FutureBuilder<List<Map<String, dynamic>>>(
+//   future: Get.find<AddWalletController>().getInstalledUpiApps(),
+//   builder: (context, snapshot) {
+//     if (!snapshot.hasData) {
+//       return const Center(
+//         child: CircularProgressIndicator(),
+//       );
+//     }
+
+//     final apps = snapshot.data!;
+
+//     if (apps.isEmpty) {
+//       return const Text("No UPI apps installed");
+//     }
+
+//     return Wrap(
+//       spacing: 12,
+//       runSpacing: 12,
+//       children: apps.map((app) {
+//         return InkWell(
+//           onTap: () {
+//             Get.find<AddWalletController>().openSpecificUpiApp(
+//               packageName: app["packageName"],
+//               url: url,
+//             );
+//           },
+//           child: Container(
+//             width: 70,
+//             padding: const EdgeInsets.all(10),
+//             decoration: BoxDecoration(
+//               border: Border.all(color: Colors.grey.shade300),
+//               borderRadius: BorderRadius.circular(10),
+//             ),
+//             child: Column(
+//               mainAxisSize: MainAxisSize.min,
+//               children: [
+//                 Image.memory(
+//                   app["icon"],
+//                   width: 40,
+//                   height: 40,
+//                 ),
+//                 const SizedBox(height: 5),
+//                 Text(
+//                   app["name"],
+//                   overflow: TextOverflow.ellipsis,
+//                   textAlign: TextAlign.center,
+//                   style: const TextStyle(fontSize: 11),
+//                 ),
+//               ],
+//             ),
+//           ),
+//         );
+//       }).toList(),
+//     );
+//   },
+// ),
             ],
           ),
         ),

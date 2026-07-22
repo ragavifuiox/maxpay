@@ -19,7 +19,7 @@ class WalletBalanceScreen extends GetView<AddWalletController> {
     return Scaffold(
       appBar: CommonAppBar(title: "Wallet Balance"),
       body: Obx(() {
-        final historyList = controller.walletQrHistory.value.code ?? [];
+        final historyList = controller.walletQrHistory.value.data ?? [];
         final latestFive = historyList
             .take(3)
             .toList(); // API already latest-first

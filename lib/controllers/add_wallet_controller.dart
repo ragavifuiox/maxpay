@@ -26,7 +26,8 @@ static const MethodChannel _channel =
 
   RxBool isCheckingStatus = false.obs;
   Rx<WalletQrHistory> walletQrHistory = WalletQrHistory().obs;
-
+RxList<Map<String, dynamic>> upiApps = <Map<String, dynamic>>[].obs;
+RxBool isLoadingUpiApps = false.obs;
   @override
   void onInit() {
     super.onInit();
@@ -72,7 +73,13 @@ static const MethodChannel _channel =
     _timer = null;
     _activeTxnId = null;
   }
+Future<void> loadInstalledUpiApps() async {
+  if (upiApps.isNotEmpty) return;
 
+  isLoadingUpiApps.value = true;
+  upiApps.value = await getInstalledUpiApps();
+  isLoadingUpiApps.value = false;
+}
   Future<void> checkPaymentStatus(String txnId) async {
     if (isCheckingStatus.value) return;
     isCheckingStatus.value = true;
@@ -261,10 +268,8 @@ Future<void> openSpecificUpiApp({
       },
     );
   } catch (e) {
-    Get.snackbar(
-      "Error",
-      e.toString(),
-    );
+       CustomToast.error(e.toString());
+  
   }
 }
 

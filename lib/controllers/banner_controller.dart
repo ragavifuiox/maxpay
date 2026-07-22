@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart' hide Banner;
 import 'package:get/get.dart';
+import 'package:maxpay/core/constants/snackbar.dart';
 import 'package:maxpay/core/data/model/advertisement_model.dart';
 import 'package:maxpay/core/data/model/banner_model.dart';
 import 'package:maxpay/core/domain/usecase/advertisement_usecase.dart';
@@ -44,7 +45,8 @@ class BannerController extends GetxController {
     result.fold(
       (failure) {
         isLoading.value = false;
-        Get.snackbar("Error", failure.message);
+           CustomToast.error(failure.message);
+       
       },
       (data) {
         bannerData.value = data;

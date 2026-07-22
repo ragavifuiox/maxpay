@@ -5,7 +5,6 @@ class CustomToast {
   CustomToast(String s);
 
 
-  /// SUCCESS TOAST
   static void success(String message) {
     Fluttertoast.showToast(
       msg: message,
