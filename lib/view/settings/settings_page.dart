@@ -107,7 +107,7 @@ class SettingsPage extends StatelessWidget {
                   Get.toNamed(AppRoutes.webloginqr);
                 },
                 child: Padding(
-                  padding: EdgeInsets.only(right: 16.w),
+                  padding: EdgeInsets.only(right: 37.w),
                   child: Image.asset(
                     AssetImages.qrcode,
                     width: 26.w,

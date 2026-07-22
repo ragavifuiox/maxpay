@@ -10,8 +10,8 @@ import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
 import 'package:maxpay/view/broadband/broadband_confirm_page.dart';
+import 'package:maxpay/view/cabletv/cable_tv_confirm_page.dart';
 import 'package:maxpay/view/electricity_bill/confirm_electricity.dart';
-import 'package:maxpay/view/fastag_recharge/confirm_fastag_page.dart';
 
 
 
@@ -22,14 +22,14 @@ class _BillColors {
   static const fieldGreyDark = Color(0xFF2A2E33);
 }
 
-class FastagRechargePage extends StatefulWidget {
-  const FastagRechargePage({super.key});
+class LandlineBillPage extends StatefulWidget {
+  const LandlineBillPage({super.key});
 
   @override
-  State<FastagRechargePage> createState() => _FastagPageState();
+  State<LandlineBillPage> createState() => _LandlineBillPageState();
 }
 
-class _FastagPageState extends State<FastagRechargePage> {
+class _LandlineBillPageState extends State<LandlineBillPage> {
   String _selectedBoard = 'Kerala State Electricity';
   bool _isBillFetched = false;
 
@@ -173,7 +173,7 @@ class _FastagPageState extends State<FastagRechargePage> {
                   height: 42.h,
                   child: ElevatedButton(
                     onPressed: (){
-                      Get.to(ConfirmFastagPage());
+                      Get.to(ConfirmElectricity());
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor:AppColors.clrPrimary,
@@ -239,7 +239,7 @@ class _FastagPageState extends State<FastagRechargePage> {
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
-      appBar: CommonAppBar(title: "Fastag Recharge"),
+      appBar: CommonAppBar(title: "Landline Bill"),
       body: SafeArea(
         child: Column(
           children: [
@@ -474,7 +474,7 @@ class _FastagPageState extends State<FastagRechargePage> {
                       setState(() => _isBillFetched = true);
                     } else {
                    
-                      Get.to(BroadbandConfirmPage());
+                      Get.to(CableTvConfirmPage());
                     }
                   },
                   style: ElevatedButton.styleFrom(

@@ -26,17 +26,20 @@ import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/core/di/service_locator.dart';
 import 'package:maxpay/global_widget/insufficient_balance_page.dart';
 import 'package:maxpay/view/add_wallet/add_wallet_screen.dart';
+import 'package:maxpay/view/cabletv/cable_tv_page.dart';
 import 'package:maxpay/view/cashback/cash_back_screen.dart';
 import 'package:maxpay/view/dispute/dispute_screen.dart';
 import 'package:maxpay/view/dth_recharge/confirm_dth_page.dart';
 import 'package:maxpay/view/dth_recharge/customer_dth_page.dart';
 import 'package:maxpay/view/dth_recharge/dth_recharge_page.dart';
+import 'package:maxpay/view/dth_refresh/dth_refresh_page.dart';
 import 'package:maxpay/view/electricity_bill/electricity_bill_page.dart';
 import 'package:maxpay/view/gas_bill/gas_bill_page.dart';
 import 'package:maxpay/view/grade/grade_screen.dart';
 import 'package:maxpay/view/home/pages/home_page.dart';
 import 'package:maxpay/view/home/widgets/services_section.dart';
 import 'package:maxpay/view/kyc/kyc_screen.dart';
+import 'package:maxpay/view/landline/landline_bill_page.dart';
 import 'package:maxpay/view/login/biometrics/biometrics_intro.dart';
 import 'package:maxpay/view/login/biometrics/biometrics_scanning.dart';
 import 'package:maxpay/view/login/biometrics/enter_pin_screen.dart';
@@ -222,6 +225,9 @@ class AppPages {
     GetPage(name: AppRoutes.enterPin, page: () => PinCodeEnterPage()),
     GetPage(name: AppRoutes.water, page: () => WatterBill()),
     GetPage(name: AppRoutes.gas, page: () =>GasBillPage()),
+    GetPage(name: AppRoutes.landline, page: () =>LandlineBillPage()),
+    GetPage(name: AppRoutes.dthrefresh, page: () =>DthRefreshScreen()),
+    GetPage(name: AppRoutes.cabletv, page: () =>CableTvPage()),
 
     // GetPage(name: AppRoutes.main, page: () => const NavPageScreen()),
     // GetPage(name: AppRoutes.myearning, page: () => const MyEarningsScreen()),

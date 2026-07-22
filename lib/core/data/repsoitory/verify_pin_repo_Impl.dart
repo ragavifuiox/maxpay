@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:dio/dio.dart';
 import 'package:maxpay/core/constants/api_routes.dart';
 import 'package:maxpay/core/data/model/erify_pin_model.dart';
 import 'package:maxpay/core/domain/repository/verify_pin_repository.dart';
@@ -24,7 +25,8 @@ class VerifyPinRepoImpl implements VerifyPinRepository {
 
       final model = VerifyPin.fromJson(response);
       return Right(model);
-    } catch (e) {
+    } on DioException catch (e) {
+      print(e.response);
       return Left(ServerFailure(message: e.toString()));
     }
   }

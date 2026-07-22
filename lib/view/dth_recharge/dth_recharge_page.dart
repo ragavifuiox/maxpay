@@ -1,7 +1,3 @@
-
-
-
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -25,14 +21,14 @@ import 'package:maxpay/core/data/model/plan_model.dart';
 class DTHRechargePage extends StatefulWidget {
   const DTHRechargePage({super.key});
 
-  @override
+ @override
   State<DTHRechargePage> createState() => _DTHRechargePageState();
 }
 
 class _DTHRechargePageState extends State<DTHRechargePage>
     with SingleTickerProviderStateMixin {
   Data? selectedOperatorObj;
-  String customerHint = "Enter Customer ID";
+  String customerHint = "Enter Number";
 bool? isPaymentReceived;
   bool showCustomerInfo = false;
 
@@ -156,17 +152,11 @@ print("After getPlans");
       // FLOW 1: only productId
       await dthcontroller.searchDth(selectedOperatorObj!.id.toString());
     } else {
-      // FLOW 2: productId + amount
-      // await dthcontroller.searchDth(
-      //   selectedOperatorObj!.id.toString(),
-      //   amount: amount,
-      // );
+  
     }
   }
 
-  /// Called only when the user taps the "Proceed" button.
-  /// Performs the balance check, confirms the DTH transaction,
-  /// and then navigates to the confirmation screen.
+
   Future<void> _onProceed() async {
     if (customerIdController.text.trim().isEmpty) {
       CustomToast.error("Please enter Customer ID");

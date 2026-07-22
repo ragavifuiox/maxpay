@@ -34,7 +34,54 @@ class ProfileScreen extends GetView<ProfileController> {
 
       resizeToAvoidBottomInset: true,
 
-      appBar: const CommonAppBar(title: "Profile"),
+      appBar: AppBar(
+         centerTitle: false,
+
+      elevation: 0,
+      scrolledUnderElevation: 0,
+      surfaceTintColor: Colors.transparent,
+        backgroundColor: theme.scaffoldBackgroundColor,
+  
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back_ios, color: theme.colorScheme.onSurface),
+          onPressed: () => Get.back(),
+        ),
+        title: Text(
+          "Profile",
+          style: TextStyle(
+          fontFamily: 'Poppins',
+          fontSize: 18,
+          fontWeight: FontWeight.w600,
+          color: theme.colorScheme.onSurface,
+        ),
+        ),
+        actions: [
+          Obx(() {
+            final profile = controller.profileData.value?.data;
+            final isActive = (profile?.status ?? "Active") == "Active";
+
+            return Container(
+              margin: const EdgeInsets.only(right: 16),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 14,
+                vertical: 6,
+              ),
+              decoration: BoxDecoration(
+                color: isActive ? Colors.green : Colors.grey,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Text(
+                isActive ? "Active" : "Inactive",
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            );
+          }),
+        ],
+      ),
 
       body: Obx(() {
         if (controller.isLoading.value) {
@@ -143,7 +190,18 @@ class ProfileScreen extends GetView<ProfileController> {
                             color: theme.colorScheme.onSurface,
                           ),
                         ),
+                      ],
+                    ),
+                  ),
+                ),
 
+                const SizedBox(height: 4),
+
+                /// USER TYPE (separate line, centered, to match screenshot)
+                Center(
+                  child: RichText(
+                    text: TextSpan(
+                      children: [
                         TextSpan(
                           text: "User Type: ",
 
@@ -158,6 +216,7 @@ class ProfileScreen extends GetView<ProfileController> {
 
                           style: TextHelper.max5.copyWith(
                             fontSize: 14.6,
+                            fontWeight: FontWeight.bold,
                             color: theme.colorScheme.primary,
                           ),
                         ),
@@ -177,6 +236,15 @@ class ProfileScreen extends GetView<ProfileController> {
 
                 const SizedBox(height: 18),
 
+                /// ADDRESS
+                _buildTitle(context, "Address"),
+
+                const SizedBox(height: 8),
+
+                _buildTextField(context, addresscontroller, maxLines: 2),
+
+                const SizedBox(height: 18),
+
                 /// PINCODE
                 _buildTitle(context, "Pin code"),
 
@@ -192,19 +260,6 @@ class ProfileScreen extends GetView<ProfileController> {
                 const SizedBox(height: 8),
 
                 _buildTextField(context, emailController),
-                const SizedBox(height: 18),
-                _buildTitle(context, "Address"),
-
-                const SizedBox(height: 8),
-
-                _buildTextField(context, addresscontroller),
-
-                const SizedBox(height: 18),
-                _buildTitle(context, "WhatsApp no"),
-
-                const SizedBox(height: 8),
-
-                _buildTextField(context, wpcontroller),
 
                 const SizedBox(height: 18),
 
@@ -214,6 +269,15 @@ class ProfileScreen extends GetView<ProfileController> {
                 const SizedBox(height: 8),
 
                 _buildTextField(context, phoneController),
+
+                const SizedBox(height: 18),
+
+                /// WHATSAPP
+                _buildTitle(context, "WhatsApp Number"),
+
+                const SizedBox(height: 8),
+
+                _buildTextField(context, wpcontroller),
 
                 const SizedBox(height: 35),
 
@@ -258,15 +322,26 @@ class ProfileScreen extends GetView<ProfileController> {
       child: Text(
         title,
 
-        style: TextHelper.max6.copyWith(color: theme.colorScheme.onSurface),
+
+
+        style:TextStyle(
+             fontSize: 15,
+             fontWeight: FontWeight.w400,
+             color: theme.colorScheme.onSurface,
+             fontFamily: 'Poppins'
+        ) 
+        
+        
+      
       ),
     );
   }
 
   Widget _buildTextField(
     BuildContext context,
-    TextEditingController controller,
-  ) {
+    TextEditingController controller, {
+    int maxLines = 1,
+  }) {
     final theme = Theme.of(context);
 
     return TextFormField(
@@ -274,19 +349,21 @@ class ProfileScreen extends GetView<ProfileController> {
 
       enabled: true,
 
-      style: TextStyle(color: theme.colorScheme.onSurface),
+      maxLines: maxLines,
+
+      style: TextStyle(fontFamily: 'Poppins',fontWeight: FontWeight.w400,color: theme.colorScheme.onSurface),
 
       decoration: InputDecoration(
         filled: true,
 
         fillColor: theme.brightness == Brightness.light
-            ? const Color(0xffF1F1F1)
+            ? AppColors.background
             : theme.colorScheme.surfaceContainer,
 
         disabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
 
-          borderSide: BorderSide(color: theme.colorScheme.outline),
+          borderSide: BorderSide(color:AppColors.border),
         ),
 
         contentPadding: const EdgeInsets.symmetric(
@@ -303,13 +380,13 @@ class ProfileScreen extends GetView<ProfileController> {
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
 
-          borderSide: BorderSide(color: theme.colorScheme.outline),
+          borderSide: BorderSide(color:AppColors.border),
         ),
 
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
 
-          borderSide: BorderSide(color: theme.colorScheme.primary),
+          borderSide: BorderSide(color:AppColors.border),
         ),
       ),
     );

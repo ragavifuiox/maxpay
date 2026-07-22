@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:maxpay/core/constants/snackbar.dart';
@@ -14,6 +13,7 @@ class GetBankController extends GetxController {
   final GetBankUseCase bankusecase;
   final WalletRequestUsecase walletRequestUsecase;
   final DueAmountUsecase dueAmountUsecase;
+
   GetBankController({
     required this.bankusecase,
     required this.walletRequestUsecase,
@@ -55,7 +55,9 @@ class GetBankController extends GetxController {
                 plans.first;
           }
         },
+        
       );
+
     } finally {
       isLoading.value = false;
     }

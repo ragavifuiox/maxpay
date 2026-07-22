@@ -65,7 +65,7 @@ class KycScreen extends StatelessWidget {
               ),
               const SizedBox(height: 22),
               Text(
-                "Address Proof",
+                "Bank Details",
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w500,

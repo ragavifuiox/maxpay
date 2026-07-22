@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart' hide Banner;
 import 'package:get/get.dart';
 import 'package:maxpay/core/data/model/advertisement_model.dart';
@@ -12,7 +13,7 @@ class BannerController extends GetxController {
   BannerController({
     required this.bannerUsecase,
     required this.advusecase,
-    });
+  });
 
   RxBool isLoading = false.obs;
 
@@ -23,12 +24,16 @@ class BannerController extends GetxController {
 
   late PageController pageController;
 
+  Timer? autoSlideTimer;
+
   @override
   void onInit() {
+    super.onInit();
+
     pageController = PageController();
+
     fetchbanner();
     fetchadv();
-    super.onInit();
   }
 
   Future<void> fetchbanner() async {
@@ -39,63 +44,84 @@ class BannerController extends GetxController {
     result.fold(
       (failure) {
         isLoading.value = false;
-        Get.snackbar('Error', failure.message);
+        Get.snackbar("Error", failure.message);
       },
       (data) {
         bannerData.value = data;
         isLoading.value = false;
 
-        startAutoSlide(); // 🔥 IMPORTANT FIX
+        startAutoSlide();
       },
     );
   }
 
-
-
- Future<void> fetchadv() async {
-    isLoading.value = true;
-
+  Future<void> fetchadv() async {
     final result = await advusecase();
 
     result.fold(
       (failure) {
-        isLoading.value = false;
-        Get.snackbar('Error', failure.message);
+        Get.snackbar("Error", failure.message);
       },
       (data) {
         advdata.value = data;
-        isLoading.value = false;
-
-       
       },
     );
   }
+
   void startAutoSlide() {
-    Future.delayed(const Duration(seconds: 3), () {
-      final list = bannerData.value?.data ?? [];
+    autoSlideTimer?.cancel();
 
-      if (list.isEmpty || !pageController.hasClients) return;
+    autoSlideTimer = Timer.periodic(
+      const Duration(seconds: 3),
+      (_) => nextBanner(),
+    );
+  }
 
-      int nextPage = currentIndex.value + 1;
+  void nextBanner() {
+    final list = bannerData.value?.data ?? [];
 
-      if (nextPage >= list.length) {
-        nextPage = 0;
-      }
+    if (list.isEmpty) return;
+    if (!pageController.hasClients) return;
 
-      pageController.animateToPage(
-        nextPage,
-        duration: const Duration(milliseconds: 500),
-        curve: Curves.easeInOut,
-      );
+    int next = currentIndex.value + 1;
 
-      currentIndex.value = nextPage;
+    if (next >= list.length) {
+      next = 0;
+    }
 
-      startAutoSlide(); // loop
-    });
+    pageController.animateToPage(
+      next,
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.easeInOut,
+    );
+
+    currentIndex.value = next;
+  }
+
+  void previousBanner() {
+    final list = bannerData.value?.data ?? [];
+
+    if (list.isEmpty) return;
+    if (!pageController.hasClients) return;
+
+    int previous = currentIndex.value - 1;
+
+    if (previous < 0) {
+      previous = list.length - 1;
+    }
+
+    pageController.animateToPage(
+      previous,
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.easeInOut,
+    );
+
+    currentIndex.value = previous;
   }
 
   @override
   void onClose() {
+    autoSlideTimer?.cancel();
     pageController.dispose();
     super.onClose();
   }

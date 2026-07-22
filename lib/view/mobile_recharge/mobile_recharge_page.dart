@@ -154,7 +154,7 @@ class _MobileRechargePageState extends State<MobileRechargePage>
         ),
 
         title: Text(
-          'Mobile Recharge',
+          'Mobile Prepaid Recharge',
 
           style: TextStyle(
             color: isDark ? Colors.white : Colors.black,
@@ -290,32 +290,39 @@ class _MobileRechargePageState extends State<MobileRechargePage>
                   controller: mobileController,
                   keyboardType: TextInputType.number,
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  onChanged: (String value) async {
-                    setState(() {
-                      showOperatorDropdown = value.isEmpty;
-                    });
+                onChanged: (String value) async {
+  setState(() {
+    showOperatorDropdown = value.isEmpty;
+  });
 
-                    if (value.length == 10) {
-                      await controller.checkOperator(value);
+  if (value.length == 10) {
+    await controller.checkOperator(value);
 
-                      final matched = controller.selectedPlan.value;
+    final matched = controller.selectedPlan.value;
 
-                      if (matched != null) {
-                        selectedOperator = matched.name ?? "";
-                        selectedProductId = matched.id.toString();
+    if (matched != null) {
+      selectedOperator = matched.name ?? "";
+      selectedProductId = matched.id.toString();
 
-                        await controller.searchPlans(selectedProductId, "");
-                        controller.applyTabFilter();
+      await controller.searchPlans(selectedProductId, "");
+      controller.applyTabFilter();
 
-                        setState(() {
-                          isPlanLoaded = true;
-                        });
-                      }
-                    } else {
-                      controller.operatorName.value = "";
-                      controller.operatorWebsite.value = "";
-                    }
-                  },
+      setState(() {
+        isPlanLoaded = true;
+      });
+    }
+  } else {
+    controller.operatorName.value = "";
+    controller.operatorWebsite.value = "";
+
+    // Clear operator selection
+    controller.selectedPlan.value = null;
+    selectedOperator = "";
+    selectedProductId = "";
+    isPlanLoaded = false;
+    controller.filteredSearchPlans.clear();
+  }
+},
                   decoration: InputDecoration(
                     hintText: 'Enter Mobile No',
                     hintStyle: TextStyle(color: Colors.grey, fontSize: 12.sp),
@@ -337,15 +344,35 @@ class _MobileRechargePageState extends State<MobileRechargePage>
                             children: [
                               if (hasText)
                                 InkWell(
+                                  // onTap: () {
+                                  //   mobileController.clear();
+                                  //   setState(() {
+                                  //     showOperatorDropdown =
+                                  //         true; // back to dropdown when cleared
+                                  //   });
+                                  //   controller.operatorName.value = "";
+                                  //   controller.operatorWebsite.value = "";
+                                  // },
+
+
                                   onTap: () {
-                                    mobileController.clear();
-                                    setState(() {
-                                      showOperatorDropdown =
-                                          true; // back to dropdown when cleared
-                                    });
-                                    controller.operatorName.value = "";
-                                    controller.operatorWebsite.value = "";
-                                  },
+  mobileController.clear();
+
+  controller.selectedPlan.value = null; // Clear selected operator
+  selectedOperator = "";
+  selectedProductId = "";
+  isPlanLoaded = false;
+
+  controller.operatorName.value = "";
+  controller.operatorWebsite.value = "";
+
+  // Clear plan list if needed
+  controller.filteredSearchPlans.clear();
+
+  setState(() {
+    showOperatorDropdown = true;
+  });
+},
                                   child: Icon(Icons.cancel, color: Colors.red),
                                 ),
                               SizedBox(width: 8),
@@ -422,20 +449,24 @@ class _MobileRechargePageState extends State<MobileRechargePage>
                               ),
                             );
                           }).toList(),
-                          onChanged: (Data? value) async {
-                            if (value == null) return;
+                         onChanged: (Data? value) async {
+  if (value == null) return;
 
-                            controller.selectedPlan.value = value;
-                            selectedOperator = value.name ?? "";
-                            selectedProductId = value.id.toString();
+  controller.selectedPlan.value = value;
+  selectedOperator = value.name ?? "";
+  selectedProductId = value.id.toString();
 
-                            await controller.searchPlans(selectedProductId, "");
-                            controller.applyTabFilter();
+  controller.operatorName.value = value.name ?? "";
+  controller.operatorWebsite.value = value.description ?? "";
 
-                            setState(() {
-                              isPlanLoaded = true;
-                            });
-                          },
+  await controller.searchPlans(selectedProductId, "");
+  controller.applyTabFilter();
+
+  setState(() {
+    isPlanLoaded = true;
+  });
+}
+
                         ),
                       ),
                     ),
@@ -444,7 +475,6 @@ class _MobileRechargePageState extends State<MobileRechargePage>
               }),
               SizedBox(height: 20.h),
 
-              SizedBox(height: 4.h),
 
               /// SEARCH / AMOUNT FIELD
               Container(

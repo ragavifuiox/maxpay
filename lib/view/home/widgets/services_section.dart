@@ -8,16 +8,23 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:maxpay/controllers/banner_controller.dart';
 import 'package:maxpay/controllers/homepage_controller.dart';
 import 'package:maxpay/controllers/menu_controlller.dart';
+import 'package:maxpay/controllers/transaction_report_controller.dart';
 import 'package:maxpay/core/constants/asset_images.dart';
 import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/core/di/service_locator.dart';
 import 'package:maxpay/core/extensions/currency.dart';
+import 'package:maxpay/view/broadband/broad_band_page.dart';
+import 'package:maxpay/view/cabletv/cable_tv_page.dart';
+import 'package:maxpay/view/dth_refresh/dth_refresh_page.dart';
 import 'package:maxpay/view/electricity_bill/electricity_bill_page.dart';
 import 'package:maxpay/view/fastag_recharge/fastag_recharge_page.dart';
 import 'package:maxpay/view/gas_bill/gas_bill_page.dart';
 import 'package:maxpay/view/home/widgets/home_header.dart';
 import 'package:maxpay/core/constants/extension.dart';
+import 'package:maxpay/view/landline/landline_bill_page.dart';
+import 'package:maxpay/view/postpaid/postpaid_page.dart';
+import 'package:maxpay/view/transaction_screens/transaction_success_screen.dart';
 import 'package:maxpay/view/water/watter_bill.dart';
 import '../../../core/data/model/product_type.dart';
 
@@ -31,6 +38,8 @@ class MenuScreen extends StatelessWidget {
   final BannerController bannerController = Get.put(
     BannerController(bannerUsecase: sl(), advusecase: sl()),
   );
+  final TransReportController transReportController= Get.put(TransReportController(cashbackTypeUsecase: sl(), transreportUsecase: sl(), producttypeUseCase: sl(), submitDisputeUsecase: sl(),));
+
   Future<void> _refreshPage() async {
     await Future.wait([controller.fetchProductTypes()]);
   }
@@ -136,71 +145,41 @@ class MenuScreen extends StatelessWidget {
                           }
                           if (list.isEmpty) return const SizedBox.shrink();
 
-                          return Column(
-                            children: [
-                              SizedBox(
-                                height: 150.h,
-                                child: PageView.builder(
-                                  controller: bannerController.pageController,
-                                  itemCount: list.length,
-                                  onPageChanged: (index) {
-                                    bannerController.currentIndex.value = index;
-                                  },
-                                  itemBuilder: (context, index) {
-                                    /// ✅ FIXED: using _toImageUrl
-                                    final imageUrl = _toImageUrl(
-                                      list[index].image,
-                                    );
-                                    log(imageUrl);
-                                    return ClipRRect(
-                                      borderRadius: BorderRadius.circular(16.r),
-                                      child: Image.network(
-                                        imageUrl,
-                                        fit: BoxFit.cover,
-                                        errorBuilder: (_, _, _) => Container(
-                                          color: Colors.grey.shade300,
-                                          child: const Icon(Icons.broken_image),
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ),
-                              SizedBox(height: 8.h),
-                              Obx(() {
-                                return Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: List.generate(list.length, (index) {
-                                    final isActive =
-                                        bannerController.currentIndex.value ==
-                                        index;
-                                    return AnimatedContainer(
-                                      duration: const Duration(
-                                        milliseconds: 300,
-                                      ),
-                                      margin: EdgeInsets.symmetric(
-                                        horizontal: 4.w,
-                                      ),
-                                      height: 6.w,
-                                      width: isActive ? 18.w : 6.w,
-                                      decoration: BoxDecoration(
-                                        color: isActive
-                                            ? AppColors.clrPrimary
-                                            : Colors.grey.shade400,
-                                        borderRadius: BorderRadius.circular(
-                                          20.r,
-                                        ),
-                                      ),
-                                    );
-                                  }),
-                                );
-                              }),
-                            ],
-                          );
-                        }),
+                         return Column(
+  children: [
+    SizedBox(
+      height: 150.h,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+
+          PageView.builder(
+            controller: bannerController.pageController,
+            itemCount: list.length,
+            onPageChanged: (index) {
+              bannerController.currentIndex.value = index;
+            },
+            itemBuilder: (context, index) {
+              final imageUrl = _toImageUrl(list[index].image);
+
+              return ClipRRect(
+                borderRadius: BorderRadius.circular(16.r),
+                child: Image.network(
+                  imageUrl,
+                  fit: BoxFit.cover,
+                ),
+              );
+            },
+          ),
+
+          
+        ],
+      ),
+    ),
+                       ] );  }),
 
                         SizedBox(height: 10.h),
-Row(
+                        Row(
                           children: [
                              Expanded(
                               child: Divider(
@@ -209,7 +188,7 @@ Row(
                               ),
                             ),
                             Text(
-                              "Today",
+                              "Today Transaction",
                               style: TextStyle(
                                 color: AppColors.clrPrimary,
                                 fontSize: 14.sp,
@@ -229,34 +208,61 @@ Obx(() {
   return Row(
     children: [
       Expanded(
-        child: _statusCard(
-          image: AssetImages.successIcon,
-          value:
-              "₹${transaction?.data?.success?.amount?.toString() ?? "0"}",
-          bgColor: const Color(0xffC0FFDF),
-          textColor: const Color(0xff22C55E),
+  child: InkWell(
+    onTap: () {
+      Get.to(
+        () => const TransactionScreen(
+          status: TransactionStatus.success,
         ),
-      ),
+      );
+    },
+    borderRadius: BorderRadius.circular(12),
+    child: _statusCard(
+      image: AssetImages.successIcon,
+      value: "₹${transaction?.data?.success?.amount?.toString() ?? "0"}",
+      bgColor: const Color(0xffC0FFDF),
+      textColor: const Color(0xff22C55E),
+    ),
+  ),
+),
       SizedBox(width: 12.w),
-      Expanded(
-        child: _statusCard(
-          image: AssetImages.processIcon,
-          value:
-              "₹${transaction?.data?.processing?.amount?.toString() ?? "0"}",
-          bgColor: const Color(0xffFFE1B4),
-          textColor: Colors.orange,
+    Expanded(
+  child: InkWell(
+    onTap: () {
+      Get.to(
+        () => const TransactionScreen(
+          status: TransactionStatus.pending,
         ),
-      ),
+      );
+    },
+    borderRadius: BorderRadius.circular(12),
+    child: _statusCard(
+      image: AssetImages.processIcon,
+      value: "₹${transaction?.data?.processing?.amount?.toString() ?? "0"}",
+      bgColor: const Color(0xffFFE1B4),
+      textColor: Colors.orange,
+    ),
+  ),
+),
       SizedBox(width: 12.w),
-      Expanded(
-        child: _statusCard(
-          image: AssetImages.failedIcon,
-          value:
-              "₹${transaction?.data?.failed?.amount?.toString() ?? "0"}",
-          bgColor: const Color(0xffFFCCD3),
-          textColor: Colors.red,
+    Expanded(
+  child: InkWell(
+    onTap: () {
+      Get.to(
+        () => const TransactionScreen(
+          status: TransactionStatus.failed,
         ),
-      ),
+      );
+    },
+    borderRadius: BorderRadius.circular(12),
+    child: _statusCard(
+      image: AssetImages.failedIcon,
+      value: "₹${transaction?.data?.failed?.amount?.toString() ?? "0"}",
+      bgColor: const Color(0xffFFCCD3),
+      textColor: Colors.red,
+    ),
+  ),
+),
     ],
   );
 }),
@@ -587,41 +593,43 @@ Obx(() {
       ),
     );
   }
-
+/// ✅ Normalizes product names so matching is consistent everywhere
+/// (strips spaces/dashes, lowercases) — "Cable TV", "CableTV", "cable-tv"
+/// all become "cabletv".
+String _normalize(String name) =>
+    name.toLowerCase().replaceAll(RegExp(r'[\s\-]+'), '');
   String _getImage(String name) {
-    switch (name.toLowerCase()) {
-      case 'prepaid':
-        return AssetImages.prepaid;
-      case 'postpaid':
-        return AssetImages.prepaid;
-      case 'dth':
-        return AssetImages.dth;
-      case 'fastag':
-        return AssetImages.fastag;
-      case 'gas':
-        return AssetImages.gas;
-      case 'electricity':
-        return AssetImages.promoFrame;
-      case 'water':
-        return AssetImages.water;
-      case 'landline':
-        return AssetImages.landline;
-      case 'broadband':
-        return AssetImages.broadband;
-      case 'cabletv':
-        return AssetImages.cable;
-      case 'payment status':
-        return AssetImages.paymentStatus;
-      case 'p - status':
-        return AssetImages.paymentStatus;
-      case 'refresh':
-        return AssetImages.dthRefresh;
-      case 'dth refresh':
-        return AssetImages.dthRefresh;
-      default:
-        return AssetImages.prepaid;
-    }
+  switch (_normalize(name)) {
+    case 'prepaid':
+      return AssetImages.prepaid;
+    case 'postpaid':
+      return AssetImages.prepaid;
+    case 'dth':
+      return AssetImages.dth;
+    case 'fastag':
+      return AssetImages.fastag;
+    case 'gas':
+      return AssetImages.gas;
+    case 'electricity':
+      return AssetImages.promoFrame;
+    case 'water':
+      return AssetImages.water;
+    case 'landline':
+      return AssetImages.landline;
+    case 'broadband':
+      return AssetImages.broadband;
+    case 'cabletv':          // now matches "Cable TV" too
+      return AssetImages.cable;
+    case 'paymentstatus':
+    case 'pstatus':
+      return AssetImages.paymentStatus;
+    case 'refresh':
+    case 'dthrefresh':
+      return AssetImages.dthRefresh;
+    default:
+      return AssetImages.prepaid;
   }
+}
 
   Color _getBgColor(String name) {
     switch (name.toLowerCase()) {
@@ -652,86 +660,122 @@ Obx(() {
     }
   }
 
-  void _handleNavigation(Data item) {
-    switch (item.name?.toLowerCase()) {
-      case 'prepaid':
-        Get.toNamed(
-          AppRoutes.prepaid,
-          arguments: {
-            "productId": item.id.toString(),
-            "productName": item.name ?? "",
-          },
-        );
-        break;
+ void _handleNavigation(Data item) {
+  final key = _normalize(item.name ?? "");
 
-      case 'dth':
-        print("MENU SCREEN ID = ${item.id}");
-        Get.toNamed(
-          AppRoutes.dth,
-          arguments: {
-            "productId": item.id.toString(),
-            "productName": item.name ?? "",
-          },
-        );
-        break;
+  switch (key) {
+    case 'prepaid':
+      Get.toNamed(
+        AppRoutes.prepaid,
+        arguments: {
+          "productId": item.id.toString(),
+          "productName": item.name ?? "",
+        },
+      );
+      break;
 
-      case 'payment status':
-        Get.toNamed(
-          AppRoutes.paymentstatus,
-          arguments: {
-            "productId": item.id.toString(),
-            "productName": item.name ?? "",
-          },
-        );
-        break;
+    case 'dth':
+      Get.toNamed(
+        AppRoutes.dth,
+        arguments: {
+          "productId": item.id.toString(),
+          "productName": item.name ?? "",
+        },
+      );
+      break;
 
-      case 'fastag':
-        Get.to(() => const FastagRechargePage());
-        break;
+    case 'paymentstatus':
+      Get.toNamed(
+        AppRoutes.paymentstatus,
+        arguments: {
+          "productId": item.id.toString(),
+          "productName": item.name ?? "",
+        },
+      );
+      break;
 
- case 'water':
-        Get.to(() => const WatterBill());
-        break;
-case 'gas':
-        Get.to(() => const GasBillPage());
-        break;
+    case 'fastag':
+      Get.to(() => const FastagRechargePage());
+      break;
 
-        case 'electricity':
-        Get.to(() => const ElectricityBillPage());
-        break;
+    case 'water':
+      Get.to(() => const WatterBill());
+      break;
+        case '':
+      Get.to(() => const WatterBill());
+      break;
 
-      default:
-        break;
-    }
+
+    case 'gas':
+      Get.to(() => const GasBillPage());
+      break;
+
+    case 'electricity':
+      Get.to(() => const ElectricityBillPage());
+      break;
+
+    case 'broadband':
+      Get.to(() => const BroadBandPage());
+      break;
+
+    case 'cabletv':                 // ✅ fixed — was 'cable tv'
+      Get.to(() => const CableTvPage());
+      break;
+
+
+case 'postpaid':                 // ✅ fixed — was 'cable tv'
+      Get.to(() => const PostpaidPage());
+      break;
+    case 'refresh':
+    case 'dthrefresh':              // ✅ fixed — now catches both spellings
+      Get.to(() => const DthRefreshScreen());
+      break;
+
+
+
+ case 'landline':              // ✅ fixed — now catches both spellings
+      Get.to(() => const LandlineBillPage());
+      break;
+    default:
+      log("No navigation mapped for product: ${item.name}");
+      break;
   }
-
+}
   Widget _statusCard({
-    required String image,
-    required String value,
-    required Color bgColor,
-    required Color textColor,
-  }) {
-    return Container(
-      height: 52.h,
-      decoration: BoxDecoration(
-        color: bgColor,
-        borderRadius: BorderRadius.circular(12.r),
+  required String image,
+  required String value,
+  required Color bgColor,
+  required Color textColor,
+}) {
+  return Container(
+    height: 52.h,
+    decoration: BoxDecoration(
+      color: bgColor,
+      borderRadius: BorderRadius.circular(12.r),
+      border: Border.all(
+        color:AppColors.clrPrimary, // Same border color for all cards
+        width: 2,
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SvgPicture.asset(image, width: 20.w, height: 20.h),
-          SizedBox(width: 8.w),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 16.sp,
-              fontWeight: FontWeight.bold,
-              color: textColor,
-            ),
+    ),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        SvgPicture.asset(
+          image,
+          width: 20.w,
+          height: 20.h,
+        ),
+        SizedBox(width: 8.w),
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: 16.sp,
+            fontWeight: FontWeight.bold,
+            color: textColor,
           ),
-        ],
-      ),
-    );
-  }
+        ),
+      ],
+    ),
+  );
+}
 }

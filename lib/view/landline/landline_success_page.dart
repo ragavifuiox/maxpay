@@ -5,63 +5,34 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:maxpay/controllers/download_controller.dart';
 import 'package:maxpay/controllers/earning_controller.dart';
 import 'package:maxpay/controllers/homepage_controller.dart';
-import 'package:maxpay/controllers/profile_controller.dart';
 import 'package:maxpay/controllers/refund_controller.dart';
 import 'package:maxpay/controllers/transaction_report_controller.dart';
 import 'package:maxpay/controllers/wallet_credit_controller.dart';
 import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
-import 'package:maxpay/core/di/service_locator.dart';
 import 'package:maxpay/core/extensions/currency.dart';
 import 'package:maxpay/global_widget/commom_button.dart';
 
 
-class DthSuccessPage extends StatelessWidget {
-  final String productName;
-  final String operatorInitial;
-  final Color operatorColor;
-  final String transactionNo;
-  final String rechargeAmount;
-  final String transactionId;
-  final String dateTime;
-  final String rechargeId;
-  // final String operatorLogo; // image URL
+class LandlineSuccessPage extends StatelessWidget {
   
-  const DthSuccessPage({
+ 
+  const LandlineSuccessPage({
     super.key,
-    required this.productName,
-    required this.operatorInitial,
-    required this.operatorColor,
-    required this.transactionNo,
-    required this.rechargeAmount,
-    required this.transactionId,
-    required this.dateTime,
-    required this.rechargeId,
-    // required this.operatorLogo,
+   
+    
   });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    final ProfileController profileController = Get.put(
-      ProfileController(getProfileUseCase: sl(), profileUpdateUseCase: sl()),
-    );
+  
    
 
-    final bool isMobileOrDTH =
-        productName.toLowerCase().contains('jio') ||
-        productName.toLowerCase().contains('airtel') ||
-        productName.toLowerCase().contains('vi') ||
-        productName.toLowerCase().contains('bsnl') ||
-        productName.toLowerCase().contains('tv') ||
-        productName.toLowerCase().contains('dish') ||
-        productName.toLowerCase().contains('tata') ||
-        productName.toLowerCase().contains('sun') ||
-        productName.toLowerCase().contains('videocon');
+  
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -133,26 +104,25 @@ class DthSuccessPage extends StatelessWidget {
                     // ),
                     _buildSummaryRow(
                       'Transaction No',
-                      transactionNo,
+                      "787878787878",
                       context: context,
                     ),
                     _buildSummaryRow(
                       'Recharge Amount',
-                      rechargeAmount,
+                      "250",
                       context: context,
                     ),
                     _buildSummaryRow(
                       'Transaction ID',
-                      transactionId,
+                      "txc4567898765",
                       context: context,
                     ),
-                    _buildSummaryRow('Date & Time', dateTime, context: context),
+                    _buildSummaryRow('Date & Time', "2/06/20206", context: context),
 
                     SizedBox(height: 10.h),
 
                     GestureDetector(
-                      onTap: () =>
-                          _showTransactionDetails(context, profileController),
+                    onTap: () => _showTransactionDetails(context),
                       child: Text(
                         'View Detail',
                         style: TextStyle(
@@ -221,214 +191,211 @@ class DthSuccessPage extends StatelessWidget {
   }
 
   /// ---------------- DETAILS POPUP ----------------
-  void _showTransactionDetails(
-  BuildContext context,
-  ProfileController profileController,
-) {
-  final isDark = Theme.of(context).brightness == Brightness.dark;
 
-  final profile = profileController.profileData.value?.data;
+void _showTransactionDetails(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
-  final DownloadController downloadController = Get.put(
-    DownloadController(downloadUseCase: sl()),
-  );
+    showDialog(
+      context: context,
+      builder: (context) {
+   
 
-  showDialog(
-    context: context,
-    builder: (_) {
-      return Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15.r),
-        ),
-        child: SingleChildScrollView(
-          child: Container(
-            width: 340.w,
-            padding: EdgeInsets.all(16.r),
-            decoration: BoxDecoration(
-              color: isDark ? AppColors.darkplceholder : Colors.white,
+        return Dialog(
+         
+          child: Dialog(
+            shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15.r),
             ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.symmetric(vertical: 10.h),
-                  decoration: BoxDecoration(
-                    color: AppColors.clrPrimary,
-                    borderRadius: BorderRadius.circular(6.r),
-                  ),
-                  child: Center(
-                    child: Text(
-                      "Transaction Details",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w600,
-                      ),
+            child: Container(
+              padding: EdgeInsets.all(16.r),
+              decoration: BoxDecoration(
+                color: isDark ? AppColors.darkplceholder : Colors.white,
+                borderRadius: BorderRadius.circular(15.r),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.symmetric(vertical: 10.h),
+                    decoration: BoxDecoration(
+                      color: AppColors.clrPrimary,
+                      borderRadius: BorderRadius.circular(6.r),
                     ),
-                  ),
-                ),
-
-                SizedBox(height: 15.h),
-
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    "Transaction ID : $transactionId",
-                    style: TextStyle(fontSize: 12.sp),
-                  ),
-                ),
-
-                SizedBox(height: 5.h),
-
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    "Date & Time : $dateTime",
-                    style: TextStyle(fontSize: 12.sp),
-                  ),
-                ),
-
-                SizedBox(height: 12.h),
-
-                Divider(),
-
-                _detailRow(
-                  context,
-                  "Transaction",
-                  "Success",
-                  valueColor: Colors.green,
-                ),
-
-                _detailRow(
-                  context,
-                  "Transaction No",
-                  transactionNo,
-                ),
-
-                _detailRow(
-                  context,
-                  "Transaction Amount",
-                  rechargeAmount.currencyIndian,
-                ),
-
-                _detailRow(
-                  context,
-                  "Product Type",
-                  "Mobile Prepaid",
-                ),
-
-                // _logoRow(
-                //   "Product",
-                //   operatorLogo,
-                //   context,
-                // ),
-
-                _detailRow(
-                  context,
-                  "Product Ref Id",
-                  transactionId,
-                ),
-
-                SizedBox(height: 12.h),
-
-                Container(
-                  width: double.infinity,
-                  padding: EdgeInsets.all(12.r),
-                  decoration: BoxDecoration(
-                    color: AppColors.clrPrimary,
-                    borderRadius: BorderRadius.circular(8.r),
-                  ),
-                  child: Column(
-                    children: [
-                      _detailRow(
-                        context,
-                        "Retailer Name",
-                        profile?.name ?? "N/A",
-                        textColor: Colors.white,
-                      ),
-                      _detailRow(
-                        context,
-                        "Contact No",
-                        profile?.phoneNumber ?? "N/A",
-                        textColor: Colors.white,
-                      ),
-                    ],
-                  ),
-                ),
-
-                SizedBox(height: 15.h),
-
-                Text(
-                  "T & C Apply",
-                  style: TextStyle(
-                    color: Colors.blue,
-                    fontSize: 12.sp,
-                  ),
-                ),
-
-                SizedBox(height: 20.h),
-
-                Row(
-                  children: [
-                    Expanded(
-                      flex: 2,
-                      child: SizedBox(
-                        height: 42.h,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            downloadController.downloadReceipt(rechargeId);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.red,
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                "Download",
-                                style: TextStyle(color: Colors.white),
-                              ),
-                              SizedBox(width: 5.w),
-                              Icon(
-                                Icons.download,
-                                color: Colors.white,
-                                size: 18.sp,
-                              ),
-                            ],
-                          ),
+                    child: Center(
+                      child: Text(
+                        "Transaction Details",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w600,
+                          fontFamily: 'Poppins',
                         ),
                       ),
                     ),
+                  ),
 
-                    SizedBox(width: 12.w),
+                  SizedBox(height: 15.h),
 
-                    Expanded(
-                      child: SizedBox(
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      "Transaction ID : txc4567890gthb",
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.w500,
+                        fontFamily: 'Poppins',
+                        color: AppColors.totalborder1,
+                      ),
+                    ),
+                  ),
+
+                  SizedBox(height: 4.h),
+
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      "Date & Time :02/06/2026",
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.w500,
+                        fontFamily: 'Poppins',
+                        color: AppColors.totalborder1,
+                      ),
+                    ),
+                  ),
+
+                  SizedBox(height: 12.h),
+
+                  const Divider(),
+
+                  _detailRow(
+                    context,
+                    "Transaction",
+                    "Success",
+                    valueColor: Colors.green,
+                  ),
+
+                  _detailRow(context, "Transaction No","8989898989"),
+
+                  _detailRow(
+                    context,
+                    "Transaction Amount",
+                    ("234").currencyIndian,
+                  ),
+
+                  _detailRow(context, "Product Type", "Mobile Prepaid"),
+
+                  // _logoRow("Product", operatorLogo, context),
+                  _detailRow(context, "Product Ref Id", "34567893456"),
+
+                  SizedBox(height: 10.h),
+
+                  Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.all(12.r),
+                    decoration: BoxDecoration(
+                      color: AppColors.clrPrimary,
+                      borderRadius: BorderRadius.circular(8.r),
+                    ),
+                    child: Column(
+                      children: [
+                        _detailRow(
+                          context,
+                          "Retailer Name",
+                          "John Retailer",
+                        ),
+                        _detailRow(
+                          context,
+                          "Contact No",
+                       "9876543210"
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  SizedBox(height: 10.h),
+
+                  Text(
+                    "T & C Apply",
+                    style: TextStyle(color: Colors.blue, fontSize: 12.sp),
+                  ),
+
+                  SizedBox(height: 15.h),
+
+                  Row(
+                    children: [
+                      Expanded(
+                        child: SizedBox(
+                          height: 42.h,
+                          child: ElevatedButton(
+                            onPressed: () {
+   
+  },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red,
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(6.r),
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "Download",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 13.sp,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                SizedBox(width: 6.w),
+                                Icon(
+                                  Icons.download,
+                                  color: Colors.white,
+                                  size: 18.sp,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      SizedBox(width: 10.w),
+
+                      SizedBox(
+                        width: 80.w,
                         height: 42.h,
                         child: ElevatedButton(
                           onPressed: () => Get.back(),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blue,
+                            backgroundColor: Colors.blue.shade900,
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(6.r),
+                            ),
                           ),
-                          child: const Text(
+                          child: Text(
                             "Ok",
-                            style: TextStyle(color: Colors.white),
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 13.sp,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
-      );
-    },
-  );
-}
+        );
+      },
+    );
+  }
 
   Widget _logoRow(String title, String imageUrl, BuildContext context) {
     return Padding(
@@ -516,7 +483,7 @@ class DthSuccessPage extends StatelessWidget {
                             radius: 12.r,
                             backgroundColor: Colors.grey.shade300,
                             child: Text(
-                              operatorInitial,
+                              "789",
                               style: TextStyle(fontSize: 10.sp),
                             ),
                           )

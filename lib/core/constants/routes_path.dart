@@ -54,4 +54,8 @@ class AppRoutes {
   static const String electricity='/electricity';
   static const String water='/water';
   static const String gas='/gas';
+  static const String cabletv='/cabletv';
+  static const String broadband='/bradband';
+  static const String landline='/landline';
+  static const String dthrefresh='/dthrefresh';
 }

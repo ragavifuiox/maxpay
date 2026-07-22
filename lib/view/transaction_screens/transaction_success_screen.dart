@@ -17,16 +17,14 @@ class TransactionScreen extends GetView<TransReportController> {
   Widget build(BuildContext context) {
     controller.currentStatus = status.name;
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (controller.transreportList.isEmpty) {
-        controller.transactionreport(
-          search: controller.search,
-          status: controller.currentStatus,
-          productid: controller.selectedProductId.value,
-          fromdate: controller.fromDate,
-          todate: controller.toDate,
-        );
-      }
-    });
+  controller.transactionreport(
+    search: controller.search,
+    status: controller.currentStatus,
+    productid: controller.selectedProductId.value,
+    fromdate: controller.fromDate,
+    todate: controller.toDate,
+  );
+});
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
@@ -248,9 +246,9 @@ class TransactionScreen extends GetView<TransReportController> {
                   return const Center(child: CircularProgressIndicator());
                 }
 
-                if (controller.transreportList.isEmpty) {
-                  return const Center(child: Text("No Data Found"));
-                }
+                // if (controller.transreportList.isEmpty) {
+                //   return const Center(child: Text("No Data Found"));
+                // }
 
                 return ListView.builder(
                   itemCount: controller.transreportList.length,
