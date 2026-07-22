@@ -90,6 +90,7 @@ class WalletRequestScreen extends StatelessWidget {
 
             fontSize: 16.sp,
             fontWeight: FontWeight.w500,
+            fontFamily: 'Poppins'
           ),
         ),
       ),
@@ -134,6 +135,7 @@ class WalletRequestScreen extends StatelessWidget {
                         fontSize: 12.sp,
                         fontWeight:
                             FontWeight.w600,
+                            fontFamily: 'Poppins'
                       ),
                     ),
 
@@ -197,6 +199,7 @@ class WalletRequestScreen extends StatelessWidget {
                       inputDecoration(
                     context,
                     "Select",
+                  
                   ),
 
                   style: TextStyle(
@@ -204,6 +207,7 @@ class WalletRequestScreen extends StatelessWidget {
                         Theme.of(context)
                             .colorScheme
                             .onSurface,
+                            fontFamily: 'Poppins'
                   ),
 
                   icon: Icon(
@@ -284,6 +288,7 @@ class WalletRequestScreen extends StatelessWidget {
                           Theme.of(context)
                               .colorScheme
                               .onSurfaceVariant,
+                              fontFamily: 'Poppins'
                     ),
                   ),
 
@@ -292,6 +297,7 @@ class WalletRequestScreen extends StatelessWidget {
                         Theme.of(context)
                             .colorScheme
                             .onSurface,
+                            fontFamily: 'Poppins'
                   ),
 
                   validator: (value) {
@@ -668,6 +674,7 @@ class WalletRequestScreen extends StatelessWidget {
         style: TextStyle(
           fontSize: 13.sp,
           fontWeight: FontWeight.w400,
+          fontFamily: 'Poppins',
 
           color:
               Theme.of(context)

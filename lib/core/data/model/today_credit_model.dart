@@ -1,42 +1,46 @@
 class TodayCredit {
   bool? success;
-  bool? data;
+  Code? data;
   String? message;
-  Code? code;
 
-  TodayCredit({this.success, this.data, this.message, this.code});
+  TodayCredit({
+    this.success,
+    this.data,
+    this.message,
+  });
 
   TodayCredit.fromJson(Map<String, dynamic> json) {
     success = json['success'];
-    data = json['data'];
+    data = json['data'] != null ? Code.fromJson(json['data']) : null;
     message = json['message'];
-    code = json['code'] != null ? Code.fromJson(json['code']) : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['success'] = success;
-    data['data'] = this.data;
-    data['message'] = message;
-    if (code != null) {
-      data['code'] = code!.toJson();
-    }
-    return data;
+    return {
+      'success': success,
+      'data': data?.toJson(),
+      'message': message,
+    };
   }
 }
 
 class Code {
   int? todayCreditAmount;
+  int? totalcreditamount;
 
-  Code({this.todayCreditAmount});
+  Code({
+    this.todayCreditAmount,
+    this.totalcreditamount,
+  });
 
   Code.fromJson(Map<String, dynamic> json) {
+    todayCreditAmount = json['today_credit_amount'];
     todayCreditAmount = json['today_credit_amount'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['today_credit_amount'] = todayCreditAmount;
-    return data;
+    return {
+      'today_credit_amount': todayCreditAmount,
+    };
   }
 }

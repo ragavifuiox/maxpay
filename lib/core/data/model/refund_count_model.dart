@@ -1,35 +1,76 @@
 class RefundCount {
   bool? success;
-  bool? data;
+  RefundData? data;
   String? message;
   Code? code;
 
-  RefundCount({this.success, this.data, this.message, this.code});
+  RefundCount({
+    this.success,
+    this.data,
+    this.message,
+    this.code,
+  });
 
   RefundCount.fromJson(Map<String, dynamic> json) {
     success = json['success'];
-    data = json['data'];
+
+    if (json['data'] is Map<String, dynamic>) {
+      data = RefundData.fromJson(json['data']);
+    } else if (json['data'] is int) {
+      data = RefundData(
+        refundCount: json['data'],
+      );
+    }
+
     message = json['message'];
-    code = json['code'] != null ? Code.fromJson(json['code']) : null;
+
+    if (json['code'] is Map<String, dynamic>) {
+      code = Code.fromJson(json['code']);
+    }
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['success'] = success;
-    data['data'] = this.data;
-    data['message'] = message;
-    if (code != null) {
-      data['code'] = code!.toJson();
-    }
-    return data;
+    return {
+      "success": success,
+      "data": data?.toJson(),
+      "message": message,
+      "code": code?.toJson(),
+    };
   }
 }
 
+
+class RefundData {
+  int? refundAmount;
+  int? refundCount;
+
+  RefundData({
+    this.refundAmount,
+    this.refundCount,
+  });
+
+  RefundData.fromJson(Map<String, dynamic> json) {
+    refundAmount = json['refund_amount'];
+    refundCount = json['refund_count'];
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "refund_amount": refundAmount,
+      "refund_count": refundCount,
+    };
+  }
+}
+
+
 class Code {
   int? refundAmount;
-  int?count;
+  int? count;
 
-  Code({this.refundAmount, this.count});
+  Code({
+    this.refundAmount,
+    this.count,
+  });
 
   Code.fromJson(Map<String, dynamic> json) {
     refundAmount = json['refund_amount'];
@@ -37,9 +78,9 @@ class Code {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['refund_amount'] = refundAmount;
-    data['refund_count'] = count;
-    return data;
+    return {
+      "refund_amount": refundAmount,
+      "refund_count": count,
+    };
   }
 }

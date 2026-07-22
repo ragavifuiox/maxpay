@@ -199,8 +199,11 @@ class HomePageController extends GetxController {
           AppLogger.logError(
             "❌ [API CALL FAILED] fetchpopupmessage: ${failure.message}",
           );
-          Get.snackbar('Error', failure.message);
+
+            CustomToast.error(failure.message);
+          // Get.snackbar('Error', failure.message);
         },
+        
         (data) async {
           AppLogger.debugPrint("✅ [API CALL SUCCESS] fetchpopupmessage");
           popupMessage.value = data;
@@ -327,7 +330,8 @@ class HomePageController extends GetxController {
           AppLogger.logError(
             "❌ [API CALL FAILED] fetchWalletBalance: ${failure.message}",
           );
-          Get.snackbar('Error', failure.message);
+             CustomToast.error(failure.message);
+          // Get.snackbar('Error', failure.message);
         },
         (data) {
           AppLogger.debugPrint("✅ [API CALL SUCCESS] fetchWalletBalance");
@@ -350,7 +354,8 @@ class HomePageController extends GetxController {
           AppLogger.logError(
             "❌ [API CALL FAILED] fetchComplaints: ${failure.message}",
           );
-          Get.snackbar('Error', failure.message);
+             CustomToast.error(failure.message);
+          // Get.snackbar('Error', failure.message);
         },
         (data) {
           AppLogger.debugPrint("✅ [API CALL SUCCESS] fetchComplaints");
@@ -372,7 +377,8 @@ class HomePageController extends GetxController {
           AppLogger.logError(
             "❌ [API CALL FAILED] fetchtodaycredit: ${failure.message}",
           );
-          Get.snackbar('Error', failure.message);
+             CustomToast.error(failure.message);
+          // Get.snackbar('Error', failure.message);
         },
         (data) {
           AppLogger.debugPrint("✅ [API CALL SUCCESS] fetchtodaycredit");
@@ -394,7 +400,8 @@ class HomePageController extends GetxController {
           AppLogger.logError(
             "❌ [API CALL FAILED] fetchRefundCount: ${failure.message}",
           );
-          Get.snackbar('Error', failure.message);
+             CustomToast.error(failure.message);
+          // Get.snackbar('Error', failure.message);
         },
         (data) {
           AppLogger.debugPrint("✅ [API CALL SUCCESS] fetchRefundCount");
@@ -417,7 +424,7 @@ class HomePageController extends GetxController {
           AppLogger.logError(
             "❌ [API CALL FAILED] getTransactionSummary: ${failure.message}",
           );
-          Get.snackbar("Error", failure.message);
+           CustomToast.error(failure.message);
         },
         (data) {
           AppLogger.debugPrint("✅ [API CALL SUCCESS] getTransactionSummary");
