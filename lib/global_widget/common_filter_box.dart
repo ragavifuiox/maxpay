@@ -88,20 +88,17 @@ class DateField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
 
     return Expanded(
       child: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 12,
-          vertical: 14,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
         decoration: BoxDecoration(
-          color: theme.colorScheme.surface,
-          borderRadius: BorderRadius.circular(8),
+          color: isDark ? AppColors.darkplceholder : Colors.white,
+          borderRadius: BorderRadius.circular(7),
           border: Border.all(
-               color: theme.brightness == Brightness.light
-    ? AppColors.totalborde2
-    : AppColors.totalborde2,
+            color: isDark ? AppColors.darkFilterBorder : AppColors.totalborde2,
           ),
         ),
         child: Text(
@@ -109,7 +106,9 @@ class DateField extends StatelessWidget {
           style:
               style ??
               TextStyle(
-                color: theme.colorScheme.onSurfaceVariant,
+                color: isDark
+                    ? AppColors.textclr
+                    : theme.colorScheme.onSurfaceVariant,
                 fontSize: 13,
               ),
         ),
