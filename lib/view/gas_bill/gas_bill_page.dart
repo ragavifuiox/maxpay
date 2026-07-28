@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_instance/src/extension_instance.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
+import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
+import 'package:maxpay/controllers/homepage_controller.dart';
 import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
 import 'package:maxpay/view/gas_bill/gas_confirm_screen.dart';
@@ -238,36 +241,46 @@ class _ElectricityBillPageState extends State<GasBillPage> {
 
                     /// 🔹 WALLET BALANCE CARD
                     Container(
-                      width: double.infinity,
-                      padding: EdgeInsets.symmetric(vertical: 15.h),
-                      decoration: BoxDecoration(
-                        color:AppColors.clrPrimary,
-                        borderRadius: BorderRadius.circular(12.r),
-                      ),
-                      child: Column(
-                        children: [
-                          Text(
-                            'Wallet Balance',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 14.sp,
-                              fontWeight: FontWeight.w600,
-                              fontFamily: 'Poppins',
-                            ),
-                          ),
-                          SizedBox(height: 5.h),
-                          Text(
-                            '₹ 245005.23',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 22.sp,
-                              fontWeight: FontWeight.w700,
-                              fontFamily: 'Poppins',
-                            ),
-                          ),
-                        ],
+                width: double.infinity,
+
+                padding: EdgeInsets.symmetric(vertical: 15.h),
+
+                decoration: BoxDecoration(
+                  color: AppColors.clrPrimary,
+
+                  borderRadius: BorderRadius.circular(12.r),
+                ),
+
+                child: Column(
+                  children: [
+                    Text(
+                      'Wallet Balance',
+
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
+
+                    SizedBox(height: 5.h),
+
+                    Obx(() {
+                      final balance =
+                          Get.find<HomePageController>().walletBalance.value;
+
+                      return Text(
+                        "₹ ${balance?.data?.balance ?? "0.00"}",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 24.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      );
+                    }),
+                  ],
+                ),
+              ),
                     SizedBox(height: 20.h),
 
                     /// 🔹 BOARD SELECTION

@@ -14,37 +14,36 @@ class UpdateProfileOtpRepoImpl implements UpdateProfileOtpRepository {
 
   UpdateProfileOtpRepoImpl(this.apiService);
 
-  @override
   Future<Either<Failure, UpdateprofileOtp>> updateotp({
-    required String otp,
+  required String otp,
+  required String mobile,
+}) async {
+  try {
 
-  }) async {
-    try {
+    print("=========== REQUEST BODY ===========");
+    print({
+      "otp": otp,
+      "mobile": mobile,
+    });
+
     final response = await apiService.post(
-  ApiRoutes.updateprofileotp,
-  data: {
-    "otp": otp,
-    
-  },
-);
+      ApiRoutes.updateprofileotp,
+      data: {
+        "otp": otp,
+        "mobile": mobile,
+      },
+    );
 
-  
+    print("=========== RESPONSE ===========");
+    print(response);
 
-AppLogger.logError("=========== 👍REQUEST BODY ===========");
-AppLogger.logError({
- "otp": otp,
+    final model = UpdateprofileOtp.fromJson(response);
+    return Right(model);
 
-});
-
-AppLogger.logError("=========== 👍RAW RESPONSE ===========");
-AppLogger.logError(response);
-AppLogger.logError("====================================");
-      final model = UpdateprofileOtp.fromJson(response);
-      return Right(model);
-    } catch (e) {
-      return Left(ServerFailure(message: e.toString()));
-    }
+  } catch (e) {
+    return Left(ServerFailure(message: e.toString()));
   }
+}
 }
 
 

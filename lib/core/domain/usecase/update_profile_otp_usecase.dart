@@ -12,10 +12,12 @@ class UpdateProfileOtpUsecase {
   UpdateProfileOtpUsecase(this.repository);
   Future<Either<Failure, UpdateprofileOtp>> call(
     String otp ,
+    String mobile ,
   
   ) {
     return repository.updateotp(
      otp: otp,
+     mobile: mobile,
    
     );
   }

@@ -67,8 +67,8 @@ class TransferdetailFilter extends StatelessWidget {
   ),
 
   decoration: InputDecoration(
-    filled: true,
-    fillColor: Colors.white,
+      filled: true,
+                  fillColor: isDark ? AppColors.darkplceholder : Colors.white,
 
     contentPadding:
         const EdgeInsets.symmetric(horizontal: 18),
@@ -80,7 +80,9 @@ class TransferdetailFilter extends StatelessWidget {
     enabledBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(8),
       borderSide: BorderSide(
-        color: Colors.grey.shade300,
+       color: isDark
+                          ? AppColors.darkFilterBorder
+                          : AppColors.totalborde2,
       ),
     ),
   ),
@@ -92,8 +94,8 @@ class TransferdetailFilter extends StatelessWidget {
         e.label,
         style: const TextStyle(
           fontFamily: 'Poppins',
-          fontSize: 15,
-          fontWeight: FontWeight.w500,
+          fontSize: 12,
+          fontWeight: FontWeight.w400,
         ),
       ),
     ),
@@ -125,7 +127,6 @@ onChanged:(value) {
     /// DATE RANGE
     Row(
       children: [
-
         Expanded(
           child: GestureDetector(
             onTap: () => controller.selectFromDate(context),
@@ -137,24 +138,28 @@ onChanged:(value) {
                   decoration: InputDecoration(
                     hintText: "DD.MM.YYYY",
                      hintStyle: TextHelper.max1.copyWith(
-         color: isDark
-                  ? AppColors.darkFilterBorder
-                  : AppColors.totalborde2.withValues(alpha: 0.1),
+          color: isDark
+              ? AppColors.textclr
+              : theme.colorScheme.onSurfaceVariant,
         ),
                     filled: true,
-                    fillColor: Colors.white,
+                  fillColor: isDark ? AppColors.darkplceholder : Colors.white,
                     contentPadding:
                         const EdgeInsets.symmetric(horizontal: 18),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
                       borderSide: BorderSide(
-                        color: isDark ? AppColors.darkFilterBorder : AppColors.totalborde2,
+                      color: isDark
+                          ? AppColors.darkFilterBorder
+                          : AppColors.totalborde2,
                       ),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
                       borderSide: BorderSide(
-                         color: isDark ? AppColors.darkFilterBorder : AppColors.totalborde2,
+                       color: isDark
+                          ? AppColors.darkFilterBorder
+                          : AppColors.totalborde2,
                       ),
                     ),
                   ),
@@ -169,8 +174,8 @@ onChanged:(value) {
           padding: EdgeInsets.symmetric(horizontal: 14),
           child: Icon(
             Icons.arrow_forward,
-            color: Color(0xff17345F),
-            size: 30,
+            color: AppColors.clrPrimary,
+            
           ),
         ),
 
@@ -188,8 +193,8 @@ onChanged:(value) {
               ? AppColors.textclr
               : theme.colorScheme.onSurfaceVariant,
         ),
-                  filled: true,
-                  fillColor: Colors.white,
+                 filled: true,
+                  fillColor: isDark ? AppColors.darkplceholder : Colors.white,
                   contentPadding:
                       const EdgeInsets.symmetric(horizontal: 18),
                   border: OutlineInputBorder(
@@ -201,7 +206,9 @@ onChanged:(value) {
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
                     borderSide: BorderSide(
-                      color: Colors.grey.shade300,
+                     color: isDark
+                          ? AppColors.darkFilterBorder
+                          : AppColors.totalborde2,
                     ),
                   ),
                 ),
@@ -255,7 +262,7 @@ onChanged:(value) {
         ),
 
         filled: true,
-        fillColor: Colors.white,
+                  fillColor: isDark ? AppColors.darkplceholder : Colors.white,
 
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 16),
@@ -263,14 +270,18 @@ onChanged:(value) {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
           borderSide: BorderSide(
-            color: Colors.grey.shade300,
+          color: isDark
+                          ? AppColors.darkFilterBorder
+                          : AppColors.totalborde2,
           ),
         ),
 
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
           borderSide: BorderSide(
-            color: Colors.grey.shade300,
+           color: isDark
+                          ? AppColors.darkFilterBorder
+                          : AppColors.totalborde2,
           ),
         ),
 

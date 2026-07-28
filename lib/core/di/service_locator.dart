@@ -17,6 +17,7 @@ import 'package:maxpay/core/data/repsoitory/dth_recharge_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/dth_tab_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/due_amount_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/earning_repo_impl.dart';
+import 'package:maxpay/core/data/repsoitory/faq_reply_rep_impl.dart';
 import 'package:maxpay/core/data/repsoitory/faq_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/finger_print_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/get_bank_repo_impl.dart';
@@ -89,6 +90,7 @@ import 'package:maxpay/core/domain/repository/dth_recharge_repository.dart';
 import 'package:maxpay/core/domain/repository/dth_tab_repository.dart';
 import 'package:maxpay/core/domain/repository/due_amount_repository.dart';
 import 'package:maxpay/core/domain/repository/earning_repository.dart';
+import 'package:maxpay/core/domain/repository/faq_reply_repository.dart';
 import 'package:maxpay/core/domain/repository/faq_repsoitory.dart';
 import 'package:maxpay/core/domain/repository/finger_print_repository.dart';
 import 'package:maxpay/core/domain/repository/get_bank_repository.dart';
@@ -162,6 +164,7 @@ import 'package:maxpay/core/domain/usecase/dth_recharge_usecase.dart';
 import 'package:maxpay/core/domain/usecase/dth_tab_usecase.dart';
 import 'package:maxpay/core/domain/usecase/due_amount_usecase.dart';
 import 'package:maxpay/core/domain/usecase/earning_usecase.dart';
+import 'package:maxpay/core/domain/usecase/faq_reply_usecase.dart';
 import 'package:maxpay/core/domain/usecase/faq_usecase.dart';
 import 'package:maxpay/core/domain/usecase/finger_print_usecase.dart';
 import 'package:maxpay/core/domain/usecase/get_bank_usecase.dart';
@@ -349,6 +352,10 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton<WalletReportRepository>(
     () => WalletReportRepoImpl(sl()),
   );
+
+    sl.registerLazySingleton<FaqReplyRepository>(
+    () => FaqReplyRepImpl(sl()),
+  );
   sl.registerLazySingleton<ProfileUpdateRepository>(
     () => UpdateProfileRepoImpl(sl()),
   );
@@ -489,6 +496,7 @@ Future<void> initDependencies() async {
     () => ProfileUpdateUsecase(sl()),
   );
   sl.registerLazySingleton<DownloadUsecase>(() => DownloadUsecase(sl()));
+  sl.registerLazySingleton<FaqReplyUsecase>(() => FaqReplyUsecase(sl()));
 
   sl.registerLazySingleton<StatementUsecase>(() => StatementUsecase(sl()));
   sl.registerLazySingleton<BannerUsecase>(() => BannerUsecase(sl()));
@@ -499,6 +507,7 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton<LoginHistoryUsecase>(
     () => LoginHistoryUsecase(sl()),
   );
+  
   sl.registerLazySingleton<WebLoginUsecase>(() => WebLoginUsecase(sl()));
   sl.registerLazySingleton<CashBackUsecase>(() => CashBackUsecase(sl()));
   sl.registerLazySingleton<WebLogoutUsecase>(() => WebLogoutUsecase(sl()));

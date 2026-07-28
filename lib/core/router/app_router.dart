@@ -215,6 +215,7 @@ class AppPages {
             todaycreditusecase: sl(),
             graphUsecase: sl(),
             faqUsecase: sl(),
+             faqreplyusecase: sl(),
           ),
 
           fenix: true,

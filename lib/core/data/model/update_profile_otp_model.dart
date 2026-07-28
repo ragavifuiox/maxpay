@@ -6,12 +6,18 @@ class UpdateprofileOtp {
 
   UpdateprofileOtp({this.success, this.data, this.message, this.code});
 
-  UpdateprofileOtp.fromJson(Map<String, dynamic> json) {
-    success = json['success'];
-    data = json['data'] != null ? new Data.fromJson(json['data']) : null;
-    message = json['message'];
-    code = json['code'];
+ UpdateprofileOtp.fromJson(Map<String, dynamic> json) {
+  success = json['success'];
+
+  if (json['data'] is Map<String, dynamic>) {
+    data = Data.fromJson(json['data']);
+  } else {
+    data = null;
   }
+
+  message = json['message'];
+  code = json['code'];
+}
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();

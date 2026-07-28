@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:maxpay/controllers/wallet_request_controller.dart';
+import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/core/constants/snackbar.dart';
 import 'package:maxpay/core/data/model/get_bank_model.dart';
 import 'package:maxpay/core/di/service_locator.dart';
@@ -673,8 +674,8 @@ class WalletRequestScreen extends StatelessWidget {
         text,
 
         style: TextStyle(
-          fontSize: 13.sp,
-          fontWeight: FontWeight.w400,
+          fontSize: 15.sp,
+          fontWeight: FontWeight.w500,
           fontFamily: 'Poppins',
 
           color:
@@ -703,6 +704,7 @@ class WalletRequestScreen extends StatelessWidget {
             Theme.of(context)
                 .colorScheme
                 .onSurface,
+                fontSize: 15
       ),
 
       validator: (value) {
@@ -735,20 +737,23 @@ class WalletRequestScreen extends StatelessWidget {
             Theme.of(context)
                 .colorScheme
                 .onSurfaceVariant,
+               
+              
 
-        fontSize: 13.sp,
+        fontSize: 14.sp,
+        fontFamily: 'Poppins',
+        fontWeight: FontWeight.w400
       ),
 
       filled: true,
 
       fillColor:
           isDark
-              ? const Color(
-                0xFF1E1E1E,
-              )
+              ? AppColors.darkFilterBorder
               : const Color(
                 0xFFF2F2F2,
               ),
+
 
       contentPadding:
           const EdgeInsets.symmetric(

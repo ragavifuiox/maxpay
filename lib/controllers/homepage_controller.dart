@@ -1,11 +1,14 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/core/constants/snackbar.dart';
 import 'package:maxpay/core/data/model/faq_model.dart';
+import 'package:maxpay/core/data/model/faq_reply_model.dart' hide Data;
 import 'package:maxpay/core/data/model/graph_model.dart' hide Data;
 import 'package:maxpay/core/data/model/refund_count_model.dart';
 import 'package:maxpay/core/data/model/today_credit_model.dart';
+import 'package:maxpay/core/domain/usecase/faq_reply_usecase.dart';
 import 'package:maxpay/core/domain/usecase/faq_usecase.dart';
 import 'package:maxpay/core/domain/usecase/graph_usecase.dart';
 import 'package:maxpay/core/domain/usecase/refund_count_usecase.dart';
@@ -35,6 +38,7 @@ class HomePageController extends GetxController {
   final TodayCreditUsecase todaycreditusecase;
   final GraphUsecase graphUsecase;
   final FaqUsecase faqUsecase;
+  final FaqReplyUsecase faqreplyusecase;
 
   HomePageController({
     required this.getNewsUseCase,
@@ -46,6 +50,7 @@ class HomePageController extends GetxController {
     required this.todaycreditusecase,
     required this.graphUsecase,
     required this.faqUsecase,
+    required this.faqreplyusecase,
   });
 
   Rxn<TransactionResponse> transactionData = Rxn<TransactionResponse>();
@@ -57,7 +62,7 @@ class HomePageController extends GetxController {
   final Rx<News?> news = Rx<News?>(null);
   final Rx<Graph?> graphData = Rx<Graph?>(null);
   final Rx<Faq?> faq = Rx<Faq?>(null);
-
+  final TextEditingController commentController = TextEditingController();
   RxBool isLoading = false.obs;
 
   /// Shared mutex so the FAQ popup and the generic popup message
@@ -81,6 +86,48 @@ class HomePageController extends GetxController {
       await fetchGraph();
       await fetchFaq();
     });
+  }
+
+  Future<void> FaqReply({
+    required String comment,
+    required String faqid,
+    required String reply,
+  }) async {
+    try {
+      isLoading.value = true;
+
+      final result = await faqreplyusecase(
+        comment: comment,
+        faqid: faqid,
+        reply: reply,
+      );
+
+      AppLogger.debugPrint("API CALLED SUCCESSFULLY");
+
+      result.fold(
+        (failure) {
+          // ❌ ERROR TOAST
+          CustomToast.error(failure.message.toString());
+          debugPrint("ERROR: ${failure.message}");
+        },
+        (response) async {
+          // ✅ SUCCESS TOAST
+          CustomToast.success(response.message ?? "Wallet Request Success");
+          debugPrint("SUCCESS RESPONSE: ${response.toJson()}");
+
+          // Persist locally that this FAQ has been replied to,
+          // in case the backend doesn't flip `is_reply` immediately.
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setBool("faq_replied_$faqid", true);
+        },
+      );
+    } catch (e) {
+      // 🔥 EXCEPTION TOAST
+      CustomToast.error(e.toString());
+      debugPrint("EXCEPTION: $e");
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   Future<void> fetchFaq() async {
@@ -112,6 +159,25 @@ class HomePageController extends GetxController {
 
           print("📅 From Date: ${faqData.liveFromDate}");
           print("📅 To Date: ${faqData.liveToDate}");
+          print("💬 isreply: ${faqData.isreply}");
+
+          // 🔒 Reply gate: "1" means the user already answered this FAQ,
+          // so the popup should never show again for it.
+          // "0" (or null) means it's still eligible to show every time
+          // the app is opened, as long as it's within the live window.
+          bool alreadyRepliedOnServer = faqData.isreply == "1";
+
+          bool alreadyRepliedLocally = false;
+          if (!alreadyRepliedOnServer) {
+            final prefs = await SharedPreferences.getInstance();
+            alreadyRepliedLocally =
+                prefs.getBool("faq_replied_${faqData.id}") ?? false;
+          }
+
+          if (alreadyRepliedOnServer || alreadyRepliedLocally) {
+            print("🚫 FAQ already replied — skipping popup");
+            return;
+          }
 
           final now = DateTime.now();
           final fromDate = faqData.liveFromDate ?? DateTime.now();
@@ -200,10 +266,9 @@ class HomePageController extends GetxController {
             "❌ [API CALL FAILED] fetchpopupmessage: ${failure.message}",
           );
 
-            CustomToast.error(failure.message);
+         
           // Get.snackbar('Error', failure.message);
         },
-        
         (data) async {
           AppLogger.debugPrint("✅ [API CALL SUCCESS] fetchpopupmessage");
           popupMessage.value = data;
@@ -266,25 +331,30 @@ class HomePageController extends GetxController {
                   child: Stack(
                     clipBehavior: Clip.none,
                     children: [
-                      Container(
-                        width: 250,
-                        padding: const EdgeInsets.all(18),
-                        decoration: BoxDecoration(
-                          color: Theme.of(
-                            navigator?.context ?? Get.context!,
-                          ).scaffoldBackgroundColor,
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        child: Text(
-                          popupData.message ?? "",
-                          textAlign: TextAlign.center,
+                      // 👇 wrapped in Padding so the Stack's bounding box
+                      // actually includes the space the close icon sits in.
+                      Padding(
+                        padding: const EdgeInsets.only(top: 12, right: 12),
+                        child: Container(
+                          width: 250,
+                          padding: const EdgeInsets.all(18),
+                          decoration: BoxDecoration(
+                            color: Theme.of(
+                              navigator?.context ?? Get.context!,
+                            ).scaffoldBackgroundColor,
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                          child: Text(
+                            popupData.message ?? "",
+                            textAlign: TextAlign.center,
+                          ),
                         ),
                       ),
 
                       Positioned(
-                        right: -5,
-                        top: -5,
-                        child: GestureDetector(
+                        right: 0, // was -5
+                        top: 0, // was -5
+                        child: InkWell(
                           onTap: () {
                             HomePageController.isPopupOpen = false;
                             if (Get.isDialogOpen ?? false) {
@@ -330,7 +400,7 @@ class HomePageController extends GetxController {
           AppLogger.logError(
             "❌ [API CALL FAILED] fetchWalletBalance: ${failure.message}",
           );
-             CustomToast.error(failure.message);
+          // CustomToast.error(failure.message);
           // Get.snackbar('Error', failure.message);
         },
         (data) {
@@ -354,7 +424,7 @@ class HomePageController extends GetxController {
           AppLogger.logError(
             "❌ [API CALL FAILED] fetchComplaints: ${failure.message}",
           );
-             CustomToast.error(failure.message);
+          CustomToast.error(failure.message);
           // Get.snackbar('Error', failure.message);
         },
         (data) {
@@ -377,7 +447,7 @@ class HomePageController extends GetxController {
           AppLogger.logError(
             "❌ [API CALL FAILED] fetchtodaycredit: ${failure.message}",
           );
-             CustomToast.error(failure.message);
+          CustomToast.error(failure.message);
           // Get.snackbar('Error', failure.message);
         },
         (data) {
@@ -400,8 +470,7 @@ class HomePageController extends GetxController {
           AppLogger.logError(
             "❌ [API CALL FAILED] fetchRefundCount: ${failure.message}",
           );
-             CustomToast.error(failure.message);
-          // Get.snackbar('Error', failure.message);
+         
         },
         (data) {
           AppLogger.debugPrint("✅ [API CALL SUCCESS] fetchRefundCount");
@@ -424,7 +493,7 @@ class HomePageController extends GetxController {
           AppLogger.logError(
             "❌ [API CALL FAILED] getTransactionSummary: ${failure.message}",
           );
-           CustomToast.error(failure.message);
+          // CustomToast.error(failure.message);
         },
         (data) {
           AppLogger.debugPrint("✅ [API CALL SUCCESS] getTransactionSummary");
@@ -439,30 +508,21 @@ class HomePageController extends GetxController {
 
 Future<void> _showFaqPopup(Data faqData) async {
   print("🎈 _showFaqPopup() Called");
-  final prefs = await SharedPreferences.getInstance();
 
-  String today =
-      "${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day}";
+  final commentController = TextEditingController();
+  final homeController = Get.find<HomePageController>();
 
-  String key = "faq_popup_$today";
-
-  bool alreadyShown = prefs.getBool(key) ?? false;
-
-  print("🔑 FAQ popup key: $key | alreadyShown: $alreadyShown");
-
-  if (alreadyShown) {
-    print("🚫 FAQ popup already shown today — skipping");
+  // Reply gate is now handled in fetchFaq() before calling this function,
+  // but we double-check here in case _showFaqPopup is ever called directly.
+  if (faqData.isreply == "1") {
+    print("🚫 FAQ already replied — skipping popup");
     return;
   }
 
-  // Don't open the FAQ popup on top of (or racing with) the generic
-  // popup message — whichever gets here first wins for this session.
   if ((Get.isDialogOpen ?? false) || HomePageController.isPopupOpen) {
     print("⚠️ Skipping FAQ popup — another popup is already open");
     return;
   }
-
-  await prefs.setBool(key, true);
 
   HomePageController.isPopupOpen = true;
 
@@ -475,118 +535,149 @@ Future<void> _showFaqPopup(Data faqData) async {
       child: Stack(
         clipBehavior: Clip.none,
         children: [
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                /// Banner Image
-                if ((faqData.image ?? "").isNotEmpty)
-                  ClipRRect(
-                    borderRadius: const BorderRadius.vertical(
-                      top: Radius.circular(16),
-                    ),
-                    child: Image.network(
-                      faqData.image!,
-                      width: double.infinity,
-                      height: 280,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-
-                Padding(
-                  padding: const EdgeInsets.all(15),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        "Enter Comments",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w500,
-                        ),
+          // 👇 wrapped in Padding so the Stack's bounding box actually
+          // includes the space the close icon sits in (top-right corner),
+          // otherwise taps on the icon fall outside the hit-test region.
+          Padding(
+            padding: const EdgeInsets.only(top: 12, right: 12),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if ((faqData.image ?? "").isNotEmpty)
+                    ClipRRect(
+                      borderRadius: const BorderRadius.vertical(
+                        top: Radius.circular(16),
                       ),
+                      child: Image.network(
+                        faqData.image!,
+                        width: double.infinity,
+                        height: 280,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
 
-                      const SizedBox(height: 10),
-
-                      TextField(
-                        maxLines: 4,
-                        decoration: InputDecoration(
-                          hintText: "Interest",
-                          filled: true,
-                          fillColor: Colors.grey.shade100,
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: BorderSide(color: Colors.grey.shade300),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                            borderSide: BorderSide(color: Colors.grey.shade300),
+                  Padding(
+                    padding: const EdgeInsets.all(15),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          "Enter Comments",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
-                      ),
 
-                      const SizedBox(height: 18),
+                        const SizedBox(height: 10),
 
-                      Row(
-                        children: [
-                          Expanded(
-                            child: SizedBox(
-                              height: 48,
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.red,
-                                  foregroundColor: Colors.white,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10),
+                       TextField(
+  controller: commentController,
+  maxLines: 4,
+  style: const TextStyle(
+    color: Colors.black, // typing text color
+    fontSize: 16,
+  ),
+  decoration: InputDecoration(
+    hintText: "Interest",
+    hintStyle: TextStyle(
+      color: Colors.grey, // hint text color
+    ),
+    filled: true,
+    fillColor: Colors.grey.shade100,
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(10),
+      borderSide: BorderSide(color: Colors.grey.shade300),
+    ),
+    enabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(10),
+      borderSide: BorderSide(color: Colors.grey.shade300),
+    ),
+  ),
+),
+                        const SizedBox(height: 18),
+
+                        Row(
+                          children: [
+                            Expanded(
+                              child: SizedBox(
+                                height: 48,
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.red,
+                                    foregroundColor: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                  ),
+                                  onPressed: () async {
+                                    await homeController.FaqReply(
+                                      comment: commentController.text.trim(),
+                                      faqid: faqData.id.toString(),
+                                      reply: faqData.replyOne ?? "",
+                                    );
+
+                                    HomePageController.isPopupOpen = false;
+                                    Get.back();
+                                  },
+                                  child: Text(
+                                    faqData.replyOne?.isNotEmpty == true
+                                        ? faqData.replyOne!
+                                        : "Reply 1",
                                   ),
                                 ),
-                                onPressed: () {
-                                  HomePageController.isPopupOpen = false;
-                                  Get.back();
-                                },
-                                child: const Text("Replay 1"),
                               ),
                             ),
-                          ),
 
-                          const SizedBox(width: 15),
+                            const SizedBox(width: 15),
 
-                          Expanded(
-                            child: SizedBox(
-                              height: 48,
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.teal,
-                                  foregroundColor: Colors.white,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10),
+                            Expanded(
+                              child: SizedBox(
+                                height: 48,
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppColors.clrPrimary,
+                                    foregroundColor: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                  ),
+                                  onPressed: () async {
+                                    await homeController.FaqReply(
+                                      comment: commentController.text.trim(),
+                                      faqid: faqData.id.toString(),
+                                      reply: faqData.replyTwo ?? "",
+                                    );
+
+                                    HomePageController.isPopupOpen = false;
+                                    Get.back();
+                                  },
+                                  child: Text(
+                                    faqData.replyTwo?.isNotEmpty == true
+                                        ? faqData.replyTwo!
+                                        : "Reply 2",
                                   ),
                                 ),
-                                onPressed: () {
-                                  HomePageController.isPopupOpen = false;
-                                  Get.back();
-                                },
-                                child: const Text("Replay 2"),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ],
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
 
-          /// Close Button
           Positioned(
-            top: -12,
-            right: -12,
+            top: 0, // was -12
+            right: 0, // was -12
             child: InkWell(
               onTap: () {
                 HomePageController.isPopupOpen = false;
@@ -598,7 +689,11 @@ Future<void> _showFaqPopup(Data faqData) async {
                   shape: BoxShape.circle,
                 ),
                 padding: const EdgeInsets.all(5),
-                child: const Icon(Icons.close, color: Colors.white, size: 22),
+                child: const Icon(
+                  Icons.close,
+                  color: Colors.white,
+                  size: 22,
+                ),
               ),
             ),
           ),

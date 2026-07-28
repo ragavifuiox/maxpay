@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:maxpay/controllers/add_staff_controller.dart';
 import 'package:maxpay/controllers/homepage_controller.dart';
 import 'package:maxpay/core/constants/colors.dart';
+import 'package:maxpay/core/constants/snackbar.dart';
 import 'package:maxpay/global_widget/commom_button.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
 
@@ -15,14 +16,21 @@ class WalletTransferScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final staff = Get.arguments;
+final theme = Theme.of(context);
 
+final Color fieldColor = theme.brightness == Brightness.dark
+    ? const Color(0xFF3C3F52) // Dark mode
+    : const Color(0xFFF8F9FA); // Light mode
     return Scaffold(
-      backgroundColor: Colors.white,
+        backgroundColor:
+          theme.appBarTheme.backgroundColor ?? theme.scaffoldBackgroundColor,
       appBar: CommonAppBar(title: "Wallet Transfer"),
 
       // ✅ SAFE LAYOUT
       body: SafeArea(
+      
         child: GestureDetector(
           onTap: () => FocusScope.of(context).unfocus(),
           child: SingleChildScrollView(
@@ -77,20 +85,18 @@ class WalletTransferScreen extends StatelessWidget {
                     style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                   ),
                   const SizedBox(height: 8),
-
-                  TextFormField(
-                    initialValue: staff.name ?? "",
-                    readOnly: true,
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: const Color(0xffE8EAF8),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        borderSide: BorderSide.none,
-                      ),
-                    ),
-                  ),
-
+TextFormField(
+  initialValue: staff.name ?? "",
+  readOnly: true,
+  decoration: InputDecoration(
+    filled: true,
+    fillColor: fieldColor,
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(8),
+      borderSide: BorderSide.none,
+    ),
+  ),
+),
                   const SizedBox(height: 20),
 
                   /// ================= TRANSACTION TYPE =================
@@ -105,7 +111,9 @@ class WalletTransferScreen extends StatelessWidget {
     value: controller.selectedPaymentType.value,
     decoration: InputDecoration(
       filled: true,
-      fillColor: const Color(0xffF4F4F4),
+       fillColor: isDark
+      ? AppColors.darkFilterBorder // Dark mode
+      : const Color(0xFFF4F4F4),  // Light mode
       contentPadding: const EdgeInsets.symmetric(
         horizontal: 15,
         vertical: 16,
@@ -144,7 +152,9 @@ class WalletTransferScreen extends StatelessWidget {
                     decoration: InputDecoration(
                       hintText: "Enter Amount",
                       filled: true,
-                      fillColor: const Color(0xffF4F4F4),
+                      fillColor: isDark
+      ? AppColors.darkFilterBorder // Dark mode
+      : const Color(0xFFF4F4F4),  // Light mode
                       contentPadding: const EdgeInsets.symmetric(
                         horizontal: 15,
                         vertical: 16,
@@ -164,7 +174,9 @@ class WalletTransferScreen extends StatelessWidget {
                       title: "Submit",
                       onTap: () async {
                         if (amountController.text.trim().isEmpty) {
-                          Get.snackbar("Error", "Please enter amount");
+                         
+ CustomToast.error( "Please enter amount");
+                         
                           return;
                         }
 

@@ -21,7 +21,7 @@ class FaqReplyRepImpl implements FaqReplyRepository {
   }) async {
     try {
     final response = await apiService.post(
-  ApiRoutes.addstaff,
+  ApiRoutes.faqreply,
   data: {
     "faq_id": faqid,
     "comment": comment,

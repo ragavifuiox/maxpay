@@ -4,7 +4,7 @@
 import 'package:maxpay/core/data/model/update_payment_status.dart';
 
 class ApiRoutes {
-  static const baseURL = "http://139.59.91.7/test_paylinkonline.in/public/api";
+  static const baseURL = "https://paylinkonline.in/api";
   static const login = "/retailer_login_sendotp";
   static const verifyotp = "/retailer_login_verifyOtp";
   static const news = "/get_news";
@@ -82,6 +82,7 @@ class ApiRoutes {
   static const updatepaymentStatus = "/update_payment_status";
   static const wallettransferdetail = "/satff_wallet_history";
   static const staffwalletreverse = "/staff_wallet_reverse";
-  static const updateprofileotp = "/update_otp_verify";
+  static const updateprofileotp = "/verify_profile_update_otp";
+  static const faqreply = "/faq_reply";
   
 }

@@ -7,6 +7,7 @@ import 'package:maxpay/core/error/failure.dart';
 abstract class UpdateProfileOtpRepository {
   Future<Either<Failure, UpdateprofileOtp>> updateotp({
   required String otp,
+  required String mobile,
 
 });
 

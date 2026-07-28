@@ -21,7 +21,7 @@ class ProfileUpdateOtp extends StatefulWidget {
 class _VerifyPinPageState extends State<ProfileUpdateOtp> {
   final TextEditingController otpController = TextEditingController();
 
-  final ProfileController controller = Get.put(
+  final ProfileController procontroller = Get.put(
     ProfileController(getProfileUseCase: sl(), profileUpdateUseCase: sl(), updateprofileotpusecase: sl()
       
     ),
@@ -30,7 +30,7 @@ class _VerifyPinPageState extends State<ProfileUpdateOtp> {
   @override
   void initState() {
     super.initState();
-    controller.startOtpTimer();
+    procontroller.startOtpTimer();
   }
 
   @override
@@ -63,11 +63,14 @@ class _VerifyPinPageState extends State<ProfileUpdateOtp> {
 
                   const SizedBox(height: 10),
 
-                  const Text(
-                    "Please type the verification code\nsent to +91 000 000 0000",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 14, color: Colors.grey),
-                  ),
+                 Obx(() => Text(
+      "Please type the verification code\nsent to +91 ${procontroller.updatedMobile.value}",
+      textAlign: TextAlign.center,
+      style: const TextStyle(
+        fontSize: 14,
+        color: Colors.grey,
+      ),
+    )),
 
                   const SizedBox(height: 40),
 
@@ -104,7 +107,7 @@ class _VerifyPinPageState extends State<ProfileUpdateOtp> {
                             child: const Text(
                               "Resend OTP",
                               style: TextStyle(
-                                color: Colors.blue,
+                                color: Colors.red,
                                 fontSize: 14,
                                 fontWeight: FontWeight.bold,
                                 decoration: TextDecoration.underline,
@@ -130,21 +133,24 @@ class _VerifyPinPageState extends State<ProfileUpdateOtp> {
                       child: CommonButton(
                         title: "Continue",
                         width: 170,
-                        isLoading: controller.isLoading.value,
-                        onTap: () async {
-                          if (otpController.text.trim().length != 4) {
-                            CustomToast.error("Please enter a valid OTP");
-                            return;
-                          }
+                        isLoading: procontroller.isLoading.value,
+                       onTap: () async {
+  if (otpController.text.trim().length != 4) {
+    CustomToast.error("Please enter a valid OTP");
+    return;
+  }
 
-                          final success = await controller.verifyOtp(
-                            otpController.text.trim(),
-                          );
+  final success = await procontroller.verifyOtp(
+    otpController.text.trim(),
+  );
 
-                          if (success) {
-                            Get.to(() => LoginPhoneNamePage());
-                          }
-                        },
+  if (success) {
+    await procontroller.fetchProfile();
+    Get.offAll(() => LoginPhoneNamePage());
+  } else {
+    CustomToast.error("Invalid OTP");
+  }
+},
                       ),
                     ),
                   ),
