@@ -58,4 +58,5 @@ class AppRoutes {
   static const String broadband='/bradband';
   static const String landline='/landline';
   static const String dthrefresh='/dthrefresh';
+  static const String transactionDetails='/transactionDetails';
 }

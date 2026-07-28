@@ -10,7 +10,7 @@ import 'package:maxpay/core/error/failure.dart';
 class GradeUsecase {
   final GradeRepository repository;
   GradeUsecase(this.repository);
-  Future<Either<Failure, Grade>> call() {
+  Future<Either<Failure, RetailorGrade>> call() {
     return repository.grade();
   }
 }

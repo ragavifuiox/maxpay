@@ -321,26 +321,47 @@ class _LandlineBillPageState extends State<LandlineBillPage> {
 
                     /// 🔹 CUSTOMER ID INPUT
                     Container(
-                      decoration: BoxDecoration(
-                        color: fieldColor,
-                        borderRadius: BorderRadius.circular(10.r),
-                      ),
-                      child: TextField(
-                        controller: _customerIdController,
-                        enabled: !_isBillFetched,
-                        style: TextStyle(
-                          fontSize: 14.sp,
-                          color: isDark ? Colors.white : Colors.black,
-                        ),
-                        decoration: InputDecoration(
-                          hintText: 'Customer Id',
-                          hintStyle: TextStyle(color: Colors.grey, fontSize: 14.sp),
-                          border: InputBorder.none,
-                          contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 15.h),
-                        ),
-                      ),
-                    ),
-
+  decoration: BoxDecoration(
+    color: fieldColor,
+    borderRadius: BorderRadius.circular(10.r),
+  ),
+  child: TextField(
+    controller: _customerIdController,
+    enabled: !_isBillFetched,
+    onChanged: (_) {
+      setState(() {}); // Refresh to show/hide X icon
+    },
+    style: TextStyle(
+      fontSize: 14.sp,
+      color: isDark ? Colors.white : Colors.black,
+    ),
+    decoration: InputDecoration(
+      hintText: 'Customer Id',
+      hintStyle: TextStyle(
+        color: Colors.grey,
+        fontSize: 14.sp,
+      ),
+      border: InputBorder.none,
+      contentPadding: EdgeInsets.symmetric(
+        horizontal: 16.w,
+        vertical: 15.h,
+      ),
+     suffixIcon: _customerIdController.text.isNotEmpty
+    ? IconButton(
+        icon: Icon(
+          Icons.cancel,
+          color: Colors.red,
+          size: 20.sp,
+        ),
+        onPressed: () {
+          _customerIdController.clear();
+          setState(() {});
+        },
+      )
+    : null,
+    ),
+  ),
+),
                     if (_isBillFetched) ...[
                       SizedBox(height: 12.h),
 

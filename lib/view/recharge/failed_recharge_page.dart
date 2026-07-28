@@ -47,7 +47,7 @@ class FailedRechargePage extends StatelessWidget {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final ProfileController profileController = Get.put(
-      ProfileController(getProfileUseCase: sl(), profileUpdateUseCase: sl()),
+      ProfileController(getProfileUseCase: sl(), profileUpdateUseCase: sl(), updateprofileotpusecase: sl(),),
     );
 final DownloadController downloadController = Get.put(
       DownloadController(downloadUseCase: sl()),

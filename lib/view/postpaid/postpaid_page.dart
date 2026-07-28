@@ -14,7 +14,7 @@ class PostpaidPage extends StatefulWidget {
   @override
   State<PostpaidPage> createState() => _PostPaidPageState();
 }
-
+final TextEditingController _mobileController = TextEditingController();
 class _PostPaidPageState extends State<PostpaidPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
@@ -173,40 +173,46 @@ bool _isReceived = true;
                   borderRadius: BorderRadius.circular(10.r),
                 ),
                 child: TextField(
-                  keyboardType: TextInputType.phone,
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    color: isDark ? Colors.white : Colors.black,
-                  ),
-                  decoration: InputDecoration(
-                    hintText: '9876543210',
-                    hintStyle: TextStyle(color: Colors.grey, fontSize: 14.sp),
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.symmetric(
-                      horizontal: 16.w,
-                      vertical: 12.h,
-                    ),
-                    suffixIcon: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.cancel,
-                          color: Colors.red.withValues(alpha: 0.5),
-                          size: 20.sp,
-                        ),
-                        SizedBox(width: 10.w),
-                        Icon(Icons.person, color: Colors.orange, size: 20.sp),
-                        SizedBox(width: 10.w),
-                      ],
-                    ),
-                  ),
-                ),
+  controller: _mobileController,
+  keyboardType: TextInputType.phone,
+  inputFormatters: [
+    FilteringTextInputFormatter.digitsOnly,
+  ],
+  onChanged: (_) => setState(() {}), // Refresh UI
+  style: TextStyle(
+    fontSize: 14.sp,
+    color: isDark ? Colors.white : Colors.black,
+  ),
+  decoration: InputDecoration(
+    hintText: 'Enter Mobile Number',
+    hintStyle: TextStyle(
+      color: Colors.grey,
+      fontSize: 14.sp,
+    ),
+    border: InputBorder.none,
+    contentPadding: EdgeInsets.symmetric(
+      horizontal: 16.w,
+      vertical: 12.h,
+    ),
+    suffixIcon: _mobileController.text.isNotEmpty
+        ? IconButton(
+            icon: Icon(
+              Icons.cancel,
+              color: Colors.red,
+              size: 20.sp,
+            ),
+            onPressed: () {
+              _mobileController.clear();
+              setState(() {});
+            },
+          )
+        : null,
+  ),
+),
               ),
               SizedBox(height: 15.h),
 
-              /// 🔹 OPERATOR SELECTION
-              /// 🔹 OPERATOR SELECTION
+          
               GestureDetector(
                 onTap: () => _showOperatorSelector(context),
                 child: Container(

@@ -44,6 +44,84 @@ class TransferdetailFilter extends StatelessWidget {
      Column(
   children: [
 
+
+
+    DropdownButtonFormField<TransferFilterType>(
+
+  value: selectedFilter,
+
+  hint: const Text(
+    "Transfer Type",
+    style: TextStyle(
+      fontFamily: 'Poppins',
+      fontSize: 14,
+      fontWeight: FontWeight.w500,
+    ),
+  ),
+
+  isExpanded: true,
+
+  icon: const Icon(
+    Icons.keyboard_arrow_down,
+    size: 30,
+  ),
+
+  decoration: InputDecoration(
+    filled: true,
+    fillColor: Colors.white,
+
+    contentPadding:
+        const EdgeInsets.symmetric(horizontal: 18),
+
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(8),
+    ),
+
+    enabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(8),
+      borderSide: BorderSide(
+        color: Colors.grey.shade300,
+      ),
+    ),
+  ),
+
+  items: TransferFilterType.values.map(
+    (e) => DropdownMenuItem(
+      value: e,
+      child: Text(
+        e.label,
+        style: const TextStyle(
+          fontFamily: 'Poppins',
+          fontSize: 15,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+    ),
+  ).toList(),
+
+onChanged:(value) {
+
+  if(value == null) return;
+
+  onFilterChanged(value);
+
+  controller.selectedFilter.value = value;
+
+  controller.transactionType.value = value.label;
+
+
+  // API CALL IMMEDIATELY
+  controller.getWalletTransferDetail(
+    search: controller.search.value,
+    startDate: controller.fromDate,
+    endDate: controller.toDate,
+    transferType: controller.transactionType.value,
+  );
+
+},
+
+    ),
+    const SizedBox(height: 14),
     /// DATE RANGE
     Row(
       children: [
@@ -59,9 +137,9 @@ class TransferdetailFilter extends StatelessWidget {
                   decoration: InputDecoration(
                     hintText: "DD.MM.YYYY",
                      hintStyle: TextHelper.max1.copyWith(
-          color: isDark
-              ? AppColors.textclr
-              : theme.colorScheme.onSurfaceVariant,
+         color: isDark
+                  ? AppColors.darkFilterBorder
+                  : AppColors.totalborde2.withValues(alpha: 0.1),
         ),
                     filled: true,
                     fillColor: Colors.white,
@@ -70,13 +148,13 @@ class TransferdetailFilter extends StatelessWidget {
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
                       borderSide: BorderSide(
-                        color: Colors.grey.shade300,
+                        color: isDark ? AppColors.darkFilterBorder : AppColors.totalborde2,
                       ),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
                       borderSide: BorderSide(
-                        color: Colors.grey.shade300,
+                         color: isDark ? AppColors.darkFilterBorder : AppColors.totalborde2,
                       ),
                     ),
                   ),
@@ -135,78 +213,9 @@ class TransferdetailFilter extends StatelessWidget {
     ),
 
 
-    const SizedBox(height: 14),
+
     /// TRANSACTION TYPE
-    DropdownButtonFormField<TransferFilterType>(
-
-      value: selectedFilter,
-
-      isExpanded: true,
-
-      icon: const Icon(
-        Icons.keyboard_arrow_down,
-        size: 30,
-      ),
-
-      decoration: InputDecoration(
-
-        hintText: "Transaction Type",
-        
-        filled: true,
-
-        fillColor: Colors.white,
-
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 18),
-
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(
-            color: Colors.grey.shade300,
-          ),
-        ),
-
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(
-            color: Colors.grey.shade300,
-          ),
-        ),
-
-      ),
-
-
-      items: TransferFilterType.values
-          .map(
-            (e)=>DropdownMenuItem(
-              value:e,
-              child:Text(e.label),
-            ),
-          )
-          .toList(),
-
-onChanged:(value) {
-
-  if(value == null) return;
-
-  onFilterChanged(value);
-
-  controller.selectedFilter.value = value;
-
-  controller.transactionType.value = value.label;
-
-
-  // API CALL IMMEDIATELY
-  controller.getWalletTransferDetail(
-    search: controller.search.value,
-    startDate: controller.fromDate,
-    endDate: controller.toDate,
-    transferType: controller.transactionType.value,
-  );
-
-},
-
-    ),
+    
 
  const SizedBox(height: 14),
 

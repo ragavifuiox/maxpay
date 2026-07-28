@@ -51,12 +51,14 @@ import 'package:maxpay/core/data/repsoitory/statement_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/submit_dispute_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/tabdetail_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/today_credit_repo_impl.dart';
+import 'package:maxpay/core/data/repsoitory/today_transaction_repo_imppl.dart';
 import 'package:maxpay/core/data/repsoitory/trans_confirm_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/trans_fsuc_fail.dart';
 import 'package:maxpay/core/data/repsoitory/trans_report_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/update_otp_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/update_payment_status_impl.dart';
 import 'package:maxpay/core/data/repsoitory/update_pin_repo_impl.dart';
+import 'package:maxpay/core/data/repsoitory/update_profile_otp_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/update_profile_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/update_send_otp_impl.dart';
 import 'package:maxpay/core/data/repsoitory/verify_pin_repo_Impl.dart';
@@ -123,12 +125,14 @@ import 'package:maxpay/core/domain/repository/submit_dsipute_repository.dart';
 import 'package:maxpay/core/domain/repository/support_repository.dart';
 import 'package:maxpay/core/domain/repository/tab_detail_repository.dart';
 import 'package:maxpay/core/domain/repository/today_credit_repository.dart';
+import 'package:maxpay/core/domain/repository/today_trnsaction_repsoitory.dart';
 import 'package:maxpay/core/domain/repository/trans_confirm_repository.dart';
 import 'package:maxpay/core/domain/repository/trans_report_repository.dart';
 import 'package:maxpay/core/domain/repository/transaction_suc_fail_repository.dart';
 import 'package:maxpay/core/domain/repository/update_otp_repository.dart';
 import 'package:maxpay/core/domain/repository/update_payment_status_repository.dart';
 import 'package:maxpay/core/domain/repository/update_pin_repository.dart';
+import 'package:maxpay/core/domain/repository/update_profile_otp_repository.dart';
 import 'package:maxpay/core/domain/repository/update_send_otp_repository.dart';
 import 'package:maxpay/core/domain/repository/verify_pin_repository.dart';
 import 'package:maxpay/core/domain/repository/wallet_bal_repository.dart';
@@ -194,12 +198,14 @@ import 'package:maxpay/core/domain/usecase/statment_usecase.dart';
 import 'package:maxpay/core/domain/usecase/submit_dispute_usecase.dart';
 import 'package:maxpay/core/domain/usecase/tab_detail_usecase.dart';
 import 'package:maxpay/core/domain/usecase/today_credit_usecase.dart';
+import 'package:maxpay/core/domain/usecase/today_trnsaction_usecase.dart';
 import 'package:maxpay/core/domain/usecase/trans_confirm_usecase.dart';
 import 'package:maxpay/core/domain/usecase/trans_report_usecase.dart';
 import 'package:maxpay/core/domain/usecase/trans_suc_fail_usecase.dart';
 import 'package:maxpay/core/domain/usecase/update_otp_usecase.dart';
 import 'package:maxpay/core/domain/usecase/update_payment_status_usecase.dart';
 import 'package:maxpay/core/domain/usecase/update_pin_usecase.dart';
+import 'package:maxpay/core/domain/usecase/update_profile_otp_usecase.dart';
 import 'package:maxpay/core/domain/usecase/update_send_otp_usecase.dart';
 import 'package:maxpay/core/domain/usecase/verify_pin_usecase.dart';
 import 'package:maxpay/core/domain/usecase/wallet_create_qr_usecase.dart';
@@ -242,6 +248,9 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton<TransactionSucFailRepository>(
     () => TransactionSucFailRepoImpl(sl()),
   );
+   sl.registerLazySingleton<TodayTrnsactionRepsoitory>(
+    () => TodayTransactionRepoImppl(sl()),
+  );
   sl.registerLazySingleton<CheckOperatorRepository>(
     () => CheckOperatorRepoImpl(sl()),
   );
@@ -268,6 +277,10 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton<StaffListRepository>(() => StaffListRepoImpl(sl()));
   sl.registerLazySingleton<PopupMessageRepository>(
     () => PopupMessageRepoImpl(sl()),
+  );
+
+    sl.registerLazySingleton<UpdateProfileOtpRepository>(
+    () =>UpdateProfileOtpRepoImpl(sl()),
   );
   sl.registerLazySingleton<EarningsRepository>(() => EarningsRepoImpl(sl()));
   sl.registerLazySingleton<CreditRepository>(() => CreditRepoImpl(sl()));
@@ -317,6 +330,7 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton<PaymnetStatusRepository>(
     () => PaymentStatusRepoImpl(sl()),
   );
+  
   sl.registerLazySingleton<RefundRepository>(() => RefundRepoImpl(sl()));
   sl.registerLazySingleton<AllPlanRepository>(() => AllPlanRepoImpl(sl()));
   sl.registerLazySingleton<UpdatePinRepository>(() => UpdatePinRepoImpl(sl()));
@@ -380,7 +394,8 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton<OtpUsecase>(() => OtpUsecase(sl()));
   sl.registerLazySingleton<GetNewsUseCase>(() => GetNewsUseCase(sl()));
   sl.registerLazySingleton<CreatePinUsecase>(() => CreatePinUsecase(sl()));
-  sl.registerLazySingleton<DueAmountUsecase>(() => DueAmountUsecase(sl()));
+  sl.registerLazySingleton<DueAmountUsecase>(() => DueAmountUsecase(sl())); 
+  sl.registerLazySingleton<UpdateProfileOtpUsecase>(() => UpdateProfileOtpUsecase(sl())); 
   sl.registerLazySingleton<GetWalletBalanceUseCase>(
     () => GetWalletBalanceUseCase(sl()),
   );
@@ -419,6 +434,7 @@ Future<void> initDependencies() async {
     () => MobileRechargeUsecase(sl()),
   );
   sl.registerLazySingleton<SearchStaffUsecase>(() => SearchStaffUsecase(sl()));
+  sl.registerLazySingleton<TodayTrnsactionUsecase>(() => TodayTrnsactionUsecase(sl()));
   sl.registerLazySingleton<PlanTabUseCase>(() => PlanTabUseCase(sl()));
   sl.registerLazySingleton<TabDetailUsecase>(() => TabDetailUsecase(sl()));
   sl.registerLazySingleton<AddKycUsecase>(() => AddKycUsecase(sl()));

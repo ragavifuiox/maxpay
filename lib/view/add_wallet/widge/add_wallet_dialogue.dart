@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:maxpay/controllers/add_wallet_controller.dart';
+import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/core/extensions/currency.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
@@ -24,44 +25,68 @@ class AddWalletPopup extends StatelessWidget {
   
   @override
   Widget build(BuildContext context) {
+    
     final theme = Theme.of(context);
     final size = MediaQuery.of(context).size;
-
+final isDark = Theme.of(context).brightness == Brightness.dark;
     return Dialog(
       backgroundColor: Colors.transparent,
       insetPadding: const EdgeInsets.symmetric(horizontal: 24),
+      
       child: Container(
         width: 340,
         padding: const EdgeInsets.all(18),
         decoration: BoxDecoration(
-          color: theme.colorScheme.surface,
+
+          
+          color:  theme.scaffoldBackgroundColor,
           borderRadius: BorderRadius.circular(14),
         ),
         child: SingleChildScrollView(
           child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              /// Select Button
-             
+  mainAxisSize: MainAxisSize.min,
+  children: [
 
-              const SizedBox(height: 8),
+    Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        const SizedBox(width: 24),
 
-              /// Title
-              const Text(
-                "Account Details",
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black87,
-                ),
-              ),
+        Text(
+          "Account Details",
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.w500,
+              color: theme.colorScheme.onSurface
+          ),
+        ),
 
-              const SizedBox(height: 18),
+        InkWell(
+          onTap: () async {
+            final controller = Get.find<AddWalletController>();
 
+            controller.stopTimer();
+            controller.amountController.clear();
+
+            Get.back(); 
+
+            await controller.getWalletHistory(); 
+          },
+          child: const Icon(
+            Icons.cancel,
+            size: 24,
+            color: Colors.red,
+          ),
+        ),
+      ],
+    ),
+
+    const SizedBox(height: 18),
               /// QR
               Container(
-                width: 270,
-                padding: const EdgeInsets.all(12),
+                width: 220,
+                height: 220,
+                padding: const EdgeInsets.all(4),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10),
@@ -98,11 +123,17 @@ class AddWalletPopup extends StatelessWidget {
                         horizontal: 14,
                         vertical: 14,
                       ),
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade100,
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: Colors.grey.shade300),
-                      ),
+decoration: BoxDecoration(
+  color: isDark
+      ? AppColors.darkbgBlack
+      : Colors.grey.shade100,
+  borderRadius: BorderRadius.circular(8),
+  border: Border.all(
+    color: isDark
+        ? Colors.grey.shade700
+        : Colors.grey.shade300,
+  ),
+),
                       child: Text(
                         amount.currencyIndian,
                         style: const TextStyle(

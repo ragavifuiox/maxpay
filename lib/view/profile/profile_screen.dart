@@ -264,7 +264,7 @@ class ProfileScreen extends GetView<ProfileController> {
                 const SizedBox(height: 18),
 
                 /// PHONE
-                _buildTitle(context, "Phone no"),
+                _buildTitle(context, "Reg.Mob No"),
 
                 const SizedBox(height: 8),
 
@@ -281,11 +281,13 @@ class ProfileScreen extends GetView<ProfileController> {
 
                 const SizedBox(height: 35),
 
-                /// UPDATE BUTTON
+              
                 CommonButton(
                   title: "Update",
                   onTap: () {
                     print("Button Pressed");
+                    print("Mobile Value = ${phoneController.text}");
+                    print("Mobile Length = ${phoneController.text.length}");
                     print("NAME = ${nameController.text}");
                     print("PINCODE = ${pinController.text}");
                     print(

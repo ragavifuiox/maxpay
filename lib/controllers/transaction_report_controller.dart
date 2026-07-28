@@ -39,7 +39,6 @@ final TextEditingController toDateController = TextEditingController();
 String toDate = '';
 String search = '';
 final TextEditingController searchController = TextEditingController();
-
 @override
 void onInit() {
   super.onInit();
@@ -47,14 +46,61 @@ void onInit() {
   fetchplan();
 
   final now = DateTime.now();
-
-  fromDate =
+  final today =
       "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
 
-  fromDateController.text = fromDate;
+  fromDate = today;
+  toDate = today;
 
-  update(["fromDate"]);
+  fromDateController.text = today;
+  toDateController.text = today;
+
+  currentStatus = "success"; // or set this before navigation
+
+  transactionreport(
+    search: "",
+    status: currentStatus,
+    productid: "",
+    fromdate: fromDate,
+    todate: toDate,
+  );
 }
+
+// @override
+// void onInit() {
+//   super.onInit();
+
+//   fetchplan();
+
+//   final now = DateTime.now();
+//   final today =
+//       "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
+
+//   fromDate = today;
+//   toDate = today;
+
+//   fromDateController.text = today;
+//   toDateController.text = today;
+
+//   update(["fromDate", "toDate"]);
+// }
+
+// @override
+// void onInit() {
+//   super.onInit();
+
+//   fetchplan();
+
+//   final now = DateTime.now();
+  
+
+//   fromDate =
+//       "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
+
+//   fromDateController.text = fromDate;
+
+//   update(["fromDate"]);
+// }
 void clearFilters() {
   selectedProductId.value = '';
   selectedProductName.value = '';
@@ -92,7 +138,10 @@ Future<void> fetchplan() async {
   }) async {
     try {
       isLoading.value = true;
-
+print("FROM DATE : $fromdate");
+print("TO DATE   : $todate");
+print("STATUS    : $status");
+print("PRODUCT ID: $productid");
       AppLogger.debugPrint("===== REQUEST =====");
       AppLogger.debugPrint({
         "search": search,
@@ -126,7 +175,13 @@ Future<void> fetchplan() async {
 
           AppLogger.debugPrint(response.toJson());
 
-          transreportList.assignAll(response.data ?? []);
+      print("Response Data Length: ${response.data?.length}");
+print(response.toJson());
+
+transreportList.clear();
+transreportList.addAll(response.data ?? []);
+
+update();
 
           AppLogger.debugPrint("Total Records : ${transreportList.length}");
 
@@ -237,29 +292,37 @@ Future<void> selectFromDate(BuildContext context) async {
 
 
 Future<void> selectToDate(BuildContext context) async {
+  DateTime initialDate;
+
+  if (toDate.isEmpty) {
+    initialDate = DateTime.now();
+  } else {
+    initialDate = DateTime.parse(toDate);
+  }
+
   final pickedDate = await showDatePicker(
     context: context,
-    initialDate: DateTime.now(),
+    initialDate: initialDate,
     firstDate: DateTime(2024),
     lastDate: DateTime(2030),
   );
 
   if (pickedDate != null) {
-  toDate =
-      "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+    toDate =
+        "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
 
-  toDateController.text = toDate;
+    toDateController.text = toDate;
 
-  update(["toDate"]);
+    update(["toDate"]);
 
-  transactionreport(
-    search: search,
-    status: currentStatus,
-    productid: selectedProductId.value,
-    fromdate: fromDate,
-    todate: toDate,
-  );
-}
+    transactionreport(
+      search: search,
+      status: currentStatus,
+      productid: selectedProductId.value,
+      fromdate: fromDate,
+      todate: toDate,
+    );
+  }
 }
   Future<void> SubmitDispute({
     required String subject,
@@ -314,9 +377,9 @@ Future<void> selectToDate(BuildContext context) async {
 
 @override
 void onClose() {
-  fromDateController.dispose();
-  toDateController.dispose();
-  searchController.dispose();
+  // fromDateController.dispose();
+  // toDateController.dispose();
+  // searchController.dispose();
   super.onClose();
 }
 

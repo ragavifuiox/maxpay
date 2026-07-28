@@ -71,16 +71,16 @@ class Records {
       this.lastrechargeamount,
       this.planname});
 
-  Records.fromJson(Map<String, dynamic> json) {
-    monthlyrecharge = json['monthlyrecharge'];
-    balance = json['balance'];
-    customername = json['customername'];
-    status = json['status'];
-    nextrechargedate = json['nextrechargedate'];
-    lastrechargedate = json['lastrechargedate'];
-    lastrechargeamount = json['lastrechargeamount'];
-    planname = json['planname'];
-  }
+ Records.fromJson(Map<String, dynamic> json) {
+  monthlyrecharge = json['MonthlyRecharge']?.toString();
+  balance = json['Balance']?.toString();
+  customername = json['customerName']?.toString();
+  status = json['status']?.toString();
+  nextrechargedate = json['NextRechargeDate']?.toString();
+  lastrechargedate = json['LastRechargeDate']?.toString();
+  lastrechargeamount = json['lastrechargeamount']?.toString();
+  planname = json['planname']?.toString();
+}
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};

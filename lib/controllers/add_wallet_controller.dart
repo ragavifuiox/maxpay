@@ -38,6 +38,8 @@ RxBool isLoadingUpiApps = false.obs;
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       AppLogger.debugPrint("App resumed. Active Txn ID: $_activeTxnId");
+       getWalletHistory();
+
       if (_activeTxnId != null && remainingSeconds.value > 0) {
         checkPaymentStatus(_activeTxnId!);
         if (_timer == null || !_timer!.isActive) {
@@ -73,13 +75,13 @@ RxBool isLoadingUpiApps = false.obs;
     _timer = null;
     _activeTxnId = null;
   }
-Future<void> loadInstalledUpiApps() async {
-  if (upiApps.isNotEmpty) return;
+// Future<void> loadInstalledUpiApps() async {
+//   if (upiApps.isNotEmpty) return;
 
-  isLoadingUpiApps.value = true;
-  upiApps.value = await getInstalledUpiApps();
-  isLoadingUpiApps.value = false;
-}
+//   isLoadingUpiApps.value = true;
+//   upiApps.value = await getInstalledUpiApps();
+//   isLoadingUpiApps.value = false;
+// }
   Future<void> checkPaymentStatus(String txnId) async {
     if (isCheckingStatus.value) return;
     isCheckingStatus.value = true;
@@ -192,7 +194,8 @@ Future<void> loadInstalledUpiApps() async {
     );
   }
 
-  Future<void> createQr(String amount) async {
+
+Future<void> createQr(String amount) async {
     isLoading.value = true;
     update();
     _lastAmount = amount;
@@ -207,29 +210,92 @@ Future<void> loadInstalledUpiApps() async {
         AppLogger.debugPrint("------------CREATE QR END----------");
       },
       (response) {
-        // CustomToast.success(response.);
         AppLogger.debugPrint("------------CREATE QR CALLED----------");
         AppLogger.logError(response.toJson());
 
         startTimer(response.txnId ?? '');
+        loadInstalledUpiApps(); // <-- ADDED: fetch UPI apps before showing dialog
 
-        Get.dialog(
-          AddWalletPopup(
-            amount: amount,
-            txtionId: response.txnId ?? '',
-            url: response.upiLink ?? '',
-          ),
-        ).then((_) {
-          stopTimer();
-          amountController.clear();
-        });
+      Get.dialog(
+  AddWalletPopup(
+    amount: amount,
+    txtionId: response.txnId ?? '',
+    url: response.upiLink ?? '',
+  ),
+).then((_) async {
+  stopTimer();
+  amountController.clear();
 
+  // Give backend time to update
+  await Future.delayed(const Duration(seconds: 1));
+
+  await getWalletHistory();
+});
         AppLogger.debugPrint("------------CREATE QR END----------");
       },
     );
     isLoading.value = false;
     update();
   }
+
+  Future<void> loadInstalledUpiApps() async {
+    isLoadingUpiApps.value = true;
+    upiApps.value = await getInstalledUpiApps();
+    isLoadingUpiApps.value = false;
+    AppLogger.debugPrint("UPI apps found: ${upiApps.length}");
+  }
+
+  Future<List<Map<String, dynamic>>> getInstalledUpiApps() async {
+    try {
+      final List<dynamic> result =
+          await _channel.invokeMethod("getInstalledUpiApps");
+      return result.map((e) => Map<String, dynamic>.from(e)).toList();
+    } on PlatformException catch (e) {
+      AppLogger.debugPrint("getInstalledUpiApps PlatformException: ${e.message}");
+      return [];
+    } catch (e) {
+      AppLogger.debugPrint("getInstalledUpiApps error: $e");
+      return [];
+    }
+  }
+  // Future<void> createQr(String amount) async {
+  //   isLoading.value = true;
+  //   update();
+  //   _lastAmount = amount;
+  //   final result = await createQrUsecase.createQrAmount(amount: amount);
+
+  //   result.fold(
+  //     (failure) {
+  //       AppLogger.debugPrint("------------CREATE QR CALLED----------");
+  //       AppLogger.logError(failure.message);
+  //       CustomToast.error(failure.message);
+  //       amountController.clear();
+  //       AppLogger.debugPrint("------------CREATE QR END----------");
+  //     },
+  //     (response) {
+  //       // CustomToast.success(response.);
+  //       AppLogger.debugPrint("------------CREATE QR CALLED----------");
+  //       AppLogger.logError(response.toJson());
+
+  //       startTimer(response.txnId ?? '');
+
+  //       Get.dialog(
+  //         AddWalletPopup(
+  //           amount: amount,
+  //           txtionId: response.txnId ?? '',
+  //           url: response.upiLink ?? '',
+  //         ),
+  //       ).then((_) {
+  //         stopTimer();
+  //         amountController.clear();
+  //       });
+
+  //       AppLogger.debugPrint("------------CREATE QR END----------");
+  //     },
+  //   );
+  //   isLoading.value = false;
+  //   update();
+  // }
 
   Future<void> getWalletHistory() async {
     isLoading.value = true;
@@ -273,18 +339,29 @@ Future<void> openSpecificUpiApp({
   }
 }
 
-Future<List<Map<String, dynamic>>> getInstalledUpiApps() async {
-  try {
-    final List<dynamic> result =
-        await _channel.invokeMethod("getInstalledUpiApps");
+// Future<List<Map<String, dynamic>>> getInstalledUpiApps() async {
 
-    return result
-        .map((e) => Map<String, dynamic>.from(e))
-        .toList();
-  } catch (e) {
-    return [];
-  }
-}
+//   try {
+
+//     final result =
+//         await _channel.invokeMethod("getInstalledUpiApps");
+
+
+//     print(" 😊UPI APPS ===== $result");
+
+
+//     return (result as List)
+//         .map((e)=>Map<String,dynamic>.from(e))
+//         .toList();
+
+//   } catch(e){
+
+//     print("UPI ERROR ===== $e");
+
+//     return [];
+
+//   }
+// }
   @override
   void onClose() {
     WidgetsBinding.instance.removeObserver(this);

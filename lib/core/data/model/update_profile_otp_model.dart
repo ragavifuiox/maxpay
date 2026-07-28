@@ -1,12 +1,12 @@
-class ProfileUpdate {
+class UpdateprofileOtp {
   bool? success;
   Data? data;
   String? message;
   int? code;
 
-  ProfileUpdate({this.success, this.data, this.message, this.code});
+  UpdateprofileOtp({this.success, this.data, this.message, this.code});
 
-  ProfileUpdate.fromJson(Map<String, dynamic> json) {
+  UpdateprofileOtp.fromJson(Map<String, dynamic> json) {
     success = json['success'];
     data = json['data'] != null ? new Data.fromJson(json['data']) : null;
     message = json['message'];
@@ -30,45 +30,54 @@ class Data {
   String? userId;
   String? name;
   String? retailerName;
-  String? email;
   String? phoneNumber;
   String? regMobileNumber;
   String? whatsappNumber;
   String? billingAddress;
+  String? email;
   String? pincode;
   Null? state;
+  String? status;
   bool? otpRequired;
-  String? profileImg;
+  bool? mobileChangePending;
+  int? mobileRequestId;
+  String? requestedNewMobile;
 
   Data(
       {this.id,
       this.userId,
       this.name,
       this.retailerName,
-      this.email,
       this.phoneNumber,
       this.regMobileNumber,
       this.whatsappNumber,
       this.billingAddress,
+      this.email,
       this.pincode,
       this.state,
+      this.status,
       this.otpRequired,
-      this.profileImg});
+      this.mobileChangePending,
+      this.mobileRequestId,
+      this.requestedNewMobile});
 
   Data.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     userId = json['user_id'];
     name = json['name'];
     retailerName = json['retailer_name'];
-    email = json['email'];
     phoneNumber = json['phone_number'];
     regMobileNumber = json['reg_mobile_number'];
     whatsappNumber = json['whatsapp_number'];
     billingAddress = json['billing_address'];
+    email = json['email'];
     pincode = json['pincode'];
     state = json['state'];
+    status = json['status'];
     otpRequired = json['otp_required'];
-    profileImg = json['profile_img'];
+    mobileChangePending = json['mobile_change_pending'];
+    mobileRequestId = json['mobile_request_id'];
+    requestedNewMobile = json['requested_new_mobile'];
   }
 
   Map<String, dynamic> toJson() {
@@ -77,15 +86,18 @@ class Data {
     data['user_id'] = this.userId;
     data['name'] = this.name;
     data['retailer_name'] = this.retailerName;
-    data['email'] = this.email;
     data['phone_number'] = this.phoneNumber;
     data['reg_mobile_number'] = this.regMobileNumber;
     data['whatsapp_number'] = this.whatsappNumber;
     data['billing_address'] = this.billingAddress;
+    data['email'] = this.email;
     data['pincode'] = this.pincode;
     data['state'] = this.state;
+    data['status'] = this.status;
     data['otp_required'] = this.otpRequired;
-    data['profile_img'] = this.profileImg;
+    data['mobile_change_pending'] = this.mobileChangePending;
+    data['mobile_request_id'] = this.mobileRequestId;
+    data['requested_new_mobile'] = this.requestedNewMobile;
     return data;
   }
 }

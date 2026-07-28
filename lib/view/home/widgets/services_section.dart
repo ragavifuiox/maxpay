@@ -32,7 +32,7 @@ class MenuScreen extends StatelessWidget {
   MenuScreen({super.key});
 
   final ServiceController controller = Get.put(
-    ServiceController(productTypeUseCase: sl()),
+    ServiceController(productTypeUseCase: sl(), todayTrnsactionUsecase: sl(),),
   );
   final HomePageController homeController = Get.find<HomePageController>();
   final BannerController bannerController = Get.put(
@@ -70,7 +70,7 @@ class MenuScreen extends StatelessWidget {
       backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: Obx(() {
-          if (controller.isLoading.value) {
+          if (controller.isProductLoading.value) {
             return const Center(child: CircularProgressIndicator());
           }
 
@@ -219,7 +219,7 @@ Obx(() {
     borderRadius: BorderRadius.circular(12),
     child: _statusCard(
       image: AssetImages.successIcon,
-      value: "₹${transaction?.data?.success?.amount?.toString() ?? "0"}",
+      value: "₹${transaction?.data?.success?.count.toString() ?? "0"}",
       bgColor: const Color(0xffC0FFDF),
       textColor: const Color(0xff22C55E),
     ),
@@ -238,7 +238,7 @@ Obx(() {
     borderRadius: BorderRadius.circular(12),
     child: _statusCard(
       image: AssetImages.processIcon,
-      value: "₹${transaction?.data?.processing?.amount?.toString() ?? "0"}",
+      value: "₹${transaction?.data?.processing?.count.toString() ?? "0"}",
       bgColor: const Color(0xffFFE1B4),
       textColor: Colors.orange,
     ),
@@ -257,7 +257,7 @@ Obx(() {
     borderRadius: BorderRadius.circular(12),
     child: _statusCard(
       image: AssetImages.failedIcon,
-      value: "₹${transaction?.data?.failed?.amount?.toString() ?? "0"}",
+      value: "₹${transaction?.data?.failed?.count.toString() ?? "0"}",
       bgColor: const Color(0xffFFCCD3),
       textColor: Colors.red,
     ),
@@ -762,14 +762,14 @@ case 'postpaid':                 // ✅ fixed — was 'cable tv'
       children: [
         SvgPicture.asset(
           image,
-          width: 20.w,
-          height: 20.h,
+          width: 24.w,
+          height: 24.h,
         ),
         SizedBox(width: 8.w),
         Text(
           value,
           style: TextStyle(
-            fontSize: 16.sp,
+            fontSize: 19.sp,
             fontWeight: FontWeight.bold,
             color: textColor,
           ),
