@@ -32,7 +32,6 @@ class VerifyPinRepoImpl implements VerifyPinRepository {
         ),
       );
     } catch (e) {
-      AppLogger.logError(e.toString());
       return Left(ServerFailure(message: e.toString()));
     }
   }

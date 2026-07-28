@@ -4,6 +4,7 @@ import 'package:maxpay/core/data/model/due_amount_model.dart';
 import 'package:maxpay/core/domain/repository/due_amount_repository.dart';
 import 'package:maxpay/core/error/failure.dart';
 import 'package:maxpay/core/services/api_services.dart';
+import 'package:maxpay/core/utils/logg_helper.dart';
 
 
 class DueAmountRepoImpl implements DueAmountRepository {
@@ -17,6 +18,7 @@ class DueAmountRepoImpl implements DueAmountRepository {
       final model = DueAmount.fromJson(response);
       return Right(model);
     } catch (e) {
+      AppLogger.logError("Api ${ApiRoutes.dueamount} " + e.toString());
       return Left(ServerFailure(message: e.toString()));
     }
   }

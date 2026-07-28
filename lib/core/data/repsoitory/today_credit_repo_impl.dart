@@ -56,6 +56,7 @@ class TodayCreditRepoImpl implements TodayCreditRepository {
 
       return Left(ServerFailure(message: message));
     } catch (e) {
+    AppLogger.logError("Api ${ApiRoutes.todaycredit}" + e.toString());
       return Left(ServerFailure(message: e.toString()));
     }
   }

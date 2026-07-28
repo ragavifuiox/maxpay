@@ -1,8 +1,3 @@
-
-
-
-import 'package:maxpay/core/data/model/update_payment_status.dart';
-
 class ApiRoutes {
   static const baseURL = "https://paylinkonline.in/api";
   static const login = "/retailer_login_sendotp";

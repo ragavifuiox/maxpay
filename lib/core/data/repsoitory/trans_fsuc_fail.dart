@@ -55,6 +55,7 @@ class TransactionSucFailRepoImpl implements TransactionSucFailRepository {
 
       return Left(ServerFailure(message: message));
     } catch (e) {
+      AppLogger.logError("Api ${ApiRoutes.transsucfail}" + e.toString());
       return Left(ServerFailure(message: e.toString()));
     }
   }
