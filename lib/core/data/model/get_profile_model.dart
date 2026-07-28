@@ -38,7 +38,7 @@ class Data {
   String? usertype;
   String? address;
   String? whatsappnumber;
-
+bool? isstaff;
   Data(
       {this.id,
       this.userId,
@@ -52,6 +52,7 @@ class Data {
       this.usertype,
       this.address,
       this.whatsappnumber,
+      this.isstaff,
       });
 
   Data.fromJson(Map<String, dynamic> json) {
@@ -67,6 +68,7 @@ class Data {
     usertype = json['user_type'];
     whatsappnumber = json['whatsapp_number'];
     address = json['billing_address'];
+        isstaff = json['is_staff'];
   }
 
   Map<String, dynamic> toJson() {
@@ -83,6 +85,7 @@ class Data {
     data['user_type'] = usertype;
     data['billing_address'] = address;
     data['whatsapp_number'] = whatsappnumber;
+     data['is_staff'] = isstaff;
     return data;
   }
 }

@@ -63,11 +63,19 @@ class _VerifyPinPageState extends State<VerifyPinPage> {
 
                   const SizedBox(height: 10),
 
-                  const Text(
-                    "Please type the verification code\nsent to +91 000 000 0000",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 14, color: Colors.grey),
-                  ),
+                Obx(() {
+  final mobile =
+      controller.otpResponse.value?.data?.mobile ?? "";
+
+  return Text(
+    "Please type the verification code\nsent to +91 $mobile",
+    textAlign: TextAlign.center,
+    style: const TextStyle(
+      fontSize: 14,
+      color: Colors.grey,
+    ),
+  );
+}),
 
                   const SizedBox(height: 40),
 
@@ -104,7 +112,7 @@ class _VerifyPinPageState extends State<VerifyPinPage> {
                             child: const Text(
                               "Resend OTP",
                               style: TextStyle(
-                                color: Colors.blue,
+                                color: Colors.red,
                                 fontSize: 14,
                                 fontWeight: FontWeight.bold,
                                 decoration: TextDecoration.underline,

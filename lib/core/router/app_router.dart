@@ -69,6 +69,7 @@ import 'package:maxpay/view/statement/state_readmore.dart';
 import 'package:maxpay/view/statement/statement_screen.dart';
 import 'package:maxpay/view/support/supoort_screen.dart';
 import 'package:maxpay/view/transaction_screens/transaction_success_screen.dart';
+import 'package:maxpay/view/transaction_screens/widget/transaction_detail_page.dart';
 import 'package:maxpay/view/transfer_detail/transfer_detial.dart';
 import 'package:maxpay/view/update_pin/verify_pin_screen.dart';
 import 'package:maxpay/view/wallet%20balance/wallet_balance.dart';
@@ -214,6 +215,7 @@ class AppPages {
             todaycreditusecase: sl(),
             graphUsecase: sl(),
             faqUsecase: sl(),
+             faqreplyusecase: sl(),
           ),
 
           fenix: true,
@@ -333,9 +335,9 @@ class AppPages {
           () => ProfileController(
             getProfileUseCase: sl(),
             profileUpdateUseCase: sl(),
+            updateprofileotpusecase: sl(),
           ),
-
-          fenix: true,
+       fenix: true,
         );
       }),
     ),
@@ -421,7 +423,11 @@ class AppPages {
       }),
     ),
 
-    GetPage(name: AppRoutes.weblogin, page: () => const WebSignupScreen()),
+   GetPage(
+  name: AppRoutes.transactionDetails,
+  page: ()=> const TransactionDetailsPage(),
+),
+     GetPage(name: AppRoutes.weblogin, page: () => const WebSignupScreen()),
     GetPage(name: AppRoutes.webotp, page: () => const WebOtpScreen()),
     GetPage(
       name: AppRoutes.websuccess,
@@ -509,7 +515,7 @@ class AppPages {
 
       binding: BindingsBuilder(() {
         Get.lazyPut<ServiceController>(
-          () => ServiceController(productTypeUseCase: sl()),
+          () => ServiceController(productTypeUseCase: sl(), todayTrnsactionUsecase: sl()),
 
           fenix: true,
         );

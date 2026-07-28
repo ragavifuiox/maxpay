@@ -19,7 +19,7 @@ class HomeHeaderSection extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeController = Get.find<ThemeController>();
     final profileController = Get.put(
-      ProfileController(getProfileUseCase: sl(), profileUpdateUseCase: sl()),
+      ProfileController(getProfileUseCase: sl(), profileUpdateUseCase: sl(), updateprofileotpusecase: sl()),
     );
     final isTablet = Responsive.isTablet(context);
     return Obx(() {

@@ -95,8 +95,8 @@ class WalletReportScreen extends GetView<AddStaffController> {
                   "Transaction ID : $txnId",
                   style: TextStyle(
                     fontSize: 11,
-                    color:
-                        theme.colorScheme.onSurfaceVariant,
+                    
+                      color: theme.colorScheme.onSurface,
                   ),
                 ),
               ),
@@ -108,18 +108,14 @@ class WalletReportScreen extends GetView<AddStaffController> {
                     "Date & Time",
                     style: TextStyle(
                       fontSize: 10,
-                      color: theme
-                          .colorScheme
-                          .onSurfaceVariant,
+                      color: theme.colorScheme.onSurface,
                     ),
                   ),
                   Text(
                     dateTime,
                     style: TextStyle(
                       fontSize: 10,
-                      color: theme
-                          .colorScheme
-                          .onSurfaceVariant,
+                     color: theme.colorScheme.onSurface,
                     ),
                   ),
                 ],
@@ -146,9 +142,7 @@ class WalletReportScreen extends GetView<AddStaffController> {
                     "Transaction Type",
                     style: TextStyle(
                       fontSize: 10,
-                      color: theme
-                          .colorScheme
-                          .onSurfaceVariant,
+                     color: theme.colorScheme.onSurface,
                     ),
                   ),
                   Container(
@@ -182,9 +176,7 @@ class WalletReportScreen extends GetView<AddStaffController> {
                       fontWeight:
                           FontWeight.w300,
                       fontSize: 12,
-                      color: theme
-                          .colorScheme
-                          .onSurfaceVariant,
+                      color: theme.colorScheme.onSurface,
                     ),
                   ),
                   Text(

@@ -77,14 +77,7 @@ class RefundSearch extends GetView<RefundController> {
   style: TextStyle(
     color: theme.colorScheme.onSurface,
   ),
-  onChanged: (value) {
-    controller.search = value;
-
-    if (controller.fromDate.isNotEmpty &&
-        controller.toDate.isNotEmpty) {
-      controller.getPaymentStatus();
-    }
-  },
+ onChanged: controller.onSearch,
   decoration: InputDecoration(
     prefixIconConstraints: BoxConstraints(
                     maxWidth: 50,

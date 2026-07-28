@@ -114,45 +114,67 @@ class StatementFilter extends GetView<StatementController> {
               const SizedBox(height: 10),
 
               /// SEARCH
-              TextField(
-                keyboardType: TextInputType.number,
-                onChanged: (value) {
-                  controller.onSearch(value);
-                },
-                decoration: InputDecoration(
-                  prefixIconConstraints: BoxConstraints(
-                    maxWidth: 50,
-                    maxHeight: 50,
-                  ),
-                  prefixIcon: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: SvgPicture.asset(
-                      AssetImages.search,
-                      colorFilter: ColorFilter.mode(
-                        isDark
-                            ? AppColors.textclr
-                            : theme.colorScheme.onSurfaceVariant,
-                        BlendMode.srcIn,
-                      ),
-                    ),
-                  ),
-                  hintText: "Enter",
-                  hintStyle: TextHelper.max1.copyWith(
-                    color: isDark ? AppColors.textclr : AppColors.clrTextgrey,
-                  ),
-                  filled: true,
-                  fillColor: isDark ? AppColors.darkplceholder : Colors.white,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(7),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(7),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(7),
-                  ),
-                ),
-              ),
+             TextField(
+  keyboardType: TextInputType.number,
+  onChanged: (value) {
+    controller.onSearch(value);
+  },
+  decoration: InputDecoration(
+    prefixIconConstraints: const BoxConstraints(
+      maxWidth: 50,
+      maxHeight: 50,
+    ),
+
+    prefixIcon: Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: SvgPicture.asset(
+        AssetImages.search,
+        colorFilter: ColorFilter.mode(
+          isDark
+              ? AppColors.textclr
+              : theme.colorScheme.onSurfaceVariant,
+          BlendMode.srcIn,
+        ),
+      ),
+    ),
+
+    hintText: "Enter",
+    hintStyle: TextHelper.max1.copyWith(
+      color: isDark ? AppColors.textclr : AppColors.clrTextgrey,
+    ),
+
+    filled: true,
+    fillColor: isDark ? AppColors.darkplceholder : Colors.white,
+
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(7),
+      borderSide: BorderSide(
+        color: isDark
+            ? AppColors.darkFilterBorder
+            : AppColors.totalborde2,
+      ),
+    ),
+
+    enabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(7),
+      borderSide: BorderSide(
+        color: isDark
+            ? AppColors.darkFilterBorder
+            : AppColors.totalborde2,
+      ),
+    ),
+
+    focusedBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(7),
+      borderSide: BorderSide(
+        color: isDark
+            ? AppColors.darkFilterBorder
+            : AppColors.totalborde2,
+        width: 1.5,
+      ),
+    ),
+  ),
+),
             ],
           ),
         );

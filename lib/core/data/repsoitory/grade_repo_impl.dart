@@ -11,10 +11,10 @@ class GradeRepoImpl implements GradeRepository {
   GradeRepoImpl(this.apiService);
 
   @override
-  Future<Either<Failure, Grade>> grade() async {
+  Future<Either<Failure, RetailorGrade>> grade() async {
     try {
       final response = await apiService.get(ApiRoutes.grade);
-      final model = Grade.fromJson(response);
+      final model = RetailorGrade.fromJson(response);
       return Right(model);
     } catch (e) {
       return Left(ServerFailure(message: e.toString()));

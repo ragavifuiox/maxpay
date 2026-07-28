@@ -31,9 +31,25 @@ class LoginRepositoryImpl implements LoginRepository {
 
       final model = Login.fromJson(response);
       return Right(model);
-    } catch (e) {
-      return Left(ServerFailure(message: e.toString()));
+    }catch (e) {
+  if (e is DioException) {
+    final data = e.response?.data;
+
+    if (data is Map<String, dynamic>) {
+      return Left(
+        ServerFailure(
+          message: data['message'] ?? "Login failed",
+        ),
+      );
     }
+  }
+
+  return Left(
+    ServerFailure(
+      message: "Something went wrong",
+    ),
+  );
+}
   }
 
   @override

@@ -147,7 +147,7 @@ final List<String> walletTypes = [
 
       result.fold(
         (failure) {
-          CustomToast.error(failure.message);
+        
         },
         (data) {
           staff.value = data.data ?? [];
@@ -221,9 +221,9 @@ final List<String> walletTypes = [
     print(e);
     print(stackTrace);
 
-    CustomToast.error(
-      "Something went wrong. Please try again.",
-    );
+    // CustomToast.error(
+    //   "Something went wrong. Please try again.",
+    // );
   } finally {
     isLoading = false;
     update();
@@ -335,10 +335,10 @@ final List<String> walletTypes = [
           AppLogger.logError("FAILURE");
           AppLogger.logError(failure.message);
 
-          CustomToast.error(failure.message.toString());
+          // CustomToast.error(failure.message.toString());
         },
         (response) {
-          CustomToast.success(response.message ?? "Success");
+          // CustomToast.success(response.message ?? "Success");
           transReport.value = response;
         },
       );

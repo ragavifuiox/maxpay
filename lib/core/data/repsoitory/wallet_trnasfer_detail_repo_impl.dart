@@ -45,7 +45,19 @@ final response = await apiService.post(
 final model = WalletTransferDetail.fromJson(response);
     return Right(model);
 
-  } catch (e) {
-    return Left(ServerFailure(message: e.toString()));
-  }
+} on DioException catch (e) {
+
+  print("========== DIO ERROR ==========");
+  print("STATUS CODE : ${e.response?.statusCode}");
+  print("DATA : ${e.response?.data}");
+  print("MESSAGE : ${e.message}");
+
+  return Left(
+    ServerFailure(
+      message: e.response?.data["message"] ??
+          "Something went wrong",
+    ),
+  );
+
+}
 }}

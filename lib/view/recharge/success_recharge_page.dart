@@ -46,7 +46,7 @@ class SuccessRechargePage extends StatelessWidget {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final ProfileController profileController = Get.put(
-      ProfileController(getProfileUseCase: sl(), profileUpdateUseCase: sl()),
+      ProfileController(getProfileUseCase: sl(), profileUpdateUseCase: sl(), updateprofileotpusecase: sl()),
     );
 final DownloadController downloadController = Get.put(
       DownloadController(downloadUseCase: sl()),
@@ -172,20 +172,20 @@ final DownloadController downloadController = Get.put(
                     if (Get.isRegistered<WalletCreditController>()) {
                       Get.find<WalletCreditController>().fetchCredit();
                     }
-                    if (Get.isRegistered<TransReportController>()) {
-                      final reportController =
-                          Get.find<TransReportController>();
-                      if (reportController.fromDate.isNotEmpty &&
-                          reportController.toDate.isNotEmpty) {
-                        reportController.transactionreport(
-                          search: reportController.search,
-                          status: '',
-                          productid: '',
-                          fromdate: reportController.fromDate,
-                          todate: reportController.toDate,
-                        );
-                      }
-                    }
+                    // if (Get.isRegistered<TransReportController>()) {
+                    //   final reportController =
+                    //       Get.find<TransReportController>();
+                    //   if (reportController.fromDate.isNotEmpty &&
+                    //       reportController.toDate.isNotEmpty) {
+                    //     reportController.transactionreport(
+                    //       search: reportController.search,
+                    //       status: '',
+                    //       productid: '',
+                    //       fromdate: reportController.fromDate,
+                    //       todate: reportController.toDate,
+                    //     );
+                    //   }
+                    // }
                     if (Get.isRegistered<RefundController>()) {
                       final refundController = Get.find<RefundController>();
                       if (refundController.fromDate.isNotEmpty &&

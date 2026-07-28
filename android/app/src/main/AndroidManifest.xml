@@ -10,11 +10,12 @@
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28"/>
+
     <application
         android:label="Pay Link"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
-        android:allowBackup="false" 
+        android:allowBackup="false"
         android:fullBackupOnly="false"
         android:requestLegacyExternalStorage="true"
         android:usesCleartextTraffic="true">
@@ -46,10 +47,35 @@
     </application>
 
     <queries>
+
+        <!-- Text processing -->
         <intent>
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>
         </intent>
+
+        <!-- UPI Apps: scheme-based discovery -->
+        <intent>
+            <action android:name="android.intent.action.VIEW"/>
+            <data android:scheme="upi"/>
+        </intent>
+
+        <!-- UPI Apps: explicit package fallback.
+             Some OEMs (MIUI/ColorOS/FuntouchOS) restrict scheme-based
+             <queries> resolution but still honor explicit package queries. -->
+        <package android:name="com.google.android.apps.nbu.paisa.user" /> <!-- Google Pay -->
+        <package android:name="com.phonepe.app" />                        <!-- PhonePe -->
+        <package android:name="net.one97.paytm" />                        <!-- Paytm -->
+        <package android:name="in.org.npci.upiapp" />                     <!-- BHIM -->
+        <package android:name="com.amazon.mShop.android.shopping" />      <!-- Amazon Pay -->
+        <package android:name="com.mobikwik_new" />                       <!-- MobiKwik -->
+        <package android:name="com.freecharge.android" />                 <!-- Freecharge -->
+        <package android:name="com.myairtelapp" />                        <!-- Airtel Thanks -->
+        <package android:name="com.axis.mobile" />                        <!-- Axis Mobile -->
+        <package android:name="com.icicibank.imobile" />                  <!-- iMobile Pay -->
+        <package android:name="com.snapwork.hdfc" />                      <!-- HDFC PayZapp -->
+        <package android:name="com.csam.icici.bank.imobile" />
+
     </queries>
 
 </manifest>

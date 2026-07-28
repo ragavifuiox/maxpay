@@ -231,7 +231,7 @@ class PrePaidController extends GetxController {
 
       result.fold(
         (failure) {
-          CustomToast.error(failure.message);
+          // CustomToast.error(failure.message);
         },
         (response) async {
           final backendOperator =

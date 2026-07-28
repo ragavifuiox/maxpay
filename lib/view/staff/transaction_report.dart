@@ -123,7 +123,7 @@ class TransactionCard extends StatelessWidget {
                   "Transaction ID: TXN6453564",
                   style: TextStyle(
                     fontSize: 11,
-                    color: theme.colorScheme.onSurfaceVariant,
+                 color: theme.colorScheme.onSurface,
                   ),
                 ),
               ),
@@ -134,7 +134,7 @@ class TransactionCard extends StatelessWidget {
                     "Date & Time:",
                     style: TextStyle(
                       fontSize: 10,
-                      color: theme.colorScheme.onSurfaceVariant,
+                     color: theme.colorScheme.onSurface,
                     ),
                   ),
                   SizedBox(height: 2),
@@ -142,7 +142,7 @@ class TransactionCard extends StatelessWidget {
                     "29-11-2026 07:38:43PM",
                     style: TextStyle(
                       fontSize: 10,
-                      color: theme.colorScheme.onSurfaceVariant,
+                     color: theme.colorScheme.onSurface,
                     ),
                   ),
                 ],

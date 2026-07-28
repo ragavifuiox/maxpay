@@ -47,6 +47,7 @@ class Data {
   String? replyTwo;
   int? districtId;
   String? image;
+  String? isreply;
   String? createdAt;
 
   Data({
@@ -61,6 +62,7 @@ class Data {
     this.replyTwo,
     this.districtId,
     this.image,
+    this.isreply,
     this.createdAt,
   });
 
@@ -80,6 +82,7 @@ class Data {
     replyTwo: json["reply_two"],
     districtId: json["district_id"],
     image: json["image"],
+    isreply: _normalizeIsReply(json["is_reply"]), // 👈 fix
     createdAt: json["created_at"],
   );
 
@@ -99,6 +102,16 @@ class Data {
     "reply_two": replyTwo,
     "district_id": districtId,
     "image": image,
+    "is_reply": isreply,
     "created_at": createdAt,
   };
+
+  /// The backend sends `is_reply` as a raw int (0 or 1),
+  /// but we store it as a String? ("0" / "1") for easy comparison
+  /// elsewhere in the app (e.g. `faqData.isreply == "1"`).
+  static String? _normalizeIsReply(dynamic value) {
+    if (value == null) return null;
+    if (value is bool) return value ? "1" : "0";
+    return value.toString();
+  }
 }

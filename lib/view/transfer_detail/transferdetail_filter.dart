@@ -44,146 +44,62 @@ class TransferdetailFilter extends StatelessWidget {
      Column(
   children: [
 
-    /// DATE RANGE
-    Row(
-      children: [
-
-        Expanded(
-          child: GestureDetector(
-            onTap: () => controller.selectFromDate(context),
-            child: AbsorbPointer(
-              child: Container(
-                height: 45,
-                child: TextFormField(
-                  controller: controller.fromDateController,
-                  decoration: InputDecoration(
-                    hintText: "DD.MM.YYYY",
-                     hintStyle: TextHelper.max1.copyWith(
-          color: isDark
-              ? AppColors.textclr
-              : theme.colorScheme.onSurfaceVariant,
-        ),
-                    filled: true,
-                    fillColor: Colors.white,
-                    contentPadding:
-                        const EdgeInsets.symmetric(horizontal: 18),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(
-                        color: Colors.grey.shade300,
-                      ),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(
-                        color: Colors.grey.shade300,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
 
 
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 14),
-          child: Icon(
-            Icons.arrow_forward,
-            color: Color(0xff17345F),
-            size: 30,
-          ),
-        ),
-
-
-        Expanded(
-          child: GestureDetector(
-            onTap: () => controller.selectToDate(context),
-            child: AbsorbPointer(
-              child: TextFormField(
-                controller: controller.toDateController,
-                decoration: InputDecoration(
-                  hintText: "DD.MM.YYYY",
-                  hintStyle: TextHelper.max1.copyWith(
-          color: isDark
-              ? AppColors.textclr
-              : theme.colorScheme.onSurfaceVariant,
-        ),
-                  filled: true,
-                  fillColor: Colors.white,
-                  contentPadding:
-                      const EdgeInsets.symmetric(horizontal: 18),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide(
-                      color: Colors.grey.shade300,
-                    ),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    borderSide: BorderSide(
-                      color: Colors.grey.shade300,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ],
-    ),
-
-
-    const SizedBox(height: 14),
-    /// TRANSACTION TYPE
     DropdownButtonFormField<TransferFilterType>(
 
-      value: selectedFilter,
+  value: selectedFilter,
 
-      isExpanded: true,
+  hint: const Text(
+    "Transfer Type",
+    style: TextStyle(
+      fontFamily: 'Poppins',
+      fontSize: 14,
+      fontWeight: FontWeight.w500,
+    ),
+  ),
 
-      icon: const Icon(
-        Icons.keyboard_arrow_down,
-        size: 30,
+  isExpanded: true,
+
+  icon: const Icon(
+    Icons.keyboard_arrow_down,
+    size: 30,
+  ),
+
+  decoration: InputDecoration(
+      filled: true,
+                  fillColor: isDark ? AppColors.darkplceholder : Colors.white,
+
+    contentPadding:
+        const EdgeInsets.symmetric(horizontal: 18),
+
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(8),
+    ),
+
+    enabledBorder: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(8),
+      borderSide: BorderSide(
+       color: isDark
+                          ? AppColors.darkFilterBorder
+                          : AppColors.totalborde2,
       ),
+    ),
+  ),
 
-      decoration: InputDecoration(
-
-        hintText: "Transaction Type",
-        
-        filled: true,
-
-        fillColor: Colors.white,
-
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 18),
-
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(
-            color: Colors.grey.shade300,
-          ),
+  items: TransferFilterType.values.map(
+    (e) => DropdownMenuItem(
+      value: e,
+      child: Text(
+        e.label,
+        style: const TextStyle(
+          fontFamily: 'Poppins',
+          fontSize: 12,
+          fontWeight: FontWeight.w400,
         ),
-
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: BorderSide(
-            color: Colors.grey.shade300,
-          ),
-        ),
-
       ),
-
-
-      items: TransferFilterType.values
-          .map(
-            (e)=>DropdownMenuItem(
-              value:e,
-              child:Text(e.label),
-            ),
-          )
-          .toList(),
+    ),
+  ).toList(),
 
 onChanged:(value) {
 
@@ -207,6 +123,106 @@ onChanged:(value) {
 },
 
     ),
+    const SizedBox(height: 14),
+    /// DATE RANGE
+    Row(
+      children: [
+        Expanded(
+          child: GestureDetector(
+            onTap: () => controller.selectFromDate(context),
+            child: AbsorbPointer(
+              child: Container(
+                height: 45,
+                child: TextFormField(
+                  controller: controller.fromDateController,
+                  decoration: InputDecoration(
+                    hintText: "DD.MM.YYYY",
+                     hintStyle: TextHelper.max1.copyWith(
+          color: isDark
+              ? AppColors.textclr
+              : theme.colorScheme.onSurfaceVariant,
+        ),
+                    filled: true,
+                  fillColor: isDark ? AppColors.darkplceholder : Colors.white,
+                    contentPadding:
+                        const EdgeInsets.symmetric(horizontal: 18),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(
+                      color: isDark
+                          ? AppColors.darkFilterBorder
+                          : AppColors.totalborde2,
+                      ),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      borderSide: BorderSide(
+                       color: isDark
+                          ? AppColors.darkFilterBorder
+                          : AppColors.totalborde2,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+
+
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 14),
+          child: Icon(
+            Icons.arrow_forward,
+            color: AppColors.clrPrimary,
+            
+          ),
+        ),
+
+
+        Expanded(
+          child: GestureDetector(
+            onTap: () => controller.selectToDate(context),
+            child: AbsorbPointer(
+              child: TextFormField(
+                controller: controller.toDateController,
+                decoration: InputDecoration(
+                  hintText: "DD.MM.YYYY",
+                  hintStyle: TextHelper.max1.copyWith(
+          color: isDark
+              ? AppColors.textclr
+              : theme.colorScheme.onSurfaceVariant,
+        ),
+                 filled: true,
+                  fillColor: isDark ? AppColors.darkplceholder : Colors.white,
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 18),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(
+                      color: Colors.grey.shade300,
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(
+                     color: isDark
+                          ? AppColors.darkFilterBorder
+                          : AppColors.totalborde2,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    ),
+
+
+
+    /// TRANSACTION TYPE
+    
 
  const SizedBox(height: 14),
 
@@ -246,7 +262,7 @@ onChanged:(value) {
         ),
 
         filled: true,
-        fillColor: Colors.white,
+                  fillColor: isDark ? AppColors.darkplceholder : Colors.white,
 
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 16),
@@ -254,14 +270,18 @@ onChanged:(value) {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
           borderSide: BorderSide(
-            color: Colors.grey.shade300,
+          color: isDark
+                          ? AppColors.darkFilterBorder
+                          : AppColors.totalborde2,
           ),
         ),
 
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
           borderSide: BorderSide(
-            color: Colors.grey.shade300,
+           color: isDark
+                          ? AppColors.darkFilterBorder
+                          : AppColors.totalborde2,
           ),
         ),
 
