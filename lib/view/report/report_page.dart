@@ -15,16 +15,17 @@ class ReportPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeController = Get.find<ThemeController>();
     final isTablet = Responsive.isTablet(context);
-final profileController = Get.find<ProfileController>();
+    final profileController = Get.find<ProfileController>();
 
     return Obx(() {
-     
-     print("STAFF VALUE => ${profileController.profileData.value?.data?.isstaff}");
+      print(
+        "STAFF VALUE => ${profileController.profileData.value?.data?.isstaff}",
+      );
 
- final isStaff =
-    profileController.profileData.value?.data?.isstaff ?? false;
+      final isStaff =
+          profileController.profileData.value?.data?.isstaff ?? false;
 
-  print("IS STAFF => $isStaff");
+      print("IS STAFF => $isStaff");
       final isDark = themeController.isDarkMode;
       final theme = Theme.of(context);
       final colorScheme = theme.colorScheme;
@@ -76,8 +77,7 @@ final profileController = Get.find<ProfileController>();
                     SvgPicture.asset(AssetImages.walletcredit, width: 24.w),
                   ),
 
-
-                   _buildMenuTile(
+                  _buildMenuTile(
                     context,
                     'Transfer Detail',
                     () {
@@ -112,10 +112,6 @@ final profileController = Get.find<ProfileController>();
                     SvgPicture.asset(AssetImages.cashback, width: 24.w),
                   ),
 
-                 
-
-
-                  
                   _buildMenuTile(
                     context,
                     'Statement',
@@ -124,27 +120,18 @@ final profileController = Get.find<ProfileController>();
                     },
                     SvgPicture.asset(AssetImages.dispute, width: 21.w),
                   ),
-                 if (!isStaff)
-  _buildMenuTile(
-    context,
-    'Staff List',
-    () {
-      Get.toNamed(AppRoutes.stafflist);
-    },
-    SvgPicture.asset(
-      AssetImages.stafflist,
-      width: 21.w,
-    ),
-  ),
-                  _buildMenuTile(
-                    context,
-                    'Grade',
-                    () {
-                      Get.toNamed(AppRoutes.grade);
-                    },
-                    SvgPicture.asset(AssetImages.grade, width: 21.w),
-                  ),
-
+                  if (!isStaff)
+                    _buildMenuTile(
+                      context,
+                      'Staff List',
+                      () {
+                        Get.toNamed(AppRoutes.stafflist);
+                      },
+                      SvgPicture.asset(AssetImages.stafflist, width: 21.w),
+                    ),
+                  _buildMenuTile(context, 'Grade', () {
+                    Get.toNamed(AppRoutes.grade);
+                  }, SvgPicture.asset(AssetImages.grade, width: 21.w)),
                 ],
               ),
             ),

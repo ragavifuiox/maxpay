@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -9,6 +10,7 @@ import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/core/di/service_locator.dart';
 import 'package:maxpay/core/router/app_router.dart';
 import 'package:maxpay/core/utils/theme.dart';
+import 'package:maxpay/firebase_options.dart';
 import 'package:maxpay/view/nav_page/navbar_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -22,6 +24,7 @@ void main() async {
   // SharedPreferences
   final sharedPreferences = await SharedPreferences.getInstance();
 
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   // GetX Controllers
   Get.put(ThemeController(sharedPreferences));
   Get.put(NavbarController());

@@ -15,7 +15,6 @@ import 'package:maxpay/controllers/transaction_report_controller.dart';
 import 'package:maxpay/core/constants/asset_images.dart';
 import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
-import 'package:maxpay/core/data/model/today_credit_model.dart';
 import 'package:maxpay/core/di/service_locator.dart';
 import 'package:maxpay/core/extensions/currency.dart';
 import 'package:maxpay/view/home/widgets/earnings_chart.dart';

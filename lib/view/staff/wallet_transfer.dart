@@ -108,7 +108,7 @@ TextFormField(
 
                  Obx(
   () => DropdownButtonFormField<String>(
-    value: controller.selectedPaymentType.value,
+    initialValue: controller.selectedPaymentType.value,
     decoration: InputDecoration(
       filled: true,
        fillColor: isDark

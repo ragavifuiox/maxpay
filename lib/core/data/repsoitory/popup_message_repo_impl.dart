@@ -58,7 +58,7 @@ class PopupMessageRepoImpl implements PopupMessageRepository {
 
       return Left(ServerFailure(message: message));
     } catch (e) {
-     AppLogger.logError("Api ${ApiRoutes.popupMessage}" + e.toString());
+      AppLogger.logError("Api ${ApiRoutes.popupMessage}$e");
       return Left(ServerFailure(message: e.toString()));
     }
   }

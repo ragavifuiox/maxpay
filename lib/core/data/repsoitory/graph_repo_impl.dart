@@ -18,7 +18,7 @@ class GraphRepoImpl implements GraphRepository {
       final model = Graph.fromJson(response);
       return Right(model);
     } catch (e) {
-       AppLogger.logError("Api ${ApiRoutes.graph}" + e.toString());
+       AppLogger.logError("Api ${ApiRoutes.graph}$e");
       return Left(ServerFailure(message: e.toString()));
     }
   }

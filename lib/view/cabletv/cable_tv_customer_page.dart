@@ -4,9 +4,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:maxpay/global_widget/commom_button.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
-import 'package:maxpay/view/broadband/broad_band_success_page.dart';
 import 'package:maxpay/view/cabletv/cable_tv_success_page.dart';
-import 'package:maxpay/view/fastag_recharge/fastag_success_screen.dart';
 
 class CableTvCustomerPage extends StatelessWidget {
   const CableTvCustomerPage({super.key});

@@ -12,7 +12,6 @@ import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:maxpay/controllers/homepage_controller.dart';
 import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
-import 'package:maxpay/view/broadband/broadband_confirm_page.dart';
 import 'package:maxpay/view/cabletv/cable_tv_confirm_page.dart';
 import 'package:maxpay/view/electricity_bill/confirm_electricity.dart';
 

@@ -57,7 +57,7 @@ class RefundCountRepoImpl implements RefundCountRepository {
 
       return Left(ServerFailure(message: message));
     } catch (e) {
-      AppLogger.logError("Api ${ApiRoutes.refundcount}" + e.toString());
+      AppLogger.logError("Api ${ApiRoutes.refundcount}$e");
       return Left(ServerFailure(message: e.toString()));
     }
   }

@@ -17,12 +17,14 @@ class EarningController extends GetxController {
     required this.getEarningsUseCase,
     required this.searchEarningsUseCase,
   });
-RxBool isSearchLoading = false.obs;
+  RxBool isSearchLoading = false.obs;
   RxBool isLoading = false.obs;
   Rx<SearchEarning?> searchData = Rx<SearchEarning?>(null);
   Rx<Earnings?> earningsData = Rx<Earnings?>(null);
-  String fromDate = '';
-  String toDate = '';
+  String fromDate =
+      "${DateTime.now().year}-${DateTime.now().month.toString().padLeft(2, '0')}-${DateTime.now().day.toString().padLeft(2, '0')}";
+  String toDate =
+      "${DateTime.now().year}-${DateTime.now().month.toString().padLeft(2, '0')}-${DateTime.now().day.toString().padLeft(2, '0')}";
   String search = '';
 
   @override
@@ -65,41 +67,42 @@ RxBool isSearchLoading = false.obs;
     );
   }
 
- Future<void> searchEarnings(
-  String fromdate,
-  String todate,
-  String search,
-) async {
-  try {
-    isSearchLoading.value = true;
+  Future<void> searchEarnings(
+    String fromdate,
+    String todate,
+    String search,
+  ) async {
+    try {
+      isSearchLoading.value = true;
 
-    print("From Date: $fromdate");
-    print("To Date: $todate");
-    print("Search: $search");
+      print("From Date: $fromdate");
+      print("To Date: $todate");
+      print("Search: $search");
 
-    final result = await searchEarningsUseCase(
-      fromdate: fromdate,
-      todate: todate,
-      search: search,
-    );
+      final result = await searchEarningsUseCase(
+        fromdate: fromdate,
+        todate: todate,
+        search: search,
+      );
 
-    result.fold(
-      (failure) {
-        print("API Error: ${failure.message}");
-      },
-      (response) {
-        print("API Response: ${response.toJson()}");
+      result.fold(
+        (failure) {
+          print("API Error: ${failure.message}");
+        },
+        (response) {
+          print("API Response: ${response.toJson()}");
 
-        if (response.success == true) {
-          searchData.value = response;
-          print("List Length: ${response.data?.list?.length}");
-        }
-      },
-    );
-  } finally {
-    isSearchLoading.value = false;
+          if (response.success == true) {
+            searchData.value = response;
+            print("List Length: ${response.data?.list?.length}");
+          }
+        },
+      );
+    } finally {
+      isSearchLoading.value = false;
+    }
   }
-}
+
   Future<void> selectFromDate(BuildContext context) async {
     DateTime? pickedDate = await showDatePicker(
       context: context,

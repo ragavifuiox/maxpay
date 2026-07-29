@@ -1,7 +1,6 @@
 import 'package:get/get.dart';
 import 'package:maxpay/controllers/add_staff_controller.dart';
 import 'package:maxpay/controllers/add_wallet_controller.dart';
-import 'package:maxpay/controllers/auth_controller.dart';
 import 'package:maxpay/controllers/cash_back_controller.dart';
 // import 'package:maxpay/controllers/credit_controller.dart';
 import 'package:maxpay/controllers/dispute_controller.dart';
@@ -93,24 +92,8 @@ class AppPages {
     ),
     GetPage(
       transition: Transition.fade,
-
       name: AppRoutes.loginPhoneName,
-
       page: () => const LoginPhoneNamePage(),
-
-      binding: BindingsBuilder(() {
-        Get.lazyPut<AuthController>(
-          () => AuthController(
-            loginUseCase: sl(),
-            otpUsecase: sl(),
-            createPinUsecase: sl(),
-            fingerPrintUsecase: sl(),
-            verifyPinUsecase: sl(),
-          ),
-
-          fenix: true,
-        );
-      }),
     ),
 
     GetPage(
@@ -162,24 +145,8 @@ class AppPages {
     ),
     GetPage(
       transition: Transition.fade,
-
       name: AppRoutes.pinCodeCreation,
-
       page: () => PinCodeCreationPage(),
-
-      binding: BindingsBuilder(() {
-        Get.lazyPut<AuthController>(
-          () => AuthController(
-            loginUseCase: sl(),
-            otpUsecase: sl(),
-            createPinUsecase: sl(),
-            fingerPrintUsecase: sl(),
-            verifyPinUsecase: sl(),
-          ),
-
-          fenix: true,
-        );
-      }),
     ),
     GetPage(
       name: AppRoutes.otpVerification,
@@ -215,7 +182,7 @@ class AppPages {
             todaycreditusecase: sl(),
             graphUsecase: sl(),
             faqUsecase: sl(),
-             faqreplyusecase: sl(),
+            faqreplyusecase: sl(),
           ),
 
           fenix: true,
@@ -226,10 +193,10 @@ class AppPages {
     GetPage(name: AppRoutes.verify, page: () => const VerifyPinPage()),
     GetPage(name: AppRoutes.enterPin, page: () => PinCodeEnterPage()),
     GetPage(name: AppRoutes.water, page: () => WatterBill()),
-    GetPage(name: AppRoutes.gas, page: () =>GasBillPage()),
-    GetPage(name: AppRoutes.landline, page: () =>LandlineBillPage()),
-    GetPage(name: AppRoutes.dthrefresh, page: () =>DthRefreshScreen()),
-    GetPage(name: AppRoutes.cabletv, page: () =>CableTvPage()),
+    GetPage(name: AppRoutes.gas, page: () => GasBillPage()),
+    GetPage(name: AppRoutes.landline, page: () => LandlineBillPage()),
+    GetPage(name: AppRoutes.dthrefresh, page: () => DthRefreshScreen()),
+    GetPage(name: AppRoutes.cabletv, page: () => CableTvPage()),
 
     // GetPage(name: AppRoutes.main, page: () => const NavPageScreen()),
     // GetPage(name: AppRoutes.myearning, page: () => const MyEarningsScreen()),
@@ -337,7 +304,7 @@ class AppPages {
             profileUpdateUseCase: sl(),
             updateprofileotpusecase: sl(),
           ),
-       fenix: true,
+          fenix: true,
         );
       }),
     ),
@@ -423,11 +390,11 @@ class AppPages {
       }),
     ),
 
-   GetPage(
-  name: AppRoutes.transactionDetails,
-  page: ()=> const TransactionDetailsPage(),
-),
-     GetPage(name: AppRoutes.weblogin, page: () => const WebSignupScreen()),
+    GetPage(
+      name: AppRoutes.transactionDetails,
+      page: () => const TransactionDetailsPage(),
+    ),
+    GetPage(name: AppRoutes.weblogin, page: () => const WebSignupScreen()),
     GetPage(name: AppRoutes.webotp, page: () => const WebOtpScreen()),
     GetPage(
       name: AppRoutes.websuccess,
@@ -515,7 +482,10 @@ class AppPages {
 
       binding: BindingsBuilder(() {
         Get.lazyPut<ServiceController>(
-          () => ServiceController(productTypeUseCase: sl(), todayTrnsactionUsecase: sl()),
+          () => ServiceController(
+            productTypeUseCase: sl(),
+            todayTrnsactionUsecase: sl(),
+          ),
 
           fenix: true,
         );
@@ -610,7 +580,11 @@ class AppPages {
 
       binding: BindingsBuilder(() {
         Get.lazyPut<PaymentStatusController>(
-          () => PaymentStatusController(paymentStatusUsecase: sl(), paymentStatusTypeUsecase: sl(), updatePaymentStatusUsecase: sl(),),
+          () => PaymentStatusController(
+            paymentStatusUsecase: sl(),
+            paymentStatusTypeUsecase: sl(),
+            updatePaymentStatusUsecase: sl(),
+          ),
           fenix: true,
         );
       }),

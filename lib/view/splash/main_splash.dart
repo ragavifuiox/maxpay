@@ -81,15 +81,10 @@ class _MainSplashScreenState extends State<MainSplashScreen>
         tween: Tween<double>(
           begin: 0,
           end: 1,
-        ).chain(
-          CurveTween(curve: Curves.easeOut),
-        ),
+        ).chain(CurveTween(curve: Curves.easeOut)),
         weight: 20,
       ),
-      TweenSequenceItem(
-        tween: ConstantTween<double>(1),
-        weight: 80,
-      ),
+      TweenSequenceItem(tween: ConstantTween<double>(1), weight: 80),
     ]).animate(_controller);
 
     _controller.forward();
@@ -105,72 +100,78 @@ class _MainSplashScreenState extends State<MainSplashScreen>
 });
   }
 
-   Future<void> _checkSession() async {
-  final storage = LocalStorageService();
-  await storage.init();
+  Future<void> _checkSession() async {
+    final storage = LocalStorageService();
+    await storage.init();
 
-  final token = storage.getString("auth_token");
-  final isPin = storage.getInt("is_pin") ?? 0;
-  final isFingerPrint = storage.getInt("is_fingerprint") ?? 0;
-  final loggedInPhone = storage.getString("logged_in_phone");
+    final token = storage.getString("auth_token");
+    final isPin = storage.getInt("is_pin") ?? 0;
+    final isFingerPrint = storage.getInt("is_fingerprint") ?? 0;
+    final loggedInPhone = storage.getString("logged_in_phone");
 
-  AppLogger.logError("TOKEN : $token");
-  AppLogger.logError("IS PIN : $isPin");
-  AppLogger.logError("IS FINGERPRINT : $isFingerPrint");
+    AppLogger.logError("TOKEN : $token");
+    AppLogger.logError("IS PIN : $isPin");
+    AppLogger.logError("IS FINGERPRINT : $isFingerPrint");
 
-  await Future.delayed(const Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 2));
 
-  if (!mounted) return;
+    if (!mounted) return;
 
-  /// Not Logged In
-  if (token == null || token.isEmpty) {
-    Get.offAllNamed(AppRoutes.intro);
-    return;
-  }
+    /// Not Logged In
+    if (token == null || token.isEmpty) {
+      Get.offAllNamed(AppRoutes.intro);
+      return;
+    }
 
-  /// Verify SIM Binding
-  if (loggedInPhone != null && loggedInPhone.isNotEmpty) {
-    final bool isSimValid = await SimUtil.verifySimPresent(loggedInPhone);
-    if (!isSimValid) {
-      AppLogger.logError("SIM Binding Failed. Calling backend logout API and clearing data.");
-      CustomToast.error("The already logged number doesn't exist in device");
-      
-      if (Get.isRegistered<AuthController>()) {
-        await Get.find<AuthController>().forceLogout();
+    /// Verify SIM Binding
+    if (loggedInPhone != null && loggedInPhone.isNotEmpty) {
+      final bool isSimValid = await SimUtil.verifySimPresent(loggedInPhone);
+      if (!isSimValid) {
+        AppLogger.logError(
+          "SIM Binding Failed. Calling backend logout API and clearing data.",
+        );
+        CustomToast.error("The already logged number doesn't exist in device");
+
+        if (Get.isRegistered<AuthController>()) {
+          await Get.find<AuthController>().forceLogout();
+        } else {
+          await storage.clear();
+          Get.offAllNamed(AppRoutes.intro);
+        }
+        return;
+      }
+    }
+
+    /// Old User -> PIN Created
+    if (isPin == 1) {
+      final lastActiveStr = storage.getString("last_active_time");
+      if (lastActiveStr != null) {
+        final lastActive = DateTime.tryParse(lastActiveStr);
+        if (lastActive != null) {
+          if (!AppLifecycleController.hasCrossedLogoutTime(
+            lastActive,
+            DateTime.now(),
+          )) {
+            AppLogger.logError(
+              "Cold start: did not cross logout boundaries. Navigating straight to home.",
+            );
+            Get.offAllNamed(AppRoutes.main);
+            return;
+          }
+        }
+      }
+
+      if (isFingerPrint == 1) {
+        Get.offAllNamed(AppRoutes.veirfypin);
       } else {
-        await storage.clear();
-        Get.offAllNamed(AppRoutes.intro);
+        Get.offAllNamed(AppRoutes.enterPin);
       }
       return;
     }
+
+    /// User Logged In But No PIN
+    Get.offAllNamed(AppRoutes.pinCodeCreation);
   }
-
-  /// Old User -> PIN Created
-  if (isPin == 1) {
-    final lastActiveStr = storage.getString("last_active_time");
-    if (lastActiveStr != null) {
-      final lastActive = DateTime.tryParse(lastActiveStr);
-      if (lastActive != null) {
-        if (!AppLifecycleController.hasCrossedLogoutTime(lastActive, DateTime.now())) {
-          AppLogger.logError("Cold start: did not cross logout boundaries. Navigating straight to home.");
-          Get.offAllNamed(AppRoutes.main);
-          return;
-        }
-      }
-    }
-
-    if (isFingerPrint == 1) {
-      Get.offAllNamed(AppRoutes.veirfypin);
-    } else {
-      Get.offAllNamed(AppRoutes.enterPin);
-    }
-    return;
-  }
-
-  /// User Logged In But No PIN
-  Get.offAllNamed(AppRoutes.pinCodeCreation);
-}
-
 
   @override
   void dispose() {
@@ -244,21 +245,14 @@ class _SplashLogoImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final image = SvgPicture.asset(
-      asset,
-      width: width,
-      fit: BoxFit.contain,
-    );
+    final image = SvgPicture.asset(asset, width: width, fit: BoxFit.contain);
 
     if (!isDark) {
       return image;
     }
 
     return ColorFiltered(
-      colorFilter: const ColorFilter.mode(
-        Colors.white,
-        BlendMode.srcIn,
-      ),
+      colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
       child: image,
     );
   }

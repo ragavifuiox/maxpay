@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/core/constants/snackbar.dart';
 import 'package:maxpay/core/data/model/faq_model.dart';
-import 'package:maxpay/core/data/model/faq_reply_model.dart' hide Data;
 import 'package:maxpay/core/data/model/graph_model.dart' hide Data;
 import 'package:maxpay/core/data/model/refund_count_model.dart';
 import 'package:maxpay/core/data/model/today_credit_model.dart';

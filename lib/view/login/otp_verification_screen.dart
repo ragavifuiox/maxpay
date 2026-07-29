@@ -31,28 +31,42 @@ class _ScreenOtpVerificationState extends State<ScreenOtpVerification> {
 
   Timer? timer;
 
- @override
-void initState() {
-  super.initState();
-  startTimer();
+  @override
+  void initState() {
+    super.initState();
+    startTimer();
 
-  ever<String>(authController.otp, (otp) {
-    _otpController.text = otp;
-    setState(() {
-      _showVerifyButton = otp.isNotEmpty;
+    ever<String>(authController.otp, (otp) {
+      if (otp.isNotEmpty) {
+        Future.delayed(const Duration(seconds: 2), () {
+          if (mounted) {
+            _otpController.text = otp;
+            setState(() {
+              _showVerifyButton = true;
+            });
+          }
+        });
+      } else {
+        _otpController.text = otp;
+        setState(() {
+          _showVerifyButton = false;
+        });
+      }
     });
-  });
 
-
-  WidgetsBinding.instance.addPostFrameCallback((_) {
-    if (authController.otp.value.isNotEmpty) {
-      setState(() {
-        _otpController.text = authController.otp.value;
-        _showVerifyButton = true;
-      });
-    }
-  });
-}
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (authController.otp.value.isNotEmpty) {
+        Future.delayed(const Duration(seconds: 2), () {
+          if (mounted) {
+            setState(() {
+              _otpController.text = authController.otp.value;
+              _showVerifyButton = true;
+            });
+          }
+        });
+      }
+    });
+  }
 
   // @override
   // void initState() {
@@ -177,7 +191,6 @@ void initState() {
                         //     color: Colors.grey.withValues(alpha: .3),
                         //   ),
                         // ),
-
                         child: Icon(Icons.arrow_back_ios_new, size: 23),
                       ),
                     ),
@@ -300,28 +313,29 @@ void initState() {
 
                         /// 🔹 TIMER
                         GestureDetector(
-                          onTap:isOtpExpired
-    ? () async {
-        _otpController.clear();
+                          onTap: isOtpExpired
+                              ? () async {
+                                  _otpController.clear();
 
-        setState(() {
-          _showVerifyButton = false;
-        });
+                                  setState(() {
+                                    _showVerifyButton = false;
+                                  });
 
-        await authController.resendOtp();
+                                  await authController.resendOtp();
 
-        if (authController.otp.value.isNotEmpty) {
-          setState(() {
-            _otpController.text = authController.otp.value;
-            _showVerifyButton = true;
-            secondsRemaining = 30;
-            isOtpExpired = false;
-          });
-        }
+                                  if (authController.otp.value.isNotEmpty) {
+                                    setState(() {
+                                      _otpController.text =
+                                          authController.otp.value;
+                                      _showVerifyButton = true;
+                                      secondsRemaining = 30;
+                                      isOtpExpired = false;
+                                    });
+                                  }
 
-        startTimer();
-      }
-    : null,
+                                  startTimer();
+                                }
+                              : null,
 
                           child: Text(
                             isOtpExpired

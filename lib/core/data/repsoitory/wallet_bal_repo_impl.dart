@@ -61,7 +61,7 @@ class WalletBalanceRepoImpl implements WalletBalanceRepository {
 
       return Left(ServerFailure(message: message));
     } catch (e) {
-        AppLogger.logError("Api ${ApiRoutes.walletbalance}" + e.toString());
+        AppLogger.logError("Api ${ApiRoutes.walletbalance}$e");
       return Left(ServerFailure(message: e.toString()));
     }
   }

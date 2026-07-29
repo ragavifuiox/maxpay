@@ -8,9 +8,6 @@ import 'package:maxpay/global_widget/commom_button.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
 import 'package:maxpay/view/broadband/broad_band_customer_page.dart';
 import 'package:maxpay/view/broadband/broad_band_success_page.dart';
-import 'package:maxpay/view/fastag_recharge/fastag_customer.dart';
-import 'package:maxpay/view/landline/landline_customer_page.dart';
-import 'package:maxpay/view/landline/landline_success_page.dart';
 
 class BroadbandConfirmPage extends StatelessWidget {
   final String productName;

@@ -38,7 +38,14 @@ class MenuScreen extends StatelessWidget {
   final BannerController bannerController = Get.put(
     BannerController(bannerUsecase: sl(), advusecase: sl()),
   );
-  final TransReportController transReportController= Get.put(TransReportController(cashbackTypeUsecase: sl(), transreportUsecase: sl(), producttypeUseCase: sl(), submitDisputeUsecase: sl(),));
+  final TransReportController transReportController = Get.put(
+    TransReportController(
+      cashbackTypeUsecase: sl(),
+      transreportUsecase: sl(),
+      producttypeUseCase: sl(),
+      submitDisputeUsecase: sl(),
+    ),
+  );
 
   Future<void> _refreshPage() async {
     await Future.wait([controller.fetchProductTypes()]);
@@ -145,43 +152,48 @@ class MenuScreen extends StatelessWidget {
                           }
                           if (list.isEmpty) return const SizedBox.shrink();
 
-                         return Column(
-  children: [
-    SizedBox(
-      height: 150.h,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
+                          return Column(
+                            children: [
+                              SizedBox(
+                                height: 150.h,
+                                child: Stack(
+                                  alignment: Alignment.center,
+                                  children: [
+                                    PageView.builder(
+                                      controller:
+                                          bannerController.pageController,
+                                      itemCount: list.length,
+                                      onPageChanged: (index) {
+                                        bannerController.currentIndex.value =
+                                            index;
+                                      },
+                                      itemBuilder: (context, index) {
+                                        final imageUrl = _toImageUrl(
+                                          list[index].image,
+                                        );
 
-          PageView.builder(
-            controller: bannerController.pageController,
-            itemCount: list.length,
-            onPageChanged: (index) {
-              bannerController.currentIndex.value = index;
-            },
-            itemBuilder: (context, index) {
-              final imageUrl = _toImageUrl(list[index].image);
-
-              return ClipRRect(
-                borderRadius: BorderRadius.circular(16.r),
-                child: Image.network(
-                  imageUrl,
-                  fit: BoxFit.cover,
-                ),
-              );
-            },
-          ),
-
-          
-        ],
-      ),
-    ),
-                       ] );  }),
+                                        return ClipRRect(
+                                          borderRadius: BorderRadius.circular(
+                                            16.r,
+                                          ),
+                                          child: Image.network(
+                                            imageUrl,
+                                            fit: BoxFit.cover,
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          );
+                        }),
 
                         SizedBox(height: 10.h),
                         Row(
                           children: [
-                             Expanded(
+                            Expanded(
                               child: Divider(
                                 color: AppColors.clrPrimary,
                                 thickness: 1.2,
@@ -196,14 +208,15 @@ class MenuScreen extends StatelessWidget {
                               ),
                             ),
                             SizedBox(width: 8.w),
-                           
                           ],
                         ),
-                      
-const SizedBox(height: 12,),
-/// STATUS CARDS
-Obx(() {
-  final transaction = homeController.transactionData.value;
+
+                        const SizedBox(height: 12),
+
+                        /// STATUS CARDS
+                        Obx(() {
+                          final transaction =
+                              homeController.transactionData.value;
 
   return Row(
     children: [
@@ -593,43 +606,44 @@ Obx(() {
       ),
     );
   }
-/// ✅ Normalizes product names so matching is consistent everywhere
-/// (strips spaces/dashes, lowercases) — "Cable TV", "CableTV", "cable-tv"
-/// all become "cabletv".
-String _normalize(String name) =>
-    name.toLowerCase().replaceAll(RegExp(r'[\s\-]+'), '');
+
+  /// ✅ Normalizes product names so matching is consistent everywhere
+  /// (strips spaces/dashes, lowercases) — "Cable TV", "CableTV", "cable-tv"
+  /// all become "cabletv".
+  String _normalize(String name) =>
+      name.toLowerCase().replaceAll(RegExp(r'[\s\-]+'), '');
   String _getImage(String name) {
-  switch (_normalize(name)) {
-    case 'prepaid':
-      return AssetImages.prepaid;
-    case 'postpaid':
-      return AssetImages.prepaid;
-    case 'dth':
-      return AssetImages.dth;
-    case 'fastag':
-      return AssetImages.fastag;
-    case 'gas':
-      return AssetImages.gas;
-    case 'electricity':
-      return AssetImages.promoFrame;
-    case 'water':
-      return AssetImages.water;
-    case 'landline':
-      return AssetImages.landline;
-    case 'broadband':
-      return AssetImages.broadband;
-    case 'cabletv':          // now matches "Cable TV" too
-      return AssetImages.cable;
-    case 'paymentstatus':
-    case 'pstatus':
-      return AssetImages.paymentStatus;
-    case 'refresh':
-    case 'dthrefresh':
-      return AssetImages.dthRefresh;
-    default:
-      return AssetImages.prepaid;
+    switch (_normalize(name)) {
+      case 'prepaid':
+        return AssetImages.prepaid;
+      case 'postpaid':
+        return AssetImages.prepaid;
+      case 'dth':
+        return AssetImages.dth;
+      case 'fastag':
+        return AssetImages.fastag;
+      case 'gas':
+        return AssetImages.gas;
+      case 'electricity':
+        return AssetImages.promoFrame;
+      case 'water':
+        return AssetImages.water;
+      case 'landline':
+        return AssetImages.landline;
+      case 'broadband':
+        return AssetImages.broadband;
+      case 'cabletv': // now matches "Cable TV" too
+        return AssetImages.cable;
+      case 'paymentstatus':
+      case 'pstatus':
+        return AssetImages.paymentStatus;
+      case 'refresh':
+      case 'dthrefresh':
+        return AssetImages.dthRefresh;
+      default:
+        return AssetImages.prepaid;
+    }
   }
-}
 
   Color _getBgColor(String name) {
     switch (name.toLowerCase()) {
@@ -660,87 +674,84 @@ String _normalize(String name) =>
     }
   }
 
- void _handleNavigation(Data item) {
-  final key = _normalize(item.name ?? "");
+  void _handleNavigation(Data item) {
+    final key = _normalize(item.name ?? "");
 
-  switch (key) {
-    case 'prepaid':
-      Get.toNamed(
-        AppRoutes.prepaid,
-        arguments: {
-          "productId": item.id.toString(),
-          "productName": item.name ?? "",
-        },
-      );
-      break;
+    switch (key) {
+      case 'prepaid':
+        Get.toNamed(
+          AppRoutes.prepaid,
+          arguments: {
+            "productId": item.id.toString(),
+            "productName": item.name ?? "",
+          },
+        );
+        break;
 
-    case 'dth':
-      Get.toNamed(
-        AppRoutes.dth,
-        arguments: {
-          "productId": item.id.toString(),
-          "productName": item.name ?? "",
-        },
-      );
-      break;
+      case 'dth':
+        Get.toNamed(
+          AppRoutes.dth,
+          arguments: {
+            "productId": item.id.toString(),
+            "productName": item.name ?? "",
+          },
+        );
+        break;
 
-    case 'paymentstatus':
-      Get.toNamed(
-        AppRoutes.paymentstatus,
-        arguments: {
-          "productId": item.id.toString(),
-          "productName": item.name ?? "",
-        },
-      );
-      break;
+      case 'paymentstatus':
+        Get.toNamed(
+          AppRoutes.paymentstatus,
+          arguments: {
+            "productId": item.id.toString(),
+            "productName": item.name ?? "",
+          },
+        );
+        break;
 
-    case 'fastag':
-      Get.to(() => const FastagRechargePage());
-      break;
+      case 'fastag':
+        Get.to(() => const FastagRechargePage());
+        break;
 
-    case 'water':
-      Get.to(() => const WatterBill());
-      break;
-        case '':
-      Get.to(() => const WatterBill());
-      break;
+      case 'water':
+        Get.to(() => const WatterBill());
+        break;
+      case '':
+        Get.to(() => const WatterBill());
+        break;
 
+      case 'gas':
+        Get.to(() => const GasBillPage());
+        break;
 
-    case 'gas':
-      Get.to(() => const GasBillPage());
-      break;
+      case 'electricity':
+        Get.to(() => const ElectricityBillPage());
+        break;
 
-    case 'electricity':
-      Get.to(() => const ElectricityBillPage());
-      break;
+      case 'broadband':
+        Get.to(() => const BroadBandPage());
+        break;
 
-    case 'broadband':
-      Get.to(() => const BroadBandPage());
-      break;
+      case 'cabletv': // ✅ fixed — was 'cable tv'
+        Get.to(() => const CableTvPage());
+        break;
 
-    case 'cabletv':                 // ✅ fixed — was 'cable tv'
-      Get.to(() => const CableTvPage());
-      break;
+      case 'postpaid': // ✅ fixed — was 'cable tv'
+        Get.to(() => const PostpaidPage());
+        break;
+      case 'refresh':
+      case 'dthrefresh': // ✅ fixed — now catches both spellings
+        Get.to(() => const DthRefreshScreen());
+        break;
 
-
-case 'postpaid':                 // ✅ fixed — was 'cable tv'
-      Get.to(() => const PostpaidPage());
-      break;
-    case 'refresh':
-    case 'dthrefresh':              // ✅ fixed — now catches both spellings
-      Get.to(() => const DthRefreshScreen());
-      break;
-
-
-
- case 'landline':              // ✅ fixed — now catches both spellings
-      Get.to(() => const LandlineBillPage());
-      break;
-    default:
-      log("No navigation mapped for product: ${item.name}");
-      break;
+      case 'landline': // ✅ fixed — now catches both spellings
+        Get.to(() => const LandlineBillPage());
+        break;
+      default:
+        log("No navigation mapped for product: ${item.name}");
+        break;
+    }
   }
-}
+
   Widget _statusCard({
   required String image,
   required String value,

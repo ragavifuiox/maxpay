@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_instance/src/extension_instance.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
-import 'package:maxpay/controllers/wallet_transfer_detil_controller.dart';
 import 'package:maxpay/controllers/wallet_trnasfer_detail_controller.dart';
 import 'package:maxpay/core/constants/colors.dart';
-import 'package:maxpay/core/data/model/wallet_trnasfer_detail.dart';
 import 'package:maxpay/core/di/service_locator.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
 
@@ -24,7 +22,7 @@ class TransferDetial extends StatefulWidget {
 
 class _TransferDetialState extends State<TransferDetial> {
   TransferFilterType? _selectedFilter;
-  String _searchQuery = "";
+  final String _searchQuery = "";
  final WalletTrnasferDetailController controller = Get.put(WalletTrnasferDetailController(walletTransferDetailUseCase: sl(), staffWalletReverseUsecase: sl()));
 
 

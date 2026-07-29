@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:maxpay/controllers/homepage_controller.dart';
@@ -6,7 +7,6 @@ import 'package:maxpay/core/constants/asset_images.dart';
 import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/core/utils/texthelper.dart';
 import 'package:maxpay/global_widget/commom_button.dart';
-import 'package:maxpay/global_widget/custom_app.dart';
 
 class ProfileScreen extends GetView<ProfileController> {
   ProfileScreen({super.key});
@@ -35,13 +35,13 @@ class ProfileScreen extends GetView<ProfileController> {
       resizeToAvoidBottomInset: true,
 
       appBar: AppBar(
-         centerTitle: false,
+        centerTitle: false,
 
-      elevation: 0,
-      scrolledUnderElevation: 0,
-      surfaceTintColor: Colors.transparent,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        surfaceTintColor: Colors.transparent,
         backgroundColor: theme.scaffoldBackgroundColor,
-  
+
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios, color: theme.colorScheme.onSurface),
           onPressed: () => Get.back(),
@@ -49,11 +49,11 @@ class ProfileScreen extends GetView<ProfileController> {
         title: Text(
           "Profile",
           style: TextStyle(
-          fontFamily: 'Poppins',
-          fontSize: 18,
-          fontWeight: FontWeight.w600,
-          color: theme.colorScheme.onSurface,
-        ),
+            fontFamily: 'Poppins',
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+            color: theme.colorScheme.onSurface,
+          ),
         ),
         actions: [
           Obx(() {
@@ -62,10 +62,7 @@ class ProfileScreen extends GetView<ProfileController> {
 
             return Container(
               margin: const EdgeInsets.only(right: 16),
-              padding: const EdgeInsets.symmetric(
-                horizontal: 14,
-                vertical: 6,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
               decoration: BoxDecoration(
                 color: isActive ? Colors.green : Colors.grey,
                 borderRadius: BorderRadius.circular(20),
@@ -122,8 +119,8 @@ class ProfileScreen extends GetView<ProfileController> {
                         if (controller.selectedImage.value != null) {
                           provider = FileImage(controller.selectedImage.value!);
                         } else if ((profile?.profileimg ?? "").isNotEmpty) {
-                          provider = NetworkImage(
-                            "${profile!.profileimg!}?t=${DateTime.now().millisecondsSinceEpoch}",
+                          provider = CachedNetworkImageProvider(
+                            profile!.profileimg!,
                           );
                         } else {
                           provider = const AssetImage(AssetImages.profileImage);
@@ -281,7 +278,6 @@ class ProfileScreen extends GetView<ProfileController> {
 
                 const SizedBox(height: 35),
 
-              
                 CommonButton(
                   title: "Update",
                   onTap: () {
@@ -324,17 +320,12 @@ class ProfileScreen extends GetView<ProfileController> {
       child: Text(
         title,
 
-
-
-        style:TextStyle(
-             fontSize: 15,
-             fontWeight: FontWeight.w400,
-             color: theme.colorScheme.onSurface,
-             fontFamily: 'Poppins'
-        ) 
-        
-        
-      
+        style: TextStyle(
+          fontSize: 15,
+          fontWeight: FontWeight.w400,
+          color: theme.colorScheme.onSurface,
+          fontFamily: 'Poppins',
+        ),
       ),
     );
   }
@@ -353,7 +344,11 @@ class ProfileScreen extends GetView<ProfileController> {
 
       maxLines: maxLines,
 
-      style: TextStyle(fontFamily: 'Poppins',fontWeight: FontWeight.w400,color: theme.colorScheme.onSurface),
+      style: TextStyle(
+        fontFamily: 'Poppins',
+        fontWeight: FontWeight.w400,
+        color: theme.colorScheme.onSurface,
+      ),
 
       decoration: InputDecoration(
         filled: true,
@@ -365,7 +360,7 @@ class ProfileScreen extends GetView<ProfileController> {
         disabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
 
-          borderSide: BorderSide(color:AppColors.border),
+          borderSide: BorderSide(color: AppColors.border),
         ),
 
         contentPadding: const EdgeInsets.symmetric(
@@ -382,13 +377,13 @@ class ProfileScreen extends GetView<ProfileController> {
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
 
-          borderSide: BorderSide(color:AppColors.border),
+          borderSide: BorderSide(color: AppColors.border),
         ),
 
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
 
-          borderSide: BorderSide(color:AppColors.border),
+          borderSide: BorderSide(color: AppColors.border),
         ),
       ),
     );

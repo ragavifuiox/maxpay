@@ -267,14 +267,12 @@ import 'package:image_picker/image_picker.dart';
 import 'package:maxpay/core/constants/snackbar.dart';
 import 'package:maxpay/core/data/model/get_profile_model.dart';
 import 'package:maxpay/core/data/model/update_profile_otp_model.dart';
-import 'package:maxpay/core/data/repsoitory/update_profile_repo_impl.dart';
 
 import 'package:maxpay/core/domain/usecase/get_profile_usecase.dart';
 import 'package:maxpay/core/domain/usecase/profile_update_usecase.dart';
 import 'package:maxpay/core/domain/usecase/update_profile_otp_usecase.dart';
 import 'package:maxpay/core/utils/logg_helper.dart';
 import 'package:maxpay/global_widget/webview.dart';
-import 'package:maxpay/view/login/otp_verification_screen.dart';
 import 'package:maxpay/view/profile/profile_update_otp.dart';
 
 class ProfileController extends GetxController {

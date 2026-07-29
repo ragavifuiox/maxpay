@@ -8,19 +8,19 @@ class UpdatePaymentStatus {
 
   UpdatePaymentStatus.fromJson(Map<String, dynamic> json) {
     success = json['success'];
-    data = json['data'] != null ? new UpdatePaymentData.fromJson(json['data']) : null;
+    data = json['data'] != null ? UpdatePaymentData.fromJson(json['data']) : null;
     message = json['message'];
     code = json['code'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['success'] = this.success;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['success'] = success;
     if (this.data != null) {
       data['data'] = this.data!.toJson();
     }
-    data['message'] = this.message;
-    data['code'] = this.code;
+    data['message'] = message;
+    data['code'] = code;
     return data;
   }
 }
@@ -34,15 +34,15 @@ class UpdatePaymentData {
   UpdatePaymentData.fromJson(Map<String, dynamic> json) {
     paymentStatus = json['payment_status'];
     recharge = json['recharge'] != null
-        ? new Recharge.fromJson(json['recharge'])
+        ? Recharge.fromJson(json['recharge'])
         : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['payment_status'] = this.paymentStatus;
-    if (this.recharge != null) {
-      data['recharge'] = this.recharge!.toJson();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['payment_status'] = paymentStatus;
+    if (recharge != null) {
+      data['recharge'] = recharge!.toJson();
     }
     return data;
   }
@@ -61,7 +61,7 @@ class Recharge {
   String? apiResponse;
   String? userType;
   String? time;
-  Null? txnId;
+  Null txnId;
   String? requestTime;
   String? paymentStatus;
   String? createdAt;
@@ -107,24 +107,24 @@ class Recharge {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['user_id'] = this.userId;
-    data['user_name'] = this.userName;
-    data['product_id'] = this.productId;
-    data['api_id'] = this.apiId;
-    data['mapping_id'] = this.mappingId;
-    data['mobile'] = this.mobile;
-    data['amount'] = this.amount;
-    data['status'] = this.status;
-    data['api_response'] = this.apiResponse;
-    data['user_type'] = this.userType;
-    data['time'] = this.time;
-    data['txn_id'] = this.txnId;
-    data['request_time'] = this.requestTime;
-    data['payment_status'] = this.paymentStatus;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['user_id'] = userId;
+    data['user_name'] = userName;
+    data['product_id'] = productId;
+    data['api_id'] = apiId;
+    data['mapping_id'] = mappingId;
+    data['mobile'] = mobile;
+    data['amount'] = amount;
+    data['status'] = status;
+    data['api_response'] = apiResponse;
+    data['user_type'] = userType;
+    data['time'] = time;
+    data['txn_id'] = txnId;
+    data['request_time'] = requestTime;
+    data['payment_status'] = paymentStatus;
+    data['created_at'] = createdAt;
+    data['updated_at'] = updatedAt;
     return data;
   }
 }

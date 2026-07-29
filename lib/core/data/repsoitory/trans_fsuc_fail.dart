@@ -30,6 +30,7 @@ import 'package:maxpay/core/data/model/transaction_suc_faii_model.dart';
 import 'package:maxpay/core/domain/repository/transaction_suc_fail_repository.dart';
 import 'package:maxpay/core/error/failure.dart';
 import 'package:maxpay/core/services/api_services.dart';
+import 'package:maxpay/core/utils/logg_helper.dart';
 
 class TransactionSucFailRepoImpl implements TransactionSucFailRepository {
   final ApiService apiService;
@@ -55,7 +56,7 @@ class TransactionSucFailRepoImpl implements TransactionSucFailRepository {
 
       return Left(ServerFailure(message: message));
     } catch (e) {
-      AppLogger.logError("Api ${ApiRoutes.transsucfail}" + e.toString());
+      AppLogger.logError("Api ${ApiRoutes.transsucfail}$e");
       return Left(ServerFailure(message: e.toString()));
     }
   }

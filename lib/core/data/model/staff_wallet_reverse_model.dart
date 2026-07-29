@@ -8,19 +8,19 @@ class StaffReverse {
 
   StaffReverse.fromJson(Map<String, dynamic> json) {
     success = json['success'];
-    data = json['data'] != null ? new Data.fromJson(json['data']) : null;
+    data = json['data'] != null ? Data.fromJson(json['data']) : null;
     message = json['message'];
     code = json['code'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['success'] = this.success;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['success'] = success;
     if (this.data != null) {
       data['data'] = this.data!.toJson();
     }
-    data['message'] = this.message;
-    data['code'] = this.code;
+    data['message'] = message;
+    data['code'] = code;
     return data;
   }
 }
@@ -57,15 +57,15 @@ class Data {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['retailer_id'] = this.retailerId;
-    data['staff_id'] = this.staffId;
-    data['payment_type'] = this.paymentType;
-    data['amount'] = this.amount;
-    data['txn_id'] = this.txnId;
-    data['updated_at'] = this.updatedAt;
-    data['created_at'] = this.createdAt;
-    data['id'] = this.id;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['retailer_id'] = retailerId;
+    data['staff_id'] = staffId;
+    data['payment_type'] = paymentType;
+    data['amount'] = amount;
+    data['txn_id'] = txnId;
+    data['updated_at'] = updatedAt;
+    data['created_at'] = createdAt;
+    data['id'] = id;
     return data;
   }
 }

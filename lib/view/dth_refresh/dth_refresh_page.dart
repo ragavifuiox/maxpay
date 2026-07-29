@@ -73,7 +73,7 @@ class DthRefreshScreen extends StatelessWidget {
                     Image.network(
                       "https://upload.wikimedia.org/wikipedia/commons/8/89/Airtel_logo.svg",
                       width: 45,
-                      errorBuilder: (_, __, ___) => const Icon(Icons.tv),
+                      errorBuilder: (_, _, _) => const Icon(Icons.tv),
                     ),
                   ],
                 ),

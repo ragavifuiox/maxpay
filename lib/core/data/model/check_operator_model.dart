@@ -1,6 +1,5 @@
 
 
-import 'dart:ffi';
 
 class CheckOperator {
   bool? status;
@@ -13,21 +12,21 @@ class CheckOperator {
   CheckOperator.fromJson(Map<String, dynamic> json) {
     status = json['status'];
     lookup =
-        json['lookup'] != null ? new Lookup.fromJson(json['lookup']) : null;
+        json['lookup'] != null ? Lookup.fromJson(json['lookup']) : null;
     productFound = json['product_found'];
     product =
-        json['product'] != null ? new Product.fromJson(json['product']) : null;
+        json['product'] != null ? Product.fromJson(json['product']) : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['status'] = this.status;
-    if (this.lookup != null) {
-      data['lookup'] = this.lookup!.toJson();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['status'] = status;
+    if (lookup != null) {
+      data['lookup'] = lookup!.toJson();
     }
-    data['product_found'] = this.productFound;
-    if (this.product != null) {
-      data['product'] = this.product!.toJson();
+    data['product_found'] = productFound;
+    if (product != null) {
+      data['product'] = product!.toJson();
     }
     return data;
   }
@@ -45,18 +44,18 @@ class Lookup {
     status = json['status'];
     mobileNumber = json['mobile_number'];
     records =
-        json['records'] != null ? new Records.fromJson(json['records']) : null;
+        json['records'] != null ? Records.fromJson(json['records']) : null;
     time = json['time'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['status'] = this.status;
-    data['mobile_number'] = this.mobileNumber;
-    if (this.records != null) {
-      data['records'] = this.records!.toJson();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['status'] = status;
+    data['mobile_number'] = mobileNumber;
+    if (records != null) {
+      data['records'] = records!.toJson();
     }
-    data['time'] = this.time;
+    data['time'] = time;
     return data;
   }
 }
@@ -90,14 +89,14 @@ class Records {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['status'] = this.status;
-    data['Operator'] = this.operator;
-    data['segment'] = this.segment;
-    data['circle'] = this.circle;
-    data['comcircle'] = this.comcircle;
-    data['OperatorCode'] = this.operatorCode;
-    data['CircleCode'] = this.circleCode;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['status'] = status;
+    data['Operator'] = operator;
+    data['segment'] = segment;
+    data['circle'] = circle;
+    data['comcircle'] = comcircle;
+    data['OperatorCode'] = operatorCode;
+    data['CircleCode'] = circleCode;
     return data;
   }
 }
@@ -116,10 +115,10 @@ class Product {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['name'] = this.name;
-    data['description'] = this.description;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['name'] = name;
+    data['description'] = description;
     return data;
   }
 }

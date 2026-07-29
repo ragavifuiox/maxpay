@@ -20,13 +20,13 @@ class UpdateprofileOtp {
 }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['success'] = this.success;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['success'] = success;
     if (this.data != null) {
       data['data'] = this.data!.toJson();
     }
-    data['message'] = this.message;
-    data['code'] = this.code;
+    data['message'] = message;
+    data['code'] = code;
     return data;
   }
 }
@@ -42,7 +42,7 @@ class Data {
   String? billingAddress;
   String? email;
   String? pincode;
-  Null? state;
+  Null state;
   String? status;
   bool? otpRequired;
   bool? mobileChangePending;
@@ -87,23 +87,23 @@ class Data {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['user_id'] = this.userId;
-    data['name'] = this.name;
-    data['retailer_name'] = this.retailerName;
-    data['phone_number'] = this.phoneNumber;
-    data['reg_mobile_number'] = this.regMobileNumber;
-    data['whatsapp_number'] = this.whatsappNumber;
-    data['billing_address'] = this.billingAddress;
-    data['email'] = this.email;
-    data['pincode'] = this.pincode;
-    data['state'] = this.state;
-    data['status'] = this.status;
-    data['otp_required'] = this.otpRequired;
-    data['mobile_change_pending'] = this.mobileChangePending;
-    data['mobile_request_id'] = this.mobileRequestId;
-    data['requested_new_mobile'] = this.requestedNewMobile;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['user_id'] = userId;
+    data['name'] = name;
+    data['retailer_name'] = retailerName;
+    data['phone_number'] = phoneNumber;
+    data['reg_mobile_number'] = regMobileNumber;
+    data['whatsapp_number'] = whatsappNumber;
+    data['billing_address'] = billingAddress;
+    data['email'] = email;
+    data['pincode'] = pincode;
+    data['state'] = state;
+    data['status'] = status;
+    data['otp_required'] = otpRequired;
+    data['mobile_change_pending'] = mobileChangePending;
+    data['mobile_request_id'] = mobileRequestId;
+    data['requested_new_mobile'] = requestedNewMobile;
     return data;
   }
 }

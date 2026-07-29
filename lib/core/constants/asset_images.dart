@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:maxpay/view/transfer_detail/transfer_detial.dart';
 
 class AssetImages {
   // Splash & Auth

@@ -8,19 +8,19 @@ class RetailorGrade {
 
   RetailorGrade.fromJson(Map<String, dynamic> json) {
     success = json['success'];
-    data = json['data'] != null ? new Data.fromJson(json['data']) : null;
+    data = json['data'] != null ? Data.fromJson(json['data']) : null;
     message = json['message'];
     code = json['code'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['success'] = this.success;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['success'] = success;
     if (this.data != null) {
       data['data'] = this.data!.toJson();
     }
-    data['message'] = this.message;
-    data['code'] = this.code;
+    data['message'] = message;
+    data['code'] = code;
     return data;
   }
 }
@@ -69,22 +69,22 @@ class Data {
 }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.retailer != null) {
-      data['retailer'] = this.retailer!.toJson();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    if (retailer != null) {
+      data['retailer'] = retailer!.toJson();
     }
-    data['wallet_balance'] = this.walletBalance;
-    if (this.currentMonth != null) {
-      data['current_month'] = this.currentMonth!.toJson();
+    data['wallet_balance'] = walletBalance;
+    if (currentMonth != null) {
+      data['current_month'] = currentMonth!.toJson();
     }
-    if (this.lastMonth != null) {
-      data['last_month'] = this.lastMonth!.toJson();
+    if (lastMonth != null) {
+      data['last_month'] = lastMonth!.toJson();
     }
-    if (this.displayCard != null) {
-      data['display_card'] = this.displayCard!.toJson();
+    if (displayCard != null) {
+      data['display_card'] = displayCard!.toJson();
     }
-    if (this.gradeSlabs != null) {
-      data['grade_slabs'] = this.gradeSlabs!.map((v) => v.toJson()).toList();
+    if (gradeSlabs != null) {
+      data['grade_slabs'] = gradeSlabs!.map((v) => v.toJson()).toList();
     }
     return data;
   }
@@ -104,10 +104,10 @@ class Retailer {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['user_id'] = this.userId;
-    data['retailer_name'] = this.retailerName;
-    data['mobile'] = this.mobile;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['user_id'] = userId;
+    data['retailer_name'] = retailerName;
+    data['mobile'] = mobile;
     return data;
   }
 }
@@ -140,13 +140,13 @@ class CurrentMonth {
 }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['grade'] = this.grade;
-    data['month_key'] = this.monthKey;
-    data['month_label'] = this.monthLabel;
-    data['days_tracked'] = this.daysTracked;
-    data['actual_avg'] = this.actualAvg;
-    data['label'] = this.label;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['grade'] = grade;
+    data['month_key'] = monthKey;
+    data['month_label'] = monthLabel;
+    data['days_tracked'] = daysTracked;
+    data['actual_avg'] = actualAvg;
+    data['label'] = label;
     return data;
   }
 }
@@ -157,7 +157,7 @@ class LastMonth {
   String? monthLabel;
   int? daysTracked;
  double? actualAvg;
-  Null? cashback;
+  Null cashback;
   String? label;
 
   LastMonth(
@@ -182,14 +182,14 @@ class LastMonth {
 }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['grade'] = this.grade;
-    data['month_key'] = this.monthKey;
-    data['month_label'] = this.monthLabel;
-    data['days_tracked'] = this.daysTracked;
-    data['actual_avg'] = this.actualAvg;
-    data['cashback'] = this.cashback;
-    data['label'] = this.label;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['grade'] = grade;
+    data['month_key'] = monthKey;
+    data['month_label'] = monthLabel;
+    data['days_tracked'] = daysTracked;
+    data['actual_avg'] = actualAvg;
+    data['cashback'] = cashback;
+    data['label'] = label;
     return data;
   }
 }
@@ -210,11 +210,11 @@ class DisplayCard {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['grade'] = this.grade;
-    data['label'] = this.label;
-    data['month_label'] = this.monthLabel;
-    data['source'] = this.source;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['grade'] = grade;
+    data['label'] = label;
+    data['month_label'] = monthLabel;
+    data['source'] = source;
     return data;
   }
 }
@@ -238,11 +238,11 @@ class GradeSlabs {
 }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['sno'] = this.sno;
-    data['grade'] = this.grade;
-    data['daily_average_balance'] = this.dailyAverageBalance;
-    data['monthly_cash_back'] = this.monthlyCashBack;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['sno'] = sno;
+    data['grade'] = grade;
+    data['daily_average_balance'] = dailyAverageBalance;
+    data['monthly_cash_back'] = monthlyCashBack;
     return data;
   }
 }

@@ -171,7 +171,7 @@ class TransactionReport {
     if (json['data'] != null) {
       data = <TransrepData>[];
       json['data'].forEach((v) {
-        data!.add(new TransrepData.fromJson(v));
+        data!.add(TransrepData.fromJson(v));
       });
     }
     message = json['message'];
@@ -179,13 +179,13 @@ class TransactionReport {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['success'] = this.success;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['success'] = success;
     if (this.data != null) {
       data['data'] = this.data!.map((v) => v.toJson()).toList();
     }
-    data['message'] = this.message;
-    data['code'] = this.code;
+    data['message'] = message;
+    data['code'] = code;
     return data;
   }
 }
@@ -267,30 +267,30 @@ class TransrepData {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['product_id'] = this.productId;
-    data['product_type_id'] = this.productTypeId;
-    data['product_type'] = this.productType;
-    data['product_name'] = this.productName;
-    data['product_logo'] = this.productLogo;
-    data['payment_status'] = this.paymentStatus;
-    data['transaction_no'] = this.transactionNo;
-    data['mobile'] = this.mobile;
-    data['available_balance'] = this.availableBalance;
-    data['transaction_amount'] = this.transactionAmount;
-    data['commission'] = this.commission;
-    data['surcharge'] = this.surcharge;
-    data['remaining_balance'] = this.remainingBalance;
-    data['request_date_time'] = this.requestDateTime;
-    data['response_date_time'] = this.responseDateTime;
-    data['transaction_id'] = this.transactionId;
-    data['operator'] = this.operator;
-    data['amount'] = this.amount;
-    data['status'] = this.status;
-    data['date_time'] = this.dateTime;
-    data['logo'] = this.logo;
-    data['receipt_url'] = this.url;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['product_id'] = productId;
+    data['product_type_id'] = productTypeId;
+    data['product_type'] = productType;
+    data['product_name'] = productName;
+    data['product_logo'] = productLogo;
+    data['payment_status'] = paymentStatus;
+    data['transaction_no'] = transactionNo;
+    data['mobile'] = mobile;
+    data['available_balance'] = availableBalance;
+    data['transaction_amount'] = transactionAmount;
+    data['commission'] = commission;
+    data['surcharge'] = surcharge;
+    data['remaining_balance'] = remainingBalance;
+    data['request_date_time'] = requestDateTime;
+    data['response_date_time'] = responseDateTime;
+    data['transaction_id'] = transactionId;
+    data['operator'] = operator;
+    data['amount'] = amount;
+    data['status'] = status;
+    data['date_time'] = dateTime;
+    data['logo'] = logo;
+    data['receipt_url'] = url;
     return data;
   }
 }

@@ -324,7 +324,7 @@ class ConfirmDthPage extends GetView<DthController> {
                                   Get.to(
                                     () => DthSuccessPage(
                                       productName: productName,
-                                          rechargeId: rechargeData?.transactionId?.toString() ?? "",
+                                          rechargeId: rechargeData.transactionId?.toString() ?? "",
 
                                       operatorInitial:
                                           (apiData?.operatorName?.isNotEmpty ??
