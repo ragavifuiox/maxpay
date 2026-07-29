@@ -18,7 +18,7 @@ class GetNewsRepoImpl implements GetNewsRepository {
       final model = News.fromJson(response);
       return Right(model);
     } catch (e) {
-      AppLogger.logError("Api ${ApiRoutes.news}" + e.toString());
+      AppLogger.logError("Api ${ApiRoutes.news}$e");
       return Left(ServerFailure(message: e.toString()));
     }
   }

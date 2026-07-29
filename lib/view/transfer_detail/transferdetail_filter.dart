@@ -5,7 +5,6 @@ import 'package:get/get.dart';
 import 'package:maxpay/controllers/wallet_trnasfer_detail_controller.dart';
 import 'package:maxpay/core/constants/asset_images.dart';
 import 'package:maxpay/core/constants/colors.dart';
-import 'package:maxpay/core/di/service_locator.dart';
 import 'package:maxpay/core/utils/texthelper.dart';
 import 'package:maxpay/view/transfer_detail/wallet_trnasfer.dart';
 
@@ -52,7 +51,7 @@ class TransferdetailFilter extends StatelessWidget {
           child: GestureDetector(
             onTap: () => controller.selectFromDate(context),
             child: AbsorbPointer(
-              child: Container(
+              child: SizedBox(
                 height: 45,
                 child: TextFormField(
                   controller: controller.fromDateController,
@@ -139,7 +138,7 @@ class TransferdetailFilter extends StatelessWidget {
     /// TRANSACTION TYPE
     DropdownButtonFormField<TransferFilterType>(
 
-      value: selectedFilter,
+      initialValue: selectedFilter,
 
       isExpanded: true,
 

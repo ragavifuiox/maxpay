@@ -6,7 +6,6 @@ import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/global_widget/commom_button.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
-import 'package:maxpay/view/fastag_recharge/fastag_customer.dart';
 import 'package:maxpay/view/postpaid/Post_paid_customer_page.dart';
 import 'package:maxpay/view/postpaid/postpaid_success_page.dart';
 

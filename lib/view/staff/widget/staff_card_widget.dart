@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:get/instance_manager.dart';
-import 'package:maxpay/controllers/add_staff_controller.dart';
 import 'package:maxpay/controllers/transaction_report_controller.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/core/di/service_locator.dart';

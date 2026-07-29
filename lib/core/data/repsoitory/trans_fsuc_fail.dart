@@ -17,7 +17,7 @@ class TransactionSucFailRepoImpl implements TransactionSucFailRepository {
       final model = TransactionResponse.fromJson(response);
       return Right(model);
     } catch (e) {
-      AppLogger.logError("Api ${ApiRoutes.transsucfail}" + e.toString());
+      AppLogger.logError("Api ${ApiRoutes.transsucfail}$e");
       return Left(ServerFailure(message: e.toString()));
     }
   }

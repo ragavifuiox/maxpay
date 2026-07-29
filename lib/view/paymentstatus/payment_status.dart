@@ -280,7 +280,7 @@ class PaymentCard extends StatelessWidget {
                 child: Image.network(
                   productLogo,
                   fit: BoxFit.contain,
-                  errorBuilder: (_, __, ___) =>
+                  errorBuilder: (_, _, _) =>
                       const Icon(Icons.image_not_supported),
                 ),
               ),
@@ -345,7 +345,7 @@ class PaymentCard extends StatelessWidget {
                 width: 120.w,
                 height: 36.h,
                 child: DropdownButtonFormField<String>(
-                  value: selectedStatus,
+                  initialValue: selectedStatus,
                   isExpanded: true,
                   decoration: InputDecoration(
                     isDense: true,

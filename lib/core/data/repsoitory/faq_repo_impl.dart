@@ -18,7 +18,7 @@ class FaqRepoImpl implements FaqRepsoitory {
       final model = Faq.fromJson(response);
       return Right(model);
     } catch (e) {
-       AppLogger.logError("Api ${ApiRoutes.faq}" + e.toString());
+       AppLogger.logError("Api ${ApiRoutes.faq}$e");
       return Left(ServerFailure(message: e.toString()));
     }
   }

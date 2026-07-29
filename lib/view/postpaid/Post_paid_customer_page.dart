@@ -4,8 +4,6 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:maxpay/global_widget/commom_button.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
-import 'package:maxpay/view/fastag_recharge/fastag_success_screen.dart';
-import 'package:maxpay/view/landline/landline_success_page.dart';
 import 'package:maxpay/view/postpaid/postpaid_success_page.dart';
 
 class PostPaidCustomerPage extends StatelessWidget {

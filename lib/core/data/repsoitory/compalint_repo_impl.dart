@@ -17,7 +17,7 @@ class ComplaintsRepoImpl implements ComplaintsRepository {
       final model = Complaints.fromJson(response);
       return Right(model);
     } catch (e) {
-     AppLogger.logError("Api ${ApiRoutes.complaints}" + e.toString());
+     AppLogger.logError("Api ${ApiRoutes.complaints}$e");
       return Left(ServerFailure(message: e.toString()));
     }
   }

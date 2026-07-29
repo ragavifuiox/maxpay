@@ -12,7 +12,6 @@ class ApiService {
   final _storage = LocalStorageService();
   final bool _isUnauthorizedHandled = false;
 
-
   ApiService()
     : _dio = Dio(
         BaseOptions(

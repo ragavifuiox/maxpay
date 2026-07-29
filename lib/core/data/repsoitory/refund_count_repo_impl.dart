@@ -18,7 +18,7 @@ class RefundCountRepoImpl implements RefundCountRepository {
       final model = RefundCount.fromJson(response);
       return Right(model);
     } catch (e) {
-      AppLogger.logError("Api ${ApiRoutes.refundcount}" + e.toString());
+      AppLogger.logError("Api ${ApiRoutes.refundcount}$e");
       return Left(ServerFailure(message: e.toString()));
     }
   }

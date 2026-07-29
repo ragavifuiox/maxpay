@@ -18,7 +18,7 @@ class DueAmountRepoImpl implements DueAmountRepository {
       final model = DueAmount.fromJson(response);
       return Right(model);
     } catch (e) {
-      AppLogger.logError("Api ${ApiRoutes.dueamount} " + e.toString());
+      AppLogger.logError("Api ${ApiRoutes.dueamount} $e");
       return Left(ServerFailure(message: e.toString()));
     }
   }

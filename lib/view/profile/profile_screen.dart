@@ -6,7 +6,6 @@ import 'package:maxpay/core/constants/asset_images.dart';
 import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/core/utils/texthelper.dart';
 import 'package:maxpay/global_widget/commom_button.dart';
-import 'package:maxpay/global_widget/custom_app.dart';
 
 class ProfileScreen extends GetView<ProfileController> {
   ProfileScreen({super.key});

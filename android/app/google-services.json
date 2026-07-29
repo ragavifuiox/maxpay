@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "12135302982",
+    "project_id": "paylink-retailor",
+    "storage_bucket": "paylink-retailor.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:12135302982:android:e92f14b2c942734730c747",
+        "android_client_info": {
+          "package_name": "com.paylink.retailor"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCD1SywbXxaLfRsE9iW5vWKukL8aTU_l6E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

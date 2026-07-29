@@ -112,18 +112,17 @@ class WalletRequestScreen extends StatelessWidget {
 
                     SizedBox(height: 4.h),
 
-                Obx(() {
-  return Text(
-    "₹ ${controller.dueamount.value?.data?.pendingAmount ?? 0}",
-    style: TextStyle(
-      color: Colors.white,
-      fontSize: 18.sp,
-      fontWeight: FontWeight.bold,
-    ),
-  );
-})
-
-            ],
+                    Obx(() {
+                      return Text(
+                        "₹ ${controller.dueamount.value?.data?.pendingAmount ?? 0}",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      );
+                    }),
+                  ],
                 ),
               ),
 

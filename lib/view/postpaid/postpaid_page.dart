@@ -6,7 +6,6 @@ import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
 import 'package:maxpay/view/postpaid/postpaid_confirm_transaction_page.dart';
-import 'package:maxpay/view/recharge/confirm_transaction_page.dart';
 
 class PostpaidPage extends StatefulWidget {
   const PostpaidPage({super.key});
@@ -21,7 +20,7 @@ class _PostPaidPageState extends State<PostpaidPage>
   String _selectedOperator = 'Jio';
   Color _selectedOperatorColor = Colors.red;
   bool _isPlanSelected = true;
-  bool _isPaymentReceived = false;
+  final bool _isPaymentReceived = false;
 bool _isReceived = true;
   final List<Map<String, dynamic>> _operators = [
     {'name': 'Jio', 'color': Colors.red},

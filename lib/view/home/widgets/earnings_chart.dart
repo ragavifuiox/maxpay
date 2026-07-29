@@ -49,24 +49,24 @@ class EarningsChart extends StatelessWidget {
 
   // bool _isShownDot(FlSpot spot) => _dottedIndices.contains(spot.x.toInt());
 
+  static bool _isTurningPoint(List<FlSpot> spots, double x) {
+    final index = spots.indexWhere((s) => s.x == x);
+    if (index == -1) return false;
 
-static bool _isTurningPoint(List<FlSpot> spots, double x) {
-  final index = spots.indexWhere((s) => s.x == x);
-  if (index == -1) return false;
+    // Endpoints count as edges (first/last point of the line).
+    if (index == 0 || index == spots.length - 1) return true;
 
-  // Endpoints count as edges (first/last point of the line).
-  if (index == 0 || index == spots.length - 1) return true;
+    final prevY = spots[index - 1].y;
+    final currY = spots[index].y;
+    final nextY = spots[index + 1].y;
 
-  final prevY = spots[index - 1].y;
-  final currY = spots[index].y;
-  final nextY = spots[index + 1].y;
+    final risingBefore = currY > prevY;
+    final risingAfter = nextY > currY;
 
-  final risingBefore = currY > prevY;
-  final risingAfter = nextY > currY;
+    // Direction changed -> this is a peak (top) or a valley (bottom).
+    return risingBefore != risingAfter;
+  }
 
-  // Direction changed -> this is a peak (top) or a valley (bottom).
-  return risingBefore != risingAfter;
-}
   void _showDummyDataDialog(
     BuildContext context, {
     required String seriesName,
@@ -177,14 +177,10 @@ static bool _isTurningPoint(List<FlSpot> spots, double x) {
                   show: true,
                   border: Border(
                     bottom: BorderSide(
-                      color: isDark
-                          ? AppColors.chart1
-                          : AppColors.chart2
+                      color: isDark ? AppColors.chart1 : AppColors.chart2,
                     ),
                     top: BorderSide(
-                      color: isDark
-                            ? AppColors.chart1
-                            : AppColors.chart2
+                      color: isDark ? AppColors.chart1 : AppColors.chart2,
                     ),
                     left: BorderSide.none,
                     right: BorderSide.none,
@@ -198,9 +194,7 @@ static bool _isTurningPoint(List<FlSpot> spots, double x) {
                   drawHorizontalLine: true,
                   getDrawingHorizontalLine: (value) {
                     return FlLine(
-                      color: isDark
-                           ? AppColors.chart1
-                             : AppColors.chart2,
+                      color: isDark ? AppColors.chart1 : AppColors.chart2,
                       strokeWidth: 1,
                     );
                   },
@@ -255,47 +249,52 @@ static bool _isTurningPoint(List<FlSpot> spots, double x) {
                   touchTooltipData: LineTouchTooltipData(
                     getTooltipItems: (_) => [],
                   ),
-                 touchCallback: (FlTouchEvent event, LineTouchResponse? response) {
-  if (event is! FlTapUpEvent) return;
-  if (response == null || response.lineBarSpots == null) return;
+                  touchCallback:
+                      (FlTouchEvent event, LineTouchResponse? response) {
+                        if (event is! FlTapUpEvent) return;
+                        if (response == null || response.lineBarSpots == null) {
+                          return;
+                        }
 
-  for (final barSpot in response.lineBarSpots!) {
-    late final List<FlSpot> seriesSpots;
-    late final String seriesName;
-    late final Color color;
+                        for (final barSpot in response.lineBarSpots!) {
+                          late final List<FlSpot> seriesSpots;
+                          late final String seriesName;
+                          late final Color color;
 
-    switch (barSpot.barIndex) {
-      case 0:
-        seriesSpots = _purchaseSpots;
-        seriesName = "Add Wallet";
-        color = Colors.blue;
-        break;
-      case 1:
-        seriesSpots = _successSpots;
-        seriesName = "Transaction";
-        color = Colors.green;
-        break;
-      case 2:
-        seriesSpots = _failedSpots;
-        seriesName = "Balance";
-        color = Colors.red;
-        break;
-      default:
-        continue;
-    }
+                          switch (barSpot.barIndex) {
+                            case 0:
+                              seriesSpots = _purchaseSpots;
+                              seriesName = "Add Wallet";
+                              color = Colors.blue;
+                              break;
+                            case 1:
+                              seriesSpots = _successSpots;
+                              seriesName = "Transaction";
+                              color = Colors.green;
+                              break;
+                            case 2:
+                              seriesSpots = _failedSpots;
+                              seriesName = "Balance";
+                              color = Colors.red;
+                              break;
+                            default:
+                              continue;
+                          }
 
-    if (!_isTurningPoint(seriesSpots, barSpot.x)) continue;
+                          if (!_isTurningPoint(seriesSpots, barSpot.x)) {
+                            continue;
+                          }
 
-    _showDummyDataDialog(
-      context,
-      seriesName: seriesName,
-      color: color,
-      spot: FlSpot(barSpot.x, barSpot.y),
-      isDark: isDark,
-    );
-    break;
-  }
-},
+                          _showDummyDataDialog(
+                            context,
+                            seriesName: seriesName,
+                            color: color,
+                            spot: FlSpot(barSpot.x, barSpot.y),
+                            isDark: isDark,
+                          );
+                          break;
+                        }
+                      },
                 ),
 
                 lineBarsData: [
@@ -309,8 +308,8 @@ static bool _isTurningPoint(List<FlSpot> spots, double x) {
                     belowBarData: BarAreaData(show: false),
                     spots: _purchaseSpots,
                     dotData: FlDotData(
-                     checkToShowDot: (spot, barData) =>
-      _isTurningPoint(barData.spots, spot.x),
+                      checkToShowDot: (spot, barData) =>
+                          _isTurningPoint(barData.spots, spot.x),
                       getDotPainter: (spot, a, b, c) {
                         return FlDotCirclePainter(
                           radius: 4,
@@ -322,7 +321,6 @@ static bool _isTurningPoint(List<FlSpot> spots, double x) {
                     ),
                   ),
 
-                  
                   LineChartBarData(
                     isCurved: false,
                     color: Colors.green,
@@ -332,13 +330,13 @@ static bool _isTurningPoint(List<FlSpot> spots, double x) {
                     spots: _successSpots,
                     dotData: FlDotData(
                       show: true,
-                     checkToShowDot: (spot, barData) =>
-      _isTurningPoint(barData.spots, spot.x),
+                      checkToShowDot: (spot, barData) =>
+                          _isTurningPoint(barData.spots, spot.x),
                       getDotPainter: (spot, a, b, c) {
                         return FlDotCirclePainter(
                           radius: 4,
                           color: Colors.green,
-                         strokeWidth: 0.1,
+                          strokeWidth: 0.1,
                           strokeColor: Colors.green,
                         );
                       },
@@ -356,12 +354,12 @@ static bool _isTurningPoint(List<FlSpot> spots, double x) {
                     dotData: FlDotData(
                       show: true,
                       checkToShowDot: (spot, barData) =>
-      _isTurningPoint(barData.spots, spot.x),
+                          _isTurningPoint(barData.spots, spot.x),
                       getDotPainter: (spot, a, b, c) {
                         return FlDotCirclePainter(
                           radius: 4,
                           color: Colors.red,
-                         strokeWidth: 0.1,
+                          strokeWidth: 0.1,
                           strokeColor: Colors.red,
                         );
                       },
@@ -378,7 +376,11 @@ static bool _isTurningPoint(List<FlSpot> spots, double x) {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               _Legend(color: Colors.blue, title: "Add Wallet", isDark: isDark),
-              _Legend(color: Colors.green, title: "Transaction", isDark: isDark),
+              _Legend(
+                color: Colors.green,
+                title: "Transaction",
+                isDark: isDark,
+              ),
               _Legend(color: Colors.red, title: "Balance", isDark: isDark),
             ],
           ),

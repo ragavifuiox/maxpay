@@ -1,6 +1,5 @@
 import 'package:dartz/dartz.dart';
 import 'package:maxpay/core/data/model/update_payment_status.dart';
-import 'package:maxpay/core/data/model/update_pin_model.dart';
 
 import 'package:maxpay/core/error/failure.dart';
 

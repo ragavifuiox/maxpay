@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:maxpay/controllers/add_wallet_controller.dart';
 import 'package:maxpay/core/extensions/currency.dart';

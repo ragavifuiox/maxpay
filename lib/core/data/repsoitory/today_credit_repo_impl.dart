@@ -17,7 +17,7 @@ class TodayCreditRepoImpl implements TodayCreditRepository {
       final model = TodayCredit.fromJson(response);
       return Right(model);
     } catch (e) {
-    AppLogger.logError("Api ${ApiRoutes.todaycredit}" + e.toString());
+    AppLogger.logError("Api ${ApiRoutes.todaycredit}$e");
       return Left(ServerFailure(message: e.toString()));
     }
   }
