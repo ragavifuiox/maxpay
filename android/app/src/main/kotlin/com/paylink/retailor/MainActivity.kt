@@ -6,6 +6,7 @@ import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Build
+import android.util.Log
 import io.flutter.embedding.android.FlutterFragmentActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
@@ -13,6 +14,7 @@ import java.io.ByteArrayOutputStream
 
 class MainActivity : FlutterFragmentActivity() {
     private val CHANNEL = "com.paylink.retailor/upi_choose"
+    private val TAG = "UPI_DEBUG"
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
@@ -38,6 +40,7 @@ class MainActivity : FlutterFragmentActivity() {
                                 result.success(false)
                             }
                         } catch (e: Exception) {
+                            Log.e(TAG, "openUpiChooser failed", e)
                             result.success(false)
                         }
                     }
@@ -45,46 +48,65 @@ class MainActivity : FlutterFragmentActivity() {
                     "getInstalledUpiApps" -> {
                         try {
                             val upiIntent = Intent(Intent.ACTION_VIEW, Uri.parse("upi://pay"))
+
+                            // FIX: MATCH_DEFAULT_ONLY is the correct flag — UPI apps
+                            // register their upi:// intent-filter with category DEFAULT.
+                            // MATCH_ALL was silently returning empty/wrong results on
+                            // several OEM ROMs.
                             val resolveInfos = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                                 packageManager.queryIntentActivities(
                                     upiIntent,
-                                    PackageManager.ResolveInfoFlags.of(PackageManager.MATCH_ALL.toLong())
+                                    PackageManager.ResolveInfoFlags.of(
+                                        PackageManager.MATCH_DEFAULT_ONLY.toLong()
+                                    )
                                 )
                             } else {
-                                packageManager.queryIntentActivities(upiIntent, PackageManager.MATCH_ALL)
-                            }
-
-                            val apps = resolveInfos.map { info ->
-                                val packageName = info.activityInfo.packageName
-                                val appName = info.loadLabel(packageManager).toString()
-                                val iconDrawable = info.loadIcon(packageManager)
-                                val bitmap = if (iconDrawable is BitmapDrawable) {
-                                    iconDrawable.bitmap
-                                } else {
-                                    val bmp = Bitmap.createBitmap(
-                                        iconDrawable.intrinsicWidth.coerceAtLeast(1),
-                                        iconDrawable.intrinsicHeight.coerceAtLeast(1),
-                                        Bitmap.Config.ARGB_8888
-                                    )
-                                    val canvas = android.graphics.Canvas(bmp)
-                                    iconDrawable.setBounds(0, 0, canvas.width, canvas.height)
-                                    iconDrawable.draw(canvas)
-                                    bmp
-                                }
-
-                                val stream = ByteArrayOutputStream()
-                                bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
-                                val iconBytes = stream.toByteArray()
-
-                                mapOf(
-                                    "packageName" to packageName,
-                                    "name" to appName,
-                                    "icon" to iconBytes
+                                packageManager.queryIntentActivities(
+                                    upiIntent,
+                                    PackageManager.MATCH_DEFAULT_ONLY
                                 )
                             }
 
+                            Log.d(TAG, "Raw resolveInfos count: ${resolveInfos.size}")
+                            resolveInfos.forEach {
+                                Log.d(TAG, "Found: ${it.activityInfo.packageName}")
+                            }
+
+                            val apps = resolveInfos
+                                .distinctBy { it.activityInfo.packageName } // avoid dup entries
+                                .map { info ->
+                                    val packageName = info.activityInfo.packageName
+                                    val appName = info.loadLabel(packageManager).toString()
+                                    val iconDrawable = info.loadIcon(packageManager)
+                                    val bitmap = if (iconDrawable is BitmapDrawable) {
+                                        iconDrawable.bitmap
+                                    } else {
+                                        val bmp = Bitmap.createBitmap(
+                                            iconDrawable.intrinsicWidth.coerceAtLeast(1),
+                                            iconDrawable.intrinsicHeight.coerceAtLeast(1),
+                                            Bitmap.Config.ARGB_8888
+                                        )
+                                        val canvas = android.graphics.Canvas(bmp)
+                                        iconDrawable.setBounds(0, 0, canvas.width, canvas.height)
+                                        iconDrawable.draw(canvas)
+                                        bmp
+                                    }
+
+                                    val stream = ByteArrayOutputStream()
+                                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
+                                    val iconBytes = stream.toByteArray()
+
+                                    mapOf(
+                                        "packageName" to packageName,
+                                        "name" to appName,
+                                        "icon" to iconBytes
+                                    )
+                                }
+
+                            Log.d(TAG, "Final apps list size: ${apps.size}")
                             result.success(apps)
                         } catch (e: Exception) {
+                            Log.e(TAG, "getInstalledUpiApps failed", e)
                             result.error("UPI_LIST_ERROR", e.message, null)
                         }
                     }
@@ -108,6 +130,7 @@ class MainActivity : FlutterFragmentActivity() {
                                 result.success(false)
                             }
                         } catch (e: Exception) {
+                            Log.e(TAG, "openSpecificUpiApp failed", e)
                             result.error("UPI_OPEN_ERROR", e.message, null)
                         }
                     }

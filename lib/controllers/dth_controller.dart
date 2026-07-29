@@ -83,7 +83,8 @@ Rx<ConfirmDth?> confirmdth = Rx<ConfirmDth?>(null);
 
   result.fold(
     (failure) {
-      Get.snackbar('Error', failure.message);
+      searchdthList.clear(); // Clear old plans
+      Get.snackbar('Info', 'No plans found');
     },
     (response) {
       searchdthList.value = response.data ?? [];

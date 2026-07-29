@@ -1,5 +1,5 @@
 class ApiRoutes {
-  static const baseURL = "http://139.59.91.7/test_paylinkonline.in/public/api";
+  static const baseURL = "https://paylinkonline.in/api";
   static const login = "/retailer_login_sendotp";
   static const verifyotp = "/retailer_login_verifyOtp";
   static const news = "/get_news";
@@ -12,7 +12,7 @@ class ApiRoutes {
   static const plans = "/get_product/";
   static const complaints = "/get_complaint";
   static const bank = "/get_bank";
-  static const grade = "/user_grades";
+  static const grade = "/retailer_grade";
   static const walletrequest = "/create_wallet_request";
   static const addstaff = "/add_staff";
   static const stafflist = "/get_staff";
@@ -62,6 +62,7 @@ class ApiRoutes {
   static const walletQrHistory = "/wallet_qr_history";
   static const refundcount = "/refund_count";
   static const todaycredit = "/today_credit_amount";
+  static const todaytrnas= "/today_transaction_amount";
   static const dueamount = "/due_amount";
   static const download = "/receipt_download/";
   static const checkoperator = "/check_operator";
@@ -76,4 +77,7 @@ class ApiRoutes {
   static const updatepaymentStatus = "/update_payment_status";
   static const wallettransferdetail = "/satff_wallet_history";
   static const staffwalletreverse = "/staff_wallet_reverse";
+  static const updateprofileotp = "/verify_profile_update_otp";
+  static const faqreply = "/faq_reply";
+  
 }

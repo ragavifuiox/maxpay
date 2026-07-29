@@ -10,6 +10,21 @@ class RefundController extends GetxController {
   RefundController({
     required this.refundUsecase,
   });
+@override
+void onInit() {
+  super.onInit();
+
+  final today = DateTime.now();
+
+  final todayDate =
+      "${today.year}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}";
+
+  fromDate = todayDate;
+  toDate = todayDate;
+
+  getPaymentStatus();
+}
+
 
   RxBool isLoading = false.obs;
   RxList<RefundData> refund =
@@ -51,56 +66,48 @@ class RefundController extends GetxController {
     }
   }
 
-  Future<void> selectFromDate(
-      BuildContext context) async {
-    DateTime? pickedDate =
-        await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2024),
-      lastDate: DateTime(2030),
-    );
+ Future<void> selectFromDate(BuildContext context) async {
+  DateTime? pickedDate = await showDatePicker(
+    context: context,
+    initialDate: fromDate.isNotEmpty
+        ? DateTime.parse(fromDate)
+        : DateTime.now(),
+    firstDate: DateTime(2024),
+    lastDate: DateTime(2030),
+  );
 
-    if (pickedDate != null) {
-      fromDate =
-          "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+  if (pickedDate != null) {
+    fromDate =
+        "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
 
-      if (toDate.isNotEmpty) {
-        getPaymentStatus();
-      }
+    getPaymentStatus();
 
-      update();
-    }
+    update();
   }
+}
 
-  Future<void> selectToDate(
-      BuildContext context) async {
-    DateTime? pickedDate =
-        await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2024),
-      lastDate: DateTime(2030),
-    );
+Future<void> selectToDate(BuildContext context) async {
+  DateTime? pickedDate = await showDatePicker(
+    context: context,
+    initialDate: toDate.isNotEmpty
+        ? DateTime.parse(toDate)
+        : DateTime.now(),
+    firstDate: DateTime(2024),
+    lastDate: DateTime(2030),
+  );
 
-    if (pickedDate != null) {
-      toDate =
-          "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
+  if (pickedDate != null) {
+    toDate =
+        "${pickedDate.year}-${pickedDate.month.toString().padLeft(2, '0')}-${pickedDate.day.toString().padLeft(2, '0')}";
 
-      if (fromDate.isNotEmpty) {
-        getPaymentStatus();
-      }
+    getPaymentStatus();
 
-      update();
-    }
+    update();
   }
+}
 
   void onSearch(String value) {
-    search = value;
-
-    if (fromDate.isNotEmpty &&
-        toDate.isNotEmpty) {
-      getPaymentStatus();
-    }
-  }
+  search = value;
+  getPaymentStatus();
+}
 }

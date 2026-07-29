@@ -7,8 +7,8 @@ import 'package:maxpay/global_widget/custom_app.dart';
 
 class GradeScreen extends GetView<GradeController> {
   const GradeScreen({super.key});
-  
- @override
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
@@ -23,9 +23,7 @@ class GradeScreen extends GetView<GradeController> {
 
       final grade = controller.gradeData.value;
 
-      if (grade == null ||
-          grade.data == null ||
-          grade.data!.isEmpty) {
+      if (grade == null || grade.data == null) {
         return const Scaffold(
           body: Center(
             child: Text("No Data Found"),
@@ -33,7 +31,7 @@ class GradeScreen extends GetView<GradeController> {
         );
       }
 
-      final item = grade.data!.first;
+      final item = grade.data!;
 
       return Scaffold(
         backgroundColor: theme.scaffoldBackgroundColor,
@@ -46,12 +44,9 @@ class GradeScreen extends GetView<GradeController> {
         body: SafeArea(
           child: SingleChildScrollView(
             child: Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: 20.w,
-              ),
+              padding: EdgeInsets.symmetric(horizontal: 20.w),
               child: Column(
-                crossAxisAlignment:
-                    CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(height: 30.h),
 
@@ -62,35 +57,28 @@ class GradeScreen extends GetView<GradeController> {
                           "Congratulations!",
                           style: TextStyle(
                             fontSize: 18.sp,
-                            fontWeight:
-                                FontWeight.w600,
-                            color: theme.colorScheme
-                                .onSurface,
+                            fontWeight: FontWeight.w600,
+                            color: theme.colorScheme.onSurface,
                           ),
                         ),
-
                         SizedBox(height: 10.h),
-
                         Text(
                           "This month grade is",
                           style: TextStyle(
                             fontSize: 14.sp,
-                            color: theme
-                                .colorScheme
-                                .onSurfaceVariant,
+                            color: theme.colorScheme.onSurfaceVariant,
                           ),
                         ),
-
                         SizedBox(height: 25.h),
 
                         Text(
-                       "A",
+                          item.displayCard?.grade ??
+                              item.currentMonth?.grade ??
+                              "-",
                           style: TextStyle(
                             fontSize: 110.sp,
-                            fontWeight:
-                                FontWeight.bold,
-                            color:
-                                AppColors.clrPrimary,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.clrPrimary,
                             height: 1,
                           ),
                         ),
@@ -98,15 +86,13 @@ class GradeScreen extends GetView<GradeController> {
                     ),
                   ),
 
-                  SizedBox(height: 45.h),
+                  SizedBox(height: 40.h),
 
                   Text(
                     "Details",
                     style: TextStyle(
                       fontSize: 16.sp,
                       fontWeight: FontWeight.w600,
-                      color: theme
-                          .colorScheme.onSurface,
                     ),
                   ),
 
@@ -114,106 +100,52 @@ class GradeScreen extends GetView<GradeController> {
 
                   Container(
                     width: double.infinity,
-                    clipBehavior: Clip.antiAlias,
                     decoration: BoxDecoration(
-                      color: theme.brightness ==
-                              Brightness.light
+                      color: theme.brightness == Brightness.light
                           ? Colors.white
-                          : theme.colorScheme
-                              .surfaceContainer,
+                          : theme.colorScheme.surfaceContainer,
+                      borderRadius: BorderRadius.circular(10.r),
                       border: Border.all(
-                        color: theme
-                            .colorScheme.outline,
-                      ),
-                      borderRadius:
-                          BorderRadius.circular(
-                        10.r,
+                        color: theme.colorScheme.outline,
                       ),
                     ),
                     child: Column(
                       children: [
                         ClipRRect(
-                          borderRadius:
-                              BorderRadius.only(
-                            topLeft:
-                                Radius.circular(
-                                    10.r),
-                            topRight:
-                                Radius.circular(
-                                    10.r),
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(10.r),
+                            topRight: Radius.circular(10.r),
                           ),
                           child: Row(
                             children: [
                               _headerCell(
                                 context,
                                 title: "Grade",
-                                color:
-                                    const Color(
-                                        0xFFFFE1B4),
+                                color: const Color(0xFFFFE1B4),
                               ),
                               _headerCell(
                                 context,
-                                title:
-                                    "Daily Average\nBalance",
-                                color:
-                                    AppColors.box1,
+                                title: "Daily Average\nBalance",
+                                color: AppColors.box1,
                               ),
                               _headerCell(
                                 context,
-                                title:
-                                    "Monthly\nCashback",
-                                color:
-                                    const Color(
-                                        0xFFC6E5FF),
+                                title: "Monthly\nCashback",
+                                color: const Color(0xFFC6E5FF),
                                 isLast: true,
                               ),
                             ],
                           ),
                         ),
 
-                        _tableRow(
-                          context,
-                          "A",
-                          item.aDailyAvgBalance ??
-                              "0",
-                          item.aMonthlyCashback ??
-                              "0",
-                        ),
-
-                        _tableRow(
-                          context,
-                          "B",
-                          item.bDailyAvgBalance ??
-                              "0",
-                          item.bMonthlyCashback ??
-                              "0",
-                        ),
-
-                        _tableRow(
-                          context,
-                          "C",
-                          item.cDailyAvgBalance ??
-                              "0",
-                          item.cMonthlyCashback ??
-                              "0",
-                        ),
-
-                        _tableRow(
-                          context,
-                          "D",
-                          item.dDailyAvgBalance ??
-                              "0",
-                          item.dMonthlyCashback ??
-                              "0",
-                        ),
-
-                        _tableRow(
-                          context,
-                          "E",
-                          item.eDailyAvgBalance ??
-                              "0",
-                          item.eMonthlyCashback ??
-                              "0",
+                        /// Dynamic Rows
+                        ...(item.gradeSlabs ?? []).map(
+                          (slab) => _tableRow(
+                            context,
+                            slab.grade ?? "-",
+                            slab.dailyAverageBalance?.toString() ?? "0",
+                            slab.monthlyCashBack?.toString() ?? "0",
+                          ),
                         ),
                       ],
                     ),
@@ -239,7 +171,7 @@ class GradeScreen extends GetView<GradeController> {
 
     return Expanded(
       child: Container(
-        height: 72.h,
+        height: 70.h,
         alignment: Alignment.center,
         decoration: BoxDecoration(
           color: color,
@@ -247,8 +179,7 @@ class GradeScreen extends GetView<GradeController> {
             right: isLast
                 ? BorderSide.none
                 : BorderSide(
-                    color: theme
-                        .colorScheme.outline,
+                    color: theme.colorScheme.outline,
                   ),
           ),
         ),
@@ -257,7 +188,7 @@ class GradeScreen extends GetView<GradeController> {
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 13.sp,
-            fontWeight: FontWeight.w500,
+            fontWeight: FontWeight.w600,
             color: Colors.black,
           ),
         ),
@@ -298,14 +229,12 @@ class GradeScreen extends GetView<GradeController> {
         decoration: BoxDecoration(
           border: Border(
             top: BorderSide(
-              color:
-                  theme.colorScheme.outline,
+              color: theme.colorScheme.outline,
             ),
             right: isLast
                 ? BorderSide.none
                 : BorderSide(
-                    color: theme
-                        .colorScheme.outline,
+                    color: theme.colorScheme.outline,
                   ),
           ),
         ),
@@ -313,8 +242,7 @@ class GradeScreen extends GetView<GradeController> {
           text,
           style: TextStyle(
             fontSize: 14.sp,
-            color:
-                theme.colorScheme.onSurface,
+            color: theme.colorScheme.onSurface,
           ),
         ),
       ),

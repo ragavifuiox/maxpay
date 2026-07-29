@@ -34,11 +34,14 @@ class WalletCreditFilter extends GetView<WalletCreditController> {
                 () => Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12),
                   decoration: BoxDecoration(
-                    color: theme.brightness == Brightness.light
-                        ? Colors.white
-                        : AppColors.darkplceholder,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
+      color: isDark ? AppColors.darkplceholder : Colors.white,
+      borderRadius: BorderRadius.circular(8),
+      border: Border.all(
+       color: isDark
+                          ? AppColors.darkFilterBorder
+                          : AppColors.totalborde2,
+      ),
+    ),
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton<String>(
                       isExpanded: true,
@@ -177,7 +180,9 @@ class WalletCreditFilter extends GetView<WalletCreditController> {
         color: isDark ? AppColors.darkplceholder : Colors.white,
         borderRadius: BorderRadius.circular(7),
         border: Border.all(
-          color: isDark ? AppColors.darkFilterBorder : AppColors.totalborde2,
+          color: isDark
+                          ? AppColors.darkFilterBorder
+                          : AppColors.totalborde2,
         ),
       ),
       child: Text(

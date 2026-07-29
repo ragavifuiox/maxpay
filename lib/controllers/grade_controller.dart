@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:maxpay/core/data/model/grade_model.dart';
 import 'package:maxpay/core/domain/usecase/grade_usecase.dart';
+import 'package:maxpay/core/utils/logg_helper.dart';
 
 class GradeController extends GetxController {
   final GradeUsecase gradeusecase;
@@ -10,7 +11,7 @@ class GradeController extends GetxController {
   });
 
   final RxBool isLoading = false.obs;
-  final Rxn<Grade> gradeData = Rxn<Grade>();
+  final Rxn<RetailorGrade> gradeData = Rxn<RetailorGrade>();
 
   @override
   void onInit() {
@@ -18,36 +19,35 @@ class GradeController extends GetxController {
     fetchGrade();
   }
 
-  Future<void> fetchGrade() async {
-    try {
-      isLoading.value = true;
+ Future<void> fetchGrade() async {
+  try {
+    AppLogger.debugPrint("1. fetchGrade Started");
 
-      final result = await gradeusecase();
+    isLoading.value = true;
 
-      result.fold(
-        (failure) {
-          Get.snackbar(
-            "Error",
-            failure.message,
-          );
-        },
-        (data) {
-          print("========== GRADE RESPONSE ==========");
-          print(data.toJson());
+    AppLogger.debugPrint("2. Before gradeUsecase");
 
-          if (data.data != null && data.data!.isNotEmpty) {
-            print("A => ${data.data!.first.a}");
-            print("A Balance => ${data.data!.first.aDailyAvgBalance}");
-            print("A Cashback => ${data.data!.first.aMonthlyCashback}");
-          }
+    final result = await gradeusecase();
 
-          gradeData.value = data;
-        },
-      );
-    } catch (e) {
-      print("GRADE ERROR => $e");
-    } finally {
-      isLoading.value = false;
-    }
+    AppLogger.debugPrint("3. After gradeUsecase");
+
+    result.fold(
+      (failure) {
+        AppLogger.debugPrint("4. Failure");
+        AppLogger.debugPrint(failure.message);
+      },
+      (data) {
+        AppLogger.debugPrint("5. Success");
+        AppLogger.debugPrint(data.toJson().toString());
+
+        gradeData.value = data;
+      },
+    );
+  } catch (e, s) {
+    AppLogger.debugPrint("ERROR: $e");
+    AppLogger.debugPrint(s.toString());
+  } finally {
+    isLoading.value = false;
   }
+}
 }

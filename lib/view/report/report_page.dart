@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:maxpay/controllers/profile_controller.dart';
 import 'package:maxpay/core/constants/asset_images.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/core/utils/responsive.dart';
@@ -14,8 +15,16 @@ class ReportPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeController = Get.find<ThemeController>();
     final isTablet = Responsive.isTablet(context);
+final profileController = Get.find<ProfileController>();
 
     return Obx(() {
+     
+     print("STAFF VALUE => ${profileController.profileData.value?.data?.isstaff}");
+
+ final isStaff =
+    profileController.profileData.value?.data?.isstaff ?? false;
+
+  print("IS STAFF => $isStaff");
       final isDark = themeController.isDarkMode;
       final theme = Theme.of(context);
       final colorScheme = theme.colorScheme;
@@ -115,14 +124,18 @@ class ReportPage extends StatelessWidget {
                     },
                     SvgPicture.asset(AssetImages.dispute, width: 21.w),
                   ),
-                  _buildMenuTile(
-                    context,
-                    'Staff List',
-                    () {
-                      Get.toNamed(AppRoutes.stafflist);
-                    },
-                    SvgPicture.asset(AssetImages.stafflist, width: 21.w),
-                  ),
+                 if (!isStaff)
+  _buildMenuTile(
+    context,
+    'Staff List',
+    () {
+      Get.toNamed(AppRoutes.stafflist);
+    },
+    SvgPicture.asset(
+      AssetImages.stafflist,
+      width: 21.w,
+    ),
+  ),
                   _buildMenuTile(
                     context,
                     'Grade',

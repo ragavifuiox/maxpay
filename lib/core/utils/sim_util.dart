@@ -5,7 +5,7 @@ import 'package:sim_card_code/sim_card_code.dart';
 
 class SimUtil {
   /// Test numbers exception list
-  static const List<String> testNumbers = ['9999999999', '9895762284'];
+  static const List<String> testNumbers = ['9999999999', '6369497198','9895762284'];
 
   /// Helper function to normalize and match
   static bool _matches(String entered, String? sim) {

@@ -83,7 +83,7 @@ class EarningsChart extends StatelessWidget {
       context: context,
       builder: (ctx) {
         return AlertDialog(
-          backgroundColor: isDark ? AppColors.darkFilterBorder : Colors.white,
+          backgroundColor: isDark ? AppColors.darkbgBlack : Colors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16.r),
           ),
@@ -157,7 +157,7 @@ class EarningsChart extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(12.w),
       decoration: BoxDecoration(
-        color: isDark ? AppColors.darkFilterBorder : Colors.white,
+        color: isDark ? AppColors.darkbgBlack : Colors.white,
         borderRadius: BorderRadius.circular(22.r),
         border: Border.all(color: Colors.redAccent, width: 1),
       ),

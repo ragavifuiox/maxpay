@@ -109,13 +109,16 @@ class WalletTrnasferDetailController extends GetxController {
 
         walletTransferDetail.value = data;
 
-        transferList.assignAll(data.data?.history ?? []);
+     transferList.assignAll(data.data?.history ?? []);
 
-        totalAmount.value =
-            double.tryParse(data.data?.totalAmount.toString() ?? "0") ?? 0.0;
+totalAmount.value =
+    double.tryParse(
+      data.data?.totalAmount.toString() ?? "0",
+    ) ??
+    0.0;
 
-        print("TOTAL AMOUNT UPDATED => ${totalAmount.value}");
-        print("Transfer List Length : ${transferList.length}");
+print("TOTAL AMOUNT UPDATED => ${totalAmount.value}");
+      print("Transfer List Length : ${transferList.length}");
 
         for (int i = 0; i < transferList.length; i++) {
           final item = transferList[i];

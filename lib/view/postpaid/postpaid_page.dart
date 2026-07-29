@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_instance/src/extension_instance.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
+import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
+import 'package:maxpay/controllers/homepage_controller.dart';
 import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
 import 'package:maxpay/view/postpaid/postpaid_confirm_transaction_page.dart';
@@ -13,7 +16,7 @@ class PostpaidPage extends StatefulWidget {
   @override
   State<PostpaidPage> createState() => _PostPaidPageState();
 }
-
+final TextEditingController _mobileController = TextEditingController();
 class _PostPaidPageState extends State<PostpaidPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
@@ -131,32 +134,42 @@ bool _isReceived = true;
               /// 🔹 WALLET BALANCE CARD
               Container(
                 width: double.infinity,
+
                 padding: EdgeInsets.symmetric(vertical: 15.h),
+
                 decoration: BoxDecoration(
                   color: AppColors.clrPrimary,
+
                   borderRadius: BorderRadius.circular(12.r),
                 ),
+
                 child: Column(
                   children: [
                     Text(
                       'Wallet Balance',
+
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 14.sp,
                         fontWeight: FontWeight.w600,
-                        fontFamily: 'Poppins',
                       ),
                     ),
+
                     SizedBox(height: 5.h),
-                    Text(
-                      '₹ 245005.23',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 22.sp,
-                        fontWeight: FontWeight.w700,
-                        fontFamily: 'Poppins',
-                      ),
-                    ),
+
+                    Obx(() {
+                      final balance =
+                          Get.find<HomePageController>().walletBalance.value;
+
+                      return Text(
+                        "₹ ${balance?.data?.balance ?? "0.00"}",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 24.sp,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      );
+                    }),
                   ],
                 ),
               ),
@@ -172,40 +185,46 @@ bool _isReceived = true;
                   borderRadius: BorderRadius.circular(10.r),
                 ),
                 child: TextField(
-                  keyboardType: TextInputType.phone,
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  style: TextStyle(
-                    fontSize: 14.sp,
-                    color: isDark ? Colors.white : Colors.black,
-                  ),
-                  decoration: InputDecoration(
-                    hintText: '9876543210',
-                    hintStyle: TextStyle(color: Colors.grey, fontSize: 14.sp),
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.symmetric(
-                      horizontal: 16.w,
-                      vertical: 12.h,
-                    ),
-                    suffixIcon: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.cancel,
-                          color: Colors.red.withValues(alpha: 0.5),
-                          size: 20.sp,
-                        ),
-                        SizedBox(width: 10.w),
-                        Icon(Icons.person, color: Colors.orange, size: 20.sp),
-                        SizedBox(width: 10.w),
-                      ],
-                    ),
-                  ),
-                ),
+  controller: _mobileController,
+  keyboardType: TextInputType.phone,
+  inputFormatters: [
+    FilteringTextInputFormatter.digitsOnly,
+  ],
+  onChanged: (_) => setState(() {}), // Refresh UI
+  style: TextStyle(
+    fontSize: 14.sp,
+    color: isDark ? Colors.white : Colors.black,
+  ),
+  decoration: InputDecoration(
+    hintText: 'Enter Mobile Number',
+    hintStyle: TextStyle(
+      color: Colors.grey,
+      fontSize: 14.sp,
+    ),
+    border: InputBorder.none,
+    contentPadding: EdgeInsets.symmetric(
+      horizontal: 16.w,
+      vertical: 12.h,
+    ),
+    suffixIcon: _mobileController.text.isNotEmpty
+        ? IconButton(
+            icon: Icon(
+              Icons.cancel,
+              color: Colors.red,
+              size: 20.sp,
+            ),
+            onPressed: () {
+              _mobileController.clear();
+              setState(() {});
+            },
+          )
+        : null,
+  ),
+),
               ),
               SizedBox(height: 15.h),
 
-              /// 🔹 OPERATOR SELECTION
-              /// 🔹 OPERATOR SELECTION
+          
               GestureDetector(
                 onTap: () => _showOperatorSelector(context),
                 child: Container(

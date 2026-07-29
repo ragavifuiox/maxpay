@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:maxpay/controllers/transaction_report_controller.dart';
 import 'package:maxpay/view/home/pages/home_page.dart';
 import 'package:maxpay/view/home/widgets/services_section.dart';
 import 'package:maxpay/view/nav_page/navbar.dart';
@@ -22,12 +23,25 @@ class _ScreenNavBarState extends State<NavPageScreen>
   DateTime? lastBackPressed;
   final NavbarController _navbarController = Get.find<NavbarController>();
 
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addObserver(this);
-  }
+ @override
+void initState() {
+  super.initState();
+  WidgetsBinding.instance.addObserver(this);
 
+  WidgetsBinding.instance.addPostFrameCallback((_) async {
+    if (Get.isRegistered<TransReportController>()) {
+      final controller = Get.find<TransReportController>();
+
+      await controller.transactionreport(
+        search: "",
+        status: "",
+        productid: "",
+        fromdate: controller.fromDate,
+        todate: controller.toDate,
+      );
+    }
+  });
+}
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);

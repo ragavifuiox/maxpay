@@ -154,15 +154,17 @@ class AddKycController extends GetxController {
 
   final ImagePicker _picker = ImagePicker();
 
-  @override
-  void onInit() {
-    super.onInit();
+ @override
+void onInit() {
+  super.onInit();
 
-    emailController.text =
-        Get.find<ProfileController>().profileData.value?.data?.email ?? '';
+  final profileController = Get.find<ProfileController>();
 
-    fetchkyc();
-  }
+  emailController.text =
+      profileController.profileData.value?.data?.email ?? "";
+
+  fetchkyc();
+}
 
   Future<void> pickImage(String type) async {
     final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
@@ -188,15 +190,27 @@ class AddKycController extends GetxController {
   }
 
   Future<void> submitKyc() async {
-    AppLogger.debugPrint("===== KYC SUBMIT START =====");
+  if (emailController.text.trim().isEmpty) {
+    CustomToast.error("Please enter Mail ID");
+    return;
+  }
 
-    AppLogger.debugPrint({
-      "email": emailController.text.trim(),
-      "addressProof": idProof.value?.path,
-      "gstFile": gstNo.value?.path,
-      "panFile": pan.value?.path,
-    });
+  if (idProof.value == null) {
+    CustomToast.error("Please upload Address Proof");
+    return;
+  }
 
+  if (gstNo.value == null) {
+    CustomToast.error("Please upload GST No");
+    return;
+  }
+
+  if (pan.value == null) {
+    CustomToast.error("Please upload Pan Card");
+    return;
+  }
+
+  try {
     isLoading.value = true;
 
     final result = await addKycUsecase(
@@ -206,63 +220,63 @@ class AddKycController extends GetxController {
       pan.value!,
     );
 
-    isLoading.value = false;
-
     result.fold(
       (failure) {
-        AppLogger.logError({"status": "FAILED", "message": failure.message});
-
         CustomToast.error(failure.message);
       },
       (response) {
-        AppLogger.debugPrint({
-          "success": response.success,
-          "message": response.message,
-        });
-
         if (response.success == true) {
-          CustomToast.success(response.message ?? "KYC Submitted Successfully");
-
+          CustomToast.success(
+              response.message ?? "KYC Submitted Successfully");
           fetchkyc();
         } else {
-          CustomToast.error(response.message ?? "Failed to submit KYC");
+          CustomToast.error(
+              response.message ?? "Failed to submit KYC");
         }
       },
     );
+  } catch (e) {
+    AppLogger.logError(e.toString());
+    CustomToast.error("Something went wrong");
+  } finally {
+    isLoading.value = false;
   }
+}
+ Future<void> fetchkyc() async {
+  try {
+    isLoading.value = true;
 
-  Future<void> fetchkyc() async {
-    try {
-      isLoading.value = true;
+    final result = await getkycUsecase();
 
-      final result = await getkycUsecase();
+    result.fold(
+      (failure) {
+        // KYC illa na profile email use pannunga
+        final profile = Get.find<ProfileController>();
+        emailController.text =
+            profile.profileData.value?.data?.email ?? "";
+      },
+      (data) {
+        news.value = data;
 
-      result.fold(
-        (failure) {
-             CustomToast.error(failure.message);
-         
-        },
-        (data) {
-          news.value = data;
+        if (data.success == true && data.data != null) {
+          emailController.text = data.data?.email ?? "";
 
-          if (data.success == true && data.data != null) {
-            emailController.text = data.data?.email ?? '';
+          addressFileName.value = data.data?.address ?? "";
+          gstFileName.value = data.data?.gstNo ?? "";
+          panFileName.value = data.data?.pan ?? "";
 
-          addressFileName.value = data.data?.address ?? '';
-
-gstFileName.value = data.data?.gstNo ?? '';
-
-panFileName.value = data.data?.pan ?? '';
-
-            isKycSubmitted.value = true;
-          }
-        },
-      );
-    } finally {
-      isLoading.value = false;
-    }
+          isKycSubmitted.value = true;
+        } else {
+          final profile = Get.find<ProfileController>();
+          emailController.text =
+              profile.profileData.value?.data?.email ?? "";
+        }
+      },
+    );
+  } finally {
+    isLoading.value = false;
   }
-
+}
   @override
   void onClose() {
     emailController.dispose();

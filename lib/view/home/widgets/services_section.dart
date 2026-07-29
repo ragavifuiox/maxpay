@@ -32,7 +32,7 @@ class MenuScreen extends StatelessWidget {
   MenuScreen({super.key});
 
   final ServiceController controller = Get.put(
-    ServiceController(productTypeUseCase: sl()),
+    ServiceController(productTypeUseCase: sl(), todayTrnsactionUsecase: sl(),),
   );
   final HomePageController homeController = Get.find<HomePageController>();
   final BannerController bannerController = Get.put(
@@ -77,7 +77,7 @@ class MenuScreen extends StatelessWidget {
       backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: Obx(() {
-          if (controller.isLoading.value) {
+          if (controller.isProductLoading.value) {
             return const Center(child: CircularProgressIndicator());
           }
 
@@ -218,70 +218,67 @@ class MenuScreen extends StatelessWidget {
                           final transaction =
                               homeController.transactionData.value;
 
-                          return Row(
-                            children: [
-                              Expanded(
-                                child: InkWell(
-                                  onTap: () {
-                                    Get.to(
-                                      () => const TransactionScreen(
-                                        status: TransactionStatus.success,
-                                      ),
-                                    );
-                                  },
-                                  borderRadius: BorderRadius.circular(12),
-                                  child: _statusCard(
-                                    image: AssetImages.successIcon,
-                                    value:
-                                        "₹${transaction?.data?.success?.amount?.toString() ?? "0"}",
-                                    bgColor: const Color(0xffC0FFDF),
-                                    textColor: const Color(0xff22C55E),
-                                  ),
-                                ),
-                              ),
-                              SizedBox(width: 12.w),
-                              Expanded(
-                                child: InkWell(
-                                  onTap: () {
-                                    Get.to(
-                                      () => const TransactionScreen(
-                                        status: TransactionStatus.pending,
-                                      ),
-                                    );
-                                  },
-                                  borderRadius: BorderRadius.circular(12),
-                                  child: _statusCard(
-                                    image: AssetImages.processIcon,
-                                    value:
-                                        "₹${transaction?.data?.processing?.amount?.toString() ?? "0"}",
-                                    bgColor: const Color(0xffFFE1B4),
-                                    textColor: Colors.orange,
-                                  ),
-                                ),
-                              ),
-                              SizedBox(width: 12.w),
-                              Expanded(
-                                child: InkWell(
-                                  onTap: () {
-                                    Get.to(
-                                      () => const TransactionScreen(
-                                        status: TransactionStatus.failed,
-                                      ),
-                                    );
-                                  },
-                                  borderRadius: BorderRadius.circular(12),
-                                  child: _statusCard(
-                                    image: AssetImages.failedIcon,
-                                    value:
-                                        "₹${transaction?.data?.failed?.amount?.toString() ?? "0"}",
-                                    bgColor: const Color(0xffFFCCD3),
-                                    textColor: Colors.red,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          );
-                        }),
+  return Row(
+    children: [
+      Expanded(
+  child: InkWell(
+    onTap: () {
+      Get.to(
+        () => const TransactionScreen(
+          status: TransactionStatus.success,
+        ),
+      );
+    },
+    borderRadius: BorderRadius.circular(12),
+    child: _statusCard(
+      image: AssetImages.successIcon,
+      value: "₹${transaction?.data?.success?.count.toString() ?? "0"}",
+      bgColor: const Color(0xffC0FFDF),
+      textColor: const Color(0xff22C55E),
+    ),
+  ),
+),
+      SizedBox(width: 12.w),
+    Expanded(
+  child: InkWell(
+    onTap: () {
+      Get.to(
+        () => const TransactionScreen(
+          status: TransactionStatus.pending,
+        ),
+      );
+    },
+    borderRadius: BorderRadius.circular(12),
+    child: _statusCard(
+      image: AssetImages.processIcon,
+      value: "₹${transaction?.data?.processing?.count.toString() ?? "0"}",
+      bgColor: const Color(0xffFFE1B4),
+      textColor: Colors.orange,
+    ),
+  ),
+),
+      SizedBox(width: 12.w),
+    Expanded(
+  child: InkWell(
+    onTap: () {
+      Get.to(
+        () => const TransactionScreen(
+          status: TransactionStatus.failed,
+        ),
+      );
+    },
+    borderRadius: BorderRadius.circular(12),
+    child: _statusCard(
+      image: AssetImages.failedIcon,
+      value: "₹${transaction?.data?.failed?.count.toString() ?? "0"}",
+      bgColor: const Color(0xffFFCCD3),
+      textColor: Colors.red,
+    ),
+  ),
+),
+    ],
+  );
+}),
 
                         SizedBox(height: 18.h),
 
@@ -756,36 +753,40 @@ class MenuScreen extends StatelessWidget {
   }
 
   Widget _statusCard({
-    required String image,
-    required String value,
-    required Color bgColor,
-    required Color textColor,
-  }) {
-    return Container(
-      height: 52.h,
-      decoration: BoxDecoration(
-        color: bgColor,
-        borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(
-          color: AppColors.clrPrimary, // Same border color for all cards
-          width: 2,
+  required String image,
+  required String value,
+  required Color bgColor,
+  required Color textColor,
+}) {
+  return Container(
+    height: 52.h,
+    decoration: BoxDecoration(
+      color: bgColor,
+      borderRadius: BorderRadius.circular(12.r),
+      border: Border.all(
+        color:AppColors.clrPrimary, // Same border color for all cards
+        width: 2,
+      ),
+    ),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        SvgPicture.asset(
+          image,
+          width: 24.w,
+          height: 24.h,
         ),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SvgPicture.asset(image, width: 20.w, height: 20.h),
-          SizedBox(width: 8.w),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 16.sp,
-              fontWeight: FontWeight.bold,
-              color: textColor,
-            ),
+        SizedBox(width: 8.w),
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: 19.sp,
+            fontWeight: FontWeight.bold,
+            color: textColor,
           ),
-        ],
-      ),
-    );
-  }
+        ),
+      ],
+    ),
+  );
+}
 }
