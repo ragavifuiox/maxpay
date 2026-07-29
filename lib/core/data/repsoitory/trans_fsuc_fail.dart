@@ -30,6 +30,7 @@ import 'package:maxpay/core/data/model/transaction_suc_faii_model.dart';
 import 'package:maxpay/core/domain/repository/transaction_suc_fail_repository.dart';
 import 'package:maxpay/core/error/failure.dart';
 import 'package:maxpay/core/services/api_services.dart';
+import 'package:maxpay/core/utils/logg_helper.dart';
 
 class TransactionSucFailRepoImpl implements TransactionSucFailRepository {
   final ApiService apiService;

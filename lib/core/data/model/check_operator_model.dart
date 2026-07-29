@@ -1,6 +1,5 @@
 
 
-import 'dart:ffi';
 
 class CheckOperator {
   bool? status;

@@ -7,7 +7,6 @@ import 'package:maxpay/controllers/download_controller.dart';
 import 'package:maxpay/controllers/profile_controller.dart';
 import 'package:maxpay/controllers/homepage_controller.dart';
 import 'package:maxpay/controllers/earning_controller.dart';
-import 'package:maxpay/controllers/transaction_report_controller.dart';
 import 'package:maxpay/controllers/refund_controller.dart';
 import 'package:maxpay/controllers/wallet_credit_controller.dart';
 import 'package:maxpay/core/constants/colors.dart';

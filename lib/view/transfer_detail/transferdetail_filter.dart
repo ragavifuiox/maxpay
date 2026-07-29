@@ -41,7 +41,7 @@ class TransferdetailFilter extends StatelessWidget {
       child: Column(
         children: [
           DropdownButtonFormField<TransferFilterType>(
-            value: selectedFilter,
+            initialValue: selectedFilter,
 
             hint: const Text(
               "Transfer Type",

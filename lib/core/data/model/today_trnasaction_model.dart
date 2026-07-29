@@ -8,19 +8,19 @@ class TodayTransaction {
 
   TodayTransaction.fromJson(Map<String, dynamic> json) {
     success = json['success'];
-    data = json['data'] != null ? new Data.fromJson(json['data']) : null;
+    data = json['data'] != null ? Data.fromJson(json['data']) : null;
     message = json['message'];
     code = json['code'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['success'] = this.success;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['success'] = success;
     if (this.data != null) {
       data['data'] = this.data!.toJson();
     }
-    data['message'] = this.message;
-    data['code'] = this.code;
+    data['message'] = message;
+    data['code'] = code;
     return data;
   }
 }
@@ -39,10 +39,10 @@ class Data {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['success_amount'] = this.successAmount;
-    data['failed_amount'] = this.failedAmount;
-    data['processing_amount'] = this.processingAmount;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['success_amount'] = successAmount;
+    data['failed_amount'] = failedAmount;
+    data['processing_amount'] = processingAmount;
     return data;
   }
 }

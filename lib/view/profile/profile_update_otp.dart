@@ -8,7 +8,6 @@ import 'package:maxpay/core/di/service_locator.dart';
 import 'package:maxpay/global_widget/commom_button.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
 import 'package:maxpay/view/login/login_phone_name.dart';
-import 'package:maxpay/view/update_pin/update_pin_screen.dart';
 import 'package:pinput/pinput.dart';
 
 class ProfileUpdateOtp extends StatefulWidget {
