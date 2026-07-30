@@ -5,6 +5,7 @@ import 'package:maxpay/core/data/model/login_model.dart';
 import 'package:maxpay/core/domain/repository/login_repository.dart';
 import 'package:maxpay/core/error/failure.dart';
 import 'package:maxpay/core/services/api_services.dart';
+import 'package:maxpay/core/utils/service/dio_error_handler.dart';
 
 class LoginRepositoryImpl implements LoginRepository {
   final ApiService apiService;
@@ -63,7 +64,7 @@ class LoginRepositoryImpl implements LoginRepository {
         return Left(AuthFailure(response['message']));
       }
     } on DioException catch (e) {
-      return Left(ServerFailure(message: e.response?.data['message']));
+      return Left(DioErrorHandler.handle(e));
     } catch (e) {
       return Left(ServerFailure(message: e.toString()));
     }

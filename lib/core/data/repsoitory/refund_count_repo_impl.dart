@@ -32,6 +32,7 @@ import 'package:maxpay/core/domain/repository/refund_count_repository.dart';
 import 'package:maxpay/core/error/failure.dart';
 import 'package:maxpay/core/services/api_services.dart';
 import 'package:maxpay/core/utils/logg_helper.dart';
+import 'package:maxpay/core/utils/service/dio_error_handler.dart';
 
 class RefundCountRepoImpl implements RefundCountRepository {
   final ApiService apiService;
@@ -45,17 +46,7 @@ class RefundCountRepoImpl implements RefundCountRepository {
       final model = RefundCount.fromJson(response);
       return Right(model);
     } on DioException catch (e) {
-      String message = "Something went wrong";
-
-      if (e.response?.data is Map<String, dynamic>) {
-        message = e.response?.data["message"] ?? message;
-      } else if (e.response?.data != null) {
-        message = e.response!.data.toString();
-      } else {
-        message = e.message ?? message;
-      }
-
-      return Left(ServerFailure(message: message));
+      return Left(DioErrorHandler.handle(e));
     } catch (e) {
       AppLogger.logError("Api ${ApiRoutes.refundcount}$e");
       return Left(ServerFailure(message: e.toString()));

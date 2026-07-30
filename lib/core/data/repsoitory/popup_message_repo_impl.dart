@@ -33,6 +33,7 @@ import 'package:maxpay/core/domain/repository/popup_message_repository.dart';
 import 'package:maxpay/core/error/failure.dart';
 import 'package:maxpay/core/services/api_services.dart';
 import 'package:maxpay/core/utils/logg_helper.dart';
+import 'package:maxpay/core/utils/service/dio_error_handler.dart';
 
 class PopupMessageRepoImpl implements PopupMessageRepository {
   final ApiService apiService;
@@ -46,17 +47,7 @@ class PopupMessageRepoImpl implements PopupMessageRepository {
       final model = PopupMessage.fromJson(response);
       return Right(model);
     } on DioException catch (e) {
-      String message = "Something went wrong";
-
-      if (e.response?.data is Map<String, dynamic>) {
-        message = e.response?.data["message"] ?? message;
-      } else if (e.response?.data != null) {
-        message = e.response!.data.toString();
-      } else {
-        message = e.message ?? message;
-      }
-
-      return Left(ServerFailure(message: message));
+      return Left(DioErrorHandler.handle(e));
     } catch (e) {
       AppLogger.logError("Api ${ApiRoutes.popupMessage}$e");
       return Left(ServerFailure(message: e.toString()));

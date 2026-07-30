@@ -30,6 +30,7 @@ import 'package:maxpay/core/data/model/news_model.dart';
 import 'package:maxpay/core/domain/repository/news_repository.dart';
 import 'package:maxpay/core/error/failure.dart';
 import 'package:maxpay/core/services/api_services.dart';
+import 'package:maxpay/core/utils/service/dio_error_handler.dart';
 
 class GetNewsRepoImpl implements GetNewsRepository {
   final ApiService apiService;
@@ -45,17 +46,7 @@ class GetNewsRepoImpl implements GetNewsRepository {
 
       return Right(model);
     } on DioException catch (e) {
-      print("STATUS CODE : ${e.response?.statusCode}");
-      print("ERROR DATA  : ${e.response?.data}");
-      print("MESSAGE     : ${e.message}");
-
-      return Left(
-        ServerFailure(
-          message: e.response?.data["message"] ??
-              e.message ??
-              "Something went wrong",
-        ),
-      );
+      return Left(DioErrorHandler.handle(e));
     } catch (e) {
       print("UNKNOWN ERROR : $e");
 

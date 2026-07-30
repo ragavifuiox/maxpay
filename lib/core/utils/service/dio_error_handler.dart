@@ -15,10 +15,14 @@ class DioErrorHandler {
       } else if (error.type == DioExceptionType.badResponse) {
         if (error.response?.statusCode == 404) {
           message = "The requested resource could not be found (404).";
-        } else if (error.response?.data is Map<String, dynamic>) {
-          message = error.response?.data["message"] ?? "Server error occurred.";
         } else if (error.response?.data != null) {
-          message = error.response!.data.toString();
+          if (error.response?.data is Map) {
+            message =
+                error.response?.data["message"]?.toString() ??
+                "Server error occurred.";
+          } else {
+            message = error.response!.data.toString();
+          }
         } else {
           message = "Received invalid response from server.";
         }
@@ -31,7 +35,6 @@ class DioErrorHandler {
     } else {
       message = error.toString();
     }
-
     return ServerFailure(message: message);
   }
 }

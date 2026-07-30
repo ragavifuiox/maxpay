@@ -6,7 +6,6 @@ import 'package:maxpay/core/constants/api_routes.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/core/services/local_storage_service.dart';
 import 'package:maxpay/core/utils/logg_helper.dart';
-import 'package:maxpay/core/constants/snackbar.dart';
 
 class ApiService {
   final Dio _dio;
@@ -64,15 +63,11 @@ class ApiService {
           print("FAILED URL => ${e.requestOptions.uri}");
           print("STATUS => ${e.response?.statusCode}");
           print("TOKEN => ${_storage.getString("auth_token")}");
-          
-          String errorMessage = e.message ?? "Something went wrong";
-          if (e.response?.data != null) {
-            if (e.response?.data is Map) {
-              errorMessage = e.response?.data['message']?.toString() ?? errorMessage;
-            } else {
-              errorMessage = e.response?.data.toString() ?? errorMessage;
-            }
-          }
+
+          final String errorMessage =
+              e.response?.data?['message']?.toString() ??
+              e.message ??
+              "Something went wrong";
           log("API Error: $errorMessage");
 
           // ✅ If NO INTERNET → go to network screen ONLY
@@ -82,7 +77,7 @@ class ApiService {
             // _handleUnauthorized();
           } else {
             AppLogger.logError(errorMessage);
-            CustomToast.error(errorMessage);
+            // CustomToast removed to prevent duplicate toasts in controllers
           }
 
           return handler.next(e);
