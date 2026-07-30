@@ -4,7 +4,7 @@ import 'package:maxpay/core/constants/colors.dart';
 
 class CommonButton extends StatelessWidget {
   final String title;
-  final VoidCallback? onTap; // ✅ make nullable
+  final VoidCallback? onTap; 
   final Color? backgroundColor;
   final bool isLoading;
   final double? height;

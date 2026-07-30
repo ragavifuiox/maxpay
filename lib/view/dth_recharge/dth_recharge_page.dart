@@ -66,9 +66,8 @@
 //   final GlobalKey _customerIdKey = GlobalKey();
 //   final GlobalKey _amountKey = GlobalKey();
 // bool showClear = false;
-  
-//   bool showNextButton = false;
 
+//   bool showNextButton = false;
 
 //   Map<String, dynamic>? selectedPlanData;
 
@@ -152,10 +151,9 @@
 //       // FLOW 1: only productId
 //       await dthcontroller.searchDth(selectedOperatorObj!.id.toString());
 //     } else {
-  
+
 //     }
 //   }
-
 
 //   Future<void> _onProceed() async {
 //     if (customerIdController.text.trim().isEmpty) {
@@ -541,7 +539,6 @@
 //                 ),
 //               ),
 //               SizedBox(height: 20.h),
-        
 
 //               /// 🔹 TOGGLE BUTTONS (always visible) + PROCEED (only when amount entered)
 //               Row(
@@ -1091,9 +1088,6 @@
 //   }
 // }
 
-
-
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -1117,7 +1111,7 @@ import 'package:maxpay/core/data/model/plan_model.dart';
 class DTHRechargePage extends StatefulWidget {
   const DTHRechargePage({super.key});
 
- @override
+  @override
   State<DTHRechargePage> createState() => _DTHRechargePageState();
 }
 
@@ -1125,7 +1119,7 @@ class _DTHRechargePageState extends State<DTHRechargePage>
     with SingleTickerProviderStateMixin {
   Data? selectedOperatorObj;
   String customerHint = "Enter Number";
-bool? isPaymentReceived;
+  bool? isPaymentReceived;
   bool showCustomerInfo = false;
 
   final PrePaidController controller = Get.put(
@@ -1161,11 +1155,11 @@ bool? isPaymentReceived;
   final FocusNode _amountFocusNode = FocusNode();
   final GlobalKey _customerIdKey = GlobalKey();
   final GlobalKey _amountKey = GlobalKey();
-  final GlobalKey _proceedButtonKey = GlobalKey(); // 🔹 NEW: used to scroll the Proceed button into view
-bool showClear = false;
-  
-  bool showNextButton = false;
+  final GlobalKey _proceedButtonKey =
+      GlobalKey(); // 🔹 NEW: used to scroll the Proceed button into view
+  bool showClear = false;
 
+  bool showNextButton = false;
 
   Map<String, dynamic>? selectedPlanData;
 
@@ -1180,21 +1174,21 @@ bool showClear = false;
     AppLogger.debugPrint("Arguments => ${Get.arguments}");
 
     final args = Get.arguments;
- customerIdController.addListener(() {
-    setState(() {
-      showClear = customerIdController.text.isNotEmpty;
+    customerIdController.addListener(() {
+      setState(() {
+        showClear = customerIdController.text.isNotEmpty;
+      });
     });
-  });
     productId = args["productId"]?.toString() ?? "";
     final String selectedAmount = args['amount'] ?? '';
     AppLogger.debugPrint("ARGUMENT PRODUCT ID => $productId");
     AppLogger.debugPrint("ProductId => $productId");
-print("Before getPlans");
+    print("Before getPlans");
 
-print("ProductId = $productId");
+    print("ProductId = $productId");
     controller.getPlans(productid: productId);
 
-print("After getPlans");
+    print("After getPlans");
 
     dthcontroller.getPlanTabs().then((_) {
       if (dthcontroller.planTabs.isNotEmpty) {
@@ -1271,21 +1265,18 @@ print("After getPlans");
     if (amount.isEmpty) {
       // FLOW 1: only productId
       await dthcontroller.searchDth(selectedOperatorObj!.id.toString());
-    } else {
-  
-    }
+    } else {}
   }
-
 
   Future<void> _onProceed() async {
     if (customerIdController.text.trim().isEmpty) {
       CustomToast.error("Please enter Customer ID");
       return;
     }
- if (isPaymentReceived == null) {
-    CustomToast.error("Please select Customer Payment status");
-    return;
-  }
+    if (isPaymentReceived == null) {
+      CustomToast.error("Please select Customer Payment status");
+      return;
+    }
     final amount = amountController.text.trim();
 
     if (amount.isEmpty) {
@@ -1297,7 +1288,7 @@ print("After getPlans");
 
     final currentBalance =
         Get.find<HomePageController>().walletBalance.value?.data?.balance ??
-            0.0;
+        0.0;
 
     if (requiredAmount > currentBalance) {
       Get.toNamed(
@@ -1314,13 +1305,12 @@ print("After getPlans");
 
     // Plan selected from card
     if (selectedPlanData != null) {
-      productDetailId = selectedPlanData!["plan"].productId.toString();
+      productDetailId = selectedPlanData!["plan"].id.toString();
     }
     // Manual amount entered
     else {
       if (dthcontroller.searchdthList.isNotEmpty) {
-        productDetailId =
-            dthcontroller.searchdthList.first.productId.toString();
+        productDetailId = dthcontroller.searchdthList.first.id.toString();
       }
     }
 
@@ -1335,6 +1325,7 @@ print("After getPlans");
       CustomToast.error("Confirmation data not available");
       return;
     }
+    print("Product Detail ID before navigation: $productDetailId");
 
     Get.toNamed(
       AppRoutes.confirmdth,
@@ -1343,7 +1334,7 @@ print("After getPlans");
         "customerId": customerIdController.text.trim(),
         "productdetid": productDetailId,
         "amount": amount,
-         "paymentStatus": isPaymentReceived! ? "Paid" : "Pending",
+        "paymentStatus": isPaymentReceived! ? "Paid" : "Pending",
       },
     );
   }
@@ -1450,22 +1441,26 @@ print("After getPlans");
 
                         setState(() {
                           AppLogger.debugPrint(
-                              "🔍 Operator selected => id: ${value.id}, name: ${value.name}");
+                            "🔍 Operator selected => id: ${value.id}, name: ${value.name}",
+                          );
                           AppLogger.debugPrint(
-                              "🔍 Current productId variable BEFORE update => $productId");
+                            "🔍 Current productId variable BEFORE update => $productId",
+                          );
 
                           selectedOperatorObj = value;
 
                           // ✅ Keep productId in sync with the selected operator
                           productId = value.id.toString();
 
-                          customerHint = (value.msgToNumber != null &&
+                          customerHint =
+                              (value.msgToNumber != null &&
                                   value.msgToNumber!.trim().isNotEmpty)
                               ? value.msgToNumber!
                               : "Enter Customer ID";
 
                           AppLogger.debugPrint(
-                              "🔍 productId variable AFTER update => $productId");
+                            "🔍 productId variable AFTER update => $productId",
+                          );
                         });
 
                         await _triggerSearch();
@@ -1478,45 +1473,43 @@ print("After getPlans");
               SizedBox(height: 15.h),
 
               /// 🔹 CUSTOMER ID / MOBILE NUMBER INPUT
-             Container(
-  decoration: BoxDecoration(
-    color: isDark
-        ? AppColors.darkplceholder
-        : AppColors.clrplceholder,
-    borderRadius: BorderRadius.circular(10.r),
-  ),
-  child: TextField(
-    controller: customerIdController,
-    focusNode: _customerIdFocusNode,
-    keyboardType: TextInputType.number,
-    inputFormatters: [
-      FilteringTextInputFormatter.digitsOnly,
-    ],
-    decoration: InputDecoration(
-      hintText: customerHint,
-      border: InputBorder.none,
-      contentPadding: EdgeInsets.symmetric(
-        horizontal: 16.w,
-        vertical: 12.h,
-      ),
-      suffixIcon: showClear
-          ? IconButton(
-              icon: Icon(
-                Icons.cancel,
-                color: Colors.red,
-                size: 20.sp,
+              Container(
+                decoration: BoxDecoration(
+                  color: isDark
+                      ? AppColors.darkplceholder
+                      : AppColors.clrplceholder,
+                  borderRadius: BorderRadius.circular(10.r),
+                ),
+                child: TextField(
+                  controller: customerIdController,
+                  focusNode: _customerIdFocusNode,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  decoration: InputDecoration(
+                    hintText: customerHint,
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 12.h,
+                    ),
+                    suffixIcon: showClear
+                        ? IconButton(
+                            icon: Icon(
+                              Icons.cancel,
+                              color: Colors.red,
+                              size: 20.sp,
+                            ),
+                            onPressed: () {
+                              customerIdController.clear();
+                              setState(() {
+                                showClear = false;
+                              });
+                            },
+                          )
+                        : null,
+                  ),
+                ),
               ),
-              onPressed: () {
-                customerIdController.clear();
-                setState(() {
-                  showClear = false;
-                });
-              },
-            )
-          : null,
-    ),
-  ),
-),
               SizedBox(height: 15.h),
 
               /// 🔹 AMOUNT INPUT
@@ -1570,8 +1563,7 @@ print("After getPlans");
               /// 🔹 CUSTOMER PAYMENT RECEIVED / NOT RECEIVED
               Container(
                 width: double.infinity,
-                padding:
-                    EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
+                padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
                 decoration: BoxDecoration(
                   border: Border.all(color: const Color(0xff19A7CE), width: 1),
                   borderRadius: BorderRadius.circular(10.r),
@@ -1603,15 +1595,15 @@ print("After getPlans");
                               },
                               child: Row(
                                 children: [
-                               Checkbox(
-  value: isPaymentReceived == false,
-  activeColor: Colors.red,
-  onChanged: (value) {
-    setState(() {
-      isPaymentReceived = false;
-    });
-  },
-),
+                                  Checkbox(
+                                    value: isPaymentReceived == false,
+                                    activeColor: Colors.red,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        isPaymentReceived = false;
+                                      });
+                                    },
+                                  ),
                                   Text(
                                     "Pending",
                                     style: TextStyle(
@@ -1633,15 +1625,15 @@ print("After getPlans");
                               },
                               child: Row(
                                 children: [
-                               Checkbox(
-  value: isPaymentReceived == true,
-  activeColor: Colors.green,
-  onChanged: (value) {
-    setState(() {
-      isPaymentReceived = true;
-    });
-  },
-),
+                                  Checkbox(
+                                    value: isPaymentReceived == true,
+                                    activeColor: Colors.green,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        isPaymentReceived = true;
+                                      });
+                                    },
+                                  ),
                                   Text(
                                     "Paid",
                                     style: TextStyle(
@@ -1661,11 +1653,11 @@ print("After getPlans");
                 ),
               ),
               SizedBox(height: 20.h),
-        
 
               /// 🔹 TOGGLE BUTTONS (always visible) + PROCEED (only when amount entered)
               Row(
-                key: _proceedButtonKey, // 🔹 NEW: target for auto-scroll after plan selection
+                key:
+                    _proceedButtonKey, // 🔹 NEW: target for auto-scroll after plan selection
                 children: [
                   // Left Side - Customer Info & Plan (ALWAYS VISIBLE)
                   Expanded(
@@ -1675,8 +1667,7 @@ print("After getPlans");
                           'Customer Info',
                           showCustomerInfo,
                           () async {
-                            final customerId =
-                                customerIdController.text.trim();
+                            final customerId = customerIdController.text.trim();
 
                             if (customerId.isEmpty) {
                               CustomToast.error("Please enter Customer ID");
@@ -1688,19 +1679,17 @@ print("After getPlans");
                             });
 
                             await dthcontroller.getCustomerInfo(
-                                productId, customerId);
+                              productId,
+                              customerId,
+                            );
                           },
                         ),
                         SizedBox(width: 10.w),
-                        _buildToggleButton(
-                          'Plan',
-                          !showCustomerInfo,
-                          () {
-                            setState(() {
-                              showCustomerInfo = false;
-                            });
-                          },
-                        ),
+                        _buildToggleButton('Plan', !showCustomerInfo, () {
+                          setState(() {
+                            showCustomerInfo = false;
+                          });
+                        }),
                       ],
                     ),
                   ),
@@ -1771,12 +1760,12 @@ print("After getPlans");
                 /// NOT to the amount field, so typing an amount never
                 /// changes which plan cards are shown.
                 Obx(() {
-                  final filteredPlans = dthcontroller.searchdthList.where(
-                    (plan) {
-                      return plan.planType ==
-                          dthcontroller.selectedPlanType.value;
-                    },
-                  ).toList();
+                  final filteredPlans = dthcontroller.searchdthList.where((
+                    plan,
+                  ) {
+                    return plan.planType ==
+                        dthcontroller.selectedPlanType.value;
+                  }).toList();
 
                   final List<Map<String, dynamic>> allPlans = [];
 
@@ -1797,74 +1786,74 @@ print("After getPlans");
                     addPlan(plan.twelveMonth, "12 Months");
                   }
 
-                if (selectedOperatorObj == null) {
-  return Container(
-    width: double.infinity,
-    margin: EdgeInsets.symmetric(vertical: 20.h),
-    padding: EdgeInsets.all(20.r),
-    decoration: BoxDecoration(
-      // color: Colors.white,
-      borderRadius: BorderRadius.circular(12.r),
-      border: Border.all(color: Colors.grey.shade300),
-    ),
-    child: Column(
-      children: [
-        Icon(
-          Icons.info_outline,
-          color: Colors.orange,
-          size: 23.sp,
-        ),
-        SizedBox(height: 10.h),
-        Text(
-          "Please Select a DTH Operator",
-          style: TextStyle(
-            fontSize: 15.sp,
-            fontWeight: FontWeight.w500,
-            color: theme.colorScheme.onSurface
-          ),
-        ),
-      ],
-    ),
-  );
-}
+                  if (selectedOperatorObj == null) {
+                    return Container(
+                      width: double.infinity,
+                      margin: EdgeInsets.symmetric(vertical: 20.h),
+                      padding: EdgeInsets.all(20.r),
+                      decoration: BoxDecoration(
+                        // color: Colors.white,
+                        borderRadius: BorderRadius.circular(12.r),
+                        border: Border.all(color: Colors.grey.shade300),
+                      ),
+                      child: Column(
+                        children: [
+                          Icon(
+                            Icons.info_outline,
+                            color: Colors.orange,
+                            size: 23.sp,
+                          ),
+                          SizedBox(height: 10.h),
+                          Text(
+                            "Please Select a DTH Operator",
+                            style: TextStyle(
+                              fontSize: 15.sp,
+                              fontWeight: FontWeight.w500,
+                              color: theme.colorScheme.onSurface,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
 
-if (allPlans.isEmpty) {
-  return Container(
-    width: double.infinity,
-    margin: EdgeInsets.symmetric(vertical: 20.h),
-    padding: EdgeInsets.all(20.r),
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(12.r),
-      border: Border.all(color: Colors.grey.shade300),
-    ),
-    child: Column(
-      children: [
-        Icon(
-          Icons.info_outline,
-          color: Colors.orange,
-          size: 23.sp,
-        ),
-        Text(
-          "No Plans Found",
-          style: TextStyle(
-            fontSize: 14.sp,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        SizedBox(height: 6.h),
-        // Text(
-        //   "No plans are available for the selected operator.",
-        //   textAlign: TextAlign.center,
-        //   style: TextStyle(
-        //     color: Colors.black,
-        //     fontSize: 14.sp,
-        //   ),
-        // ),
-      ],
-    ),
-  );
-}
+                  if (allPlans.isEmpty) {
+                    return Container(
+                      width: double.infinity,
+                      margin: EdgeInsets.symmetric(vertical: 20.h),
+                      padding: EdgeInsets.all(20.r),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12.r),
+                        border: Border.all(color: Colors.grey.shade300),
+                      ),
+                      child: Column(
+                        children: [
+                          Icon(
+                            Icons.info_outline,
+                            color: Colors.orange,
+                            size: 23.sp,
+                          ),
+                          Text(
+                            "No Plans Found",
+                            style: TextStyle(
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          SizedBox(height: 6.h),
+                          // Text(
+                          //   "No plans are available for the selected operator.",
+                          //   textAlign: TextAlign.center,
+                          //   style: TextStyle(
+                          //     color: Colors.black,
+                          //     fontSize: 14.sp,
+                          //   ),
+                          // ),
+                        ],
+                      ),
+                    );
+                  }
 
                   return ListView.builder(
                     shrinkWrap: true,
@@ -1873,7 +1862,8 @@ if (allPlans.isEmpty) {
                     itemBuilder: (context, index) {
                       final item = allPlans[index];
 
-                      final isSelected = selectedPlanData != null &&
+                      final isSelected =
+                          selectedPlanData != null &&
                           selectedPlanData!["plan"] == item["plan"] &&
                           selectedPlanData!["amount"] == item["amount"];
 
@@ -1888,8 +1878,7 @@ if (allPlans.isEmpty) {
                           // field. It does NOT navigate anywhere.
                           setState(() {
                             selectedPlanData = item;
-                            amountController.text =
-                                item["amount"].toString();
+                            amountController.text = item["amount"].toString();
                             showNextButton = true;
                           });
 
@@ -2093,8 +2082,8 @@ if (allPlans.isEmpty) {
                             fontSize: 12.sp,
                             fontFamily: 'Poppins',
                             fontWeight: FontWeight.w500,
-                            color: Theme.of(context).brightness ==
-                                    Brightness.dark
+                            color:
+                                Theme.of(context).brightness == Brightness.dark
                                 ? Colors.white
                                 : Colors.black,
                           ),
@@ -2142,7 +2131,10 @@ if (allPlans.isEmpty) {
             ],
           ),
         ),
-        Text(label, style: TextStyle(fontSize: 8.sp, color: Colors.grey)),
+        Text(
+          label,
+          style: TextStyle(fontSize: 8.sp, color: Colors.grey),
+        ),
       ],
     );
   }
@@ -2159,8 +2151,9 @@ if (allPlans.isEmpty) {
       }
 
       final records = dthcontroller.customerInfo.value?.data?.records;
-      final record =
-          (records != null && records.isNotEmpty) ? records.first : null;
+      final record = (records != null && records.isNotEmpty)
+          ? records.first
+          : null;
 
       if (record == null) {
         return const Center(
@@ -2176,8 +2169,9 @@ if (allPlans.isEmpty) {
         children: [
           _buildInputLabel('Customer Info'),
           Container(
-            decoration:
-                BoxDecoration(borderRadius: BorderRadius.circular(12.r)),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12.r),
+            ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -2205,14 +2199,26 @@ if (allPlans.isEmpty) {
                     ),
                     child: Column(
                       children: [
-                        _buildInfoRow('Customer Name',
-                            record.customername ?? '-', isDark),
                         _buildInfoRow(
-                            'Current Balance', record.balance ?? '-', isDark),
-                        _buildInfoRow('Monthly Transaction',
-                            record.monthlyrecharge ?? '-', isDark),
-                        _buildInfoRow('Next Transaction',
-                            record.nextrechargedate ?? '-', isDark),
+                          'Customer Name',
+                          record.customername ?? '-',
+                          isDark,
+                        ),
+                        _buildInfoRow(
+                          'Current Balance',
+                          record.balance ?? '-',
+                          isDark,
+                        ),
+                        _buildInfoRow(
+                          'Monthly Transaction',
+                          record.monthlyrecharge ?? '-',
+                          isDark,
+                        ),
+                        _buildInfoRow(
+                          'Next Transaction',
+                          record.nextrechargedate ?? '-',
+                          isDark,
+                        ),
                         _buildInfoRow(
                           'Plan Name',
                           record.planname ?? '-',
