@@ -1,4 +1,4 @@
-  import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
@@ -14,13 +14,13 @@ import 'package:maxpay/core/domain/usecase/dth_recharge_usecase.dart';
 import 'package:maxpay/core/domain/usecase/dth_tab_usecase.dart';
 import 'package:maxpay/core/domain/usecase/search_dth_usecase.dart';
 import 'package:maxpay/core/utils/logg_helper.dart';
-   
+
 class DthController extends GetxController {
   final DthTabUsecase dthtabUseCase;
   final SearchDthUsecase searchdthusecase;
   final ConfirmDthUsecase confirmdthUsecase;
-  final DthRechargeUsecase dthrechargeusecase ;
-  final CustomerInfoUsecase customerInfoUsecase ;
+  final DthRechargeUsecase dthrechargeusecase;
+  final CustomerInfoUsecase customerInfoUsecase;
 
   DthController({
     required this.dthtabUseCase,
@@ -32,13 +32,13 @@ class DthController extends GetxController {
   RxBool isCustomerInfoLoading = false.obs;
   Rx<CustomerInfo?> customerInfo = Rx<CustomerInfo?>(null);
   RxBool isLoading = false.obs;
-RxBool isRechargeLoading = false.obs;
+  RxBool isRechargeLoading = false.obs;
   RxList<DthtabData> planTabs = <DthtabData>[].obs;
   RxList<SearchDthData> searchdthList = <SearchDthData>[].obs;
-   Rx<DthRecharge?> rechargeResponse = Rx<DthRecharge?>(null);
-Rx<ConfirmDth?> confirmdth = Rx<ConfirmDth?>(null);
+  Rx<DthRecharge?> rechargeResponse = Rx<DthRecharge?>(null);
+  Rx<ConfirmDth?> confirmdth = Rx<ConfirmDth?>(null);
   RxString selectedPlanType = ''.obs;
-    final String productdetid = Get.arguments?['productId'] ?? '';
+  final String productdetid = Get.arguments?['productId'] ?? '';
   RxString enteredAmount = ''.obs;
 
   @override
@@ -76,26 +76,25 @@ Rx<ConfirmDth?> confirmdth = Rx<ConfirmDth?>(null);
   }
 
   /// ✅ SEARCH DTH
- Future<void> searchDth(String planId, {String? amount}) async {
-  isLoading.value = true;
+  Future<void> searchDth(String planId, {String? amount}) async {
+    isLoading.value = true;
 
-  final result = await searchdthusecase.searchdth(planId, amount ?? "");
+    final result = await searchdthusecase.searchdth(planId, amount ?? "");
 
-  result.fold(
-    (failure) {
-      searchdthList.clear(); // Clear old plans
-      Get.snackbar('Info', 'No plans found');
-    },
-    (response) {
-      searchdthList.value = response.data ?? [];
-    },
-  );
+    result.fold(
+      (failure) {
+        searchdthList.clear(); // Clear old plans
+        Get.snackbar('Info', 'No plans found');
+      },
+      (response) {
+        searchdthList.value = response.data ?? [];
+      },
+    );
 
-  isLoading.value = false;
-}
+    isLoading.value = false;
+  }
 
-
- Future<void> getconfirmdth(String prodcutdetid) async {
+  Future<void> getconfirmdth(String prodcutdetid) async {
     AppLogger.logError("🚀 [CONFIRM TRANS] Started");
     AppLogger.logError("🆔 Product Detail ID: $prodcutdetid");
 
@@ -112,6 +111,7 @@ Rx<ConfirmDth?> confirmdth = Rx<ConfirmDth?>(null);
         isLoading.value = false;
         AppLogger.debugPrint("⏹️ Loading stopped");
 
+        // Uncommenting this since failure.message is clean now thanks to DioErrorHandler
         Get.snackbar('Error', failure.message);
       },
       (data) {
@@ -127,7 +127,7 @@ Rx<ConfirmDth?> confirmdth = Rx<ConfirmDth?>(null);
     );
   }
 
-   Future<bool> dthrecharge(
+  Future<bool> dthrecharge(
     String productdetid,
     String mobile,
     String amount,
@@ -147,15 +147,22 @@ Rx<ConfirmDth?> confirmdth = Rx<ConfirmDth?>(null);
       AppLogger.logError("productdetid: $productdetid");
       AppLogger.logError("mobile: $mobile");
       AppLogger.logError("amount: $amount");
-         AppLogger.logError("paymentstatus: $paymentstatus");
+      AppLogger.logError("paymentstatus: $paymentstatus");
 
       final stopwatch = Stopwatch()..start();
 
       AppLogger.logError("🚀 API CALL START");
 
-      final result = await dthrechargeusecase(productdetid, mobile, amount,paymentstatus);
+      final result = await dthrechargeusecase(
+        productdetid,
+        mobile,
+        amount,
+        paymentstatus,
+      );
 
-      AppLogger.logError("✅ API RESPONSE RECEIVED in ${stopwatch.elapsedMilliseconds} ms");
+      AppLogger.logError(
+        "✅ API RESPONSE RECEIVED in ${stopwatch.elapsedMilliseconds} ms",
+      );
 
       AppLogger.logError("👉 API RESPONSE RECEIVED");
 
@@ -172,8 +179,7 @@ Rx<ConfirmDth?> confirmdth = Rx<ConfirmDth?>(null);
           AppLogger.logError("✅ SUCCESS RESPONSE OBJECT");
           AppLogger.logError("Full response: $response");
 
-          final status =
-    response.data?.data?.status?.toLowerCase();
+          final status = response.data?.data?.status?.toLowerCase();
           AppLogger.logError("👉 Parsed status: $status");
 
           final isSuccess = status == "success";
@@ -203,7 +209,6 @@ Rx<ConfirmDth?> confirmdth = Rx<ConfirmDth?>(null);
     }
   }
 
-
   Future<void> getCustomerInfo(String productId, String customerId) async {
     if (productId.isEmpty || customerId.isEmpty) {
       Get.snackbar('Error', 'Product ID and Customer ID are required');
@@ -213,17 +218,16 @@ Rx<ConfirmDth?> confirmdth = Rx<ConfirmDth?>(null);
     isCustomerInfoLoading.value = true;
     customerInfo.value = null;
 
-    AppLogger.logError("🚀 [CUSTOMER INFO] Request => productId: $productId, customerId: $customerId");
-
-    final result = await customerInfoUsecase(
-      productId,
-      customerId,
+    AppLogger.logError(
+      "🚀 [CUSTOMER INFO] Request => productId: $productId, customerId: $customerId",
     );
+
+    final result = await customerInfoUsecase(productId, customerId);
 
     result.fold(
       (failure) {
         AppLogger.logError("❌ Customer Info Error: ${failure.message}");
-        Get.snackbar('Error', failure.message);
+        // Get.snackbar('Error', failure.message);
       },
       (response) {
         customerInfo.value = response;
