@@ -200,7 +200,7 @@ class MenuScreen extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              "Today Transaction",
+                              "No of Today Transations",
                               style: TextStyle(
                                 color: AppColors.clrPrimary,
                                 fontSize: 14.sp,
@@ -232,7 +232,7 @@ class MenuScreen extends StatelessWidget {
     borderRadius: BorderRadius.circular(12),
     child: _statusCard(
       image: AssetImages.successIcon,
-      value: "₹${transaction?.data?.success?.count.toString() ?? "0"}",
+      value: "${transaction?.data?.success?.count.toString() ?? "0"}",
       bgColor: const Color(0xffC0FFDF),
       textColor: const Color(0xff22C55E),
     ),
@@ -251,7 +251,7 @@ class MenuScreen extends StatelessWidget {
     borderRadius: BorderRadius.circular(12),
     child: _statusCard(
       image: AssetImages.processIcon,
-      value: "₹${transaction?.data?.processing?.count.toString() ?? "0"}",
+      value: "${transaction?.data?.processing?.count.toString() ?? "0"}",
       bgColor: const Color(0xffFFE1B4),
       textColor: Colors.orange,
     ),
@@ -270,7 +270,7 @@ class MenuScreen extends StatelessWidget {
     borderRadius: BorderRadius.circular(12),
     child: _statusCard(
       image: AssetImages.failedIcon,
-      value: "₹${transaction?.data?.failed?.count.toString() ?? "0"}",
+      value: "${transaction?.data?.failed?.count.toString() ?? "0"}",
       bgColor: const Color(0xffFFCCD3),
       textColor: Colors.red,
     ),

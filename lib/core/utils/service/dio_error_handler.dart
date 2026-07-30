@@ -1,15 +1,37 @@
-// class DioErrorHandler {
-//   static ServerFailure handle(DioException e) {
-//     String message = "Something went wrong";
+import 'package:dio/dio.dart';
+import 'package:maxpay/core/error/failure.dart';
 
-//     if (e.response?.data is Map<String, dynamic>) {
-//       message = e.response?.data["message"] ?? message;
-//     } else if (e.response?.data != null) {
-//       message = e.response!.data.toString();
-//     } else {
-//       message = e.message ?? message;
-//     }
+class DioErrorHandler {
+  static Failure handle(dynamic error) {
+    String message = "Something went wrong";
 
-//     return ServerFailure(message: message);
-//   }
-// }
+    if (error is DioException) {
+      if (error.type == DioExceptionType.connectionTimeout ||
+          error.type == DioExceptionType.receiveTimeout ||
+          error.type == DioExceptionType.sendTimeout) {
+        message =
+            "Connection timed out. Please check your internet connection.";
+        return NetworkFailure(message);
+      } else if (error.type == DioExceptionType.badResponse) {
+        if (error.response?.statusCode == 404) {
+          message = "The requested resource could not be found (404).";
+        } else if (error.response?.data is Map<String, dynamic>) {
+          message = error.response?.data["message"] ?? "Server error occurred.";
+        } else if (error.response?.data != null) {
+          message = error.response!.data.toString();
+        } else {
+          message = "Received invalid response from server.";
+        }
+      } else if (error.type == DioExceptionType.connectionError) {
+        message = "No internet connection.";
+        return NetworkFailure(message);
+      } else {
+        message = error.message ?? "Unexpected network error occurred.";
+      }
+    } else {
+      message = error.toString();
+    }
+
+    return ServerFailure(message: message);
+  }
+}

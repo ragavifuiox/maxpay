@@ -204,7 +204,7 @@ class PrePaidController extends GetxController {
       result.fold(
         (failure) {
           print("Offer Failed");
-          CustomToast.error(failure.message);
+          // CustomToast.error(failure.message);
         },
         (response) {
           print("Offer Success");

@@ -5,6 +5,7 @@ import 'package:maxpay/core/domain/repository/confirm_dth_repository.dart';
 import 'package:maxpay/core/error/failure.dart';
 import 'package:maxpay/core/services/api_services.dart';
 import 'package:maxpay/core/utils/logg_helper.dart';
+import 'package:maxpay/core/utils/service/dio_error_handler.dart';
 
 class ConfirmDthRepoImpl implements ConfirmDthRepository {
   final ApiService apiService;
@@ -23,9 +24,7 @@ class ConfirmDthRepoImpl implements ConfirmDthRepository {
       Map<String, dynamic> jsonMap;
 
       if (decoded is List) {
-        jsonMap = decoded.isNotEmpty
-            ? Map<String, dynamic>.from(decoded)
-            : {};
+        jsonMap = decoded.isNotEmpty ? Map<String, dynamic>.from(decoded) : {};
       } else {
         jsonMap = decoded;
       }
@@ -33,7 +32,7 @@ class ConfirmDthRepoImpl implements ConfirmDthRepository {
       final model = ConfirmDth.fromJson(jsonMap);
       return Right(model);
     } catch (e) {
-      return Left(ServerFailure(message: e.toString()));
+      return Left(DioErrorHandler.handle(e));
     }
   }
 }
