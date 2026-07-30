@@ -31,6 +31,7 @@ import 'package:maxpay/core/domain/repository/transaction_suc_fail_repository.da
 import 'package:maxpay/core/error/failure.dart';
 import 'package:maxpay/core/services/api_services.dart';
 import 'package:maxpay/core/utils/logg_helper.dart';
+import 'package:maxpay/core/utils/service/dio_error_handler.dart';
 
 class TransactionSucFailRepoImpl implements TransactionSucFailRepository {
   final ApiService apiService;
@@ -44,17 +45,7 @@ class TransactionSucFailRepoImpl implements TransactionSucFailRepository {
       final model = TransactionResponse.fromJson(response);
       return Right(model);
     } on DioException catch (e) {
-      String message = "Something went wrong";
-
-      if (e.response?.data is Map<String, dynamic>) {
-        message = e.response?.data["message"] ?? message;
-      } else if (e.response?.data != null) {
-        message = e.response!.data.toString();
-      } else {
-        message = e.message ?? message;
-      }
-
-      return Left(ServerFailure(message: message));
+      return Left(DioErrorHandler.handle(e));
     } catch (e) {
       AppLogger.logError("Api ${ApiRoutes.transsucfail}$e");
       return Left(ServerFailure(message: e.toString()));

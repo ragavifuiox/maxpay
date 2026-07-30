@@ -63,7 +63,12 @@ class ApiService {
           print("FAILED URL => ${e.requestOptions.uri}");
           print("STATUS => ${e.response?.statusCode}");
           print("TOKEN => ${_storage.getString("auth_token")}");
-          log("API Error: ${e.message}");
+
+          final String errorMessage =
+              e.response?.data?['message']?.toString() ??
+              e.message ??
+              "Something went wrong";
+          log("API Error: $errorMessage");
 
           // ✅ If NO INTERNET → go to network screen ONLY
 
@@ -71,13 +76,8 @@ class ApiService {
           if (e.response?.statusCode == 401) {
             // _handleUnauthorized();
           } else {
-            // g.Get.snackbar(
-            //   "Error",
-            //   e.response?.data?['message'] ?? "Something went wrong",
-            // );
-            AppLogger.logError(
-              e.response?.data?['message'] ?? "Something went wrong",
-            );
+            AppLogger.logError(errorMessage);
+            // CustomToast removed to prevent duplicate toasts in controllers
           }
 
           return handler.next(e);

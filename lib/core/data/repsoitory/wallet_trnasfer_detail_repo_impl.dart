@@ -7,6 +7,7 @@ import 'package:maxpay/core/data/model/wallet_trnasfer_detail.dart';
 import 'package:maxpay/core/domain/repository/wallet_trnsfer_detail_repository.dart';
 import 'package:maxpay/core/error/failure.dart';
 import 'package:maxpay/core/services/api_services.dart';
+import 'package:maxpay/core/utils/service/dio_error_handler.dart';
 
 class WalletTrnasferDetailRepoImpl implements WalletTrnsferDetailRepository {
   final ApiService apiService;
@@ -44,18 +45,6 @@ final model = WalletTransferDetail.fromJson(response);
     return Right(model);
 
 } on DioException catch (e) {
-
-  print("========== DIO ERROR ==========");
-  print("STATUS CODE : ${e.response?.statusCode}");
-  print("DATA : ${e.response?.data}");
-  print("MESSAGE : ${e.message}");
-
-  return Left(
-    ServerFailure(
-      message: e.response?.data["message"] ??
-          "Something went wrong",
-    ),
-  );
-
-}
+      return Left(DioErrorHandler.handle(e));
+    }
 }}

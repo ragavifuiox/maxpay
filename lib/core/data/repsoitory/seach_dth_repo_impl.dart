@@ -6,6 +6,7 @@ import 'package:maxpay/core/domain/repository/search_dth_repository.dart';
 import 'package:maxpay/core/error/failure.dart';
 import 'package:maxpay/core/services/api_services.dart';
 import 'package:maxpay/core/utils/logg_helper.dart';
+import 'package:maxpay/core/utils/service/dio_error_handler.dart';
 
 class SearchDthRepoImpl implements SearchDthRepository {
   final ApiService apiService;
@@ -40,22 +41,7 @@ class SearchDthRepoImpl implements SearchDthRepository {
 
       return Right(model);
     } on DioException catch (e) {
-      AppLogger.logError("API Error: ${e.message}");
-      AppLogger.logError("Status Code: ${e.response?.statusCode}");
-      AppLogger.logError("Response: ${e.response?.data}");
-
-      String message = "Something went wrong";
-
-      if (e.response?.data is Map<String, dynamic>) {
-        message =
-            e.response?.data["message"]?.toString() ?? message;
-      }
-
-      if (e.response?.statusCode == 404) {
-        message = "No DTH plans found.";
-      }
-
-      return Left(ServerFailure(message: message));
+      return Left(DioErrorHandler.handle(e));
     } catch (e) {
       AppLogger.logError("Unexpected Error: $e");
       return Left(
