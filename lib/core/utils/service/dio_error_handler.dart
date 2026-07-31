@@ -1,11 +1,20 @@
 import 'package:dio/dio.dart';
 import 'package:maxpay/core/error/failure.dart';
+import 'package:maxpay/core/utils/logg_helper.dart';
 
 class DioErrorHandler {
   static Failure handle(dynamic error) {
     String message = "Something went wrong";
-
+    AppLogger.logError("error message: $error");
+    AppLogger.logError("error message: ${error.runtimeType}");
     if (error is DioException) {
+      AppLogger.logError("error response data: ${error.response?.data}");
+      AppLogger.logError(
+        "error response statusCode: ${error.response?.statusCode}",
+      );
+      AppLogger.logError(
+        "error response statusMessage: ${error.response?.statusMessage}",
+      );
       if (error.type == DioExceptionType.connectionTimeout ||
           error.type == DioExceptionType.receiveTimeout ||
           error.type == DioExceptionType.sendTimeout) {

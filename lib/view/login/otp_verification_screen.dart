@@ -38,7 +38,7 @@ class _ScreenOtpVerificationState extends State<ScreenOtpVerification> {
 
     ever<String>(authController.otp, (otp) {
       if (otp.isNotEmpty) {
-        Future.delayed(const Duration(seconds: 2), () {
+        Future.delayed(const Duration(seconds: 5), () {
           if (mounted) {
             _otpController.text = otp;
             setState(() {
