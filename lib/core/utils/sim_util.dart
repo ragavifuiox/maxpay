@@ -2,10 +2,15 @@ import 'package:maxpay/core/constants/snackbar.dart';
 import 'package:maxpay/core/utils/logg_helper.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:sim_card_code/sim_card_code.dart';
+import 'package:flutter/services.dart';
 
 class SimUtil {
   /// Test numbers exception list
-  static const List<String> testNumbers = ['9999999999', '6369497198','9895762284'];
+  static const List<String> testNumbers = [
+    '9999999999',
+    '6369497198',
+    '9895762284',
+  ];
 
   /// Helper function to normalize and match
   static bool _matches(String entered, String? sim) {
@@ -41,7 +46,89 @@ class SimUtil {
   /// 3. The phone number doesn't match any of the readable SIMs.
   ///
   /// Set [showToasts] to true to display error messages via CustomToast (e.g. during login).
+  static const _simChannel = MethodChannel('sim_verification');
+
+  /// Verifies if the [registeredPhone] is currently present in the device's SIM slots.
+  /// Uses the new custom MethodChannel 'sim_verification' implemented in MainActivity.kt
   static Future<bool> verifySimPresent(
+    String registeredPhone, {
+    bool showToasts = false,
+  }) async {
+    final enteredPhone = registeredPhone.trim();
+
+    if (testNumbers.contains(enteredPhone)) {
+      return true; // Bypass for test numbers
+    }
+
+    // 1. Request phone permission
+    var status = await Permission.phone.status;
+    if (!status.isGranted) {
+      status = await Permission.phone.request();
+    }
+
+    if (!status.isGranted) {
+      if (showToasts) {
+        CustomToast.error(
+          "Phone permission is required to verify the SIM card",
+        );
+      }
+      return false;
+    }
+
+    // 2. Fetch SIM info using MethodChannel
+    try {
+      final List<dynamic> simList = await _simChannel.invokeMethod(
+        'getSimList',
+      );
+      AppLogger.logError("Detected SIM cards via channel: ${simList.length}");
+
+      if (simList.isEmpty) {
+        if (showToasts) {
+          CustomToast.error("No SIM card detected in this device");
+        }
+        return false;
+      }
+
+      bool numberExists = false;
+
+      for (var sim in simList) {
+        final Map<dynamic, dynamic> simData = sim as Map<dynamic, dynamic>;
+        final String? phoneNumber = simData['number']?.toString();
+
+        AppLogger.logError(
+          "SIM slot=${simData['slotIndex']}, carrier=${simData['carrierName']}, number=$phoneNumber",
+        );
+
+        if (phoneNumber != null && phoneNumber.isNotEmpty) {
+          if (_matches(enteredPhone, phoneNumber)) {
+            numberExists = true;
+            break;
+          }
+        }
+      }
+
+      if (!numberExists) {
+        if (showToasts) {
+          CustomToast.error(
+            "The entered mobile number does not exist on this device",
+          );
+        }
+        return false;
+      }
+
+      return true;
+    } catch (e) {
+      AppLogger.logError("Failed to get SIM list via channel: $e");
+      if (showToasts) {
+        CustomToast.error("Failed to verify SIM card");
+      }
+      return false;
+    }
+  }
+
+  /// Old implementation of verifySimPresent using sim_card_code package.
+  /// Kept here for easy reversion.
+  static Future<bool> verifySimPresentOld(
     String registeredPhone, {
     bool showToasts = false,
   }) async {
