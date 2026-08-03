@@ -10,6 +10,7 @@ class SimUtil {
     '9999999999',
     '6369497198',
     '9895762284',
+    '6369497196',
   ];
 
   /// Helper function to normalize and match

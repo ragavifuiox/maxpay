@@ -1305,12 +1305,15 @@ class _DTHRechargePageState extends State<DTHRechargePage>
 
     // Plan selected from card
     if (selectedPlanData != null) {
-      productDetailId = selectedPlanData!["plan"].id.toString();
+      productDetailId = selectedPlanData!["plan"].productId.toString();
     }
     // Manual amount entered
     else {
       if (dthcontroller.searchdthList.isNotEmpty) {
-        productDetailId = dthcontroller.searchdthList.first.id.toString();
+        productDetailId = dthcontroller.searchdthList.first.productId
+            .toString();
+      } else {
+        productDetailId = productId;
       }
     }
 

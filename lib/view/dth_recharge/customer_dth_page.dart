@@ -22,19 +22,19 @@ class CustomerDthPage extends GetView<DthController> {
   @override
   Widget build(BuildContext context) {
     final args = Get.arguments ?? {};
-  final confirmData = controller.confirmdth.value?.data;
+    final confirmData = controller.confirmdth.value?.data;
     final operatorlogo = confirmData?.logo ?? '';
 
     final productName = args['productName'] ?? '';
     final paymentStatus = args['paymentStatus'] ?? '';
     final transactionNo = args['transactionNo'] ?? '';
     final transactionAmount = args['transactionAmount'] ?? '';
-   final whatsappNumber = args['whatsappNumber'] ?? "N/A";
+    final whatsappNumber = args['whatsappNumber'] ?? "N/A";
     final operatorInitial = args['operatorInitial'] ?? '';
     final operatorColor = args['operatorColor'] ?? Colors.red;
     final operatorLogo = args['operatorLogo'] ?? '';
     final mobileNumber = args['mobileNumber'] ?? '';
-final productdetid = args['productdetid'] ?? '';
+    final productdetid = args['productdetid'] ?? '';
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
@@ -47,7 +47,7 @@ final productdetid = args['productdetid'] ?? '';
           children: [
             SizedBox(height: 20.h),
 
-          RotatedBox(
+            RotatedBox(
               quarterTurns: 2,
               child: Container(
                 width: double.infinity,
@@ -75,16 +75,17 @@ final productdetid = args['productdetid'] ?? '';
 
                     SizedBox(height: 14.h),
 
-                   _buildRow(
-  context,
-  "Payment Status",
-  paymentStatus.toString().toLowerCase() == "received"
-      ? "Paid"
-      : "Pending",
-  valueColor: paymentStatus.toString().toLowerCase() == "received"
-      ? Colors.green
-      : Colors.orange,
-),
+                    _buildRow(
+                      context,
+                      "Payment Status",
+                      paymentStatus.toString().toLowerCase() == "received"
+                          ? "Paid"
+                          : "Pending",
+                      valueColor:
+                          paymentStatus.toString().toLowerCase() == "received"
+                          ? Colors.green
+                          : Colors.orange,
+                    ),
                     SizedBox(height: 14.h),
 
                     _buildRow(context, "Transaction No", transactionNo),
@@ -101,7 +102,7 @@ final productdetid = args['productdetid'] ?? '';
 
                     SizedBox(height: 14.h),
 
-                  _buildRow(context, "Whatsapp no", whatsappNumber),
+                    _buildRow(context, "Whatsapp no", whatsappNumber),
                   ],
                 ),
               ),
@@ -141,134 +142,100 @@ final productdetid = args['productdetid'] ?? '';
             const Spacer(),
 
             /// PAY NOW
-          Obx(
-  () => Center(
-    child: CommonButton(
-      title: controller.isRechargeLoading.value
-          ? "Processing..."
-          : "Pay Now",
+            Obx(
+              () => Center(
+                child: CommonButton(
+                  title: controller.isRechargeLoading.value
+                      ? "Processing..."
+                      : "Pay Now",
 
-      onTap: controller.isRechargeLoading.value
-          ? null
-          : () async {
+                  onTap: controller.isRechargeLoading.value
+                      ? null
+                      : () async {
+                          AppLogger.debugPrint(
+                            "👉 FINAL PRODUCT ID: $productdetid",
+                          );
 
-              AppLogger.debugPrint(
-                "👉 FINAL PRODUCT ID: $productdetid",
-              );
+                          final success = await controller.dthrecharge(
+                            productdetid.toString(),
+                            mobileNumber.toString(),
+                            transactionAmount.toString(),
+                            paymentStatus.toString(),
+                            args['commissionAmount']?.toString() ?? '0',
+                          );
 
-              final success = await controller.dthrecharge(
-                productdetid.toString(),
-                mobileNumber.toString(),
-                transactionAmount.toString(),
-                paymentStatus.toString(),
-              );
+                          AppLogger.debugPrint("AFTER API CALL");
 
+                          final rechargeData =
+                              controller.rechargeResponse.value;
 
-              AppLogger.debugPrint("AFTER API CALL");
+                          if (rechargeData != null) {
+                            final apiData = rechargeData.data?.data;
 
+                            final status =
+                                rechargeData.status?.toLowerCase() ?? "";
 
-              final rechargeData =
-                  controller.rechargeResponse.value;
+                            if (success && status == "success") {
+                              Get.to(
+                                () => DthSuccessPage(
+                                  rechargeId:
+                                      rechargeData.transactionId?.toString() ??
+                                      "",
+                                  productName: confirmData?.productName ?? "",
 
+                                  operatorInitial:
+                                      (apiData?.operatorName?.isNotEmpty ??
+                                          false)
+                                      ? apiData!.operatorName![0]
+                                      : "J",
 
-              if (rechargeData != null) {
+                                  operatorColor: Colors.red,
 
-                final apiData =
-                    rechargeData.data?.data;
+                                  transactionNo:
+                                      apiData?.mobileno ?? mobileNumber,
 
+                                  rechargeAmount:
+                                      (apiData?.amount ?? transactionAmount)
+                                          .toString()
+                                          .currencyIndian,
 
-                final status =
-                    rechargeData.status?.toLowerCase() ?? "";
+                                  transactionId: apiData?.tnxId ?? "",
 
+                                  dateTime: apiData?.rechargeDate ?? "",
+                                ),
+                              );
+                            } else {
+                              Get.to(
+                                () => DthFailedRechargeScreen(
+                                  productName: confirmData?.productName ?? "",
 
-                if (success && status == "success") {
+                                  operatorInitial:
+                                      (apiData?.operatorName?.isNotEmpty ??
+                                          false)
+                                      ? apiData!.operatorName![0]
+                                      : "J",
 
-                  Get.to(
-                    () => DthSuccessPage(
-            rechargeId: rechargeData.transactionId?.toString() ?? "",
-                      productName:
-                          confirmData?.productName ?? "",
+                                  operatorColor: Colors.red,
 
+                                  transactionNo:
+                                      apiData?.mobileno ?? mobileNumber,
 
-                      operatorInitial:
-                          (apiData?.operatorName?.isNotEmpty ?? false)
-                              ? apiData!.operatorName![0]
-                              : "J",
+                                  rechargeAmount:
+                                      (apiData?.amount ?? transactionAmount)
+                                          .toString()
+                                          .currencyIndian,
 
+                                  transactionId: apiData?.tnxId ?? "",
 
-                      operatorColor:
-                          Colors.red,
-
-
-                      transactionNo:
-                          apiData?.mobileno ??
-                          mobileNumber,
-
-
-                      rechargeAmount:
-                          (apiData?.amount ??
-                                  transactionAmount)
-                              .toString()
-                              .currencyIndian,
-
-
-                      transactionId:
-                          apiData?.tnxId ?? "",
-
-
-                      dateTime:
-                          apiData?.rechargeDate ?? "",
-                    ),
-                  );
-
-                } else {
-
-
-                  Get.to(
-                    () => DthFailedRechargeScreen(
-
-                      productName:
-                          confirmData?.productName ?? "",
-
-
-                      operatorInitial:
-                          (apiData?.operatorName?.isNotEmpty ?? false)
-                              ? apiData!.operatorName![0]
-                              : "J",
-
-
-                      operatorColor:
-                          Colors.red,
-
-
-                      transactionNo:
-                          apiData?.mobileno ??
-                          mobileNumber,
-
-
-                      rechargeAmount:
-                 (apiData?.amount ??
-                                  transactionAmount)
-                              .toString()
-                              .currencyIndian,
-
-
-                      transactionId:
-                          apiData?.tnxId ?? "",
-
-
-                      dateTime:
-                          apiData?.rechargeDate ?? "",
-                    ),
-                  );
-
-                }
-              }
-
-            },
-    ),
-  ),
-),
+                                  dateTime: apiData?.rechargeDate ?? "",
+                                ),
+                              );
+                            }
+                          }
+                        },
+                ),
+              ),
+            ),
 
             SizedBox(height: 30.h),
           ],

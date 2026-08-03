@@ -74,13 +74,20 @@ class ConfirmDthPage extends GetView<DthController> {
         confirmData?.productName ?? args['operator'] ?? '';
     final String logoUrl = confirmData?.logo ?? args['logo'] ?? '';
 
-    final String availableBalanceStr = confirmData?.availableBalance ?? '0';
+    final String availableBalanceStr =
+        confirmData?.availableBalance ?? args['availableBalance'] ?? '0';
     final String transactionAmountStr = selectedAmount.isNotEmpty
         ? selectedAmount
         : (confirmData?.transactionAmount ?? args['amount'] ?? "0").toString();
-    final String commissionStr = confirmData?.commission ?? '0';
+    final String commissionStr =
+        confirmData?.commission ?? args['commission'] ?? '0';
+
+    final double availBal = double.tryParse(availableBalanceStr) ?? 0.0;
+    final double transAmt = double.tryParse(transactionAmountStr) ?? 0.0;
+
     final String remainingBalanceStr =
-        confirmData?.remainingBalance?.toString() ?? '0';
+        confirmData?.remainingBalance?.toString() ??
+        (availBal - transAmt).toStringAsFixed(2);
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -109,7 +116,6 @@ class ConfirmDthPage extends GetView<DthController> {
                   ),
                   child: Column(
                     children: [
-                     
                       Padding(
                         padding: EdgeInsets.symmetric(vertical: 12.h),
                         child: Row(
@@ -256,6 +262,7 @@ class ConfirmDthPage extends GetView<DthController> {
                               : '',
                           "operatorColor": Colors.red,
                           "operatorLogo": logoUrl,
+                          "commissionAmount": commissionStr,
                         },
                       );
                     },
@@ -308,6 +315,7 @@ class ConfirmDthPage extends GetView<DthController> {
                                 customerId,
                                 amountController.text.trim(),
                                 convertedPaymentStatus,
+                                commissionStr,
                               );
 
                               AppLogger.debugPrint("AFTER API CALL");
@@ -324,7 +332,10 @@ class ConfirmDthPage extends GetView<DthController> {
                                   Get.to(
                                     () => DthSuccessPage(
                                       productName: productName,
-                                          rechargeId: rechargeData.transactionId?.toString() ?? "",
+                                      rechargeId:
+                                          rechargeData.transactionId
+                                              ?.toString() ??
+                                          "",
 
                                       operatorInitial:
                                           (apiData?.operatorName?.isNotEmpty ??
@@ -332,7 +343,7 @@ class ConfirmDthPage extends GetView<DthController> {
                                           ? apiData!.operatorName![0]
                                           : "J",
                                       operatorColor: Colors.red,
-                                      
+
                                       transactionNo:
                                           apiData?.mobileno ?? customerId,
                                       rechargeAmount:

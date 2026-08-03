@@ -132,6 +132,7 @@ class DthController extends GetxController {
     String mobile,
     String amount,
     String paymentstatus,
+    String commissionAmount,
   ) async {
     try {
       AppLogger.logError("👉 Recharge API CALL STARTED");
@@ -148,6 +149,7 @@ class DthController extends GetxController {
       AppLogger.logError("mobile: $mobile");
       AppLogger.logError("amount: $amount");
       AppLogger.logError("paymentstatus: $paymentstatus");
+      AppLogger.logError("commissionAmount: $commissionAmount");
 
       final stopwatch = Stopwatch()..start();
 
@@ -158,6 +160,7 @@ class DthController extends GetxController {
         mobile,
         amount,
         paymentstatus,
+        commissionAmount,
       );
 
       AppLogger.logError(

@@ -1,5 +1,3 @@
-
-
 import 'package:dartz/dartz.dart';
 import 'package:maxpay/core/data/model/dth_recharge_model.dart';
 
@@ -14,12 +12,14 @@ class DthRechargeUsecase {
     String mobile,
     String amount,
     String paymenstatus,
+    String commissionAmount,
   ) {
     return repository.Dthrecharge(
       productdetid: productdetid,
       mobile: mobile,
       amount: amount,
       paymentstatus: paymenstatus,
+      commissionAmount: commissionAmount,
     );
   }
 }

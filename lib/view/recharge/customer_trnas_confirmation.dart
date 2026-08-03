@@ -26,8 +26,8 @@ class CustomerTransConfirmationScreen extends GetView<PrePaidController> {
     final operatorlogo = confirmData?.logo ?? '';
 
     final productName = args['productName'] ?? '';
- 
-final paymentStatus = args["paymentStatus"] ?? "";
+
+    final paymentStatus = args["paymentStatus"] ?? "";
     final transactionNo = args['transactionNo'] ?? '';
     final transactionAmount = args['transactionAmount'] ?? '';
     final whatsappNumber = args['whatsappNumber'] ?? '';
@@ -154,15 +154,20 @@ final paymentStatus = args["paymentStatus"] ?? "";
                           AppLogger.debugPrint(
                             "👉 FINAL PRODUCT ID: ${controller.productdetid}",
                           );
-final String backendStatus =
-    paymentStatus.toLowerCase() == "paid"
-        ? "received"
-        : "not_received";
+                          final String backendStatus =
+                              paymentStatus.toLowerCase() == "paid"
+                              ? "received"
+                              : "not_received";
+
+                          final String commissionStr =
+                              confirmData?.commision ?? "0";
+
                           final success = await controller.mobilerecharge(
                             controller.productdetid,
                             mobileNumber,
                             transactionAmount,
                             backendStatus,
+                            commissionStr,
                           );
 
                           AppLogger.debugPrint("AFTER API CALL");
@@ -200,47 +205,63 @@ final String backendStatus =
                           //   );
                           // }
 
+                          final rechargeData =
+                              controller.rechargeResponse.value;
+                          final apiData = rechargeData?.data?.apiResponse;
 
-                          final rechargeData = controller.rechargeResponse.value;
-final apiData = rechargeData?.data?.apiResponse;
-
-if (success && rechargeData != null) {
-  Get.to(
-    () => SuccessRechargePage(
-      rechargeId: rechargeData.data?.recharge?.id?.toString() ?? "",
-      productName: apiData?.operatorName ?? confirmData?.productName ?? "",
-      operatorLogo: apiData?.logo ?? "",
-      operatorInitial:
-          (apiData?.operatorName?.isNotEmpty ?? false)
-              ? apiData!.operatorName![0]
-              : "J",
-      operatorColor: Colors.green,
-      transactionNo: apiData?.mobileno ?? mobileNumber,
-      rechargeAmount:
-          (apiData?.amount ?? amountController.text).currencyIndian,
-      transactionId: apiData?.txnid ?? "",
-      dateTime: apiData?.requestDatetime ?? "",
-    ),
-  );
-} else {
-  Get.to(
-    () => FailedRechargePage(
-      rechargeId: rechargeData?.data?.recharge?.id?.toString() ?? "",
-      productName: apiData?.operatorName ?? confirmData?.productName ?? "",
-      operatorLogo: apiData?.logo ?? "",
-      operatorInitial:
-          (apiData?.operatorName?.isNotEmpty ?? false)
-              ? apiData!.operatorName![0]
-              : "J",
-      operatorColor: Colors.red,
-      transactionNo: apiData?.mobileno ?? mobileNumber,
-      rechargeAmount:
-          (apiData?.amount ?? amountController.text).currencyIndian,
-      transactionId: apiData?.txnid ?? "",
-      dateTime: apiData?.requestDatetime ?? "",
-    ),
-  );
-}
+                          if (success && rechargeData != null) {
+                            Get.to(
+                              () => SuccessRechargePage(
+                                rechargeId:
+                                    rechargeData.data?.recharge?.id
+                                        ?.toString() ??
+                                    "",
+                                productName:
+                                    apiData?.operatorName ??
+                                    confirmData?.productName ??
+                                    "",
+                                operatorLogo: apiData?.logo ?? "",
+                                operatorInitial:
+                                    (apiData?.operatorName?.isNotEmpty ?? false)
+                                    ? apiData!.operatorName![0]
+                                    : "J",
+                                operatorColor: Colors.green,
+                                transactionNo:
+                                    apiData?.mobileno ?? mobileNumber,
+                                rechargeAmount:
+                                    (apiData?.amount ?? amountController.text)
+                                        .currencyIndian,
+                                transactionId: apiData?.txnid ?? "",
+                                dateTime: apiData?.requestDatetime ?? "",
+                              ),
+                            );
+                          } else {
+                            Get.to(
+                              () => FailedRechargePage(
+                                rechargeId:
+                                    rechargeData?.data?.recharge?.id
+                                        ?.toString() ??
+                                    "",
+                                productName:
+                                    apiData?.operatorName ??
+                                    confirmData?.productName ??
+                                    "",
+                                operatorLogo: apiData?.logo ?? "",
+                                operatorInitial:
+                                    (apiData?.operatorName?.isNotEmpty ?? false)
+                                    ? apiData!.operatorName![0]
+                                    : "J",
+                                operatorColor: Colors.red,
+                                transactionNo:
+                                    apiData?.mobileno ?? mobileNumber,
+                                rechargeAmount:
+                                    (apiData?.amount ?? amountController.text)
+                                        .currencyIndian,
+                                transactionId: apiData?.txnid ?? "",
+                                dateTime: apiData?.requestDatetime ?? "",
+                              ),
+                            );
+                          }
                         },
                 ),
               ),

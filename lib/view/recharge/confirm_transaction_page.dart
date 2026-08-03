@@ -1,6 +1,5 @@
 // ignore_for_file: must_be_immutable
 
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -61,13 +60,21 @@ class ConfirmTransactionPage extends GetView<PrePaidController> {
           confirmData?.productName ?? args['operator'] ?? '';
       final String logoUrl = confirmData?.logo ?? args['logo'] ?? '';
 
-      final String availableBalanceStr = confirmData?.availableBalance ?? '0';
+      final String availableBalanceStr =
+          confirmData?.availableBalance ?? args['availableBalance'] ?? '0';
       final String transactionAmountStr = enteredAmount.isNotEmpty
           ? enteredAmount
           : (confirmData?.transactionAmount ?? args['amount'] ?? "0")
                 .toString();
-      final String commissionStr = confirmData?.commision ?? '0';
-      final String remainingBalanceStr = confirmData?.remainingBalance ?? '0';
+      final String commissionStr =
+          confirmData?.commision ?? args['commission'] ?? '0';
+
+      final double availBal = double.tryParse(availableBalanceStr) ?? 0.0;
+      final double transAmt = double.tryParse(transactionAmountStr) ?? 0.0;
+
+      final String remainingBalanceStr =
+          confirmData?.remainingBalance ??
+          (availBal - transAmt).toStringAsFixed(2);
 
       return Scaffold(
         backgroundColor: theme.scaffoldBackgroundColor,
@@ -97,7 +104,6 @@ class ConfirmTransactionPage extends GetView<PrePaidController> {
                   ),
                   child: Column(
                     children: [
-                     
                       Padding(
                         padding: EdgeInsets.symmetric(vertical: 8.h),
                         child: Row(
@@ -316,7 +322,6 @@ class ConfirmTransactionPage extends GetView<PrePaidController> {
                       onTap: controller.isRechargeLoading.value
                           ? null
                           : () async {
-                             
                               if (amountController.text.trim().isEmpty) {
                                 Get.snackbar(
                                   "Validation",
@@ -360,10 +365,10 @@ class ConfirmTransactionPage extends GetView<PrePaidController> {
                                 mobileNumber,
                                 amountController.text.trim(),
                                 backendStatus,
+                                commissionStr,
                               );
 
                               AppLogger.debugPrint("AFTER API CALL");
-                            
 
                               final rechargeData =
                                   controller.rechargeResponse.value;
@@ -396,32 +401,37 @@ class ConfirmTransactionPage extends GetView<PrePaidController> {
                                   ),
                                 );
                               } else {
-                               Get.to(
-  () => FailedRechargePage(
-    rechargeId:
-        rechargeData?.data?.recharge?.id?.toString() ?? "",
-    productName:
-        apiData?.operatorName ?? productName,
-    operatorLogo:
-        apiData?.logo ?? logoUrl,
-    operatorInitial:
-        (apiData?.operatorName?.isNotEmpty ?? false)
-            ? apiData!.operatorName![0]
-            : "J",
-    operatorColor: Colors.red,
-    transactionNo:
-        apiData?.mobileno ?? mobileNumber,
-    rechargeAmount:
-        (apiData?.amount ?? amountController.text)
-            .currencyIndian,
-    transactionId:
-        apiData?.txnid ?? "",
-    dateTime:
-        rechargeData?.data?.recharge?.requestTime ??
-        apiData?.requestDatetime ??
-        "",
-  ),
-);
+                                Get.to(
+                                  () => FailedRechargePage(
+                                    rechargeId:
+                                        rechargeData?.data?.recharge?.id
+                                            ?.toString() ??
+                                        "",
+                                    productName:
+                                        apiData?.operatorName ?? productName,
+                                    operatorLogo: apiData?.logo ?? logoUrl,
+                                    operatorInitial:
+                                        (apiData?.operatorName?.isNotEmpty ??
+                                            false)
+                                        ? apiData!.operatorName![0]
+                                        : "J",
+                                    operatorColor: Colors.red,
+                                    transactionNo:
+                                        apiData?.mobileno ?? mobileNumber,
+                                    rechargeAmount:
+                                        (apiData?.amount ??
+                                                amountController.text)
+                                            .currencyIndian,
+                                    transactionId: apiData?.txnid ?? "",
+                                    dateTime:
+                                        rechargeData
+                                            ?.data
+                                            ?.recharge
+                                            ?.requestTime ??
+                                        apiData?.requestDatetime ??
+                                        "",
+                                  ),
+                                );
                               }
                             },
                     ),

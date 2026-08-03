@@ -19,23 +19,21 @@ class TransactionCard extends StatelessWidget {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final status = (data.status ?? "").toLowerCase();
-final isSuccess = status == "success" || status == "received";
+    final isSuccess = status == "success" || status == "received";
 
     Color statusColor;
     Color bgColor;
 
-
-
-if (status == "success" || status == "received") {
-  statusColor = Colors.green;
-  bgColor = const Color(0xFFE8F8EC); // light green
-} else if (status == "pending") {
-  statusColor = Colors.orange;
-  bgColor = const Color(0xFFFFF4E5);
-} else {
-  statusColor = Colors.red;
-  bgColor = const Color(0xFFFFEBEE);
-}
+    if (status == "success" || status == "received") {
+      statusColor = Colors.green;
+      bgColor = const Color(0xFFE8F8EC); // light green
+    } else if (status == "pending") {
+      statusColor = Colors.orange;
+      bgColor = const Color(0xFFFFF4E5);
+    } else {
+      statusColor = Colors.red;
+      bgColor = const Color(0xFFFFEBEE);
+    }
     return Container(
       margin: const EdgeInsets.only(bottom: 14),
       padding: const EdgeInsets.all(12),
@@ -168,80 +166,68 @@ if (status == "success" || status == "received") {
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-//               if (status == "success") ...[
-//                 _button("Dispute", Colors.red, () {
-//                   showDialog(
-//                     context: context,
-//                     builder: (_) =>
-//                         DisputeDialog(rechargeId: (data.id ?? 0).toString()),
-//                   );
-//                 }),
-//                 const SizedBox(width: 6),
-//                _button("View", Colors.blue, () {
-//   Get.toNamed(
-//     AppRoutes.transactionDetails,
-//     arguments: data,
-//   );
-// }),
-//                 const SizedBox(width: 6),
-//                 _button("Share", Colors.green, () {}),
-//               ],
-
-
-
-if (isSuccess) ...[
-  _button("Dispute", Colors.red, () {
-    showDialog(
-      context: context,
-      builder: (_) => DisputeDialog(
-        rechargeId: data.id.toString(),
-      ),
-    );
-  }),
-  const SizedBox(width: 6),
-  _button("View", Colors.blue, () {
-    Get.toNamed(
-      AppRoutes.transactionDetails,
-      arguments: data,
-    );
-  }),
-  const SizedBox(width: 6),
- _button("Share", Colors.green, () {
-
-  ShareReceipt.sharePdf(
-    pdfUrl: data.url ?? "",
-    phone: data.mobile ?? "",
-  );
-
-}),
-],
+              //               if (status == "success") ...[
+              //                 _button("Dispute", Colors.red, () {
+              //                   showDialog(
+              //                     context: context,
+              //                     builder: (_) =>
+              //                         DisputeDialog(rechargeId: (data.id ?? 0).toString()),
+              //                   );
+              //                 }),
+              //                 const SizedBox(width: 6),
+              //                _button("View", Colors.blue, () {
+              //   Get.toNamed(
+              //     AppRoutes.transactionDetails,
+              //     arguments: data,
+              //   );
+              // }),
+              //                 const SizedBox(width: 6),
+              //                 _button("Share", Colors.green, () {}),
+              //               ],
+              if (isSuccess) ...[
+                _button("Dispute", Colors.red, () {
+                  showDialog(
+                    context: context,
+                    builder: (_) =>
+                        DisputeDialog(rechargeId: data.id.toString()),
+                  );
+                }),
+                const SizedBox(width: 6),
+                _button("View", Colors.blue, () {
+                  Get.toNamed(AppRoutes.transactionDetails, arguments: data);
+                }),
+                const SizedBox(width: 6),
+                _button("Share", Colors.green, () {
+                  ShareReceipt.sharePdf(
+                    pdfUrl: data.url ?? "",
+                    phone: data.mobile ?? "",
+                  );
+                }),
+              ],
 
               if (status == "pending")
                 _button("Processing", Colors.orange, () {}),
 
-             if (status == "failed") ...[
-  _button("View", Colors.blue, () {
-    Get.toNamed(
-      AppRoutes.transactionDetails,
-      arguments: data,
-    );
-  }),
+              if (status == "failed") ...[
+                _button("View", Colors.blue, () {
+                  Get.toNamed(AppRoutes.transactionDetails, arguments: data);
+                }),
 
-  const SizedBox(width: 6),
+                const SizedBox(width: 6),
 
-  _button("Resend", Colors.green, () {
-    print("========== RESEND ==========");
-    print("ID: ${data.id}");
-    print("Transaction ID: ${data.transactionId}");
-    print("Product Type: ${data.productType}");
-    print("Mobile: ${data.mobile}");
-    print("Amount: ${data.amount}");
-    print("Status: ${data.status}");
-    print("Logo: ${data.logo}");
+                _button("Resend", Colors.green, () {
+                  print("========== RESEND ==========");
+                  print("ID: ${data.id}");
+                  print("Transaction ID: ${data.transactionId}");
+                  print("Product Type: ${data.productType}");
+                  print("Mobile: ${data.mobile}");
+                  print("Amount: ${data.amount}");
+                  print("Status: ${data.status}");
+                  print("Logo: ${data.logo}");
 
-    _onResend(context);
-  }),
-],
+                  _onResend(context);
+                }),
+              ],
             ],
           ),
         ],
