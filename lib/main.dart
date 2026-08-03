@@ -45,9 +45,10 @@ class MyApp extends StatelessWidget {
     final themeController = Get.find<ThemeController>();
 
     return ScreenUtilInit(
-      designSize: const Size(375, 844),
+      designSize: const Size(390 , 844),
       minTextAdapt: true,
       splitScreenMode: true,
+      fontSizeResolver: FontSizeResolvers.width,
       builder: (_, child) {
         return GetMaterialApp(
           title: 'PayLink',
