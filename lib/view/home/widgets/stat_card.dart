@@ -243,8 +243,6 @@
 //   }
 // }
 
-
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:maxpay/core/constants/colors.dart';
@@ -282,7 +280,8 @@ class StatCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.all(8.r),
+        padding: EdgeInsets.all(8),
+        clipBehavior: .none,
         decoration: BoxDecoration(
           color: bgColor ?? (isDark ? theme.colorScheme.surface : Colors.white),
 
@@ -323,7 +322,7 @@ class StatCard extends StatelessWidget {
                 style: TextStyle(
                   fontFamily: 'Poppins',
                   fontWeight: FontWeight.w700,
-                  fontSize: 10.sp,
+                  fontSize: 10,
                   color: textColor ?? theme.colorScheme.onSurface,
                 ),
               ),
@@ -340,7 +339,7 @@ class StatCard extends StatelessWidget {
                   style: TextStyle(
                     fontFamily: 'Poppins',
                     fontWeight: FontWeight.w600,
-                    fontSize: 10.sp,
+                    fontSize: 10,
                     height: 1.2,
                     color: valueColor ?? theme.textTheme.bodyLarge?.color,
                   ),

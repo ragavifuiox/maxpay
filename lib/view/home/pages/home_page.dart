@@ -1,6 +1,3 @@
-
-
-
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -289,7 +286,7 @@ class HomePageScreen extends GetView<HomePageController> {
                                       ? AppColors.clrPrimary
                                       : Color(0x66495BFF),
                                   onTap: () => Get.toNamed(AppRoutes.walletbal),
-                                  value: '₹${balance.toStringAsFixed(2)}',
+                                  value: balance.toString().currencyIndian,
                                   bgColor: AppColors.darkBlue.withValues(
                                     alpha: 0.04,
                                   ),
@@ -302,7 +299,9 @@ class HomePageScreen extends GetView<HomePageController> {
                               // ✅ TRANSACTIONS — animated border dot + zoom
                               BlinkingZoomCard(
                                 child: Container(
-                                  padding: EdgeInsets.all(3), // Border thickness
+                                  padding: EdgeInsets.all(
+                                    3,
+                                  ), // Border thickness
                                   decoration: BoxDecoration(
                                     color:
                                         Theme.of(context).brightness ==
@@ -318,8 +317,8 @@ class HomePageScreen extends GetView<HomePageController> {
                                     bgColor: AppColors.clrPrimary,
                                     textColor: Colors.white,
                                     valueColor: Colors.white,
-                                    borderColor:
-                                        Colors.transparent, // Hide StatCard border
+                                    borderColor: Colors
+                                        .transparent, // Hide StatCard border
                                     imageWidget: SvgPicture.asset(
                                       AssetImages.transactions,
                                       height: 32.h,
@@ -328,10 +327,6 @@ class HomePageScreen extends GetView<HomePageController> {
                                 ),
                               ),
 
-                            
-
-
-                              
                               Obx(() {
                                 final amount =
                                     controller
@@ -341,18 +336,17 @@ class HomePageScreen extends GetView<HomePageController> {
                                         ?.todayCreditAmount ??
                                     0;
 
-                            
-                                final count = controller
+                                final count =
+                                    controller
                                         .todaycredit
                                         .value
                                         ?.data
                                         ?.totalcreditamount ??
                                     0;
 
-
                                 return StatCard(
-                                   title: 'Todays Credit',
-                                    
+                                  title: 'Todays Credit',
+
                                   value:
                                       '${amount.toString().currencyIndian}/\n$count Nos',
                                   borderColor: isDark
@@ -363,19 +357,19 @@ class HomePageScreen extends GetView<HomePageController> {
                                           Brightness.dark
                                       ? const Color.fromARGB(255, 171, 171, 171)
                                       : AppColors.darktextclr,
-                                   imageWidget: SvgPicture.asset(
+                                  imageWidget: SvgPicture.asset(
                                     AssetImages.todaysCredit,
                                     height: 32.h,
                                   ),
-                                   bgColor: AppColors.darkBlue.withValues(
+                                  bgColor: AppColors.darkBlue.withValues(
                                     alpha: 0.04,
                                   ),
                                 );
                               }),
 
-
                               Obx(() {
-                                final refund = controller.refundcount.value?.code;
+                                final refund =
+                                    controller.refundcount.value?.code;
 
                                 final refundAmount = refund?.refundAmount ?? 0;
                                 final count = refund?.count ?? 0;
@@ -432,7 +426,8 @@ class HomePageScreen extends GetView<HomePageController> {
                                     ?.data
                                     ?.success;
 
-                                final amount = (success?.amount ?? 0).toDouble();
+                                final amount = (success?.amount ?? 0)
+                                    .toDouble();
                                 final count = success?.count ?? 0;
 
                                 return StatCard(
