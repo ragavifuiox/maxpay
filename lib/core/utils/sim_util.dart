@@ -62,11 +62,11 @@ class SimUtil {
 
 
     var status = await Permission.phone.status;
-    if (!status.isGranted) {
+    if (!status.isGranted && !status.isLimited) {
       status = await Permission.phone.request();
     }
 
-    if (!status.isGranted) {
+    if (!status.isGranted && !status.isLimited) {
       if (showToasts) {
         CustomToast.error(
           "Phone permission is required to verify the SIM card",
@@ -75,47 +75,65 @@ class SimUtil {
       return false;
     }
     try {
-      final List<dynamic> simList = await _simChannel.invokeMethod(
+      final List<dynamic>? simList = await _simChannel.invokeMethod(
         'getSimList',
       );
+      AppLogger.logError("Detected SIM cards via channel: ${simList?.length ?? 0}");
 
-      AppLogger.logError("Detected SIM cards via channel: ${simList.length}");
-
-      if (simList.isEmpty) {
+      if (simList == null || simList.isEmpty) {
         if (showToasts) {
           CustomToast.error("No SIM card detected in this device");
         }
         return false;
       }
 
-      bool numberExists = false;
+      int readableSimsCount = 0;
+      bool numberMatched = false;
 
       for (var sim in simList) {
         final Map<dynamic, dynamic> simData = sim as Map<dynamic, dynamic>;
-        final String? phoneNumber = simData['number']?.toString();
+        final String? phoneNumber = simData['number']?.toString().trim();
 
         AppLogger.logError(
           "SIM slot=${simData['slotIndex']}, carrier=${simData['carrierName']}, number=$phoneNumber",
         );
 
         if (phoneNumber != null && phoneNumber.isNotEmpty) {
+          readableSimsCount++;
           if (_matches(enteredPhone, phoneNumber)) {
-            numberExists = true;
+            numberMatched = true;
             break;
           }
         }
       }
 
-      if (!numberExists) {
-        if (showToasts) {
-          CustomToast.error(
-            "The entered mobile number does not exist on this device",
-          );
-        }
-        return false;
+      // If we found a direct match on any readable SIM, permit immediately.
+      if (numberMatched) {
+        AppLogger.logError("SIM check passed: Phone number matched active SIM.");
+        return true;
       }
 
-      return true;
+      // If NOT all inserted SIMs returned readable numbers (e.g. carrier did not store MSISDN on SIM hardware),
+      // we allow the login/session to proceed because at least one active SIM card exists whose number cannot be read by Android OS.
+      // Ownership is then securely verified through OTP / SMS.
+      final int totalSimsCount = simList.length;
+      if (readableSimsCount < totalSimsCount) {
+        AppLogger.logError(
+          "SIM check fallback: $readableSimsCount of $totalSimsCount SIMs returned readable numbers. Permitting operation.",
+        );
+        return true;
+      }
+
+      // If ALL inserted SIMs returned readable phone numbers and NONE of them matched the entered phone:
+      AppLogger.logError(
+        "SIM check failed: None of the $totalSimsCount readable SIM cards matched $enteredPhone.",
+      );
+      if (showToasts) {
+        CustomToast.error(
+          "The entered mobile number does not exist on this device",
+        );
+      }
+      return false;
     } catch (e) {
       AppLogger.logError("Failed to get SIM list via channel: $e");
       if (showToasts) {
