@@ -95,28 +95,25 @@ class WaterSuccessScreen extends StatelessWidget {
                 ),
                 child: Column(
                   children: [
-                    //                    _buildSummaryRow(
-                    //   'Product',
-                    //   '',
-                    //   isIcon: true,
-                    //   imageUrl: operatorLogo,
-                    //   context: context,
-                    // ),
+
                     _buildSummaryRow(
                       'Transaction No',
                       "787878787878",
                       context: context,
                     ),
+
                     _buildSummaryRow(
-                      'Recharge Amount',
+                      'Transaction Amount',
                       "250",
                       context: context,
                     ),
+
                     _buildSummaryRow(
                       'Transaction ID',
                       "txc4567898765",
                       context: context,
                     ),
+                    
                     _buildSummaryRow('Date & Time', "2/06/20206", context: context),
 
                     SizedBox(height: 10.h),

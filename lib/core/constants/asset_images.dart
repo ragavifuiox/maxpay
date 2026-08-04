@@ -39,6 +39,8 @@ class AssetImages {
   static const fastag = "assets/images/fastag.svg";
   static const water = "assets/images/water.svg";
   static const paymentStatus = "assets/images/payment_status.svg";
+  static const info = "assets/images/info.svg";
+  static const plan = "assets/images/plan.svg";
 
   // Others
   static const favorite = "assets/images/favorite.svg";
@@ -80,6 +82,8 @@ class AssetImages {
   static const transfer = "assets/images/transfer.svg";
   static const walletcredit = "assets/images/wallet-check.svg";
   static const TransferDetial = "assets/images/card-tick.svg";
+  static const bank = "assets/images/bank.svg";
+  static const copy = "assets/images/copy.svg";
 }
 
 SizedBox adjustWidth(double width) {

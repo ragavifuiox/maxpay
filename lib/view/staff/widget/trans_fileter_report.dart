@@ -25,8 +25,8 @@ class TransactionFilterWidget extends StatefulWidget {
 
 class _TransactionFilterWidgetState extends State<TransactionFilterWidget> {
   String? selectedStatus;
-  DateTime? fromDate;
-  DateTime? toDate;
+  DateTime? fromDate = DateTime.now();
+  DateTime? toDate = DateTime.now();
   String? prd;
   final TextEditingController _searchController = TextEditingController();
 

@@ -1,6 +1,5 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:maxpay/controllers/homepage_controller.dart';
@@ -14,52 +13,44 @@ class NewsTicker extends StatefulWidget {
   State<NewsTicker> createState() => _NewsTickerState();
 }
 
-class _NewsTickerState extends State<NewsTicker> {
+class _NewsTickerState extends State<NewsTicker>
+    with SingleTickerProviderStateMixin {
   final HomePageController controller = Get.find<HomePageController>();
 
-  final ScrollController scrollController = ScrollController();
+  late ScrollController scrollController;
+  late Ticker _ticker;
+  double _lastElapsed = 0.0;
+  String _lastNewsText = "";
 
   @override
   void initState() {
     super.initState();
+    scrollController = ScrollController();
+
+    _ticker = createTicker((elapsed) {
+      if (!scrollController.hasClients) return;
+
+      final elapsedSecs = elapsed.inMicroseconds / 1000000.0;
+      final deltaSecs = elapsedSecs - _lastElapsed;
+      _lastElapsed = elapsedSecs;
+
+      // Constant speed of 45 pixels per second
+      final deltaPx = deltaSecs * 45.0;
+
+      // Infinite horizontal scroll
+      scrollController.jumpTo(scrollController.offset + deltaPx);
+    });
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      startScrolling();
+      _ticker.start();
     });
   }
 
   @override
   void dispose() {
+    _ticker.dispose();
     scrollController.dispose();
     super.dispose();
-  }
-
-  void startScrolling() {
-    if (!scrollController.hasClients) return;
-
-    final maxScrollExtent = scrollController.position.maxScrollExtent;
-
-    if (maxScrollExtent <= 0) {
-      Future.delayed(const Duration(seconds: 24), () {
-        if (mounted) {
-          startScrolling();
-        }
-      });
-      return;
-    }
-
-    scrollController
-        .animateTo(
-          maxScrollExtent,
-          duration: const Duration(seconds: 24),
-          curve: Curves.linear,
-        )
-        .then((_) {
-          if (!mounted) return;
-
-          scrollController.jumpTo(0);
-          startScrolling();
-        });
   }
 
   @override
@@ -82,9 +73,13 @@ class _NewsTickerState extends State<NewsTicker> {
         newsText = newsResponse.data!.first.message ?? "";
       }
 
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (!scrollController.hasClients) return;
-      });
+      if (_lastNewsText != newsText) {
+        _lastNewsText = newsText;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (!scrollController.hasClients) return;
+          scrollController.jumpTo(0);
+        });
+      }
 
       return RepaintBoundary(
         child: Container(
@@ -128,34 +123,35 @@ class _NewsTickerState extends State<NewsTicker> {
                 /// SCROLLING NEWS
                 Expanded(
                   child: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
                     onTap: () => showNewsPopup(newsText),
-                    child: SingleChildScrollView(
-                      controller: scrollController,
-                      scrollDirection: Axis.horizontal,
-                      physics: const NeverScrollableScrollPhysics(),
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 12.w),
-                        child: Row(
-                          children: [
-                            Text(
-                              newsText,
-                              style: TextStyle(
-                                fontSize: 14.sp,
-                                fontWeight: FontWeight.w500,
-                                color: colorScheme.onSurface,
+                    child: IgnorePointer(
+                      child: ListView.builder(
+                        controller: scrollController,
+                        scrollDirection: Axis.horizontal,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemBuilder: (context, index) {
+                          // Infinite looping items
+                          return Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.only(
+                                  left: index == 0 ? 12.w : 0,
+                                ),
+                                child: Text(
+                                  newsText,
+                                  style: TextStyle(
+                                    fontSize: 14.sp,
+                                    fontWeight: FontWeight.w500,
+                                    color: colorScheme.onSurface,
+                                  ),
+                                ),
                               ),
-                            ),
-                            SizedBox(width: 50.w),
-                            Text(
-                              newsText,
-                              style: TextStyle(
-                                fontSize: 14.sp,
-                                fontWeight: FontWeight.w500,
-                                color: colorScheme.onSurface,
-                              ),
-                            ),
-                          ],
-                        ),
+                              SizedBox(width: 50.w),
+                            ],
+                          );
+                        },
                       ),
                     ),
                   ),

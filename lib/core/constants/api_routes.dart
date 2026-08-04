@@ -79,5 +79,7 @@ class ApiRoutes {
   static const staffwalletreverse = "/staff_wallet_reverse";
   static const updateprofileotp = "/verify_profile_update_otp";
   static const faqreply = "/faq_reply";
+  static const totalrecharge = "/total_recharge";
+  static const bankdetail = "/get_bank_details";
   
 }

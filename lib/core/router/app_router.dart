@@ -25,6 +25,7 @@ import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/core/di/service_locator.dart';
 import 'package:maxpay/global_widget/insufficient_balance_page.dart';
 import 'package:maxpay/view/add_wallet/add_wallet_screen.dart';
+import 'package:maxpay/view/bank_detail/bank_details.dart';
 import 'package:maxpay/view/cabletv/cable_tv_page.dart';
 import 'package:maxpay/view/cashback/cash_back_screen.dart';
 import 'package:maxpay/view/dispute/dispute_screen.dart';
@@ -548,6 +549,7 @@ class AppPages {
     ),
     GetPage(name: AppRoutes.veirfypin, page: () => PinCodeEnterPage()),
     GetPage(name: AppRoutes.wallettrnsfer, page: () => WalletTransferScreen()),
+      GetPage(name: AppRoutes.bank, page: () => BankDetailsPage()),
     GetPage(
       name: AppRoutes.statementReadMore,
       page: () => const StatementReadMoreScreen(),
@@ -659,6 +661,7 @@ class AppPages {
             producttypeUseCase: sl(),
             submitDisputeUsecase: sl(),
             cashbackTypeUsecase: sl(),
+            totalTransactionUsecase: sl(),
           ),
           fenix: true,
         );

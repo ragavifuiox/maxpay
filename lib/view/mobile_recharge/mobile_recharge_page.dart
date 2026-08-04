@@ -1,5 +1,3 @@
-
-
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -168,7 +166,7 @@ class _MobileRechargePageState extends State<MobileRechargePage>
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
 
-      appBar: CommonAppBar(title:  'Mobile Prepaid Recharge'),
+      appBar: CommonAppBar(title: 'Mobile Prepaid Recharge'),
 
       body: SafeArea(
         child: SingleChildScrollView(
@@ -293,43 +291,52 @@ class _MobileRechargePageState extends State<MobileRechargePage>
                 child: TextField(
                   controller: mobileController,
                   keyboardType: TextInputType.number,
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                onChanged: (String value) async {
-  setState(() {
-    showOperatorDropdown = value.isEmpty;
-  });
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                    LengthLimitingTextInputFormatter(10),
+                  ],
+                  onChanged: (String value) async {
+                    setState(() {
+                      showOperatorDropdown = value.isEmpty;
+                    });
 
-  if (value.length == 10) {
-    await controller.checkOperator(value);
+                    if (value.length == 10) {
+                      await controller.checkOperator(value);
 
-    final matched = controller.selectedPlan.value;
+                      final matched = controller.selectedPlan.value;
 
-    if (matched != null) {
-      selectedOperator = matched.name ?? "";
-      selectedProductId = matched.id.toString();
+                      if (matched != null) {
+                        selectedOperator = matched.name ?? "";
+                        selectedProductId = matched.id.toString();
 
-      await controller.searchPlans(selectedProductId, "");
-      controller.applyTabFilter();
+                        await controller.searchPlans(selectedProductId, "");
+                        controller.applyTabFilter();
 
-      setState(() {
-        isPlanLoaded = true;
-      });
-    }
-  } else {
-    controller.operatorName.value = "";
-    controller.operatorWebsite.value = "";
+                        setState(() {
+                          isPlanLoaded = true;
+                        });
+                      }
+                    } else {
+                      controller.operatorName.value = "";
+                      controller.operatorWebsite.value = "";
 
-    // Clear operator selection
-    controller.selectedPlan.value = null;
-    selectedOperator = "";
-    selectedProductId = "";
-    isPlanLoaded = false;
-    controller.filteredSearchPlans.clear();
-  }
-},
+                      // Clear operator selection
+                      controller.selectedPlan.value = null;
+                      selectedOperator = "";
+                      selectedProductId = "";
+                      isPlanLoaded = false;
+                      controller.filteredSearchPlans.clear();
+                    }
+                  },
+                  maxLength: 10,
                   decoration: InputDecoration(
+                    counterText: "",
                     hintText: 'Enter Mobile No',
-                    hintStyle: TextStyle(color: Colors.grey, fontSize: 15.sp,fontFamily: 'Poppins'),
+                    hintStyle: TextStyle(
+                      color: Colors.grey,
+                      fontSize: 15.sp,
+                      fontFamily: 'Poppins',
+                    ),
                     border: InputBorder.none,
                     contentPadding: EdgeInsets.symmetric(
                       horizontal: 16.w,
@@ -357,26 +364,25 @@ class _MobileRechargePageState extends State<MobileRechargePage>
                                   //   controller.operatorName.value = "";
                                   //   controller.operatorWebsite.value = "";
                                   // },
-
-
                                   onTap: () {
-  mobileController.clear();
+                                    mobileController.clear();
 
-  controller.selectedPlan.value = null; // Clear selected operator
-  selectedOperator = "";
-  selectedProductId = "";
-  isPlanLoaded = false;
+                                    controller.selectedPlan.value =
+                                        null; // Clear selected operator
+                                    selectedOperator = "";
+                                    selectedProductId = "";
+                                    isPlanLoaded = false;
 
-  controller.operatorName.value = "";
-  controller.operatorWebsite.value = "";
+                                    controller.operatorName.value = "";
+                                    controller.operatorWebsite.value = "";
 
-  // Clear plan list if needed
-  controller.filteredSearchPlans.clear();
+                                    // Clear plan list if needed
+                                    controller.filteredSearchPlans.clear();
 
-  setState(() {
-    showOperatorDropdown = true;
-  });
-},
+                                    setState(() {
+                                      showOperatorDropdown = true;
+                                    });
+                                  },
                                   child: Icon(Icons.cancel, color: Colors.red),
                                 ),
                               SizedBox(width: 8),
@@ -453,24 +459,24 @@ class _MobileRechargePageState extends State<MobileRechargePage>
                               ),
                             );
                           }).toList(),
-                         onChanged: (Data? value) async {
-  if (value == null) return;
+                          onChanged: (Data? value) async {
+                            if (value == null) return;
 
-  controller.selectedPlan.value = value;
-  selectedOperator = value.name ?? "";
-  selectedProductId = value.id.toString();
+                            controller.selectedPlan.value = value;
+                            selectedOperator = value.name ?? "";
+                            selectedProductId = value.id.toString();
 
-  controller.operatorName.value = value.name ?? "";
-  controller.operatorWebsite.value = value.description ?? "";
+                            controller.operatorName.value = value.name ?? "";
+                            controller.operatorWebsite.value =
+                                value.description ?? "";
 
-  await controller.searchPlans(selectedProductId, "");
-  controller.applyTabFilter();
+                            await controller.searchPlans(selectedProductId, "");
+                            controller.applyTabFilter();
 
-  setState(() {
-    isPlanLoaded = true;
-  });
-}
-
+                            setState(() {
+                              isPlanLoaded = true;
+                            });
+                          },
                         ),
                       ),
                     ),
@@ -479,25 +485,27 @@ class _MobileRechargePageState extends State<MobileRechargePage>
               }),
               SizedBox(height: 20.h),
 
-
               /// SEARCH / AMOUNT FIELD
               Container(
                 decoration: BoxDecoration(
-                 color: isDark
-                            ? AppColors.darkplceholder
-                            : AppColors.clrplceholder,
-                  borderRadius: BorderRadius.circular(10.r),
-                  border: Border.all(  color: isDark
-                            ? AppColors.darkplceholder
-                            : AppColors.clrplceholder, width: 1),
-                ),
-                child: Container(
-                  decoration: BoxDecoration(
                   color: isDark
                       ? AppColors.darkplceholder
                       : AppColors.clrplceholder,
                   borderRadius: BorderRadius.circular(10.r),
+                  border: Border.all(
+                    color: isDark
+                        ? AppColors.darkplceholder
+                        : AppColors.clrplceholder,
+                    width: 1,
+                  ),
                 ),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: isDark
+                        ? AppColors.darkplceholder
+                        : AppColors.clrplceholder,
+                    borderRadius: BorderRadius.circular(10.r),
+                  ),
                   child: TextField(
                     controller: amountController,
                     keyboardType: TextInputType.number,
@@ -509,7 +517,11 @@ class _MobileRechargePageState extends State<MobileRechargePage>
                     },
                     decoration: InputDecoration(
                       hintText: "Enter Amount",
-                      hintStyle: TextStyle(color: Colors.grey, fontSize: 15.sp,fontFamily: 'Poppins'),
+                      hintStyle: TextStyle(
+                        color: Colors.grey,
+                        fontSize: 15.sp,
+                        fontFamily: 'Poppins',
+                      ),
                       border: InputBorder.none,
                       contentPadding: EdgeInsets.only(
                         left: 20.w,
@@ -625,7 +637,8 @@ class _MobileRechargePageState extends State<MobileRechargePage>
 
               /// TABBAR BUTTONS
               Row(
-                key: _proceedButtonKey, // 🔹 NEW: target for auto-scroll after plan/offer selection
+                key:
+                    _proceedButtonKey, // 🔹 NEW: target for auto-scroll after plan/offer selection
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   // Left Side
@@ -1018,19 +1031,27 @@ class _MobileRechargePageState extends State<MobileRechargePage>
             children: [
               /// Amount
               Expanded(
-                flex: 2,
-                child: Text(
-                  amount.currencyIndian,
-                  style: TextStyle(
-                    fontSize: 18.sp,
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w600,
-                    color: Theme.of(context).brightness == Brightness.dark
-                        ? Colors.white
-                        : Colors.black,
+                flex: 3,
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    amount.currencyIndian,
+                    maxLines: 1,
+                    overflow: TextOverflow.visible,
+                    softWrap: false,
+                    style: TextStyle(
+                      fontSize: 22.sp,
+                      fontFamily: 'Poppins',
+                      fontWeight: FontWeight.w700,
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.white
+                          : Colors.black,
+                    ),
                   ),
                 ),
               ),
+              const SizedBox(width: 32),
 
               /// Validity
               Expanded(
@@ -1324,7 +1345,7 @@ class _MobileRechargePageState extends State<MobileRechargePage>
             borderRadius: BorderRadius.circular(15),
           ),
           title: const Text(
-            "Terms & Conditions",
+            "Terms",
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
           content: const SingleChildScrollView(

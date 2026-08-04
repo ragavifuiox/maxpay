@@ -215,63 +215,67 @@ class CashbackTile extends StatelessWidget {
               )
             : null,
       ),
-      child: Row(
-        children: [
-          Container(
-            height: 35,
-            width: 35,
-            clipBehavior: Clip.hardEdge,
-            decoration: const BoxDecoration(
-              // shape: BoxShape.circle,
-            ),
-            child: Image.network(
-              logo,
-              fit: BoxFit.cover,
-              errorBuilder:
-                  (_, _, _) => const Icon(
-                    Icons.image,
-                  ),
-            ),
-          ),
-
-          const SizedBox(width: 12),
-
-          Expanded(
-            child: Text(
-              name,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-                color: theme.colorScheme.onSurface,
-              ),
-            ),
-          ),
-
-          Column(
-            crossAxisAlignment:
-                CrossAxisAlignment.end,
-            children: [
-              Text(
-                "Cashback",
-                style: TextHelper.max2.copyWith(
-                  color: theme.brightness ==
-                          Brightness.light
-                      ? AppColors.darktextclr
-                      : Colors.white,
-                ),
-              ),
-              const SizedBox(height: 3),
-              Text(
-                cashback,
+      child: Container(
+        child: Row(
+          children: [
+           Container(
+  height: 45,
+  width: 45,
+  clipBehavior: Clip.hardEdge,
+  decoration: BoxDecoration(
+    borderRadius: BorderRadius.circular(5),
+  ),
+  child: Image.network(
+    logo,
+    fit: BoxFit.contain,
+    errorBuilder: (context, error, stackTrace) {
+      return const Icon(
+        Icons.image,
+        size: 25,
+      );
+    },
+  ),
+),
+        
+            const SizedBox(width: 12),
+        
+            Expanded(
+              child: Text(
+                name,
                 style: TextStyle(
-                  color: cashbackColor,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  color: theme.colorScheme.onSurface,
                 ),
               ),
-            ],
-          ),
-        ],
+            ),
+        
+            Column(
+              crossAxisAlignment:
+                  CrossAxisAlignment.end,
+              children: [
+                Text(
+                  "Cashback",
+                  style: TextHelper.max2.copyWith(
+                    color: theme.brightness ==
+                            Brightness.light
+                        ? AppColors.darktextclr
+                        : Colors.white,
+                  ),
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  cashback,
+                  style: TextStyle(
+                    color: cashbackColor,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

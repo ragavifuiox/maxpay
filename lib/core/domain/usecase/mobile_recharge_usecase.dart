@@ -14,12 +14,15 @@ class MobileRechargeUsecase {
     String mobile,
     String amount,
     String paymentstatus,
+    String commission,
   ) {
     return repository.mobileRecharge(
       productdetid: productdetid,
       mobile: mobile,
       amount: amount,
       paymentstatus: paymentstatus,
+      commission: commission,
+
     );
   }
 }

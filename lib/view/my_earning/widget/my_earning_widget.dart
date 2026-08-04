@@ -66,19 +66,32 @@ class EarningsCard extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              CircleAvatar(
-                radius: 18,
-                backgroundColor: Colors.red,
-                child: Text(
-                  (item.productName?.isNotEmpty ?? false)
-                      ? item.productName![0].toUpperCase()
-                      : "J",
-                  style: const TextStyle(
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-
+            CircleAvatar(
+  radius: 18,
+  backgroundColor: AppColors.background,
+  child: ClipOval(
+    child: (item.productLogo != null &&
+            item.productLogo!.isNotEmpty)
+        ? Image.network(
+            item.productLogo!,
+            width: 36,
+            height: 36,
+            fit: BoxFit.contain, // shows full logo
+            errorBuilder: (context, error, stackTrace) {
+              return const Icon(
+                Icons.image,
+                size: 20,
+                color: Colors.grey,
+              );
+            },
+          )
+        : const Icon(
+            Icons.image,
+            size: 20,
+            color: Colors.grey,
+          ),
+  ),
+),
               const SizedBox(width: 10),
 
               Expanded(

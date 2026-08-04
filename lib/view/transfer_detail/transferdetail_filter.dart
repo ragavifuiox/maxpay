@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:maxpay/controllers/wallet_trnasfer_detail_controller.dart';
 import 'package:maxpay/core/constants/asset_images.dart';
 import 'package:maxpay/core/constants/colors.dart';
-import 'package:maxpay/core/utils/texthelper.dart';
+
 import 'package:maxpay/view/transfer_detail/wallet_trnasfer.dart';
 
 class TransferdetailFilter extends StatelessWidget {
@@ -123,12 +123,18 @@ class TransferdetailFilter extends StatelessWidget {
                       height: 45,
                       child: TextFormField(
                         controller: controller.fromDateController,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: isDark ? Colors.white : Colors.black,
+                        ),
                         decoration: InputDecoration(
                           hintText: "DD.MM.YYYY",
-                          hintStyle: TextHelper.max1.copyWith(
+                          hintStyle: TextStyle(
                             color: isDark
                                 ? AppColors.textclr
                                 : theme.colorScheme.onSurfaceVariant,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w400,
                           ),
                           filled: true,
                           fillColor: isDark
@@ -136,6 +142,7 @@ class TransferdetailFilter extends StatelessWidget {
                               : Colors.white,
                           contentPadding: const EdgeInsets.symmetric(
                             horizontal: 18,
+                            vertical: 12,
                           ),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
@@ -169,32 +176,42 @@ class TransferdetailFilter extends StatelessWidget {
                 child: GestureDetector(
                   onTap: () => controller.selectToDate(context),
                   child: AbsorbPointer(
-                    child: TextFormField(
-                      controller: controller.toDateController,
-                      decoration: InputDecoration(
-                        hintText: "DD.MM.YYYY",
-                        hintStyle: TextHelper.max1.copyWith(
-                          color: isDark
-                              ? AppColors.textclr
-                              : theme.colorScheme.onSurfaceVariant,
+                    child: SizedBox(
+                      height: 45,
+                      child: TextFormField(
+                        controller: controller.toDateController,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: isDark ? Colors.white : Colors.black,
                         ),
-                        filled: true,
-                        fillColor: isDark
-                            ? AppColors.darkplceholder
-                            : Colors.white,
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 18,
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(color: Colors.grey.shade300),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          borderSide: BorderSide(
+                        decoration: InputDecoration(
+                          hintText: "DD.MM.YYYY",
+                          hintStyle: TextStyle(
                             color: isDark
-                                ? AppColors.darkFilterBorder
-                                : AppColors.totalborde2,
+                                ? AppColors.textclr
+                                : theme.colorScheme.onSurfaceVariant,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w400,
+                          ),
+                          filled: true,
+                          fillColor: isDark
+                              ? AppColors.darkplceholder
+                              : Colors.white,
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 18,
+                            vertical: 12,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(color: Colors.grey.shade300),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(
+                              color: isDark
+                                  ? AppColors.darkFilterBorder
+                                  : AppColors.totalborde2,
+                            ),
                           ),
                         ),
                       ),
@@ -226,8 +243,8 @@ class TransferdetailFilter extends StatelessWidget {
                 padding: const EdgeInsets.all(12),
                 child: SvgPicture.asset(
                   AssetImages.search,
-                  width: 20,
-                  height: 20,
+                  width: 12,
+                  height: 12,
                   colorFilter: const ColorFilter.mode(
                     Colors.grey,
                     BlendMode.srcIn,

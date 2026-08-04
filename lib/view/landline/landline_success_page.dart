@@ -108,7 +108,7 @@ class LandlineSuccessPage extends StatelessWidget {
                       context: context,
                     ),
                     _buildSummaryRow(
-                      'Recharge Amount',
+                      'Transaction Amount',
                       "250",
                       context: context,
                     ),

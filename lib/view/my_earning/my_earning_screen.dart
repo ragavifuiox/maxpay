@@ -65,14 +65,14 @@ class MyEarningsScreen extends GetView<EarningController> {
                       ),
                     ),
                     const SizedBox(height: 4),
-                  Text(
-  "₹ ${(controller.earningsData.value?.data?.totalEarnings ?? 0).toDouble().toStringAsFixed(2)}",
-  style: const TextStyle(
-    color: Colors.white,
-    fontSize: 18,
-    fontWeight: FontWeight.bold,
-  ),
-),
+                    Text(
+                      "₹ ${(controller.earningsData.value?.data?.totalEarnings ?? 0).toDouble().toStringAsFixed(2)}",
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -82,6 +82,10 @@ class MyEarningsScreen extends GetView<EarningController> {
               // Dummy List
               Expanded(
                 child: Obx(() {
+                  if (controller.isSearchLoading.value) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
                   final list = controller.searchData.value?.data?.list ?? [];
 
                   if (list.isEmpty) {

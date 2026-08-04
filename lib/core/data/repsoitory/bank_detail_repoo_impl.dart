@@ -1,0 +1,22 @@
+import 'package:dartz/dartz.dart';
+import 'package:maxpay/core/constants/api_routes.dart';
+import 'package:maxpay/core/data/model/bank_details_model.dart';
+import 'package:maxpay/core/domain/repository/bank_detail_repository.dart';
+import 'package:maxpay/core/error/failure.dart';
+import 'package:maxpay/core/services/api_services.dart';
+
+class BankDetailRepooImpl implements BankDetailRepository {
+  final ApiService apiService;
+  BankDetailRepooImpl(this.apiService);
+
+  @override
+  Future<Either<Failure, BankDetails>> bankdetail() async {
+    try {
+      final response = await apiService.get(ApiRoutes.bankdetail);
+      final model = BankDetails.fromJson(response);
+      return Right(model);
+    } catch (e) {
+      return Left(ServerFailure(message: e.toString()));
+    }
+  }
+}

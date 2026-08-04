@@ -30,6 +30,7 @@ class EarningController extends GetxController {
   @override
   void onInit() {
     fetchEarnings();
+    searchEarnings(fromDate, toDate, search);
     super.onInit();
   }
 

@@ -17,18 +17,18 @@ class DthRechargeRepoImpl implements DthRechargeRepository {
     required String mobile,
     required String amount,
     required String paymentstatus,
-
-   
+    required String commission,
   }) async {
     try {
       final response = await apiService.post(
         ApiRoutes.Dthrecharge,
         data: {
           "product_id": productdetid,
-           "number": mobile,
-            "amount": amount,
-             "payment_status": paymentstatus,
-            },
+          "number": mobile,
+          "amount": amount,
+          "payment_status": paymentstatus,
+          "commission": commission,
+        },
       );
 
       AppLogger.logError("=========== 👍REQUEST BODY ===========");

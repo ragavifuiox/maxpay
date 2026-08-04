@@ -42,13 +42,10 @@ class AddStaffController extends GetxController {
   final staff = <Data>[].obs;
   final searchStaffData = <SearchStaffData>[].obs;
   final wallettransfer = <TransferData>[].obs;
-RxString selectedcreditname = ''.obs;
+  RxString selectedcreditname = ''.obs;
 
-RxString selectedPaymentType = "Wallet Transfer".obs;
-final List<String> walletTypes = [
-  "Wallet Transfer",
-  "Wallet Reverse",
-];
+  RxString selectedPaymentType = "Wallet Transfer".obs;
+  final List<String> walletTypes = ["Wallet Transfer", "Wallet Reverse"];
 
   RxList<WalReportData> walletreport = <WalReportData>[].obs;
   bool isLoading = false;
@@ -145,14 +142,9 @@ final List<String> walletTypes = [
 
       final result = await staffListUseCase();
 
-      result.fold(
-        (failure) {
-        
-        },
-        (data) {
-          staff.value = data.data ?? [];
-        },
-      );
+      result.fold((failure) {}, (data) {
+        staff.value = data.data ?? [];
+      });
     } finally {
       isLoading = false;
       update();
@@ -168,71 +160,62 @@ final List<String> walletTypes = [
       isLoading = true;
       update();
 
-    print("===== Wallet Transfer API =====");
-    print("Staff ID: $staffid");
-    print("Amount: $amount");
-    print("Payment Type: $paymenttype");
+      print("===== Wallet Transfer API =====");
+      print("Staff ID: $staffid");
+      print("Amount: $amount");
+      print("Payment Type: $paymenttype");
 
-    final result = await walletTransferUsecase(
-      staffid,
-      paymenttype,
-      amount,
-    );
+      final result = await walletTransferUsecase(staffid, paymenttype, amount);
 
-    print("API CALLED SUCCESSFULLY");
+      print("API CALLED SUCCESSFULLY");
 
-    result.fold(
-      (failure) {
-        print("API FAILED");
-        print("Error Message: ${failure.message}");
+      result.fold(
+        (failure) {
+          print("API FAILED");
+          print("Error Message: ${failure.message}");
 
-        CustomToast.error(failure.message);
-      },
-      (response) async {
-        print("API RESPONSE RECEIVED");
-        print("Success: ${response.success}");
-        print("Message: ${response.message}");
-        print("Response: $response");
+          CustomToast.error(failure.message);
+        },
+        (response) async {
+          print("API RESPONSE RECEIVED");
+          print("Success: ${response.success}");
+          print("Message: ${response.message}");
+          print("Response: $response");
 
-        if (response.success == true) {
-          CustomToast.success(
-            response.message ?? "Wallet Transfer Successful",
-          );
+          if (response.success == true) {
+            CustomToast.success(
+              response.message ?? "Wallet Transfer Successful",
+            );
 
-          print("Refreshing Wallet Balance...");
+            print("Refreshing Wallet Balance...");
 
-          await Get.find<HomePageController>()
-              .fetchWalletBalance();
+            await Get.find<HomePageController>().fetchWalletBalance();
 
-          print("Wallet Balance Refreshed");
+            print("Wallet Balance Refreshed");
 
-          update();
-        } else {
-          print("Transfer Failed");
+            update();
+          } else {
+            print("Transfer Failed");
 
-          CustomToast.error(
-            response.message ?? "Transfer Failed",
-          );
-        }
-      },
-    );
-  } catch (e, stackTrace) {
-    print("EXCEPTION OCCURRED");
-    print(e);
-    print(stackTrace);
+            CustomToast.error(response.message ?? "Transfer Failed");
+          }
+        },
+      );
+    } catch (e, stackTrace) {
+      print("EXCEPTION OCCURRED");
+      print(e);
+      print(stackTrace);
 
-    // CustomToast.error(
-    //   "Something went wrong. Please try again.",
-    // );
-  } finally {
-    isLoading = false;
-    update();
+      // CustomToast.error(
+      //   "Something went wrong. Please try again.",
+      // );
+    } finally {
+      isLoading = false;
+      update();
 
-    print("Loading Finished");
+      print("Loading Finished");
+    }
   }
-}
-
-
 
   Future<void> searchcredit({
     required String search,
