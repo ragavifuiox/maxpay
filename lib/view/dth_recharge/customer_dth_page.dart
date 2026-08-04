@@ -156,12 +156,13 @@ class CustomerDthPage extends GetView<DthController> {
                             "👉 FINAL PRODUCT ID: $productdetid",
                           );
 
+                          final commissionAmount = args['commission'] ?? "0.00";
                           final success = await controller.dthrecharge(
                             productdetid.toString(),
                             mobileNumber.toString(),
                             transactionAmount.toString(),
                             paymentStatus.toString(),
-                            args['commissionAmount']?.toString() ?? '0',
+                            commissionAmount,
                           );
 
                           AppLogger.debugPrint("AFTER API CALL");
@@ -170,7 +171,7 @@ class CustomerDthPage extends GetView<DthController> {
                               controller.rechargeResponse.value;
 
                           if (rechargeData != null) {
-                            final apiData = rechargeData.data?.data;
+                            final apiData = rechargeData.response;
 
                             final status =
                                 rechargeData.status?.toLowerCase() ?? "";
@@ -181,53 +182,64 @@ class CustomerDthPage extends GetView<DthController> {
                                   rechargeId:
                                       rechargeData.transactionId?.toString() ??
                                       "",
-                                  productName: confirmData?.productName ?? "",
+                                  productName:
+                                      confirmData?.productName ?? productName,
+                                  operatorLogo: operatorLogo,
 
-                                  operatorInitial:
-                                      (apiData?.operatorName?.isNotEmpty ??
-                                          false)
-                                      ? apiData!.operatorName![0]
+                                  operatorInitial: productName.isNotEmpty
+                                      ? productName[0]
                                       : "J",
 
                                   operatorColor: Colors.red,
 
                                   transactionNo:
-                                      apiData?.mobileno ?? mobileNumber,
+                                      apiData?.mobileNo ?? mobileNumber,
 
                                   rechargeAmount:
-                                      (apiData?.amount ?? transactionAmount)
+                                      (apiData?.amount?.toString() ??
+                                              transactionAmount)
                                           .toString()
                                           .currencyIndian,
 
-                                  transactionId: apiData?.tnxId ?? "",
+                                  transactionId:
+                                      rechargeData.transactionDetails?.txnId ??
+                                      apiData?.tnxId ??
+                                      "",
 
-                                  dateTime: apiData?.rechargeDate ?? "",
+                                  dateTime:
+                                      apiData?.rechargeDate ??
+                                      DateTime.now().toString(),
                                 ),
                               );
                             } else {
                               Get.to(
                                 () => DthFailedRechargeScreen(
-                                  productName: confirmData?.productName ?? "",
+                                  productName:
+                                      confirmData?.productName ?? productName,
 
-                                  operatorInitial:
-                                      (apiData?.operatorName?.isNotEmpty ??
-                                          false)
-                                      ? apiData!.operatorName![0]
+                                  operatorInitial: productName.isNotEmpty
+                                      ? productName[0]
                                       : "J",
 
                                   operatorColor: Colors.red,
 
                                   transactionNo:
-                                      apiData?.mobileno ?? mobileNumber,
+                                      apiData?.mobileNo ?? mobileNumber,
 
                                   rechargeAmount:
-                                      (apiData?.amount ?? transactionAmount)
+                                      (apiData?.amount?.toString() ??
+                                              transactionAmount)
                                           .toString()
                                           .currencyIndian,
 
-                                  transactionId: apiData?.tnxId ?? "",
+                                  transactionId:
+                                      rechargeData.transactionDetails?.txnId ??
+                                      apiData?.tnxId ??
+                                      "",
 
-                                  dateTime: apiData?.rechargeDate ?? "",
+                                  dateTime:
+                                      apiData?.rechargeDate ??
+                                      DateTime.now().toString(),
                                 ),
                               );
                             }

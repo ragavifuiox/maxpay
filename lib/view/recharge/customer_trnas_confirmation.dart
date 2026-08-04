@@ -158,52 +158,16 @@ class CustomerTransConfirmationScreen extends GetView<PrePaidController> {
                               paymentStatus.toLowerCase() == "paid"
                               ? "received"
                               : "not_received";
-
-                          final String commissionStr =
-                              confirmData?.commision ?? "0";
-
+                          final commissionAmount = args['commission'] ?? "0.00";
                           final success = await controller.mobilerecharge(
                             controller.productdetid,
                             mobileNumber,
                             transactionAmount,
                             backendStatus,
-                            commissionStr,
+                            commissionAmount,
                           );
 
                           AppLogger.debugPrint("AFTER API CALL");
-                          // final rechargeData =
-                          //     controller.rechargeResponse.value;
-
-                          // if (success && rechargeData != null) {
-                          //   final apiData = rechargeData.data?.apiResponse;
-
-                          //   Get.to(
-                          //     () => SuccessRechargePage(
-                          //       productName:
-                          //           apiData?.logo ??
-                          //           confirmData?.productName ??
-                          //           "",
-                          //       operatorLogo: apiData?.logo ?? "",
-                          //       operatorInitial:
-                          //           (apiData?.operatorName?.isNotEmpty ?? false)
-                          //           ? apiData!.operatorName![0]
-                          //           : "J",
-
-                          //       operatorColor: Colors.red,
-
-                          //       transactionNo:
-                          //           apiData?.mobileno ?? mobileNumber,
-
-                          //       rechargeAmount:
-                          //           (apiData?.amount ?? amountController.text)
-                          //               .currencyIndian,
-
-                          //       transactionId: apiData?.txnid ?? "",
-
-                          //       dateTime: apiData?.requestDatetime ?? "",
-                          //     ),
-                          //   );
-                          // }
 
                           final rechargeData =
                               controller.rechargeResponse.value;
@@ -217,22 +181,24 @@ class CustomerTransConfirmationScreen extends GetView<PrePaidController> {
                                         ?.toString() ??
                                     "",
                                 productName:
-                                    apiData?.operatorName ??
-                                    confirmData?.productName ??
-                                    "",
-                                operatorLogo: apiData?.logo ?? "",
-                                operatorInitial:
-                                    (apiData?.operatorName?.isNotEmpty ?? false)
-                                    ? apiData!.operatorName![0]
+                                    confirmData?.productName ?? productName,
+                                operatorLogo: apiData?.logo ?? operatorLogo,
+                                operatorInitial: productName.isNotEmpty
+                                    ? productName[0]
                                     : "J",
                                 operatorColor: Colors.green,
                                 transactionNo:
-                                    apiData?.mobileno ?? mobileNumber,
+                                    rechargeData.data?.recharge?.mobile ??
+                                    mobileNumber,
                                 rechargeAmount:
-                                    (apiData?.amount ?? amountController.text)
+                                    (rechargeData.data?.recharge?.amount ??
+                                            transactionAmount.toString())
                                         .currencyIndian,
-                                transactionId: apiData?.txnid ?? "",
-                                dateTime: apiData?.requestDatetime ?? "",
+                                transactionId:
+                                    rechargeData.data?.recharge?.txnId ?? "",
+                                dateTime:
+                                    rechargeData.data?.recharge?.requestTime ??
+                                    DateTime.now().toString(),
                               ),
                             );
                           } else {
@@ -243,22 +209,24 @@ class CustomerTransConfirmationScreen extends GetView<PrePaidController> {
                                         ?.toString() ??
                                     "",
                                 productName:
-                                    apiData?.operatorName ??
-                                    confirmData?.productName ??
-                                    "",
-                                operatorLogo: apiData?.logo ?? "",
-                                operatorInitial:
-                                    (apiData?.operatorName?.isNotEmpty ?? false)
-                                    ? apiData!.operatorName![0]
+                                    confirmData?.productName ?? productName,
+                                operatorLogo: apiData?.logo ?? operatorLogo,
+                                operatorInitial: productName.isNotEmpty
+                                    ? productName[0]
                                     : "J",
                                 operatorColor: Colors.red,
                                 transactionNo:
-                                    apiData?.mobileno ?? mobileNumber,
+                                    rechargeData?.data?.recharge?.mobile ??
+                                    mobileNumber,
                                 rechargeAmount:
-                                    (apiData?.amount ?? amountController.text)
+                                    (rechargeData?.data?.recharge?.amount ??
+                                            transactionAmount.toString())
                                         .currencyIndian,
-                                transactionId: apiData?.txnid ?? "",
-                                dateTime: apiData?.requestDatetime ?? "",
+                                transactionId:
+                                    rechargeData?.data?.recharge?.txnId ?? "",
+                                dateTime:
+                                    rechargeData?.data?.recharge?.requestTime ??
+                                    DateTime.now().toString(),
                               ),
                             );
                           }

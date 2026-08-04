@@ -12,14 +12,14 @@ class DthRechargeUsecase {
     String mobile,
     String amount,
     String paymenstatus,
-    String commissionAmount,
+    String commission,
   ) {
     return repository.Dthrecharge(
       productdetid: productdetid,
       mobile: mobile,
       amount: amount,
       paymentstatus: paymenstatus,
-      commissionAmount: commissionAmount,
+      commission: commission,
     );
   }
 }

@@ -44,6 +44,8 @@ class MenuScreen extends StatelessWidget {
       transreportUsecase: sl(),
       producttypeUseCase: sl(),
       submitDisputeUsecase: sl(),
+
+      totalTransactionUsecase: sl(),
     ),
   );
 
@@ -156,9 +158,54 @@ class MenuScreen extends StatelessWidget {
                             children: [
                               SizedBox(
                                 height: 150.h,
+                                width: double.infinity,
                                 child: Stack(
-                                  alignment: Alignment.center,
                                   children: [
+                                    // 1. VISUAL LAYER (Fading Animation)
+                                    Obx(() {
+                                      final currentIndex =
+                                          bannerController.currentIndex.value;
+                                      final list =
+                                          bannerController
+                                              .bannerData
+                                              .value
+                                              ?.data ??
+                                          [];
+
+                                      if (list.isEmpty)
+                                        return const SizedBox.shrink();
+
+                                      final imageUrl = _toImageUrl(
+                                        list[currentIndex].image,
+                                      );
+
+                                      return AnimatedSwitcher(
+                                        duration: const Duration(
+                                          milliseconds: 600,
+                                        ),
+                                        transitionBuilder: (child, animation) {
+                                          return FadeTransition(
+                                            opacity: animation,
+                                            child: child,
+                                          );
+                                        },
+                                        child: ClipRRect(
+                                          key: ValueKey<int>(currentIndex),
+                                          borderRadius: BorderRadius.circular(
+                                            16.r,
+                                          ),
+                                          child: Image.network(
+                                            imageUrl,
+                                            fit: BoxFit.cover,
+                                            width: double.infinity,
+                                            height: 150.h,
+                                          ),
+                                        ),
+                                      );
+                                    }),
+
+                                    // 2. GESTURE LAYER (Native PageView)
+                                    // This intercepts swipe gestures correctly without interfering with vertical scroll
                                     PageView.builder(
                                       controller:
                                           bannerController.pageController,
@@ -166,21 +213,12 @@ class MenuScreen extends StatelessWidget {
                                       onPageChanged: (index) {
                                         bannerController.currentIndex.value =
                                             index;
+                                        bannerController
+                                            .startAutoSlide(); // Reset timer on manual swipe
                                       },
                                       itemBuilder: (context, index) {
-                                        final imageUrl = _toImageUrl(
-                                          list[index].image,
-                                        );
-
-                                        return ClipRRect(
-                                          borderRadius: BorderRadius.circular(
-                                            16.r,
-                                          ),
-                                          child: Image.network(
-                                            imageUrl,
-                                            fit: BoxFit.cover,
-                                          ),
-                                        );
+                                        // Invisible widget to capture gestures
+                                        return const SizedBox.expand();
                                       },
                                     ),
                                   ],
@@ -215,8 +253,7 @@ class MenuScreen extends StatelessWidget {
 
                         /// STATUS CARDS
                         Obx(() {
-                          final transaction =
-                              homeController.transactionData.value;
+                          final transaction = controller.todaytrans.value?.data;
 
                           return Row(
                             children: [
@@ -229,19 +266,17 @@ class MenuScreen extends StatelessWidget {
                                       ),
                                     );
                                   },
-                                  borderRadius: BorderRadius.circular(12),
                                   child: _statusCard(
                                     image: AssetImages.successIcon,
-                                    value:
-                                        transaction?.data?.success?.count
-                                            .toString() ??
-                                        "0",
+                                    value: "${transaction?.successCount ?? 0}",
                                     bgColor: const Color(0xffC0FFDF),
                                     textColor: const Color(0xff22C55E),
                                   ),
                                 ),
                               ),
+
                               SizedBox(width: 12.w),
+
                               Expanded(
                                 child: InkWell(
                                   onTap: () {
@@ -251,19 +286,18 @@ class MenuScreen extends StatelessWidget {
                                       ),
                                     );
                                   },
-                                  borderRadius: BorderRadius.circular(12),
                                   child: _statusCard(
                                     image: AssetImages.processIcon,
                                     value:
-                                        transaction?.data?.processing?.count
-                                            .toString() ??
-                                        "0",
+                                        "${transaction?.processingCount ?? 0}",
                                     bgColor: const Color(0xffFFE1B4),
                                     textColor: Colors.orange,
                                   ),
                                 ),
                               ),
+
                               SizedBox(width: 12.w),
+
                               Expanded(
                                 child: InkWell(
                                   onTap: () {
@@ -273,13 +307,9 @@ class MenuScreen extends StatelessWidget {
                                       ),
                                     );
                                   },
-                                  borderRadius: BorderRadius.circular(12),
                                   child: _statusCard(
                                     image: AssetImages.failedIcon,
-                                    value:
-                                        transaction?.data?.failed?.count
-                                            .toString() ??
-                                        "0",
+                                    value: "${transaction?.failedCount ?? 0}",
                                     bgColor: const Color(0xffFFCCD3),
                                     textColor: Colors.red,
                                   ),
@@ -332,6 +362,7 @@ class MenuScreen extends StatelessWidget {
                               context,
                               productList,
                               advList,
+                              bannerController.currentAdvIndex.value,
                             );
                           } else {
                             return _buildCleanGrid(context, productList);
@@ -351,14 +382,21 @@ class MenuScreen extends StatelessWidget {
     );
   }
 
-  /// ✅ IMAGE 1 LAYOUT — with ad banners between icons
   Widget _buildLayoutWithAds(
     BuildContext context,
     List<Data> productList,
     List advList,
+    int currentIndex,
   ) {
-    /// ✅ FIXED: using _toImageUrl instead of .addToBase()
-    final adImageUrl = _toImageUrl(advList.first.adImage);
+    if (advList.isEmpty) return const SizedBox.shrink();
+
+    // Use current index to animate ads. Ad 1 gets current index, Ad 2 gets the prior index
+    // so they are usually different if there's more than 1 ad.
+    final ad1Index = currentIndex % advList.length;
+    final ad2Index = (currentIndex + 1) % advList.length;
+
+    final adImageUrl1 = _toImageUrl(advList[ad1Index].displayImage);
+    final adImageUrl2 = _toImageUrl(advList[ad2Index].adImage);
 
     return Column(
       children: [
@@ -392,22 +430,63 @@ class MenuScreen extends StatelessWidget {
               ],
             ),
             SizedBox(width: 12.w),
+
             Expanded(
-              child: SizedBox(
-                height: 160.h,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(16.r),
-                  child: Image.network(
-                    adImageUrl,
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, _, _) => Container(
-                      color: Colors.grey.shade300,
-                      child: const Icon(Icons.broken_image),
+              child: InkWell(
+                onTap: () {
+                  final urls = advList
+                      .map((e) => _toImageUrl(e.displayImage))
+                      .toList();
+                  _showFullImage(context, urls, ad1Index);
+                },
+                child: SizedBox(
+                  height: 160.h,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(16.r),
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 600),
+                      transitionBuilder: (child, animation) =>
+                          FadeTransition(opacity: animation, child: child),
+                      child: Image.network(
+                        adImageUrl1,
+                        key: ValueKey<String>(adImageUrl1),
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        height: double.infinity,
+                        errorBuilder: (_, _, _) => Container(
+                          color: Colors.grey.shade300,
+                          child: const Icon(Icons.broken_image),
+                        ),
+                      ),
                     ),
                   ),
                 ),
               ),
             ),
+            // Expanded(
+            //   child: SizedBox(
+            //     height: 160.h,
+            //     child: ClipRRect(
+            //       borderRadius: BorderRadius.circular(16.r),
+            //       child: AnimatedSwitcher(
+            //         duration: const Duration(milliseconds: 600),
+            //         transitionBuilder: (child, animation) =>
+            //             FadeTransition(opacity: animation, child: child),
+            //         child: Image.network(
+            //           adImageUrl1,
+            //           key: ValueKey<String>(adImageUrl1),
+            //           fit: BoxFit.cover,
+            //           width: double.infinity,
+            //           height: double.infinity,
+            //           errorBuilder: (_, _, _) => Container(
+            //             color: Colors.grey.shade300,
+            //             child: const Icon(Icons.broken_image),
+            //           ),
+            //         ),
+            //       ),
+            //     ),
+            //   ),
+            // ),
           ],
         ),
 
@@ -436,17 +515,30 @@ class MenuScreen extends StatelessWidget {
           children: [
             Expanded(
               child: InkWell(
-                onTap: () => _showFullImage(context, adImageUrl),
+                onTap: () {
+                  final urls = advList
+                      .map((e) => _toImageUrl(e.adImage))
+                      .toList();
+                  _showFullImage(context, urls, ad2Index);
+                },
                 child: SizedBox(
                   height: 160.h,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(16.r),
-                    child: Image.network(
-                      adImageUrl,
-                      fit: BoxFit.cover,
-                      errorBuilder: (_, _, _) => Container(
-                        color: Colors.grey.shade300,
-                        child: const Icon(Icons.broken_image),
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 600),
+                      transitionBuilder: (child, animation) =>
+                          FadeTransition(opacity: animation, child: child),
+                      child: Image.network(
+                        adImageUrl2,
+                        key: ValueKey<String>(adImageUrl2),
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        height: double.infinity,
+                        errorBuilder: (_, _, _) => Container(
+                          color: Colors.grey.shade300,
+                          child: const Icon(Icons.broken_image),
+                        ),
                       ),
                     ),
                   ),
@@ -503,27 +595,48 @@ class MenuScreen extends StatelessWidget {
     );
   }
 
-  void _showFullImage(BuildContext context, String imageUrl) {
+  void _showFullImage(
+    BuildContext context,
+    List<String> imageUrls,
+    int initialIndex,
+  ) {
+    final PageController controller = PageController(initialPage: initialIndex);
+
     showDialog(
       context: context,
-      barrierColor: Colors.black.withValues(alpha: 0.9),
+      barrierColor: Colors.black,
       builder: (_) {
-        return GestureDetector(
-          onTap: () => Get.back(),
-          child: Center(
-            child: Hero(
-              tag: imageUrl,
-              child: InteractiveViewer(
-                child: Image.network(
-                  imageUrl,
-                  fit: BoxFit.contain,
-                  errorBuilder: (_, _, _) => const Icon(
-                    Icons.broken_image,
-                    color: Colors.white,
-                    size: 60,
+        return Scaffold(
+          backgroundColor: Colors.black,
+          body: SafeArea(
+            child: Stack(
+              children: [
+                PageView.builder(
+                  controller: controller,
+                  itemCount: imageUrls.length,
+                  itemBuilder: (context, index) {
+                    final imageUrl = imageUrls[index];
+
+                    return InteractiveViewer(
+                      child: Center(
+                        child: Image.network(imageUrl, fit: BoxFit.contain),
+                      ),
+                    );
+                  },
+                ),
+                Positioned(
+                  top: 20,
+                  right: 20,
+                  child: IconButton(
+                    onPressed: () => Get.back(),
+                    icon: const Icon(
+                      Icons.close,
+                      color: Colors.white,
+                      size: 30,
+                    ),
                   ),
                 ),
-              ),
+              ],
             ),
           ),
         );

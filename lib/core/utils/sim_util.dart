@@ -11,6 +11,7 @@ class SimUtil {
     '6369497198',
     '9895762284',
     '6369497196',
+    '8888444444'
   ];
 
   /// Helper function to normalize and match
@@ -20,14 +21,13 @@ class SimUtil {
     final cleanSim = sim.replaceAll(RegExp(r'\D'), '');
     if (cleanEntered.isEmpty || cleanSim.isEmpty) return false;
 
-    // Match last 10 digits if both have at least 10 digits
+    
     if (cleanEntered.length >= 10 && cleanSim.length >= 10) {
       return cleanEntered.substring(cleanEntered.length - 10) ==
           cleanSim.substring(cleanSim.length - 10);
     }
 
-    // If any part of the number is visible (e.g., SIM returns fewer than 10 digits),
-    // compare it with the exact position (usually the end) of the entered number.
+  
     if (cleanEntered.endsWith(cleanSim)) {
       return true;
     }
@@ -40,17 +40,16 @@ class SimUtil {
   /// 1. The phone is in the test numbers list.
   /// 2. The phone matches an active SIM.
   /// 3. SIMs are present but none return a readable phone number (fallback).
-  ///
   /// Returns [false] if:
   /// 1. Permission is denied.
   /// 2. No SIM is inserted.
+
   /// 3. The phone number doesn't match any of the readable SIMs.
-  ///
   /// Set [showToasts] to true to display error messages via CustomToast (e.g. during login).
   static const _simChannel = MethodChannel('sim_verification');
 
   /// Verifies if the [registeredPhone] is currently present in the device's SIM slots.
-  /// Uses the new custom MethodChannel 'sim_verification' implemented in MainActivity.kt
+ 
   static Future<bool> verifySimPresent(
     String registeredPhone, {
     bool showToasts = false,
@@ -58,10 +57,10 @@ class SimUtil {
     final enteredPhone = registeredPhone.trim();
 
     if (testNumbers.contains(enteredPhone)) {
-      return true; // Bypass for test numbers
+      return true; 
     }
 
-    // 1. Request phone permission
+
     var status = await Permission.phone.status;
     if (!status.isGranted) {
       status = await Permission.phone.request();
@@ -75,12 +74,11 @@ class SimUtil {
       }
       return false;
     }
-
-    // 2. Fetch SIM info using MethodChannel
     try {
       final List<dynamic> simList = await _simChannel.invokeMethod(
         'getSimList',
       );
+
       AppLogger.logError("Detected SIM cards via channel: ${simList.length}");
 
       if (simList.isEmpty) {

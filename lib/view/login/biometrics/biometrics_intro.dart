@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:maxpay/controllers/auth_controller.dart';
+import 'package:get/get.dart';
 import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/core/utils/theme.dart';
@@ -13,9 +12,7 @@ class BiometricsIntroPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final themeController = Get.find<ThemeController>();
-
-    final controller = Get.find<AuthController>();
-    final isUpdate = Get.arguments['is_update'];
+    final isUpdate = Get.arguments['is_update'] ?? false;
 
     return Obx(() {
       final theme = Theme.of(context);
@@ -36,12 +33,13 @@ class BiometricsIntroPage extends StatelessWidget {
             ),
           ),
         ),
+
         body: SafeArea(
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 24.w),
             child: Column(
               children: [
-                SizedBox(height: 40.h),
+                SizedBox(height: 50.h),
 
                 Center(
                   child: Icon(
@@ -77,75 +75,21 @@ class BiometricsIntroPage extends StatelessWidget {
                     color: AppColors.darktextclr,
                   ),
                 ),
-
-                const Spacer(),
-
-                /// Enable Fingerprint Button
-                Column(
-                  crossAxisAlignment: .center,
-                  mainAxisAlignment: .center,
-                  spacing: 20.h,
-                  children: [
-                    CommonButton(
-                      title: isUpdate
-                          ? "Update Fingerprint"
-                          : "Enable Fingerprint",
-                      onTap: () {
-                        Get.toNamed(AppRoutes.biometricsScanning);
-                      },
-                    ),
-
-                    GestureDetector(
-                      onTap: () async {
-                        if (isUpdate) {
-                          final confirm = await Get.dialog<bool>(
-                            AlertDialog(
-                              title: const Text("Disable Fingerprint"),
-                              content: const Text(
-                                "Are you sure you want to remove fingerprint authentication? "
-                                "You will have to enter your MPIN every time you log in.",
-                              ),
-                              actions: [
-                                TextButton(
-                                  onPressed: () => Get.back(result: false),
-                                  child: const Text("Cancel"),
-                                ),
-                                TextButton(
-                                  onPressed: () => Get.back(result: true),
-                                  child: const Text(
-                                    "Disable",
-                                    style: TextStyle(color: Colors.red),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-
-                          if (confirm == true) {
-                            await controller.fingerprint(0);
-                            Get.offAndToNamed(AppRoutes.main);
-                          }
-                        } else {
-                          Get.offAndToNamed(AppRoutes.main);
-                        }
-                      },
-                      child: Text(
-                        isUpdate ? "Disable" : "Skip For Now",
-                        style: TextStyle(
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w600,
-                          fontSize: 16.sp,
-                          color: isUpdate
-                              ? AppColors.redClr
-                              : AppColors.clrPrimary,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-
-                SizedBox(height: 40.h),
               ],
+            ),
+          ),
+        ),
+
+        bottomNavigationBar: SafeArea(
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(24.w, 0, 24.w, 24.h),
+            child: CommonButton(
+              title: isUpdate
+                  ? "Update Fingerprint"
+                  : "Enable Fingerprint",
+              onTap: () {
+                Get.toNamed(AppRoutes.biometricsScanning);
+              },
             ),
           ),
         ),

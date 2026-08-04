@@ -34,29 +34,34 @@ class Data {
   String? transactionAmount;
   String? commission;
   String? remainingBalance;
-  String?logo;
+  String? logo;
+  String? commissiontype;
 
-  Data(
-      {this.productId,
-      this.productName,
-      this.paymentStatus,
-      this.transactionNo,
-      this.availableBalance,
-      this.transactionAmount,
-      this.commission,
-      this.remainingBalance,
-      this.logo});
+  Data({
+    this.productId,
+    this.productName,
+    this.paymentStatus,
+    this.transactionNo,
+    this.availableBalance,
+    this.transactionAmount,
+    this.commission,
+    this.remainingBalance,
+    this.logo,
+    this.commissiontype,
+  });
 
   Data.fromJson(Map<String, dynamic> json) {
     productId = json['product_id'];
     productName = json['product_name'];
     paymentStatus = json['payment_status'];
     transactionNo = json['transaction_no'];
-    availableBalance = json['available_balance'];
-    transactionAmount = json['transaction_amount'];
-    commission = json['commission'];
-    remainingBalance = json['remaining_balance'];
+    availableBalance = json['available_balance']?.toString();
+    transactionAmount = json['transaction_amount']?.toString();
+    commission = (json['commission'] ?? json['commision'])?.toString();
+    remainingBalance = json['remaining_balance']?.toString();
     logo = json['product_logo'];
+    commissiontype = (json['commission_type'] ?? json['commision_type'])
+        ?.toString();
   }
 
   Map<String, dynamic> toJson() {
@@ -70,6 +75,7 @@ class Data {
     data['commission'] = commission;
     data['remaining_balance'] = remainingBalance;
     data['product_logo'] = logo;
+    data['commission_type'] = commissiontype;
     return data;
   }
 }

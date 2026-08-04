@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:maxpay/core/data/model/transaction_report_model.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
+import 'package:maxpay/core/constants/extension.dart';
 
 class TransactionDetailsPage extends StatelessWidget {
   const TransactionDetailsPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-
     final TransrepData data = Get.arguments;
 
     return Scaffold(
@@ -21,67 +21,58 @@ class TransactionDetailsPage extends StatelessWidget {
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(12),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.shade300,
-                blurRadius: 5,
-              )
-            ],
+            boxShadow: [BoxShadow(color: Colors.grey.shade300, blurRadius: 5)],
           ),
 
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-productRow(
-  "Product Name",
-  data.productLogo,
-),
+              productRow("Product Name", data.productLogo),
 
               detailRow(
                 "Payment Status",
-                data.paymentStatus ?? "-"
+                (data.paymentStatus?.toLowerCase() == 'received')
+                    ? 'Success'
+                    : (data.paymentStatus ?? "-"),
+                textColor:
+                    (data.paymentStatus?.toLowerCase() == 'received' ||
+                        data.paymentStatus?.toLowerCase() == 'success')
+                    ? Colors.green
+                    : null,
               ),
 
-              detailRow(
-                "Transaction No",
-                data.transactionNo ?? "-"
-              ),
+              detailRow("Transaction No", data.transactionNo ?? "-"),
 
               detailRow(
                 "Available Balance",
-                "₹${data.availableBalance ?? "0"}"
+                "₹${data.availableBalance ?? "0"}",
               ),
 
               detailRow(
                 "Transaction Amount",
-                "₹${data.transactionAmount ?? "0"}"
+                "₹${data.transactionAmount ?? "0"}",
               ),
 
-              detailRow(
-                "Commission",
-                "₹${data.commission ?? "0"}"
-              ),
-
-              detailRow(
-                "Surcharge",
-                "₹${data.surcharge ?? "0"}"
-              ),
+              detailRow("Commission", "₹${data.commission ?? "0"}"),
 
               detailRow(
                 "Remaining Balance",
-                "₹${data.remainingBalance ?? "0"}"
+                "₹${data.remainingBalance ?? "0"}",
               ),
 
               detailRow(
                 "Request Date&Time",
-                data.requestDateTime ?? "-"
+                (data.requestDateTime?.isNotEmpty ?? false)
+                    ? formatTransactionDate(data.requestDateTime!)
+                    : "-",
               ),
 
               detailRow(
                 "Response Date&Time",
-                data.responseDateTime ?? "-"
+                (data.responseDateTime?.isNotEmpty ?? false)
+                    ? formatTransactionDate(data.responseDateTime!)
+                    : "-",
               ),
-
             ],
           ),
         ),
@@ -89,67 +80,48 @@ productRow(
     );
   }
 
-
-  Widget detailRow(String title,String value){
-
+  Widget detailRow(String title, String value, {Color? textColor}) {
     return Padding(
-      padding: const EdgeInsets.only(bottom:12),
+      padding: const EdgeInsets.only(bottom: 12),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize:12,
-            ),
-          ),
+          Text(title, style: const TextStyle(fontSize: 12)),
 
           Text(
             value,
-            style: const TextStyle(
-              fontSize:12,
+            style: TextStyle(
+              fontSize: 12,
               fontWeight: FontWeight.w600,
+              color: textColor,
             ),
           ),
-
         ],
       ),
     );
   }
+
   Widget productRow(String title, String? imageUrl) {
-  return Padding(
-    padding: const EdgeInsets.only(bottom: 12),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(title, style: const TextStyle(fontSize: 12)),
 
-        Text(
-          title,
-          style: const TextStyle(
-            fontSize: 12,
-          ),
-        ),
-
-        imageUrl != null && imageUrl.isNotEmpty
-            ? Image.network(
-                imageUrl,
-                height: 35,
-                width: 35,
-                fit: BoxFit.contain,
-                errorBuilder: (context, error, stackTrace) {
-                  return const Icon(
-                    Icons.image_not_supported,
-                    size: 35,
-                  );
-                },
-              )
-            : const Text(
-                "-",
-                style: TextStyle(fontSize: 12),
-              ),
-      ],
-    ),
-  );
-}
+          imageUrl != null && imageUrl.isNotEmpty
+              ? Image.network(
+                  imageUrl,
+                  height: 35,
+                  width: 35,
+                  fit: BoxFit.contain,
+                  errorBuilder: (context, error, stackTrace) {
+                    return const Icon(Icons.image_not_supported, size: 35);
+                  },
+                )
+              : const Text("-", style: TextStyle(fontSize: 12)),
+        ],
+      ),
+    );
+  }
 }

@@ -9,21 +9,43 @@ import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/core/constants/snackbar.dart';
 import 'package:maxpay/core/extensions/currency.dart';
 import 'package:maxpay/core/utils/logg_helper.dart';
-import 'package:maxpay/global_widget/commom_button.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
 import 'package:maxpay/view/dth_recharge/dth_failed_recharge_screen.dart';
 import 'package:maxpay/view/dth_recharge/dth_success_page.dart';
-
 import 'package:get/get.dart';
 
-class ConfirmDthPage extends GetView<DthController> {
-  TextEditingController whatsappController = TextEditingController();
+class ConfirmDthPage extends StatefulWidget {
+  const ConfirmDthPage({super.key});
 
-  TextEditingController amountController = TextEditingController();
-  ConfirmDthPage({super.key});
-  String get paymentStatus => args['paymentStatus'] ?? '';
+  @override
+  State<ConfirmDthPage> createState() => _ConfirmDthPageState();
+}
+
+class _ConfirmDthPageState extends State<ConfirmDthPage> {
+  late final DthController controller;
+  final TextEditingController whatsappController = TextEditingController();
+  final TextEditingController amountController = TextEditingController();
   late String productdetid;
-  final args = Get.arguments ?? {};
+
+  late final Map<String, dynamic> args;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = Get.find<DthController>();
+    args = Get.arguments ?? {};
+
+    final isFromTranactionPage = args['isFromTranactionPage'] ?? false;
+    final String pId = args['productdetid']?.toString() ?? '';
+
+    if (isFromTranactionPage && pId.isNotEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        controller.getconfirmdth(pId);
+      });
+    }
+  }
+
+  String get paymentStatus => args['paymentStatus'] ?? '';
   String get type => args["type"] ?? "mobile";
 
   void setProductId(String id) {
@@ -42,360 +64,505 @@ class ConfirmDthPage extends GetView<DthController> {
 
   @override
   Widget build(BuildContext context) {
-    final args = Get.arguments ?? {};
-
     final String customerId = args['customerId'] ?? '';
-
     final String selectedAmount = args['amount']?.toString() ?? '';
 
-    print("========== Confirm DTH ==========");
-    print("Arguments: $args");
-    print("Customer ID: $customerId");
-    print("Amount: $selectedAmount");
-    print("Product ID: ${args['productdetid']}");
+    AppLogger.debugPrint("========== Confirm DTH ==========");
+    AppLogger.debugPrint("Arguments: $args");
+    AppLogger.debugPrint("Customer ID: $customerId");
+    AppLogger.debugPrint("Amount: $selectedAmount");
+    AppLogger.debugPrint("Product ID: ${args['productdetid']}");
 
-    print("SELECTED AMOUNT => $selectedAmount");
+    AppLogger.debugPrint("SELECTED AMOUNT => $selectedAmount");
 
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     AppLogger.logError(args.toString());
-    final confirmData = controller.confirmdth.value?.data;
-    final isFromTranactionPage = Get.arguments['isFromTranactionPage'] ?? false;
 
-    if (controller.isLoading.value) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
-    }
+    return Obx(() {
+      final confirmData = controller.confirmdth.value?.data;
+      final isFromTranactionPage = args['isFromTranactionPage'] ?? false;
 
-    if (confirmData == null && !isFromTranactionPage) {
-      return const Scaffold(body: Center(child: Text("No Data Found")));
-    }
+      if (controller.isLoading.value) {
+        return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      }
 
-    final String productName =
-        confirmData?.productName ?? args['operator'] ?? '';
-    final String logoUrl = confirmData?.logo ?? args['logo'] ?? '';
+      if (confirmData == null && !isFromTranactionPage) {
+        return const Scaffold(body: Center(child: Text("No Data Found")));
+      }
 
-    final String availableBalanceStr =
-        confirmData?.availableBalance ?? args['availableBalance'] ?? '0';
-    final String transactionAmountStr = selectedAmount.isNotEmpty
-        ? selectedAmount
-        : (confirmData?.transactionAmount ?? args['amount'] ?? "0").toString();
-    final String commissionStr =
-        confirmData?.commission ?? args['commission'] ?? '0';
+      final String productName =
+          confirmData?.productName ?? args['operator'] ?? '';
+      final String logoUrl = confirmData?.logo ?? args['logo'] ?? '';
 
-    final double availBal = double.tryParse(availableBalanceStr) ?? 0.0;
-    final double transAmt = double.tryParse(transactionAmountStr) ?? 0.0;
+      final String availableBalanceStr =
+          confirmData?.availableBalance ?? args['availableBalance'] ?? '0';
+      final String transactionAmountStr = selectedAmount.isNotEmpty
+          ? selectedAmount
+          : (confirmData?.transactionAmount ?? args['amount'] ?? "0")
+                .toString();
 
-    final String remainingBalanceStr =
-        confirmData?.remainingBalance?.toString() ??
-        (availBal - transAmt).toStringAsFixed(2);
+      final double parsedAvailable =
+          double.tryParse(
+            availableBalanceStr.replaceAll(RegExp(r'[^0-9.]'), ''),
+          ) ??
+          0.0;
+      final double parsedTransaction =
+          double.tryParse(
+            transactionAmountStr.replaceAll(RegExp(r'[^0-9.]'), ''),
+          ) ??
+          0.0;
 
-    return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
-      appBar: CommonAppBar(title: "Confirm Transaction"),
-      body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.w),
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(height: 20.h),
+      final String commissionRaw =
+          confirmData?.commission ?? args['commission'] ?? '0';
+      final String commissionType = confirmData?.commissiontype ?? "Fixed";
 
-                Container(
-                  padding: EdgeInsets.all(15.w),
-                  decoration: BoxDecoration(
-                    color: isDark ? AppColors.darkplceholder : Colors.white,
-                    borderRadius: BorderRadius.circular(12.r),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Colors.black12,
-                        blurRadius: 6,
-                        offset: Offset(0, 2),
+      final double transactionAmount =
+          double.tryParse(transactionAmountStr) ?? 0.0;
+
+      final double commissionValue = double.tryParse(commissionRaw) ?? 0.0;
+      AppLogger.debugPrint("===== COMMISSION DEBUG =====");
+      AppLogger.debugPrint("Transaction Amount: $transactionAmountStr");
+      AppLogger.debugPrint("Commission Raw: $commissionRaw");
+      AppLogger.debugPrint("Commission Type: $commissionType");
+      AppLogger.debugPrint("Parsed Transaction: $transactionAmount");
+      AppLogger.debugPrint("Parsed Commission: $commissionValue");
+      AppLogger.debugPrint(confirmData?.toJson().toString() ?? "null");
+
+      double commissionAmount = 0.0;
+      String commissionStr = "0";
+
+      if (commissionType.toLowerCase() == "percentage" ||
+          commissionType.toLowerCase() == "percent") {
+        commissionAmount = (transactionAmount * commissionValue) / 100;
+        commissionStr = commissionAmount.toStringAsFixed(2);
+      } else {
+        commissionAmount = commissionValue;
+        commissionStr = commissionAmount.toStringAsFixed(2);
+      }
+      final String remainingBalanceStr =
+          (parsedAvailable - parsedTransaction + commissionAmount)
+              .toStringAsFixed(2);
+
+      return Scaffold(
+        backgroundColor: theme.scaffoldBackgroundColor,
+        appBar: CommonAppBar(title: "Confirm Transaction"),
+        body: SafeArea(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20.w),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: 20.h),
+
+                  // ===== Transaction summary card =====
+                  Container(
+                    padding: EdgeInsets.all(15.w),
+                    decoration: BoxDecoration(
+                      color: isDark
+                          ? AppColors.darkplceholder
+                          : const Color(0xFFE5FBFF),
+                      borderRadius: BorderRadius.circular(12.r),
+                      border: Border.all(
+                        color: isDark
+                            ? AppColors.darkFilterBorder
+                            : AppColors.clrPrimary,
+                        width: 1.5,
                       ),
-                    ],
-                  ),
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.symmetric(vertical: 12.h),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'Product',
-                              style: TextStyle(
-                                color: Colors.grey,
-                                fontSize: 14.sp,
-                              ),
-                            ),
-                            Container(
-                              width: 40.w,
-                              height: 30.h,
-                              alignment: Alignment.centerRight,
-                              child: Image.network(
-                                logoUrl,
-                                fit: BoxFit.contain,
-                                errorBuilder: (context, error, stackTrace) {
-                                  return const Icon(Icons.image_not_supported);
-                                },
-                              ),
-                            ),
-                          ],
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Colors.black12,
+                          blurRadius: 6,
+                          offset: Offset(1, 0),
                         ),
-                      ),
+                      ],
+                    ),
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: 8.h),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Product Name',
+                                style: TextStyle(
+                                  color: isDark ? Colors.white : Colors.black,
+                                  fontSize: 14.sp,
+                                  fontFamily: 'Poppins',
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                              Container(
+                                width: 60.w,
+                                height: 30.h,
+                                alignment: Alignment.centerRight,
+                                child: logoUrl.isNotEmpty
+                                    ? Image.network(
+                                        logoUrl,
+                                        fit: BoxFit.contain,
+                                        errorBuilder:
+                                            (context, error, stackTrace) {
+                                              return const Icon(
+                                                Icons.image_not_supported,
+                                              );
+                                            },
+                                      )
+                                    : const SizedBox.shrink(),
+                              ),
+                            ],
+                          ),
+                        ),
 
-                      _buildDetailRow(
-                        context,
-                        'Payment Status',
-                        paymentStatus,
-                        valueColor: paymentStatus == "Paid"
-                            ? Colors.green
-                            : Colors.red,
-                      ),
-                      _buildDetailRow(context, 'Transaction No', customerId),
+                        _buildDetailRow(
+                          context,
+                          'Payment Status',
+                          paymentStatus,
+                          valueColor:
+                              paymentStatus.toLowerCase() == "paid" ||
+                                  paymentStatus.toLowerCase() == "received"
+                              ? const Color(0xFF0DB561)
+                              : Colors.red,
+                        ),
 
-                      SizedBox(height: 10.h),
+                        _buildDetailRow(
+                          context,
+                          'Transaction No',
+                          customerId,
+                          valueColor: isDark ? Colors.white : Colors.black,
+                        ),
 
-                      _buildAmountBox(
-                        context,
-                        'Available Balance',
-                        availableBalanceStr.currencyIndian,
-                        Colors.blue,
-                        const Color(0xffE8EEFF),
-                        const Color(0xffE0E4FF),
-                      ),
+                        _buildDetailRow(
+                          context,
+                          'Available Balance',
+                          availableBalanceStr.currencyIndian,
+                          valueColor: const Color(0xFF314CFF),
+                        ),
 
-                      _buildAmountBox(
-                        context,
-                        'Transaction Amount',
-                        transactionAmountStr.currencyIndian,
-                        Colors.red,
-                        const Color(0xffFFE5E5),
-                        const Color(0xffFFE4E8),
-                      ),
+                        _buildDetailRow(
+                          context,
+                          'Transaction Amount',
+                          transactionAmountStr.currencyIndian,
+                          valueColor: Colors.red,
+                        ),
 
-                      _buildAmountBox(
-                        context,
-                        'Commission',
-                        commissionStr.currencyIndian,
-                        Colors.green,
-                        const Color(0xffE4FFF1),
-                        const Color(0xffE6FFF3),
-                      ),
+                        _buildDetailRow(
+                          context,
+                          'Commission',
+                          commissionStr.currencyIndian,
+                          valueColor: const Color(0xFF00C261),
+                        ),
 
-                      _buildAmountBox(
-                        context,
-                        'Remaining Balance',
-                        remainingBalanceStr.currencyIndian,
-                        Colors.blue,
-                        const Color(0xffE8EEFF),
-                        const Color(0xffE0E4FF),
-                      ),
-                    ],
-                  ),
-                ),
-
-                SizedBox(height: 20.h),
-
-                _buildInputLabel('For Transaction Detail', true),
-
-                _buildTextField(
-                  context,
-                  'Enter Whatsapp no',
-                  controller: whatsappController,
-                  keyboardType: TextInputType.phone,
-                ),
-                SizedBox(height: 15.h),
-                _buildInputLabel('Re-enter Amount', false),
-                _buildTextField(
-                  context,
-                  'Enter amount',
-                  isHighlighted: true,
-                  controller: amountController,
-                ),
-                SizedBox(height: 20.h),
-                Center(
-                  child: CommonButton(
-                    title: "Customer Confirmation",
-                    backgroundColor: AppColors.clrSecondary,
-                    onTap: () {
-                      // if (whatsappController.text.trim().isEmpty) {
-                      //   CustomToast.error("Please enter WhatsApp number");
-
-                      //   return;
-                      // }
-
-                      if (amountController.text.trim().isEmpty) {
-                        CustomToast.error("Please enter amount");
-                        return;
-                      }
-
-                      // Validate entered amount with selected amount
-                      if (amountController.text.trim() !=
-                          selectedAmount.trim()) {
-                        CustomToast.error(
-                          "Entered amount does not match the transaction amount",
-                        );
-                        return;
-                      }
-
-                      final args = Get.arguments ?? {};
-
-                      Get.toNamed(
-                        AppRoutes.dthcustomer,
-                        arguments: {
-                          "mobileNumber": customerId,
-                          "productdetid": args['productdetid'],
-                          "productName": productName,
-                          "paymentStatus": convertedPaymentStatus,
-                          "transactionNo": customerId,
-                          "transactionAmount":
-                              amountController.text.trim().isNotEmpty
-                              ? amountController.text.trim()
-                              : transactionAmountStr,
-                          "whatsappNumber":
-                              whatsappController.text.trim().isEmpty
-                              ? "N/A"
-                              : whatsappController.text.trim(),
-                          "operatorInitial": productName.isNotEmpty
-                              ? productName[0]
-                              : '',
-                          "operatorColor": Colors.red,
-                          "operatorLogo": logoUrl,
-                          "commissionAmount": commissionStr,
-                        },
-                      );
-                    },
-                  ),
-                ),
-
-                SizedBox(height: 16.h),
-
-                Obx(
-                  () => Center(
-                    child: CommonButton(
-                      title: controller.isRechargeLoading.value
-                          ? "Processing..."
-                          : "Pay Now",
-
-                      onTap: controller.isRechargeLoading.value
-                          ? null
-                          : () async {
-                              if (whatsappController.text.trim().isEmpty) {
-                                if (amountController.text.trim().isEmpty) {
-                                  CustomToast.error("Please enter amount");
-
-                                  return;
-                                }
-
-                                // Validate entered amount with selected amount
-                                if (amountController.text.trim() !=
-                                    selectedAmount.trim()) {
-                                  CustomToast.error(
-                                    "Entered amount does not match the transaction amount",
-                                  );
-
-                                  return;
-                                }
-                              }
-
-                              print(
-                                "ARGS PRODUCT ID => ${args['productdetid']}",
-                              );
-                              print(
-                                "CONTROLLER PRODUCT ID => ${controller.productdetid}",
-                              );
-
-                              AppLogger.debugPrint(
-                                "👉 FINAL PRODUCT ID: ${controller.productdetid}",
-                              );
-
-                              final success = await controller.dthrecharge(
-                                args['productdetid'].toString(),
-                                customerId,
-                                amountController.text.trim(),
-                                convertedPaymentStatus,
-                                commissionStr,
-                              );
-
-                              AppLogger.debugPrint("AFTER API CALL");
-                              final rechargeData =
-                                  controller.rechargeResponse.value;
-
-                              if (rechargeData != null) {
-                                final apiData = rechargeData.data?.data;
-
-                                final status =
-                                    rechargeData.status?.toLowerCase() ?? "";
-
-                                if (success && status == "success") {
-                                  Get.to(
-                                    () => DthSuccessPage(
-                                      productName: productName,
-                                      rechargeId:
-                                          rechargeData.transactionId
-                                              ?.toString() ??
-                                          "",
-
-                                      operatorInitial:
-                                          (apiData?.operatorName?.isNotEmpty ??
-                                              false)
-                                          ? apiData!.operatorName![0]
-                                          : "J",
-                                      operatorColor: Colors.red,
-
-                                      transactionNo:
-                                          apiData?.mobileno ?? customerId,
-                                      rechargeAmount:
-                                          (apiData?.amount ??
-                                                  amountController.text)
-                                              .currencyIndian,
-                                      transactionId: apiData?.tnxId ?? "",
-                                      dateTime: apiData?.rechargeDate ?? "",
-                                    ),
-                                  );
-                                } else {
-                                  Get.to(
-                                    () => DthFailedRechargeScreen(
-                                      productName: productName,
-                                      operatorInitial:
-                                          (apiData?.operatorName?.isNotEmpty ??
-                                              false)
-                                          ? apiData!.operatorName![0]
-                                          : "J",
-                                      operatorColor: Colors.red,
-                                      transactionNo:
-                                          apiData?.mobileno ?? customerId,
-                                      rechargeAmount:
-                                          (apiData?.amount ??
-                                                  amountController.text)
-                                              .currencyIndian,
-                                      transactionId: apiData?.tnxId ?? "",
-                                      dateTime: apiData?.rechargeDate ?? "",
-                                    ),
-                                  );
-                                }
-                              }
-                            },
+                        _buildDetailRow(
+                          context,
+                          'Remaining Balance',
+                          remainingBalanceStr.currencyIndian,
+                          valueColor: const Color(0xFF314CFF),
+                        ),
+                      ],
                     ),
                   ),
-                ),
 
-                SizedBox(height: 40.h),
-              ],
+                  SizedBox(height: 20.h),
+
+                  // ===== Transaction detail input card =====
+                  Container(
+                    padding: EdgeInsets.all(15.w),
+                    decoration: BoxDecoration(
+                      color: isDark
+                          ? AppColors.darkFilterBorder
+                          : const Color(0xFFE5FBFF),
+                      borderRadius: BorderRadius.circular(12.r),
+                      border: Border.all(
+                        color: isDark ? Colors.white24 : AppColors.clrPrimary,
+                        width: 1.2,
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildInputLabel(
+                          context,
+                          'For Transaction Detail',
+                          true,
+                        ),
+                        SizedBox(height: 8.h),
+                        _buildTextField(
+                          context,
+                          'Enter Whatsapp no',
+                          controller: whatsappController,
+                          // Note: DTH page did not import SvgPicture or asset, but keeping behavior similar without prefixIcon if it's missing, let's leave it as plain.
+                          // Wait, does confirm_dth have SvgPicture? Let's assume it doesn't and skip prefixIcon to prevent errors, or maybe it does?
+                          keyboardType: TextInputType.phone,
+                        ),
+                        SizedBox(height: 15.h),
+                        _buildInputLabel(context, 'Re-enter Amount', false),
+                        SizedBox(height: 8.h),
+                        _buildTextField(
+                          context,
+                          'Enter amount',
+                          isHighlighted: true,
+                          controller: amountController,
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  SizedBox(height: 20.h),
+
+                  // ===== Warning note =====
+                  Center(
+                    child: Container(
+                      width: 380.w,
+                      padding: EdgeInsets.symmetric(
+                        vertical: 8.h,
+                        horizontal: 20.w,
+                      ),
+                      decoration: BoxDecoration(
+                        color: const Color(0xffFFDDE2),
+                        borderRadius: BorderRadius.circular(4.r),
+                      ),
+                      child: Center(
+                        child: Text(
+                          "Note: Wrong recharge amount is not refundable",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 12.sp,
+                            fontWeight: FontWeight.w500,
+                            color: const Color(0xffFF001F),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  SizedBox(height: 20.h),
+                  // ===== Bottom action buttons (side by side) =====
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _pillButton(
+                          title: "Customer Confirmation",
+                          color: const Color(0xFF0B1440),
+                          onTap: () {
+                            if (amountController.text.trim().isEmpty) {
+                              CustomToast.error("Please enter amount");
+                              return;
+                            }
+
+                            if (amountController.text.trim() !=
+                                selectedAmount.trim()) {
+                              CustomToast.error(
+                                "Entered amount does not match the transaction amount",
+                              );
+                              return;
+                            }
+
+                            final args = Get.arguments ?? {};
+
+                            Get.toNamed(
+                              AppRoutes.dthcustomer,
+                              arguments: {
+                                "mobileNumber": customerId,
+                                "productdetid": args['productdetid'],
+                                "productName": productName,
+                                "paymentStatus": convertedPaymentStatus,
+                                "transactionNo": customerId,
+                                "transactionAmount":
+                                    amountController.text.trim().isNotEmpty
+                                    ? amountController.text.trim()
+                                    : transactionAmountStr,
+                                "whatsappNumber":
+                                    whatsappController.text.trim().isEmpty
+                                    ? "N/A"
+                                    : whatsappController.text.trim(),
+                                "operatorInitial": productName.isNotEmpty
+                                    ? productName[0]
+                                    : '',
+                                "operatorColor": Colors.red,
+                                "operatorLogo": logoUrl,
+                                "commission": commissionStr,
+                              },
+                            );
+                          },
+                        ),
+                      ),
+                      SizedBox(width: 12.w),
+                      Expanded(
+                        child: Obx(
+                          () => _pillButton(
+                            title: controller.isRechargeLoading.value
+                                ? "Processing..."
+                                : "Pay Now",
+                            color: const Color(0xFF1CACC2),
+                            isLoading: controller.isRechargeLoading.value,
+                            onTap: controller.isRechargeLoading.value
+                                ? null
+                                : () async {
+                                    if (amountController.text.trim().isEmpty) {
+                                      CustomToast.error("Please enter amount");
+                                      return;
+                                    }
+
+                                    if (amountController.text.trim() !=
+                                        selectedAmount.trim()) {
+                                      CustomToast.error(
+                                        "Entered amount does not match the transaction amount",
+                                      );
+                                      return;
+                                    }
+
+                                    final success = await controller
+                                        .dthrecharge(
+                                          args['productdetid'].toString(),
+                                          customerId,
+                                          amountController.text.trim(),
+                                          convertedPaymentStatus,
+                                          commissionStr,
+                                        );
+
+                                    final rechargeData =
+                                        controller.rechargeResponse.value;
+
+                                    if (rechargeData != null) {
+                                      final apiData = rechargeData.response;
+
+                                      if (success) {
+                                        Get.to(
+                                          () => DthSuccessPage(
+                                            productName: productName,
+                                            operatorLogo: logoUrl,
+                                            rechargeId:
+                                                rechargeData.transactionId
+                                                    ?.toString() ??
+                                                "",
+
+                                            operatorInitial:
+                                                productName.isNotEmpty
+                                                ? productName[0]
+                                                : "J",
+                                            operatorColor: Colors.red,
+
+                                            transactionNo:
+                                                apiData?.mobileNo ?? customerId,
+                                            rechargeAmount:
+                                                (apiData?.amount?.toString() ??
+                                                        amountController.text)
+                                                    .currencyIndian,
+                                            transactionId:
+                                                rechargeData
+                                                    .transactionDetails
+                                                    ?.txnId ??
+                                                apiData?.tnxId ??
+                                                "",
+                                            dateTime:
+                                                apiData?.rechargeDate ??
+                                                DateTime.now().toString(),
+                                          ),
+                                        );
+                                      } else {
+                                        Get.to(
+                                          () => DthFailedRechargeScreen(
+                                            productName: productName,
+                                            operatorInitial:
+                                                productName.isNotEmpty
+                                                ? productName[0]
+                                                : "J",
+                                            operatorColor: Colors.red,
+                                            transactionNo:
+                                                apiData?.mobileNo ?? customerId,
+                                            rechargeAmount:
+                                                (apiData?.amount?.toString() ??
+                                                        amountController.text)
+                                                    .currencyIndian,
+                                            transactionId:
+                                                rechargeData
+                                                    .transactionDetails
+                                                    ?.txnId ??
+                                                apiData?.tnxId ??
+                                                "",
+                                            dateTime:
+                                                apiData?.rechargeDate ??
+                                                DateTime.now().toString(),
+                                          ),
+                                        );
+                                      }
+                                    }
+                                  },
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  SizedBox(height: 40.h),
+                ],
+              ),
             ),
           ),
         ),
-      ),
-    );
+      );
+    });
   }
+}
+
+Widget _pillButton({
+  required String title,
+  required Color color,
+  required VoidCallback? onTap,
+  bool isLoading = false,
+}) {
+  return Material(
+    color: onTap == null ? color.withValues(alpha: 0.6) : color,
+    borderRadius: BorderRadius.circular(12),
+    child: InkWell(
+      borderRadius: BorderRadius.circular(12),
+      onTap: onTap,
+      child: Container(
+        height: 48,
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        alignment: Alignment.center,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (isLoading) ...[
+              const SizedBox(
+                height: 16,
+                width: 16,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: Colors.white,
+                ),
+              ),
+              const SizedBox(width: 8),
+            ],
+            Flexible(
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
 }
 
 Widget _buildDetailRow(
   BuildContext context,
   String label,
   String value, {
-  bool isIcon = false,
   Color? valueColor,
 }) {
   final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -406,31 +573,21 @@ Widget _buildDetailRow(
       children: [
         Text(
           label,
-          style: TextStyle(color: Colors.grey, fontSize: 14.sp),
+          style: TextStyle(
+            color: isDark ? Colors.white70 : Colors.black,
+            fontSize: 14.sp,
+            fontFamily: 'Poppins',
+            fontWeight: FontWeight.w400,
+          ),
         ),
         Row(
           children: [
-            if (isIcon) ...[
-              CircleAvatar(
-                radius: 10.r,
-                backgroundColor: AppColors.clrPrimary,
-                child: Text(
-                  "jio",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 10.sp,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              SizedBox(width: 8.w),
-            ],
             Text(
               value,
               style: TextStyle(
                 color: valueColor ?? (isDark ? Colors.white : Colors.black),
                 fontSize: 14.sp,
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w500,
               ),
             ),
           ],
@@ -440,50 +597,13 @@ Widget _buildDetailRow(
   );
 }
 
-Widget _buildAmountBox(
+Widget _buildInputLabel(
   BuildContext context,
-  String label,
-  String amount,
-  Color textColor,
-  Color lightBg,
-  Color darkBg,
-) {
+  String label, [
+  bool isOptionOrNot = false,
+]) {
   final isDark = Theme.of(context).brightness == Brightness.dark;
-  return Container(
-    margin: EdgeInsets.only(bottom: 8.h),
-    padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
-    decoration: BoxDecoration(
-      color: isDark ? darkBg : lightBg,
-      borderRadius: BorderRadius.circular(6.r),
-      border: Border.all(
-        color: isDark ? darkBg.withValues(alpha: 0.8) : lightBg,
-      ),
-    ),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            color: textColor,
-            fontSize: 13.sp,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        Text(
-          amount,
-          style: TextStyle(
-            color: textColor,
-            fontSize: 13.sp,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-      ],
-    ),
-  );
-}
 
-Widget _buildInputLabel(String label, [bool isOptionOrNot = false]) {
   return Padding(
     padding: EdgeInsets.only(bottom: 8.h),
     child: Text.rich(
@@ -494,7 +614,7 @@ Widget _buildInputLabel(String label, [bool isOptionOrNot = false]) {
             style: TextStyle(
               fontSize: 14.sp,
               fontWeight: FontWeight.w400,
-              color: Colors.grey,
+              color: isDark ? Colors.white : Colors.black,
             ),
           ),
           if (isOptionOrNot)
@@ -503,7 +623,7 @@ Widget _buildInputLabel(String label, [bool isOptionOrNot = false]) {
               style: TextStyle(
                 fontSize: 14.sp,
                 fontWeight: FontWeight.w400,
-                color: Colors.grey,
+                color: isDark ? Colors.white70 : Colors.black54,
               ),
             )
           else
@@ -523,7 +643,6 @@ Widget _buildInputLabel(String label, [bool isOptionOrNot = false]) {
 
 Widget _buildTextField(
   BuildContext context,
-
   String hint, {
   TextEditingController? controller,
   Widget? prefixIcon,
@@ -535,8 +654,14 @@ Widget _buildTextField(
 
   return Container(
     decoration: BoxDecoration(
-      color: isDark ? AppColors.darkplceholder : AppColors.clrplceholder,
+      color: isDark ? AppColors.darkplceholder : Colors.white,
       borderRadius: BorderRadius.circular(10.r),
+      border: Border.all(
+        color: isHighlighted
+            ? AppColors.darktextclr
+            : (isDark ? Colors.white24 : const Color(0xFFE0E0E0)),
+        width: 1,
+      ),
     ),
     child: TextField(
       controller: controller,
@@ -546,18 +671,9 @@ Widget _buildTextField(
       decoration: InputDecoration(
         prefixIcon: prefixIcon,
         hintText: hint,
-        enabledBorder: isHighlighted
-            ? OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10.r),
-                borderSide: BorderSide(color: AppColors.clrPrimary),
-              )
-            : InputBorder.none,
-        focusedBorder: isHighlighted
-            ? OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10.r),
-                borderSide: BorderSide(color: AppColors.clrPrimary),
-              )
-            : InputBorder.none,
+        border: InputBorder.none,
+        enabledBorder: InputBorder.none,
+        focusedBorder: InputBorder.none,
         contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
       ),
     ),

@@ -18,7 +18,8 @@ class TransactionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    final status = (data.status ?? "").toLowerCase();
+    final status = (data.status ?? "").trim().toLowerCase();
+
     final isSuccess = status == "success" || status == "received";
 
     Color statusColor;
@@ -26,7 +27,7 @@ class TransactionCard extends StatelessWidget {
 
     if (status == "success" || status == "received") {
       statusColor = Colors.green;
-      bgColor = const Color(0xFFE8F8EC); // light green
+      bgColor = const Color(0xFFE8F8EC);
     } else if (status == "pending") {
       statusColor = Colors.orange;
       bgColor = const Color(0xFFFFF4E5);
@@ -92,9 +93,9 @@ class TransactionCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(0),
                   child: Image.network(
                     data.logo!,
-                    width: 30,
-                    height: 30,
-                    fit: BoxFit.cover,
+                    width: 32,
+                    height: 32,
+                    fit: BoxFit.contain,
                     errorBuilder: (_, _, _) => _defaultLogo(),
                   ),
                 )
@@ -134,100 +135,93 @@ class TransactionCard extends StatelessWidget {
                       color: Colors.black,
                     ),
                   ),
-
-                  const SizedBox(height: 5),
-
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: statusColor,
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    child: Text(
-                      data.status ?? "",
-                      style: const TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ),
                 ],
               ),
             ],
           ),
 
           const SizedBox(height: 12),
-
-          /// Bottom Buttons
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              //               if (status == "success") ...[
-              //                 _button("Dispute", Colors.red, () {
-              //                   showDialog(
-              //                     context: context,
-              //                     builder: (_) =>
-              //                         DisputeDialog(rechargeId: (data.id ?? 0).toString()),
-              //                   );
-              //                 }),
-              //                 const SizedBox(width: 6),
-              //                _button("View", Colors.blue, () {
-              //   Get.toNamed(
-              //     AppRoutes.transactionDetails,
-              //     arguments: data,
-              //   );
-              // }),
-              //                 const SizedBox(width: 6),
-              //                 _button("Share", Colors.green, () {}),
-              //               ],
-              if (isSuccess) ...[
-                _button("Dispute", Colors.red, () {
-                  showDialog(
-                    context: context,
-                    builder: (_) =>
-                        DisputeDialog(rechargeId: data.id.toString()),
-                  );
-                }),
-                const SizedBox(width: 6),
-                _button("View", Colors.blue, () {
-                  Get.toNamed(AppRoutes.transactionDetails, arguments: data);
-                }),
-                const SizedBox(width: 6),
-                _button("Share", Colors.green, () {
-                  ShareReceipt.sharePdf(
-                    pdfUrl: data.url ?? "",
-                    phone: data.mobile ?? "",
-                  );
-                }),
-              ],
+              // Action Buttons
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (isSuccess) ...[
+                    _button("Dispute", Colors.red, () {
+                      showDialog(
+                        context: context,
+                        builder: (_) =>
+                            DisputeDialog(rechargeId: data.id.toString()),
+                      );
+                    }),
+                    const SizedBox(width: 6),
+                    _button("View", Colors.blue, () {
+                      Get.toNamed(
+                        AppRoutes.transactionDetails,
+                        arguments: data,
+                      );
+                    }),
+                    const SizedBox(width: 6),
+                    _button("Share", Colors.green, () {
+                      ShareReceipt.sharePdf(
+                        pdfUrl: data.url ?? "",
+                        phone: data.mobile ?? "",
+                      );
+                    }),
+                  ],
 
-              if (status == "pending")
-                _button("Processing", Colors.orange, () {}),
+                  if (status == "pending")
+                    _button("Processing", Colors.orange, () {}),
 
-              if (status == "failed") ...[
-                _button("View", Colors.blue, () {
-                  Get.toNamed(AppRoutes.transactionDetails, arguments: data);
-                }),
+                  if (status == "failed") ...[
+                    _button("View", Colors.blue, () {
+                      Get.toNamed(
+                        AppRoutes.transactionDetails,
+                        arguments: data,
+                      );
+                    }),
 
-                const SizedBox(width: 6),
+                    const SizedBox(width: 6),
 
-                _button("Resend", Colors.green, () {
-                  print("========== RESEND ==========");
-                  print("ID: ${data.id}");
-                  print("Transaction ID: ${data.transactionId}");
-                  print("Product Type: ${data.productType}");
-                  print("Mobile: ${data.mobile}");
-                  print("Amount: ${data.amount}");
-                  print("Status: ${data.status}");
-                  print("Logo: ${data.logo}");
+                    _button("Resend", Colors.green, () {
+                      print("========== RESEND ==========");
+                      print("ID: ${data.id}");
+                      print("Transaction ID: ${data.transactionId}");
+                      print("Product Type: ${data.productType}");
+                      print("Mobile: ${data.mobile}");
+                      print("Amount: ${data.amount}");
+                      print("Status: ${data.status}");
+                      print("Logo: ${data.logo}");
 
-                  _onResend(context);
-                }),
-              ],
+                      _onResend(context);
+                    }),
+                  ],
+                ],
+              ),
+
+              const SizedBox(width: 8),
+
+              // Status Badge
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
+                decoration: BoxDecoration(
+                  color: statusColor,
+                  borderRadius: BorderRadius.circular(5),
+                ),
+                child: Text(
+                  status == "received" ? "Success" : (data.status ?? ""),
+                  style: const TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
             ],
           ),
         ],
@@ -237,8 +231,8 @@ class TransactionCard extends StatelessWidget {
 
   Widget _defaultLogo() {
     return Container(
-      width: 40,
-      height: 40,
+      width: 30,
+      height: 30,
       decoration: const BoxDecoration(
         color: Colors.red,
         shape: BoxShape.circle,
@@ -246,7 +240,11 @@ class TransactionCard extends StatelessWidget {
       alignment: Alignment.center,
       child: const Text(
         "J",
-        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        style: TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+          fontSize: 12,
+        ),
       ),
     );
   }
@@ -273,27 +271,53 @@ class TransactionCard extends StatelessWidget {
 
   void _onResend(BuildContext context) {
     final productType = (data.productType ?? "").toLowerCase();
+    final productTypeId = (data.productTypeId ?? "").toString();
 
-    if (productType == "prepaid") {
+    // Make type matching more robust
+    bool isPrepaid =
+        productType.contains("prepaid") ||
+        productType.contains("mobile") ||
+        productTypeId == "1";
+
+    bool isDth = productType.contains("dth") || productTypeId == "2";
+
+    if (isPrepaid) {
       Get.toNamed(
         AppRoutes.transconfirm,
         arguments: {
           "mobileNumber": data.mobile,
           "amount": data.amount,
-          "productdetid": data.id.toString(),
+          "productdetid":
+              data.productId?.toString() ?? "", // Must be operator/plan ID
+          "paymentStatus": data.paymentStatus ?? "Pending",
+          "operator": data.operator ?? "",
+          "logo": data.logo ?? "",
+          "commission": data.commission ?? "0",
+          "availableBalance": data.availableBalance ?? "0",
+          "isFromTranactionPage": true,
         },
       );
-    } else if (productType == "dth") {
+    } else if (isDth) {
       Get.toNamed(
         AppRoutes.confirmdth,
         arguments: {
           "customerId": data.mobile,
           "amount": data.amount,
-          "productdetid": data.id.toString(),
+          "productdetid":
+              data.productId?.toString() ?? "", // Must be operator/plan ID
+          "paymentStatus": data.paymentStatus ?? "Pending",
+          "operator": data.operator ?? "",
+          "logo": data.logo ?? "",
+          "commission": data.commission ?? "0",
+          "availableBalance": data.availableBalance ?? "0",
+          "isFromTranactionPage": true,
         },
       );
     } else {
-      Get.snackbar("Error", "Unknown product type");
+      Get.snackbar(
+        "Error",
+        "Unknown product type: ${data.productType} (ID: $productTypeId)",
+      );
     }
   }
 }

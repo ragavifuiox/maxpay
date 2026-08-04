@@ -5,9 +5,12 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_instance/src/extension_instance.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
+import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:get/get_state_manager/src/simple/get_view.dart';
+import 'package:maxpay/controllers/auth_controller.dart';
 import 'package:maxpay/controllers/homepage_controller.dart';
+import 'package:maxpay/controllers/profile_controller.dart';
 import 'package:maxpay/controllers/transaction_report_controller.dart';
 import 'package:maxpay/core/constants/asset_images.dart';
 import 'package:maxpay/core/constants/colors.dart';
@@ -189,6 +192,15 @@ class HomePageScreen extends GetView<HomePageController> {
   Widget build(BuildContext context) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       controller.fetchpopupmessage("Home");
+
+      if (Get.isRegistered<AuthController>()) {
+        final authController = Get.find<AuthController>();
+        if (authController.isNewUser.value == 1) {
+          authController.isNewUser.value = 0;
+          authController.storage.saveInt("is_new_user", 0);
+          _showPinConfirmationPopup(context);
+        }
+      }
     });
 
     final theme = Theme.of(context);
@@ -439,6 +451,7 @@ class HomePageScreen extends GetView<HomePageController> {
                                         producttypeUseCase: sl(),
                                         submitDisputeUsecase: sl(),
                                         cashbackTypeUsecase: sl(),
+                                        totalTransactionUsecase: sl(),
                                       ),
                                     );
                                     controller.clearFilters();
@@ -483,6 +496,7 @@ class HomePageScreen extends GetView<HomePageController> {
                                             producttypeUseCase: sl(),
                                             submitDisputeUsecase: sl(),
                                             cashbackTypeUsecase: sl(),
+                                            totalTransactionUsecase: sl(),
                                           ),
                                         );
 
@@ -528,6 +542,7 @@ class HomePageScreen extends GetView<HomePageController> {
                                             producttypeUseCase: sl(),
                                             submitDisputeUsecase: sl(),
                                             cashbackTypeUsecase: sl(),
+                                            totalTransactionUsecase: sl(),
                                           ),
                                         );
                                     controller.clearFilters();
@@ -563,6 +578,121 @@ class HomePageScreen extends GetView<HomePageController> {
           ],
         ),
       ),
+    );
+  }
+
+  void _showPinConfirmationPopup(BuildContext context) {
+    final profileController = Get.isRegistered<ProfileController>()
+        ? Get.find<ProfileController>()
+        : Get.put(
+            ProfileController(
+              getProfileUseCase: sl(),
+              profileUpdateUseCase: sl(),
+              updateprofileotpusecase: sl(),
+            ),
+          );
+
+    final TextEditingController pinTextController = TextEditingController();
+    final RxBool isPinEntered = false.obs;
+    final RxBool isSubmitting = false.obs;
+
+    pinTextController.addListener(() {
+      isPinEntered.value = pinTextController.text.trim().isNotEmpty;
+    });
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15.r),
+          ),
+          title: Text(
+            'Confirm PIN',
+            style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
+          ),
+          content: Obx(() {
+            final isProfileLoading = profileController.isLoading.value;
+
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Please enter your PIN code to update it.',
+                  style: TextStyle(fontSize: 14.sp),
+                ),
+                SizedBox(height: 12.h),
+                TextField(
+                  controller: pinTextController,
+                  keyboardType: TextInputType.number,
+                  obscureText: true,
+                  maxLength: 6,
+                  decoration: InputDecoration(
+                    hintText: 'Enter new PIN',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8.r),
+                    ),
+                    counterText: '',
+                  ),
+                ),
+                if (isProfileLoading || isSubmitting.value) ...[
+                  SizedBox(height: 12.h),
+                  const Center(
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
+                ],
+              ],
+            );
+          }),
+          actions: [
+            Obx(() {
+              if (isPinEntered.value) {
+                return ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.clrPrimary,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.r),
+                    ),
+                  ),
+                  onPressed: isSubmitting.value
+                      ? null
+                      : () async {
+                          final data =
+                              profileController.profileData.value?.data;
+                          if (data != null) {
+                            isSubmitting.value = true;
+                            await profileController.updateProfile(
+                              name: data.name ?? '',
+                              email: data.email ?? '',
+                              mobile: data.phoneNumber ?? '',
+                              pincode: pinTextController.text.trim(),
+                              address: data.address ?? '',
+                              whatsappnumber: data.whatsappnumber ?? '',
+                            );
+                            isSubmitting.value = false;
+                            if (dialogContext.mounted) {
+                              Navigator.of(dialogContext).pop();
+                            }
+                          } else {
+                            Get.snackbar(
+                              'Error',
+                              'Profile data is not available to update PIN.',
+                            );
+                          }
+                        },
+                  child: Text(
+                    'Update',
+                    style: TextStyle(color: Colors.white, fontSize: 14.sp),
+                  ),
+                );
+              }
+              return const SizedBox.shrink();
+            }),
+          ],
+        );
+      },
     );
   }
 }

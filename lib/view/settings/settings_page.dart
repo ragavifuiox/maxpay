@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:in_app_review/in_app_review.dart';
 import 'package:maxpay/controllers/auth_controller.dart';
 import 'package:maxpay/controllers/profile_controller.dart';
 import 'package:maxpay/controllers/update_pin_controller.dart';
@@ -35,6 +36,15 @@ class SettingsPage extends StatelessWidget {
             permanent: true,
           );
     final isTablet = Responsive.isTablet(context);
+
+    Future<void> openRatingReview() async {
+      final InAppReview inAppReview = InAppReview.instance;
+      try {
+        await inAppReview.openStoreListing(appStoreId: 'com.paylink.retailor');
+      } catch (e) {
+        debugPrint("Could not open store listing: $e");
+      }
+    }
 
     return Obx(() {
       final isDark = themeController.isDarkMode;
@@ -142,6 +152,10 @@ class SettingsPage extends StatelessWidget {
                   _buildMenuTile(context, 'KYC', () {
                     Get.toNamed(AppRoutes.kyc);
                   }, SvgPicture.asset(AssetImages.kyc, width: 24.w)),
+
+                   _buildMenuTile(context, 'BankDetails', () {
+                    Get.toNamed(AppRoutes.bank);
+                  }, SvgPicture.asset(AssetImages.cashback, width: 24.w)),
                   _buildMenuTile(
                     context,
                     'Update M-Pin',
@@ -212,7 +226,7 @@ class SettingsPage extends StatelessWidget {
                     context,
                     'Rating Review',
                     () {
-                      // Get.toNamed(AppRoutes.weblogin);
+                      openRatingReview();
                     },
                     SvgPicture.asset(AssetImages.review, width: 24.w),
                   ),
@@ -235,6 +249,7 @@ class SettingsPage extends StatelessWidget {
                   // ),
 
                   /// 🔹 LOGOUT BUTTONS
+                  /// 
                   Padding(
                     padding: EdgeInsets.symmetric(
                       horizontal: 20.w,

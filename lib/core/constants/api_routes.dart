@@ -1,5 +1,5 @@
 class ApiRoutes {
-  static const baseURL = "http://139.59.91.7/test_paylinkonline.in/public/api";
+  static const baseURL = "https://paylinkonline.in/api";
   static const login = "/retailer_login_sendotp";
   static const verifyotp = "/retailer_login_verifyOtp";
   static const news = "/get_news";
@@ -79,5 +79,7 @@ class ApiRoutes {
   static const staffwalletreverse = "/staff_wallet_reverse";
   static const updateprofileotp = "/verify_profile_update_otp";
   static const faqreply = "/faq_reply";
+  static const totalrecharge = "/total_recharge";
+  static const bankdetail = "/get_bank_details";
   
 }

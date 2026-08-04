@@ -43,17 +43,14 @@ class EarningsChart extends StatelessWidget {
     FlSpot(8, 3.4),
   ];
 
-  // The exact x-indices that get a visible dot, on every line —
-  // matches the reference screenshot: first point, peak point, last point.
-  // static const Set<int> _dottedIndices = {1, 4, 8};
-
-  // bool _isShownDot(FlSpot spot) => _dottedIndices.contains(spot.x.toInt());
-
+  // Every data point now gets a dot — not just peaks/valleys — so this
+  // helper is no longer used to gate visibility. Kept around only if you
+  // still want to distinguish "turning points" for other purposes (e.g.
+  // a bigger/highlighted dot), otherwise it can be deleted.
   static bool _isTurningPoint(List<FlSpot> spots, double x) {
     final index = spots.indexWhere((s) => s.x == x);
     if (index == -1) return false;
 
-    // Endpoints count as edges (first/last point of the line).
     if (index == 0 || index == spots.length - 1) return true;
 
     final prevY = spots[index - 1].y;
@@ -63,7 +60,6 @@ class EarningsChart extends StatelessWidget {
     final risingBefore = currY > prevY;
     final risingAfter = nextY > currY;
 
-    // Direction changed -> this is a peak (top) or a valley (bottom).
     return risingBefore != risingAfter;
   }
 
@@ -241,8 +237,8 @@ class EarningsChart extends StatelessWidget {
                   ),
                 ),
 
-                // Tap handling: only react when the tapped point is one of
-                // the visible dots (x = 1, 4, or 8) on any of the 3 lines.
+                // Tap handling: every point on every line now has a visible
+                // dot, so every point responds to taps.
                 lineTouchData: LineTouchData(
                   enabled: true,
                   handleBuiltInTouches: false,
@@ -257,32 +253,24 @@ class EarningsChart extends StatelessWidget {
                         }
 
                         for (final barSpot in response.lineBarSpots!) {
-                          late final List<FlSpot> seriesSpots;
                           late final String seriesName;
                           late final Color color;
 
                           switch (barSpot.barIndex) {
                             case 0:
-                              seriesSpots = _purchaseSpots;
                               seriesName = "Add Wallet";
                               color = Colors.blue;
                               break;
                             case 1:
-                              seriesSpots = _successSpots;
                               seriesName = "Transaction";
                               color = Colors.green;
                               break;
                             case 2:
-                              seriesSpots = _failedSpots;
                               seriesName = "Balance";
                               color = Colors.red;
                               break;
                             default:
                               continue;
-                          }
-
-                          if (!_isTurningPoint(seriesSpots, barSpot.x)) {
-                            continue;
                           }
 
                           _showDummyDataDialog(
@@ -308,11 +296,10 @@ class EarningsChart extends StatelessWidget {
                     belowBarData: BarAreaData(show: false),
                     spots: _purchaseSpots,
                     dotData: FlDotData(
-                      checkToShowDot: (spot, barData) =>
-                          _isTurningPoint(barData.spots, spot.x),
+                      show: true,
                       getDotPainter: (spot, a, b, c) {
                         return FlDotCirclePainter(
-                          radius: 4,
+                          radius: 3,
                           color: Colors.blue,
                           strokeWidth: 0.1,
                           strokeColor: Colors.blue,
@@ -330,11 +317,9 @@ class EarningsChart extends StatelessWidget {
                     spots: _successSpots,
                     dotData: FlDotData(
                       show: true,
-                      checkToShowDot: (spot, barData) =>
-                          _isTurningPoint(barData.spots, spot.x),
                       getDotPainter: (spot, a, b, c) {
                         return FlDotCirclePainter(
-                          radius: 4,
+                          radius: 3,
                           color: Colors.green,
                           strokeWidth: 0.1,
                           strokeColor: Colors.green,
@@ -353,11 +338,9 @@ class EarningsChart extends StatelessWidget {
                     spots: _failedSpots,
                     dotData: FlDotData(
                       show: true,
-                      checkToShowDot: (spot, barData) =>
-                          _isTurningPoint(barData.spots, spot.x),
                       getDotPainter: (spot, a, b, c) {
                         return FlDotCirclePainter(
-                          radius: 4,
+                          radius: 3,
                           color: Colors.red,
                           strokeWidth: 0.1,
                           strokeColor: Colors.red,

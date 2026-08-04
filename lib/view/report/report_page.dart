@@ -109,7 +109,7 @@ class ReportPage extends StatelessWidget {
                     () {
                       Get.toNamed(AppRoutes.dispute);
                     },
-                    SvgPicture.asset(AssetImages.cashback, width: 24.w),
+                    SvgPicture.asset(AssetImages.bank, width: 24.w),
                   ),
 
                   _buildMenuTile(

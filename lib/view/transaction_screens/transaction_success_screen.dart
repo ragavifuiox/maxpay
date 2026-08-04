@@ -17,14 +17,14 @@ class TransactionScreen extends GetView<TransReportController> {
   Widget build(BuildContext context) {
     controller.currentStatus = status.name;
     WidgetsBinding.instance.addPostFrameCallback((_) {
-  controller.transactionreport(
-    search: controller.search,
-    status: controller.currentStatus,
-    productid: controller.selectedProductId.value,
-    fromdate: controller.fromDate,
-    todate: controller.toDate,
-  );
-});
+      controller.transactionreport(
+        search: controller.search,
+        status: controller.currentStatus,
+        productid: controller.selectedProductId.value,
+        fromdate: controller.fromDate,
+        todate: controller.toDate,
+      );
+    });
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
@@ -41,7 +41,7 @@ class TransactionScreen extends GetView<TransReportController> {
     } else if (isPending) {
       bgColor = isDark ? const Color(0xFFFFF1DD) : const Color(0xFFFFF1DD);
 
-      title = "Transaction Pending";
+      title = "Transaction Processing";
     } else {
       bgColor = isDark ? const Color(0xFFFFE4E6) : const Color(0xFFFFE4E6);
 
@@ -224,15 +224,25 @@ class TransactionScreen extends GetView<TransReportController> {
                       ),
                     ),
                     const SizedBox(height: 4),
-                    Text(
-                      "₹56.00",
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'Poppins',
-                      ),
-                    ),
+                    Obx(() {
+                      final transData = controller.totalTransaction.value?.data;
+                      String displayAmount = "0";
+                      if (isSuccess) {
+                        displayAmount = transData?.successAmount ?? "0";
+                      } else {
+                        displayAmount = transData?.failedAmount ?? "0";
+                      }
+
+                      return Text(
+                        "₹ $displayAmount",
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Poppins',
+                        ),
+                      );
+                    }),
                   ],
                 ),
               ),

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:http_parser/http_parser.dart';
 
 import 'package:dartz/dartz.dart';
 
@@ -36,10 +37,13 @@ class UpdateProfileRepoImpl implements ProfileUpdateRepository {
           "profile_img": await MultipartFile.fromFile(
             profileimage.path,
             filename: profileimage.path.split('/').last,
+            contentType: MediaType('image', 'jpeg'),
           ),
       });
 
+
       final response = await apiService.post(
+
         ApiRoutes.updateprofile,
         data: formData,
       );
@@ -47,6 +51,7 @@ class UpdateProfileRepoImpl implements ProfileUpdateRepository {
       final model = ProfileUpdate.fromJson(response);
       return Right(model);
     } catch (e) {
+      
       return Left(ServerFailure(message: e.toString()));
     }
   }

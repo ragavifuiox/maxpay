@@ -17,7 +17,7 @@ class DthRechargeRepoImpl implements DthRechargeRepository {
     required String mobile,
     required String amount,
     required String paymentstatus,
-    required String commissionAmount,
+    required String commission,
   }) async {
     try {
       final response = await apiService.post(
@@ -27,7 +27,7 @@ class DthRechargeRepoImpl implements DthRechargeRepository {
           "number": mobile,
           "amount": amount,
           "payment_status": paymentstatus,
-          "retailor_commission_amount": commissionAmount,
+          "commission": commission,
         },
       );
 

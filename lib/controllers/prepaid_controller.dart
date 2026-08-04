@@ -234,11 +234,10 @@ class PrePaidController extends GetxController {
           // CustomToast.error(failure.message);
         },
         (response) async {
-          final backendOperator =
-    response.lookup?.records?.operator?.trim() ?? "";
+          final backendOperator = response.operator?.trim() ?? "";
 
           operatorName.value = backendOperator;
-          operatorWebsite.value = response.product?.description ?? "";
+          operatorWebsite.value = "";
 
           print("Backend Operator : $backendOperator");
 
@@ -449,8 +448,7 @@ class PrePaidController extends GetxController {
     String mobile,
     String amount,
     String paymentstatus,
-    String commissionAmount,
-
+    String commission,
   ) async {
     try {
       AppLogger.logError("👉 Recharge API CALL STARTED");
@@ -476,7 +474,7 @@ class PrePaidController extends GetxController {
         mobile,
         amount,
         paymentstatus,
-        commissionAmount,
+        commission,
       );
 
       AppLogger.logError(
@@ -493,43 +491,41 @@ class PrePaidController extends GetxController {
           CustomToast.error(failure.message);
           return false;
         },
-(response) {
-  rechargeResponse.value = response;
+        (response) {
+          rechargeResponse.value = response;
 
-  AppLogger.logError("✅ SUCCESS RESPONSE OBJECT");
-  AppLogger.logError("Full response: $response");
+          AppLogger.logError("✅ SUCCESS RESPONSE OBJECT");
+          AppLogger.logError("Full response: $response");
 
-  final status = response.data?.recharge?.status?.toLowerCase();
+          final status = response.data?.recharge?.status?.toLowerCase();
 
-  AppLogger.logError("👉 Parsed status: $status");
+          AppLogger.logError("👉 Parsed status: $status");
 
-  final isSuccess = status == "success";
+          final isSuccess = status == "success";
 
-  AppLogger.logError("👉 isSuccess: $isSuccess");
+          AppLogger.logError("👉 isSuccess: $isSuccess");
 
+          if (isSuccess) {
+            AppLogger.logError("🎉 Recharge SUCCESS");
 
-  if (isSuccess) {
-    AppLogger.logError("🎉 Recharge SUCCESS");
+            // Backend message only
+            CustomToast.success(response.message ?? "Success");
 
-    // Backend message only
-    CustomToast.success(
-      response.message ?? "Success",
-    );
+            return true;
+          } else {
+            AppLogger.logError("⚠️ Recharge FAILED");
 
-    return true;
-  } else {
-    AppLogger.logError("⚠️ Recharge FAILED");
+            // Backend error message only
+            CustomToast.error(
+              response.data?.apiResponse?.data?.resText ?? "Recharge Failed",
+            );
 
-    // Backend error message only
-    CustomToast.error(
-      response.data?.apiResponse?.message ?? "Recharge Failed",
-    );
-
-    return false;
-  }
-},
+            return false;
+          }
+        },
       );
-    } catch (e, stack) {
+    }
+     catch (e, stack) {
       AppLogger.logError("🔥 EXCEPTION OCCURRED: $e");
       AppLogger.logError("STACKTRACE: $stack");
 

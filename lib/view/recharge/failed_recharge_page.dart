@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -17,7 +16,6 @@ import 'package:maxpay/core/di/service_locator.dart';
 import 'package:maxpay/core/extensions/currency.dart';
 import 'package:maxpay/global_widget/commom_button.dart';
 
-
 class FailedRechargePage extends StatelessWidget {
   final String productName;
   final String operatorInitial;
@@ -28,7 +26,7 @@ class FailedRechargePage extends StatelessWidget {
   final String dateTime;
   final String operatorLogo; // image URL
   final String rechargeId;
-  
+
   const FailedRechargePage({
     super.key,
     required this.productName,
@@ -47,9 +45,13 @@ class FailedRechargePage extends StatelessWidget {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final ProfileController profileController = Get.put(
-      ProfileController(getProfileUseCase: sl(), profileUpdateUseCase: sl(), updateprofileotpusecase: sl(),),
+      ProfileController(
+        getProfileUseCase: sl(),
+        profileUpdateUseCase: sl(),
+        updateprofileotpusecase: sl(),
+      ),
     );
-final DownloadController downloadController = Get.put(
+    final DownloadController downloadController = Get.put(
       DownloadController(downloadUseCase: sl()),
     );
     return Scaffold(
@@ -130,15 +132,13 @@ final DownloadController downloadController = Get.put(
                       rechargeAmount,
                       context: context,
                     ),
-                  
-_buildSummaryRow(
-  'Date & Time',
-  formatTransactionDate(dateTime),
-  context: context,
-),
-                    SizedBox(height: 10.h),
 
-                   
+                    _buildSummaryRow(
+                      'Date & Time',
+                      formatTransactionDate(dateTime),
+                      context: context,
+                    ),
+                    SizedBox(height: 10.h),
                   ],
                 ),
               ),
@@ -213,7 +213,6 @@ _buildSummaryRow(
         final profile = profileController.profileData.value?.data;
 
         return Dialog(
-          
           child: Dialog(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15.r),
@@ -267,7 +266,7 @@ _buildSummaryRow(
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      "Date & Time : $dateTime",
+                      "Date & Time : ${formatTransactionDate(dateTime)}",
                       style: TextStyle(
                         fontSize: 12.sp,
                         fontWeight: FontWeight.w500,
@@ -342,10 +341,10 @@ _buildSummaryRow(
                         child: SizedBox(
                           height: 42.h,
                           child: ElevatedButton(
-                       onPressed: () {
-  downloadController.downloadReceipt(rechargeId);
-},
-style: ElevatedButton.styleFrom(
+                            onPressed: () {
+                              downloadController.downloadReceipt(rechargeId);
+                            },
+                            style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.red,
                               elevation: 0,
                               shape: RoundedRectangleBorder(
@@ -446,8 +445,6 @@ style: ElevatedButton.styleFrom(
       ),
     );
   }
-
-  
 
   String _receiptFileName() {
     final id = rechargeId.isNotEmpty

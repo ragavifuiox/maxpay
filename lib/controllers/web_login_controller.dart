@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
@@ -18,116 +17,105 @@ class WebLoginController extends GetxController {
   RxBool isScanned = false.obs;
   RxString scannedUserId = ''.obs;
 
-@override
-void onReady() {
-  super.onReady();
+  @override
+  void onReady() {
+    super.onReady();
 
-  isScanned.value = false;
-  scannedUserId.value = '';
-}
-  RxBool isLoading = false.obs;
-void resetScanner() {
     isScanned.value = false;
     scannedUserId.value = '';
   }
 
-Future<void> submitLogin() async {
-  print("===== SUBMIT LOGIN START =====");
-  print("Scanned User ID: ${scannedUserId.value}");
-
-  if (scannedUserId.value.isEmpty) {
-    print("ERROR: QR is empty");
-    CustomToast.error("Please scan QR first");
-    return;
+  RxBool isLoading = false.obs;
+  void resetScanner() {
+    isScanned.value = false;
+    scannedUserId.value = '';
   }
 
-  try {
-    isLoading.value = true;
-    print("Loading started...");
+  Future<void> submitLogin() async {
+    print("===== SUBMIT LOGIN START =====");
+    print("Scanned User ID: ${scannedUserId.value}");
 
-    final result = await webloginusecase(scannedUserId.value);
+    if (scannedUserId.value.isEmpty) {
+      print("ERROR: QR is empty");
+      CustomToast.error("Please scan QR first");
+      return;
+    }
 
-    print("API CALLED");
+    try {
+      isLoading.value = true;
+      print("Loading started...");
 
-    result.fold(
-      (failure) {
-        print("FOLD => FAILURE");
-        print("Error Message: ${failure.message}");
+      final result = await webloginusecase(scannedUserId.value);
 
-        CustomToast.error(failure.message);
-      },
-      (response) {
-        print("FOLD => SUCCESS RESPONSE RECEIVED");
-        print("Response success: ${response.success}");
-        print("Response message: ${response.message}");
-        print("Full response: $response");
+      print("API CALLED");
 
-        if (response.success == true) {
-          print("LOGIN SUCCESS BLOCK");
-          CustomToast.success(response.message ?? "Web Login Success");
+      result.fold(
+        (failure) {
+          print("FOLD => FAILURE");
+          print("Error Message: ${failure.message}");
 
-          print("Navigating to Success Screen...");
-         Get.offAllNamed(AppRoutes.setting);
-        } else {
-          print("LOGIN FAILED BLOCK");
-          CustomToast.error(response.message ?? "Login failed");
-        }
-      },
-    );
-  } catch (e) {
-    print("EXCEPTION OCCURRED");
-    print("Error: $e");
+          CustomToast.error(failure.message);
+        },
+        (response) {
+          print("FOLD => SUCCESS RESPONSE RECEIVED");
+          print("Response success: ${response.success}");
+          print("Response message: ${response.message}");
+          print("Full response: $response");
 
-    CustomToast.error(e.toString());
-  } finally {
-    isLoading.value = false;
-    print("Loading stopped");
-    print("===== SUBMIT LOGIN END =====");
+          if (response.success == true) {
+            print("LOGIN SUCCESS BLOCK");
+            CustomToast.success(response.message ?? "Web Login Success");
+
+            print("Navigating to Success Screen...");
+             Get.back(); // Returns to Settings page with bottom bar
+          } else {
+            print("LOGIN FAILED BLOCK");
+            CustomToast.error(response.message ?? "Login failed");
+          }
+        },
+      );
+    } catch (e) {
+      print("EXCEPTION OCCURRED");
+      print("Error: $e");
+
+      CustomToast.error(e.toString());
+    } finally {
+      isLoading.value = false;
+      print("Loading stopped");
+      print("===== SUBMIT LOGIN END =====");
+    }
   }
-}
-Future<void> WebLogout({
-  required String isweb,
-  
-}) async {
-  try {
-    isLoading.value = true;
 
-    final result = await webLogoutUsecase(
-     isweb
-    );
+  Future<void> WebLogout({required String isweb}) async {
+    try {
+      isLoading.value = true;
 
-    AppLogger.debugPrint("API CALLED SUCCESSFULLY");
+      final result = await webLogoutUsecase(isweb);
 
-    result.fold(
-      (failure) {
+      AppLogger.debugPrint("API CALLED SUCCESSFULLY");
 
-        // ❌ ERROR TOAST
-        CustomToast.error(
-          failure.message.toString(),
-        );
+      result.fold(
+        (failure) {
+          // ❌ ERROR TOAST
+          CustomToast.error(failure.message.toString());
 
-        debugPrint("ERROR: ${failure.message}");
-      },
+          debugPrint("ERROR: ${failure.message}");
+        },
 
-           (response) {
-        // ✅ SUCCESS TOAST
-        CustomToast.success(
-          response.message ?? "web logout Successfully",
-        );
+        (response) {
+          // ✅ SUCCESS TOAST
+          CustomToast.success(response.message ?? "web logout Successfully");
 
-        debugPrint("SUCCESS RESPONSE: ${response.toJson()}");
-      },
-    );
-  } catch (e) {
+          debugPrint("SUCCESS RESPONSE: ${response.toJson()}");
+        },
+      );
+    } catch (e) {
+      // 🔥 EXCEPTION TOAST
+      CustomToast.error(e.toString());
 
-    // 🔥 EXCEPTION TOAST
-    CustomToast.error(e.toString());
-
-    debugPrint("EXCEPTION: $e");
-  } finally {
-    isLoading.value = false;
+      debugPrint("EXCEPTION: $e");
+    } finally {
+      isLoading.value = false;
+    }
   }
-}
-
-  
 }

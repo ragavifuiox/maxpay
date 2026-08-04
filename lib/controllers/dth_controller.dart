@@ -119,7 +119,12 @@ class DthController extends GetxController {
         AppLogger.logError("📦 Response Data: $data");
 
         confirmdth.value = data;
-
+        AppLogger.logError("API Response => ${data.toJson()}");
+        AppLogger.logError("Commission => ${data.data?.commission}");
+        AppLogger.logError("Commission Type => ${data.data?.commissiontype}");
+        AppLogger.logError(
+          "Transaction Amount => ${data.data?.transactionAmount}",
+        );
         isLoading.value = false;
         AppLogger.debugPrint("⏹️ Loading stopped");
         AppLogger.debugPrint("🎉 Transaction Confirmation Completed");
@@ -132,7 +137,7 @@ class DthController extends GetxController {
     String mobile,
     String amount,
     String paymentstatus,
-    String commissionAmount,
+    String commission,
   ) async {
     try {
       AppLogger.logError("👉 Recharge API CALL STARTED");
@@ -149,7 +154,7 @@ class DthController extends GetxController {
       AppLogger.logError("mobile: $mobile");
       AppLogger.logError("amount: $amount");
       AppLogger.logError("paymentstatus: $paymentstatus");
-      AppLogger.logError("commissionAmount: $commissionAmount");
+      AppLogger.logError("commissionAmount: $commission");
 
       final stopwatch = Stopwatch()..start();
 
@@ -160,7 +165,7 @@ class DthController extends GetxController {
         mobile,
         amount,
         paymentstatus,
-        commissionAmount,
+        commission,
       );
 
       AppLogger.logError(
@@ -182,7 +187,11 @@ class DthController extends GetxController {
           AppLogger.logError("✅ SUCCESS RESPONSE OBJECT");
           AppLogger.logError("Full response: $response");
 
-          final status = response.data?.data?.status?.toLowerCase();
+          final status =
+              (response.status ??
+                      response.transactionDetails?.status ??
+                      response.response?.status)
+                  ?.toLowerCase();
           AppLogger.logError("👉 Parsed status: $status");
 
           final isSuccess = status == "success";

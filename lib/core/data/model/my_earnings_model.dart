@@ -67,6 +67,7 @@ class EarningItem {
   String? commissionType;
   String? commissionAmount;
   String? commissionDate;
+  String? productType;
 
   EarningItem({
     this.rechargeId,
@@ -81,6 +82,7 @@ class EarningItem {
     this.commissionType,
     this.commissionAmount,
     this.commissionDate,
+    this.productType,
   });
 
   EarningItem.fromJson(Map<String, dynamic> json) {
@@ -96,6 +98,7 @@ class EarningItem {
     commissionType = json['commission_type'];
     commissionAmount = json['commission_amount'];
     commissionDate = json['commission_date'];
+    productType = json['product_type'];
   }
 
   Map<String, dynamic> toJson() {
@@ -112,6 +115,7 @@ class EarningItem {
       'commission_type': commissionType,
       'commission_amount': commissionAmount,
       'commission_date': commissionDate,
+      'product_type': productType,
     };
   }
 }
