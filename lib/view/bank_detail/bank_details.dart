@@ -5,6 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:maxpay/core/constants/asset_images.dart';
 import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/core/constants/snackbar.dart';
+import 'package:maxpay/global_widget/custom_app.dart';
 
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:maxpay/core/di/service_locator.dart';
@@ -27,20 +28,7 @@ class BankDetailsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        centerTitle: false,
-        iconTheme: const IconThemeData(color: Colors.black),
-        title: const Text(
-          'Bank Details',
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.w600,
-            fontSize: 18,
-          ),
-        ),
-      ),
+      appBar: CommonAppBar(title: "Bank Details"),
       body: Obx(() {
         if (controller.isLoading.value) {
           return const Center(child: CircularProgressIndicator());
@@ -76,7 +64,7 @@ class BankAccountCard extends StatelessWidget {
   const BankAccountCard({super.key, required this.account});
 
   void _copyToClipboard(BuildContext context, String value, String label) {
-    // Clipboard.setData(ClipboardData(text: value));
+    Clipboard.setData(ClipboardData(text: value));
     CustomToast.success('Copied');
   }
 
@@ -88,119 +76,161 @@ class BankAccountCard extends StatelessWidget {
   //   );
   // }
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
-      decoration: BoxDecoration(
-        color: AppColors.background,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.clrPrimary, width: 1.2),
+ @override
+Widget build(BuildContext context) {
+  return Container(
+    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+    decoration: BoxDecoration(
+      color: const Color(0xffF6F8FF),
+      border: Border.all(
+        color: AppColors.clrPrimary,
+        width: 1,
       ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          // Bank logo
-          BankLogoBadge(logoUrl: account.bankLogo, bankName: account.bankName),
-          const SizedBox(width: 14),
+      borderRadius: BorderRadius.circular(10),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
 
-          // Account text details
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    const Text(
-                      "Acc. Name : ",
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    Expanded(
-                      child: Text(
-                        account.accountName ?? "",
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  ],
+        /// Account Name (Top)
+        Row(
+          children: [
+            const Text(
+              "A/C Name : ",
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            Expanded(
+              child: Text(
+                account.accountName ?? "",
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
                 ),
-                const SizedBox(height: 14),
-                Wrap(
-                  spacing: 12,
-                  runSpacing: 8,
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: [
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Text(
-                          "Acc. Detail",
-                          style: TextStyle(fontSize: 13),
-                        ),
-                        const SizedBox(width: 4),
-                        _CopyIconButton(
-                          onTap: () {
-                            final String allDetails =
-                                '''Bank Name: ${account.bankName ?? ''}
+              ),
+            ),
+          ],
+        ),
+
+        const SizedBox(height: 18),
+
+        /// Bottom Row
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+
+            /// Bank Logo
+            SizedBox(
+              width: 60,
+              child: Column(
+                children: [
+                  Image.network(
+                    account.bankLogo ?? "",
+                    width: 42,
+                    height: 42,
+                    fit: BoxFit.contain,
+                    errorBuilder: (_, __, ___) =>
+                        const Icon(Icons.account_balance, size: 42),
+                  ),
+
+                  const SizedBox(height: 3),
+
+                  // Text(
+                  //   account.bankName ?? "",
+                  //   maxLines: 1,
+                  //   overflow: TextOverflow.ellipsis,
+                  //   textAlign: TextAlign.center,
+                  //   style: const TextStyle(
+                  //     fontSize: 8,
+                  //     fontWeight: FontWeight.bold,
+                  //   ),
+                  // ),
+                ],
+              ),
+            ),
+
+            const SizedBox(width: 1),
+
+            /// Account Detail
+       Expanded(
+  child: Row(
+    children: [
+      SizedBox(
+        width: 120, // enough for "Account Detail"
+        child: Row(
+          children: [
+            const Text(
+              "Account Detail",
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const SizedBox(width: 4),
+            _CopyIconButton(
+              onTap: () {
+                final String allDetails = '''
+Bank Name: ${account.bankName ?? ''}
 Account Type: ${account.accountType ?? ''}
 Account Name: ${account.accountName ?? ''}
 Account Number: ${account.accountNumber ?? ''}
 IFSC Code: ${account.ifscCode ?? ''}
 Branch: ${account.branch ?? ''}
-UPI ID: ${account.upiId ?? ''}''';
-                            _copyToClipboard(
-                              context,
-                              allDetails,
-                              "Bank Details",
-                            );
-                          },
-                        ),
-                      ],
-                    ),
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Text("UPI ID", style: TextStyle(fontSize: 13)),
-                        const SizedBox(width: 4),
-                        _CopyIconButton(
-                          onTap: () {
-                            _copyToClipboard(
-                              context,
-                              account.upiId ?? "",
-                              "UPI ID",
-                            );
-                          },
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 8),
+UPI ID: ${account.upiId ?? ''}
+''';
 
-          // QR thumbnail — tap opens the big QR dialog
-          GestureDetector(
-            child: BracketedQrBox(
-              data: account.upiId ?? '',
-              boxSize: 56,
-              qrSize: 40,
-              bracketLength: 12,
-              bracketThickness: 2,
+                _copyToClipboard(context, allDetails, "Bank Details");
+              },
             ),
-          ),
-        ],
+          ],
+        ),
       ),
-    );
-  }
+
+      Expanded(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            const Text(
+              "UPI ID",
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const SizedBox(width: 4),
+            _CopyIconButton(
+              onTap: () {
+                _copyToClipboard(
+                  context,
+                  account.upiId ?? "",
+                  "UPI ID",
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    ],
+  ),
+),
+
+const SizedBox(width: 1),
+
+BracketedQrBox(
+  data: account.upiId ?? "",
+  boxSize: 60,
+  qrSize: 42,
+),
+          ],
+        ),
+      ],
+    ),
+  );
+}
 }
 
 class _CopyIconButton extends StatelessWidget {

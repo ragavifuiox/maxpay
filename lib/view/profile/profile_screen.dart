@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:maxpay/controllers/homepage_controller.dart';
 import 'package:maxpay/controllers/profile_controller.dart';
@@ -246,8 +247,15 @@ class ProfileScreen extends GetView<ProfileController> {
                 _buildTitle(context, "Pin code"),
 
                 const SizedBox(height: 8),
-
-                _buildTextField(context, pinController),
+                _buildTextField(
+                  context,
+                  pinController,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                    LengthLimitingTextInputFormatter(6),
+                  ],
+                ),
 
                 const SizedBox(height: 18),
 
@@ -265,7 +273,15 @@ class ProfileScreen extends GetView<ProfileController> {
 
                 const SizedBox(height: 8),
 
-                _buildTextField(context, phoneController),
+                _buildTextField(
+                  context,
+                  phoneController,
+                  keyboardType: TextInputType.phone,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                    LengthLimitingTextInputFormatter(10),
+                  ],
+                ),
 
                 const SizedBox(height: 18),
 
@@ -274,7 +290,15 @@ class ProfileScreen extends GetView<ProfileController> {
 
                 const SizedBox(height: 8),
 
-                _buildTextField(context, wpcontroller),
+                _buildTextField(
+                  context,
+                  wpcontroller,
+                  keyboardType: TextInputType.phone,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                    LengthLimitingTextInputFormatter(10),
+                  ],
+                ),
 
                 const SizedBox(height: 35),
 
@@ -334,6 +358,8 @@ class ProfileScreen extends GetView<ProfileController> {
     BuildContext context,
     TextEditingController controller, {
     int maxLines = 1,
+    TextInputType? keyboardType,
+    List<TextInputFormatter>? inputFormatters,
   }) {
     final theme = Theme.of(context);
 
@@ -343,6 +369,10 @@ class ProfileScreen extends GetView<ProfileController> {
       enabled: true,
 
       maxLines: maxLines,
+
+      keyboardType: keyboardType,
+
+      inputFormatters: inputFormatters,
 
       style: TextStyle(
         fontFamily: 'Poppins',

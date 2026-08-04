@@ -153,7 +153,7 @@ class SettingsPage extends StatelessWidget {
                     Get.toNamed(AppRoutes.kyc);
                   }, SvgPicture.asset(AssetImages.kyc, width: 24.w)),
 
-                   _buildMenuTile(context, 'BankDetails', () {
+                   _buildMenuTile(context, 'Bank Details', () {
                     Get.toNamed(AppRoutes.bank);
                   }, SvgPicture.asset(AssetImages.cashback, width: 24.w)),
                   _buildMenuTile(

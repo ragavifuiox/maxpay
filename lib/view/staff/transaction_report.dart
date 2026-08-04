@@ -20,11 +20,15 @@ class _TransactionReportScreenState extends State<TransactionReportScreen> {
     super.initState();
     AppLogger.logError("Mobile Number: ${widget.mobileNumber}");
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      final now = DateTime.now();
+      final dateStr =
+          "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
+
       Get.find<AddStaffController>().getStaffTransactionReport(
         prdt: "",
         search: widget.mobileNumber,
-        fromdate: "",
-        todate: "",
+        fromdate: dateStr,
+        todate: dateStr,
         status: "",
       );
     });
@@ -123,7 +127,7 @@ class TransactionCard extends StatelessWidget {
                   "Transaction ID: TXN6453564",
                   style: TextStyle(
                     fontSize: 11,
-                 color: theme.colorScheme.onSurface,
+                    color: theme.colorScheme.onSurface,
                   ),
                 ),
               ),
@@ -134,7 +138,7 @@ class TransactionCard extends StatelessWidget {
                     "Date & Time:",
                     style: TextStyle(
                       fontSize: 10,
-                     color: theme.colorScheme.onSurface,
+                      color: theme.colorScheme.onSurface,
                     ),
                   ),
                   SizedBox(height: 2),
@@ -142,7 +146,7 @@ class TransactionCard extends StatelessWidget {
                     "29-11-2026 07:38:43PM",
                     style: TextStyle(
                       fontSize: 10,
-                     color: theme.colorScheme.onSurface,
+                      color: theme.colorScheme.onSurface,
                     ),
                   ),
                 ],
