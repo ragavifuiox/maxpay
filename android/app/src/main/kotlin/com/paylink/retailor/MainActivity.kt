@@ -1,18 +1,22 @@
 package com.paylink.retailor
 
+import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Build
+import android.telephony.SubscriptionInfo
+import android.telephony.SubscriptionManager
+import android.telephony.TelephonyManager
 import android.util.Log
+import androidx.core.content.ContextCompat
 import io.flutter.embedding.android.FlutterFragmentActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 import java.io.ByteArrayOutputStream
-import android.content.Context
-import android.telephony.SubscriptionManager
 
 class MainActivity : FlutterFragmentActivity() {
     private val CHANNEL = "com.paylink.retailor/upi_choose"
@@ -151,8 +155,10 @@ class MainActivity : FlutterFragmentActivity() {
                     try {
                         result.success(getSimList())
                     } catch (e: SecurityException) {
+                        Log.e(TAG, "Permission denied for SIM info", e)
                         result.error("PERMISSION_DENIED", "Missing READ_PHONE_STATE permission", null)
                     } catch (e: Exception) {
+                        Log.e(TAG, "Failed to get SIM list", e)
                         result.error("SIM_ERROR", e.message, null)
                     }
                 }
@@ -162,18 +168,193 @@ class MainActivity : FlutterFragmentActivity() {
     }
 
     private fun getSimList(): List<Map<String, Any>> {
-        val subscriptionManager =
-            getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE) as SubscriptionManager
+        val hasPhoneState = ContextCompat.checkSelfPermission(
+            this,
+            Manifest.permission.READ_PHONE_STATE
+        ) == PackageManager.PERMISSION_GRANTED
 
-        val activeSims = subscriptionManager.activeSubscriptionInfoList ?: return emptyList()
-
-        return activeSims.map {
-            mapOf(
-                "carrierName" to it.carrierName.toString(),
-                "number" to (it.number ?: ""), 
-                "slotIndex" to it.simSlotIndex,
-                "subscriptionId" to it.subscriptionId
-            )
+        val hasPhoneNumbers = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.READ_PHONE_NUMBERS
+            ) == PackageManager.PERMISSION_GRANTED
+        } else {
+            false
         }
+
+        val telephonyManager = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            getSystemService(TelephonyManager::class.java)
+                ?: (getSystemService(Context.TELEPHONY_SERVICE) as? TelephonyManager)
+        } else {
+            getSystemService(Context.TELEPHONY_SERVICE) as? TelephonyManager
+        }
+
+        val subscriptionManager = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            getSystemService(SubscriptionManager::class.java)
+                ?: (getSystemService(Context.TELEPHONY_SUBSCRIPTION_SERVICE) as? SubscriptionManager)
+                ?: SubscriptionManager.from(this)
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+            SubscriptionManager.from(this)
+        } else {
+            null
+        }
+
+        val subList = mutableListOf<SubscriptionInfo>()
+
+        // 1. Try activeSubscriptionInfoList (Standard API)
+        if (subscriptionManager != null && (hasPhoneState || hasPhoneNumbers)) {
+            try {
+                val list = subscriptionManager.activeSubscriptionInfoList
+                if (!list.isNullOrEmpty()) {
+                    subList.addAll(list)
+                }
+            } catch (e: Exception) {
+                Log.w(TAG, "activeSubscriptionInfoList failed: ${e.message}")
+            }
+        }
+
+        // 2. If list is still empty, query by slot index (resolves Android 12 / OEM dual-SIM null list issue)
+        if (subList.isEmpty() && subscriptionManager != null && (hasPhoneState || hasPhoneNumbers)) {
+            val phoneCount = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                telephonyManager?.activeModemCount ?: 2
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                @Suppress("DEPRECATION")
+                telephonyManager?.phoneCount ?: 2
+            } else {
+                2
+            }
+            for (slot in 0 until phoneCount) {
+                try {
+                    val subInfo = subscriptionManager.getActiveSubscriptionInfoForSimSlotIndex(slot)
+                    if (subInfo != null && !subList.any { it.subscriptionId == subInfo.subscriptionId }) {
+                        subList.add(subInfo)
+                    }
+                } catch (e: Exception) {
+                    Log.w(TAG, "getActiveSubscriptionInfoForSimSlotIndex($slot) failed: ${e.message}")
+                }
+            }
+        }
+
+        // 3. If subscription info objects were found, map them
+        if (subList.isNotEmpty()) {
+            Log.d(TAG, "Found ${subList.size} subscription info records")
+            return subList.map { subInfo ->
+                var phoneNumber = ""
+
+                // Method A: Android 13+ (API 33+) SubscriptionManager.getPhoneNumber(subId)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && subscriptionManager != null) {
+                    try {
+                        val num = subscriptionManager.getPhoneNumber(subInfo.subscriptionId)
+                        if (!num.isNullOrBlank()) {
+                            phoneNumber = num
+                        }
+                    } catch (e: Exception) {
+                        Log.w(TAG, "getPhoneNumber failed for subId ${subInfo.subscriptionId}: ${e.message}")
+                    }
+                }
+
+                // Method B: Legacy subInfo.number
+                if (phoneNumber.isBlank()) {
+                    try {
+                        @Suppress("DEPRECATION")
+                        val num = subInfo.number
+                        if (!num.isNullOrBlank()) {
+                            phoneNumber = num
+                        }
+                    } catch (e: Exception) {
+                        Log.w(TAG, "subInfo.number failed for subId ${subInfo.subscriptionId}: ${e.message}")
+                    }
+                }
+
+                // Method C: TelephonyManager line1Number for specific subscription ID (API 24+)
+                if (phoneNumber.isBlank() && telephonyManager != null) {
+                    try {
+                        val subTelephony = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                            telephonyManager.createForSubscriptionId(subInfo.subscriptionId)
+                        } else {
+                            telephonyManager
+                        }
+                        val line1 = subTelephony.line1Number
+                        if (!line1.isNullOrBlank()) {
+                            phoneNumber = line1
+                        }
+                    } catch (e: Exception) {
+                        Log.w(TAG, "subTelephony.line1Number failed for subId ${subInfo.subscriptionId}: ${e.message}")
+                    }
+                }
+
+                val carrierName = subInfo.carrierName?.toString()?.takeIf { it.isNotBlank() }
+                    ?: subInfo.displayName?.toString()?.takeIf { it.isNotBlank() }
+                    ?: "SIM ${subInfo.simSlotIndex + 1}"
+
+                val displayName = subInfo.displayName?.toString() ?: ""
+                val countryIso = subInfo.countryIso ?: ""
+
+                Log.d(
+                    TAG,
+                    "SIM slotIndex=${subInfo.simSlotIndex}, subId=${subInfo.subscriptionId}, carrier=$carrierName, number=$phoneNumber"
+                )
+
+                mapOf(
+                    "carrierName" to carrierName,
+                    "displayName" to displayName,
+                    "number" to phoneNumber.trim(),
+                    "slotIndex" to subInfo.simSlotIndex,
+                    "subscriptionId" to subInfo.subscriptionId,
+                    "countryIso" to countryIso
+                )
+            }
+        }
+
+        // 4. Fallback using TelephonyManager if SubscriptionManager returned empty but a SIM is inserted
+        if (telephonyManager != null) {
+            val simState = telephonyManager.simState
+            val isSimPresent = simState == TelephonyManager.SIM_STATE_READY ||
+                simState == TelephonyManager.SIM_STATE_NETWORK_LOCKED ||
+                telephonyManager.simOperatorName.isNotBlank() ||
+                telephonyManager.networkOperatorName.isNotBlank()
+
+            if (isSimPresent) {
+                Log.d(TAG, "Falling back to TelephonyManager for SIM detection")
+                val operatorName = telephonyManager.simOperatorName.takeIf { it.isNotBlank() }
+                    ?: telephonyManager.networkOperatorName.takeIf { it.isNotBlank() }
+                    ?: "SIM 1"
+                var line1 = ""
+                try {
+                    line1 = telephonyManager.line1Number ?: ""
+                } catch (e: Exception) {
+                    Log.w(TAG, "telephonyManager.line1Number fallback failed: ${e.message}")
+                }
+                val count = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    telephonyManager.activeModemCount.coerceAtLeast(1)
+                } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    @Suppress("DEPRECATION")
+                    telephonyManager.phoneCount.coerceAtLeast(1)
+                } else {
+                    1
+                }
+
+                val fallbackSims = mutableListOf<Map<String, Any>>()
+                for (i in 0 until count) {
+                    fallbackSims.add(
+                        mapOf(
+                            "carrierName" to if (i == 0) operatorName else "SIM ${i + 1}",
+                            "displayName" to if (i == 0) operatorName else "SIM ${i + 1}",
+                            "number" to if (i == 0) line1.trim() else "",
+                            "slotIndex" to i,
+                            "subscriptionId" to (i + 1),
+                            "countryIso" to (telephonyManager.simCountryIso ?: "")
+                        )
+                    )
+                }
+                return fallbackSims
+            }
+        }
+
+        if (!hasPhoneState && !hasPhoneNumbers) {
+            throw SecurityException("Missing READ_PHONE_STATE or READ_PHONE_NUMBERS permission")
+        }
+
+        return emptyList()
     }
 }
