@@ -1,57 +1,61 @@
+// To parse this JSON data, do
+//
+//     final searchEarning = searchEarningFromJson(jsonString);
+
+import 'dart:convert';
+
+SearchEarning searchEarningFromJson(String str) =>
+    SearchEarning.fromJson(json.decode(str));
+
+String searchEarningToJson(SearchEarning data) => json.encode(data.toJson());
+
 class SearchEarning {
   bool? success;
   Data? data;
   String? message;
   int? code;
 
-  SearchEarning({
-    this.success,
-    this.data,
-    this.message,
-    this.code,
-  });
+  SearchEarning({this.success, this.data, this.message, this.code});
 
-  SearchEarning.fromJson(Map<String, dynamic> json) {
-    success = json['success'];
-    data = json['data'] != null ? Data.fromJson(json['data']) : null;
-    message = json['message'];
-    code = json['code'];
-  }
+  factory SearchEarning.fromJson(Map<String, dynamic> json) => SearchEarning(
+    success: json["success"],
+    data: json["data"] == null ? null : Data.fromJson(json["data"]),
+    message: json["message"],
+    code: json["code"],
+  );
 
-  Map<String, dynamic> toJson() {
-    return {
-      'success': success,
-      'data': data?.toJson(),
-      'message': message,
-      'code': code,
-    };
-  }
+  Map<String, dynamic> toJson() => {
+    "success": success,
+    "data": data?.toJson(),
+    "message": message,
+    "code": code,
+  };
 }
 
 class Data {
-  double? totalEarnings;
+  int? todayTotalEarnings;
+  int? totalEarnings;
   List<EarningItem>? list;
 
-  Data({
-    this.totalEarnings,
-    this.list,
-  });
+  Data({this.todayTotalEarnings, this.totalEarnings, this.list});
 
-  Data.fromJson(Map<String, dynamic> json) {
-   totalEarnings = (json['total_earnings'] as num?)?.toDouble();
-    if (json['list'] != null) {
-      list = (json['list'] as List)
-          .map((e) => EarningItem.fromJson(e))
-          .toList();
-    }
-  }
+  factory Data.fromJson(Map<String, dynamic> json) => Data(
+    todayTotalEarnings: json["today_total_earnings"],
+    totalEarnings: json["total_earnings"],
+    list: json["list"] == null
+        ? []
+        : List<EarningItem>.from(
+            json["list"]!.map((x) => EarningItem.fromJson(x)),
+          ),
+  );
 
-  Map<String, dynamic> toJson() {
-    return {
-      'total_earnings': totalEarnings,
-      'list': list?.map((e) => e.toJson()).toList(),
-    };
-  }
+  Map<String, dynamic> toJson() => {
+    "today_total_earnings": todayTotalEarnings,
+    "total_earnings": totalEarnings,
+    "list": list == null
+        ? []
+        : List<dynamic>.from(list!.map((x) => x.toJson())),
+  };
 }
 
 class EarningItem {

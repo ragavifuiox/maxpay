@@ -341,7 +341,7 @@ class SuccessRechargePage extends StatelessWidget {
                   //   "Product Type",
                   //   "Mobile Prepaid",
                   // ),
-                  _detailRow(context, "Product", productName),
+                  _detailRow(context, "Product", "Prepaid"),
                   _detailRow(context, "Product Ref Id", transactionId),
 
                   SizedBox(height: 12.h),

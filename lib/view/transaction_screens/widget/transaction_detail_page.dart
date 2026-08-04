@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:maxpay/core/data/model/transaction_report_model.dart';
+import 'package:maxpay/core/extensions/currency.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
 import 'package:maxpay/core/constants/extension.dart';
 
@@ -45,32 +47,32 @@ class TransactionDetailsPage extends StatelessWidget {
 
               detailRow(
                 "Available Balance",
-                "₹${data.availableBalance ?? "0"}",
+                (data.availableBalance ?? "0").currencyIndian,
               ),
 
               detailRow(
                 "Transaction Amount",
-                "₹${data.transactionAmount ?? "0"}",
+                (data.transactionAmount ?? "0").currencyIndian,
               ),
 
-              detailRow("Commission", "₹${data.commission ?? "0"}"),
+              detailRow("Commission", (data.commission ?? "0").currencyIndian),
 
               detailRow(
                 "Remaining Balance",
-                "₹${data.remainingBalance ?? "0"}",
+                (data.remainingBalance ?? "0").currencyIndian,
               ),
 
               detailRow(
-                "Request Date&Time",
+                "Request Date & Time",
                 (data.requestDateTime?.isNotEmpty ?? false)
-                    ? formatTransactionDate(data.requestDateTime!)
+                    ? formatTransactionDate(data.requestDateTime ?? '-')
                     : "-",
               ),
 
               detailRow(
-                "Response Date&Time",
+                "Response Date & Time",
                 (data.responseDateTime?.isNotEmpty ?? false)
-                    ? formatTransactionDate(data.responseDateTime!)
+                    ? formatTransactionDate(data.responseDateTime ?? '-')
                     : "-",
               ),
             ],

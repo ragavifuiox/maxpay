@@ -14,7 +14,7 @@ class WalletCreditSearchRepoImpl implements WalletCreditSearchRepository {
   WalletCreditSearchRepoImpl(this.apiService);
 
   @override
-  Future<Either<Failure, CreditList>> searchcredit({
+  Future<Either<Failure, CreditListModel>> searchcredit({
     required String credit,
 
     required String fromdate,
@@ -35,16 +35,13 @@ class WalletCreditSearchRepoImpl implements WalletCreditSearchRepository {
       AppLogger.debugPrint("RAW RESPONSE:");
       AppLogger.debugPrint(response);
 
-      final model = CreditList.fromJson(response);
+      final model = CreditListModel.fromJson(response);
       return Right(model);
     } on DioException catch (e) {
       return Left(DioErrorHandler.handle(e));
     } catch (e) {
       AppLogger.logError("Unexpected Error: $e");
-      return Left(
-        ServerFailure(message: "Something went wrong"),
-      );
+      return Left(ServerFailure(message: "Something went wrong"));
     }
-  
   }
 }

@@ -1,3 +1,14 @@
+// To parse this JSON data, do
+//
+//     final retailorGrade = retailorGradeFromJson(jsonString);
+
+import 'dart:convert';
+
+RetailorGrade retailorGradeFromJson(String str) =>
+    RetailorGrade.fromJson(json.decode(str));
+
+String retailorGradeToJson(RetailorGrade data) => json.encode(data.toJson());
+
 class RetailorGrade {
   bool? success;
   Data? data;
@@ -6,192 +17,109 @@ class RetailorGrade {
 
   RetailorGrade({this.success, this.data, this.message, this.code});
 
-  RetailorGrade.fromJson(Map<String, dynamic> json) {
-    success = json['success'];
-    data = json['data'] != null ? Data.fromJson(json['data']) : null;
-    message = json['message'];
-    code = json['code'];
-  }
+  factory RetailorGrade.fromJson(Map<String, dynamic> json) => RetailorGrade(
+    success: json["success"],
+    data: json["data"] == null ? null : Data.fromJson(json["data"]),
+    message: json["message"],
+    code: json["code"],
+  );
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['success'] = success;
-    if (this.data != null) {
-      data['data'] = this.data!.toJson();
-    }
-    data['message'] = message;
-    data['code'] = code;
-    return data;
-  }
+  Map<String, dynamic> toJson() => {
+    "success": success,
+    "data": data?.toJson(),
+    "message": message,
+    "code": code,
+  };
 }
 
 class Data {
   Retailer? retailer;
   double? walletBalance;
-  CurrentMonth? currentMonth;
-  LastMonth? lastMonth;
+  TMonth? currentMonth;
+  TMonth? lastMonth;
   DisplayCard? displayCard;
-  List<GradeSlabs>? gradeSlabs;
+  List<GradeSlab>? gradeSlabs;
 
-  Data(
-      {this.retailer,
-      this.walletBalance,
-      this.currentMonth,
-      this.lastMonth,
-      this.displayCard,
-      this.gradeSlabs});
+  Data({
+    this.retailer,
+    this.walletBalance,
+    this.currentMonth,
+    this.lastMonth,
+    this.displayCard,
+    this.gradeSlabs,
+  });
 
-  Data.fromJson(Map<String, dynamic> json) {
-  retailer = json['retailer'] != null
-      ? Retailer.fromJson(json['retailer'])
-      : null;
+  factory Data.fromJson(Map<String, dynamic> json) => Data(
+    retailer: json["retailer"] == null
+        ? null
+        : Retailer.fromJson(json["retailer"]),
+    walletBalance: json["wallet_balance"]?.toDouble(),
+    currentMonth: json["current_month"] == null
+        ? null
+        : TMonth.fromJson(json["current_month"]),
+    lastMonth: json["last_month"] == null
+        ? null
+        : TMonth.fromJson(json["last_month"]),
+    displayCard: json["display_card"] == null
+        ? null
+        : DisplayCard.fromJson(json["display_card"]),
+    gradeSlabs: json["grade_slabs"] == null
+        ? []
+        : List<GradeSlab>.from(
+            json["grade_slabs"]!.map((x) => GradeSlab.fromJson(x)),
+          ),
+  );
 
-  walletBalance = (json['wallet_balance'] as num?)?.toDouble();
-
-  currentMonth = json['current_month'] != null
-      ? CurrentMonth.fromJson(json['current_month'])
-      : null;
-
-  lastMonth = json['last_month'] != null
-      ? LastMonth.fromJson(json['last_month'])
-      : null;
-
-  displayCard = json['display_card'] != null
-      ? DisplayCard.fromJson(json['display_card'])
-      : null;
-
-  if (json['grade_slabs'] != null) {
-    gradeSlabs = [];
-    json['grade_slabs'].forEach((v) {
-      gradeSlabs!.add(GradeSlabs.fromJson(v));
-    });
-  }
+  Map<String, dynamic> toJson() => {
+    "retailer": retailer?.toJson(),
+    "wallet_balance": walletBalance,
+    "current_month": currentMonth?.toJson(),
+    "last_month": lastMonth?.toJson(),
+    "display_card": displayCard?.toJson(),
+    "grade_slabs": gradeSlabs == null
+        ? []
+        : List<dynamic>.from(gradeSlabs!.map((x) => x.toJson())),
+  };
 }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    if (retailer != null) {
-      data['retailer'] = retailer!.toJson();
-    }
-    data['wallet_balance'] = walletBalance;
-    if (currentMonth != null) {
-      data['current_month'] = currentMonth!.toJson();
-    }
-    if (lastMonth != null) {
-      data['last_month'] = lastMonth!.toJson();
-    }
-    if (displayCard != null) {
-      data['display_card'] = displayCard!.toJson();
-    }
-    if (gradeSlabs != null) {
-      data['grade_slabs'] = gradeSlabs!.map((v) => v.toJson()).toList();
-    }
-    return data;
-  }
-}
-
-class Retailer {
-  String? userId;
-  String? retailerName;
-  String? mobile;
-
-  Retailer({this.userId, this.retailerName, this.mobile});
-
-  Retailer.fromJson(Map<String, dynamic> json) {
-    userId = json['user_id'];
-    retailerName = json['retailer_name'];
-    mobile = json['mobile'];
-  }
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['user_id'] = userId;
-    data['retailer_name'] = retailerName;
-    data['mobile'] = mobile;
-    return data;
-  }
-}
-
-class CurrentMonth {
+class TMonth {
   String? grade;
   String? monthKey;
   String? monthLabel;
   int? daysTracked;
   double? actualAvg;
   String? label;
+  int? cashback;
 
-  CurrentMonth(
-      {this.grade,
-      this.monthKey,
-      this.monthLabel,
-      this.daysTracked,
-      this.actualAvg,
-      this.label});
+  TMonth({
+    this.grade,
+    this.monthKey,
+    this.monthLabel,
+    this.daysTracked,
+    this.actualAvg,
+    this.label,
+    this.cashback,
+  });
 
-  CurrentMonth.fromJson(Map<String, dynamic> json) {
-  grade = json['grade'];
-  monthKey = json['month_key'];
-  monthLabel = json['month_label'];
-  daysTracked = json['days_tracked'];
+  factory TMonth.fromJson(Map<String, dynamic> json) => TMonth(
+    grade: json["grade"],
+    monthKey: json["month_key"],
+    monthLabel: json["month_label"],
+    daysTracked: json["days_tracked"],
+    actualAvg: json["actual_avg"]?.toDouble(),
+    label: json["label"],
+    cashback: json["cashback"],
+  );
 
-  actualAvg = (json['actual_avg'] as num?)?.toDouble();
-
-  label = json['label'];
-}
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['grade'] = grade;
-    data['month_key'] = monthKey;
-    data['month_label'] = monthLabel;
-    data['days_tracked'] = daysTracked;
-    data['actual_avg'] = actualAvg;
-    data['label'] = label;
-    return data;
-  }
-}
-
-class LastMonth {
-  String? grade;
-  String? monthKey;
-  String? monthLabel;
-  int? daysTracked;
- double? actualAvg;
-  Null cashback;
-  String? label;
-
-  LastMonth(
-      {this.grade,
-      this.monthKey,
-      this.monthLabel,
-      this.daysTracked,
-      this.actualAvg,
-      this.cashback,
-      this.label});
-
- LastMonth.fromJson(Map<String, dynamic> json) {
-  grade = json['grade'];
-  monthKey = json['month_key'];
-  monthLabel = json['month_label'];
-  daysTracked = json['days_tracked'];
-
-  actualAvg = (json['actual_avg'] as num?)?.toDouble();
-
-  cashback = json['cashback'];
-  label = json['label'];
-}
-
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['grade'] = grade;
-    data['month_key'] = monthKey;
-    data['month_label'] = monthLabel;
-    data['days_tracked'] = daysTracked;
-    data['actual_avg'] = actualAvg;
-    data['cashback'] = cashback;
-    data['label'] = label;
-    return data;
-  }
+  Map<String, dynamic> toJson() => {
+    "grade": grade,
+    "month_key": monthKey,
+    "month_label": monthLabel,
+    "days_tracked": daysTracked,
+    "actual_avg": actualAvg,
+    "label": label,
+    "cashback": cashback,
+  };
 }
 
 class DisplayCard {
@@ -202,47 +130,65 @@ class DisplayCard {
 
   DisplayCard({this.grade, this.label, this.monthLabel, this.source});
 
-  DisplayCard.fromJson(Map<String, dynamic> json) {
-    grade = json['grade'];
-    label = json['label'];
-    monthLabel = json['month_label'];
-    source = json['source'];
-  }
+  factory DisplayCard.fromJson(Map<String, dynamic> json) => DisplayCard(
+    grade: json["grade"],
+    label: json["label"],
+    monthLabel: json["month_label"],
+    source: json["source"],
+  );
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['grade'] = grade;
-    data['label'] = label;
-    data['month_label'] = monthLabel;
-    data['source'] = source;
-    return data;
-  }
+  Map<String, dynamic> toJson() => {
+    "grade": grade,
+    "label": label,
+    "month_label": monthLabel,
+    "source": source,
+  };
 }
 
-class GradeSlabs {
+class GradeSlab {
   int? sno;
   String? grade;
   int? dailyAverageBalance;
   double? monthlyCashBack;
 
-  GradeSlabs(
-      {this.sno, this.grade, this.dailyAverageBalance, this.monthlyCashBack});
+  GradeSlab({
+    this.sno,
+    this.grade,
+    this.dailyAverageBalance,
+    this.monthlyCashBack,
+  });
 
- GradeSlabs.fromJson(Map<String, dynamic> json) {
-  sno = json['sno'];
-  grade = json['grade'];
+  factory GradeSlab.fromJson(Map<String, dynamic> json) => GradeSlab(
+    sno: json["sno"],
+    grade: json["grade"],
+    dailyAverageBalance: json["daily_average_balance"],
+    monthlyCashBack: json["monthly_cash_back"]?.toDouble(),
+  );
 
-  dailyAverageBalance = (json['daily_average_balance'] as num?)?.toInt();
-
-  monthlyCashBack = (json['monthly_cash_back'] as num?)?.toDouble();
+  Map<String, dynamic> toJson() => {
+    "sno": sno,
+    "grade": grade,
+    "daily_average_balance": dailyAverageBalance,
+    "monthly_cash_back": monthlyCashBack,
+  };
 }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['sno'] = sno;
-    data['grade'] = grade;
-    data['daily_average_balance'] = dailyAverageBalance;
-    data['monthly_cash_back'] = monthlyCashBack;
-    return data;
-  }
+class Retailer {
+  String? userId;
+  String? retailerName;
+  String? mobile;
+
+  Retailer({this.userId, this.retailerName, this.mobile});
+
+  factory Retailer.fromJson(Map<String, dynamic> json) => Retailer(
+    userId: json["user_id"],
+    retailerName: json["retailer_name"],
+    mobile: json["mobile"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "user_id": userId,
+    "retailer_name": retailerName,
+    "mobile": mobile,
+  };
 }

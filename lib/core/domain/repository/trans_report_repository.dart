@@ -5,7 +5,7 @@ import 'package:maxpay/core/data/model/transaction_report_model.dart';
 import 'package:maxpay/core/error/failure.dart';
 
 abstract class TransReportRepository {
-  Future<Either<Failure, TransactionReport>> transreport({
+  Future<Either<Failure, TransactionReportModel>> transreport({
     required String productid,
     required String fromdate,
     required String todate,

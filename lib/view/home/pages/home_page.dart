@@ -359,8 +359,7 @@ class HomePageScreen extends GetView<HomePageController> {
                                 return StatCard(
                                   title: 'Todays Credit',
 
-                                  value:
-                                      '${amount.toString().currencyIndian}/\n$count Nos',
+                                  value: amount.toString().currencyIndian,
                                   borderColor: isDark
                                       ? AppColors.clrPrimary
                                       : Color(0x66495BFF),
@@ -388,8 +387,7 @@ class HomePageScreen extends GetView<HomePageController> {
 
                                 return StatCard(
                                   title: 'Refunded',
-                                  value:
-                                      '${refundAmount.toString().currencyIndian}/\n$count No',
+                                  value: refundAmount.toString().currencyIndian,
                                   borderColor: isDark
                                       ? AppColors.clrPrimary
                                       : const Color(0x66495BFF),
@@ -462,8 +460,7 @@ class HomePageScreen extends GetView<HomePageController> {
                                     );
                                   },
                                   title: 'Success',
-                                  value:
-                                      '${amount.toString().currencyIndian} /\n$count Nos',
+                                  value: amount.toString().currencyIndian,
                                   imageWidget: SvgPicture.asset(
                                     AssetImages.successIcon,
                                     height: 24.h,
@@ -508,8 +505,7 @@ class HomePageScreen extends GetView<HomePageController> {
                                     );
                                   },
                                   title: 'Processing',
-                                  value:
-                                      '${amount.toString().currencyIndian} /\n$count Nos',
+                                  value: amount.toString().currencyIndian,
                                   needSpacingbwImage: false,
                                   imageWidget: SvgPicture.asset(
                                     AssetImages.processIcon,
@@ -553,8 +549,7 @@ class HomePageScreen extends GetView<HomePageController> {
                                     );
                                   },
                                   title: 'Failed',
-                                  value:
-                                      '${amount.toString().currencyIndian} /\n$count Nos',
+                                  value: amount.toString().currencyIndian,
                                   needSpacingbwImage: false,
                                   imageWidget: SvgPicture.asset(
                                     AssetImages.failedIcon,

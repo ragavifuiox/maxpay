@@ -69,23 +69,23 @@ class _TransactionReportScreenState extends State<TransactionReportScreen> {
                   return const Center(child: CircularProgressIndicator());
                 }
 
-                if ((controller.transReport.value.data ?? []).isEmpty) {
+                if ((controller.transReport.value.list ?? []).isEmpty) {
                   return const Center(child: Text("No Data Found"));
                 }
 
                 return ListView.builder(
-                  itemCount: (controller.transReport.value.data ?? []).length,
+                  itemCount: (controller.transReport.value.list ?? []).length,
                   itemBuilder: (context, index) {
                     return TransactionCard(
                       bgColor:
-                          controller.transReport.value.data![index].status ==
+                          controller.transReport.value.list![index].status ==
                               "success"
                           ? Color(0xFFD1FFE8)
-                          : controller.transReport.value.data![index].status ==
+                          : controller.transReport.value.list![index].status ==
                                 "failed"
                           ? Color(0xFFFFE4E8)
                           : Color(0xFFFFF1DB),
-                      status: controller.transReport.value.data![index].status!,
+                      status: controller.transReport.value.list![index].status!,
                     );
                   },
                 );
