@@ -13,6 +13,7 @@ import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/core/di/service_locator.dart';
 import 'package:maxpay/core/utils/responsive.dart';
 import 'package:maxpay/core/utils/theme.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:share_plus/share_plus.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -348,13 +349,21 @@ class SettingsPage extends StatelessWidget {
                   ),
 
                   /// 🔹 VERSION TEXT
-                  Text(
-                    'Latest Version 1.0.0',
-                    style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 14.sp,
-                      fontFamily: 'Poppins',
-                    ),
+                  FutureBuilder<PackageInfo>(
+                    future: PackageInfo.fromPlatform(),
+                    builder: (context, snapshot) {
+                      final version = snapshot.data?.version ?? '';
+                      return Text(
+                        version.isNotEmpty
+                            ? 'Latest Version $version'
+                            : 'Latest Version',
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 14.sp,
+                          fontFamily: 'Poppins',
+                        ),
+                      );
+                    },
                   ),
                   SizedBox(height: 45.h),
                 ],

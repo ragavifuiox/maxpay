@@ -12,7 +12,7 @@ class TransReportRepoImpl implements TransReportRepository {
   TransReportRepoImpl(this.apiService);
 
   @override
-  Future<Either<Failure, TransactionReport>> transreport({
+  Future<Either<Failure, TransactionReportModel>> transreport({
     required String productid,
     required String status,
     required String fromdate,
@@ -35,7 +35,7 @@ class TransReportRepoImpl implements TransReportRepository {
     AppLogger.debugPrint("RAW RESPONSE:");
 AppLogger.debugPrint(response);
 
-      final model = TransactionReport.fromJson(response);
+      final model = TransactionReportModel.fromJson(response);
       return Right(model);
     } catch (e) {
       return Left(ServerFailure(message: e.toString()));

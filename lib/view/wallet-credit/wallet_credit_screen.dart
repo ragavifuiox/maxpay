@@ -4,6 +4,7 @@ import 'package:maxpay/controllers/wallet_credit_controller.dart';
 import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/core/constants/extension.dart';
 import 'package:maxpay/core/data/model/wallet_credit_model.dart';
+import 'package:maxpay/core/extensions/currency.dart';
 import 'package:maxpay/core/utils/texthelper.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
 import 'package:maxpay/view/wallet-credit/widget/wallet_credit_filter.dart';
@@ -20,33 +21,28 @@ class WalletCreditScreen extends GetView<WalletCreditController> {
           ? Colors.white
           : theme.scaffoldBackgroundColor,
 
-      appBar: const CommonAppBar(
-        title: "Wallet Credit",
-      ),
+      appBar: const CommonAppBar(title: "Wallet Credit"),
 
       body: Padding(
         padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
 
         child: Column(
           children: [
-
             const WalletCreditFilter(),
 
             const SizedBox(height: 16),
 
             Divider(
-  color: Theme.of(context).brightness == Brightness.light
-      ? Colors.black12
-      : Colors.white24,
-),
-const SizedBox(height: 16),
+              color: Theme.of(context).brightness == Brightness.light
+                  ? Colors.black12
+                  : Colors.white24,
+            ),
+            const SizedBox(height: 16),
             Obx(
               () => Container(
                 width: double.infinity,
 
-                padding: const EdgeInsets.symmetric(
-                  vertical: 16,
-                ),
+                padding: const EdgeInsets.symmetric(vertical: 16),
 
                 decoration: BoxDecoration(
                   color: AppColors.clrPrimary,
@@ -55,7 +51,6 @@ const SizedBox(height: 16),
 
                 child: Column(
                   children: [
-
                     const Text(
                       "Total Credit",
                       style: TextStyle(
@@ -68,14 +63,20 @@ const SizedBox(height: 16),
 
                     const SizedBox(height: 4),
 
-                    Text(
-                       "₹ ${controller.creditData.value?.data?.totalCredit?.toStringAsFixed(2) ?? "0.00"}",
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    controller.isLoading.value
+                        ? const Center(
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                            ),
+                          )
+                        : Text(
+                            (controller.todaysCredit.value).currencyIndian,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                   ],
                 ),
               ),
@@ -84,32 +85,26 @@ const SizedBox(height: 16),
             const SizedBox(height: 16),
 
             /// List
-           Expanded(
-  child: Obx(() {
-    if (controller.isLoading.value) {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
-    }
+            Expanded(
+              child: Obx(() {
+                if (controller.isLoading.value) {
+                  return const Center(child: CircularProgressIndicator());
+                }
 
-    if (controller.Searchcredit.isEmpty) {
-      return const Center(
-        child: Text("No Data Found"),
-      );
-    }
+                if (controller.Searchcredit.isEmpty) {
+                  return const Center(child: Text("No Data Found"));
+                }
 
-    return ListView.builder(
-      itemCount: controller.Searchcredit.length,
-      itemBuilder: (context, index) {
-        final item = controller.Searchcredit[index];
+                return ListView.builder(
+                  itemCount: controller.Searchcredit.length,
+                  itemBuilder: (context, index) {
+                    final item = controller.Searchcredit[index];
 
-        return _WalletCreditCard(
-          data: item,
-        );
-      },
-    );
-  }),
-)
+                    return _WalletCreditCard(data: item);
+                  },
+                );
+              }),
+            ),
           ],
         ),
       ),
@@ -119,13 +114,10 @@ const SizedBox(height: 16),
 
 /// Wallet Credit Card
 
-
 class _WalletCreditCard extends StatelessWidget {
   final CreditData data;
 
-  const _WalletCreditCard({
-    required this.data,
-  });
+  const _WalletCreditCard({required this.data});
 
   @override
   Widget build(BuildContext context) {
@@ -140,11 +132,7 @@ class _WalletCreditCard extends StatelessWidget {
             ? AppColors.background
             : const Color(0xFF2F3349),
         borderRadius: BorderRadius.circular(12),
-        border: isDark
-            ? Border.all(
-                color: const Color(0xFF3C3F52),
-              )
-            : null,
+        border: isDark ? Border.all(color: const Color(0xFF3C3F52)) : null,
       ),
       child: Column(
         children: [
@@ -154,7 +142,7 @@ class _WalletCreditCard extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  "Transaction ID: ${data.transactionId ?? '-'}",
+                  "TXN ID: ${data.transactionId ?? '-'}",
                   style: TextHelper.max1.copyWith(
                     color: isDark
                         ? const Color(0xFFFFFFFF).withValues(alpha: 0.7)
@@ -175,15 +163,15 @@ class _WalletCreditCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 5),
                   Text(
-  data.createdAt != null && data.createdAt!.isNotEmpty
-      ? formatTransactionDate(data.createdAt!)
-      : "-",
-  style: TextHelper.max1.copyWith(
-    color: isDark
-        ? const Color(0xFFFFFFFF).withValues(alpha: 0.7)
-        : AppColors.darktextclr,
-  ),
-),
+                    data.createdAt != null && data.createdAt!.isNotEmpty
+                        ? formatTransactionDate(data.createdAt!)
+                        : "-",
+                    style: TextHelper.max1.copyWith(
+                      color: isDark
+                          ? const Color(0xFFFFFFFF).withValues(alpha: 0.7)
+                          : AppColors.darktextclr,
+                    ),
+                  ),
                 ],
               ),
             ],

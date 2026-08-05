@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:maxpay/controllers/transaction_report_controller.dart';
 import 'package:maxpay/core/constants/colors.dart';
+import 'package:maxpay/core/extensions/currency.dart';
 import 'package:maxpay/core/utils/texthelper.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
 import 'package:maxpay/view/transaction_screens/widget/transaction_card.dart';
@@ -225,16 +226,34 @@ class TransactionScreen extends GetView<TransReportController> {
                     ),
                     const SizedBox(height: 4),
                     Obx(() {
-                      final transData = controller.totalTransaction.value?.data;
+                      final transData = controller.transreport.value.data;
                       String displayAmount = "0";
                       if (isSuccess) {
-                        displayAmount = transData?.successAmount ?? "0";
+                        displayAmount =
+                            (transData?.todaySuccessAmount.toString() ?? "0")
+                                .currencyIndian;
+                      } else if (isPending) {
+                        displayAmount =
+                            (transData?.todayProcessingAmount.toString() ?? "0")
+                                .currencyIndian;
                       } else {
-                        displayAmount = transData?.failedAmount ?? "0";
+                        displayAmount =
+                            (transData?.todayFailedAmount.toString() ?? "0")
+                                .currencyIndian;
                       }
-
+                      if (controller.isLoading.value) {
+                        return SizedBox(
+                          height: 40,
+                          width: 40,
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              color: AppColors.background,
+                            ),
+                          ),
+                        );
+                      }
                       return Text(
-                        "₹ $displayAmount",
+                        displayAmount,
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 18,

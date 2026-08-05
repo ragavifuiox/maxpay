@@ -71,9 +71,6 @@
 // //   }
 // // }
 
-
-
-
 // class TransactionReport {
 //   bool? success;
 //   List<TransrepData>? data;
@@ -155,39 +152,77 @@
 //   }
 // }
 
+// To parse this JSON data, do
+//
+//     final transactionReportModel = transactionReportModelFromJson(jsonString);
 
+import 'dart:convert';
 
+TransactionReportModel transactionReportModelFromJson(String str) =>
+    TransactionReportModel.fromJson(json.decode(str));
 
-class TransactionReport {
+String transactionReportModelToJson(TransactionReportModel data) =>
+    json.encode(data.toJson());
+
+class TransactionReportModel {
   bool? success;
-  List<TransrepData>? data;
+  TransactionReport? data;
   String? message;
   int? code;
 
-  TransactionReport({this.success, this.data, this.message, this.code});
+  TransactionReportModel({this.success, this.data, this.message, this.code});
 
-  TransactionReport.fromJson(Map<String, dynamic> json) {
-    success = json['success'];
-    if (json['data'] != null) {
-      data = <TransrepData>[];
-      json['data'].forEach((v) {
-        data!.add(TransrepData.fromJson(v));
-      });
-    }
-    message = json['message'];
-    code = json['code'];
-  }
+  factory TransactionReportModel.fromJson(Map<String, dynamic> json) =>
+      TransactionReportModel(
+        success: json["success"],
+        data: json["data"] == null
+            ? null
+            : TransactionReport.fromJson(json["data"]),
+        message: json["message"],
+        code: json["code"],
+      );
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['success'] = success;
-    if (this.data != null) {
-      data['data'] = this.data!.map((v) => v.toJson()).toList();
-    }
-    data['message'] = message;
-    data['code'] = code;
-    return data;
-  }
+  Map<String, dynamic> toJson() => {
+    "success": success,
+    "data": data?.toJson(),
+    "message": message,
+    "code": code,
+  };
+}
+
+class TransactionReport {
+  int? todaySuccessAmount;
+  int? todayFailedAmount;
+  int? todayProcessingAmount;
+  List<TransrepData>? list;
+
+  TransactionReport({
+    this.todaySuccessAmount,
+    this.todayFailedAmount,
+    this.todayProcessingAmount,
+    this.list,
+  });
+
+  factory TransactionReport.fromJson(Map<String, dynamic> json) =>
+      TransactionReport(
+        todaySuccessAmount: json["success_amount"],
+        todayFailedAmount: json["failed_amount"],
+        todayProcessingAmount: json["processing_amount"],
+        list: json["list"] == null
+            ? []
+            : List<TransrepData>.from(
+                json["list"]!.map((x) => TransrepData.fromJson(x)),
+              ),
+      );
+
+  Map<String, dynamic> toJson() => {
+    "success_amount": todaySuccessAmount,
+    "failed_amount": todayFailedAmount,
+    "processing_amount": todayProcessingAmount,
+    "list": list == null
+        ? []
+        : List<dynamic>.from(list!.map((x) => x.toJson())),
+  };
 }
 
 class TransrepData {
@@ -215,30 +250,31 @@ class TransrepData {
   String? logo;
   String? url;
 
-  TransrepData(
-      {this.id,
-      this.productId,
-      this.productTypeId,
-      this.productType,
-      this.productName,
-      this.productLogo,
-      this.paymentStatus,
-      this.transactionNo,
-      this.mobile,
-      this.availableBalance,
-      this.transactionAmount,
-      this.commission,
-      this.surcharge,
-      this.remainingBalance,
-      this.requestDateTime,
-      this.responseDateTime,
-      this.transactionId,
-      this.operator,
-      this.amount,
-      this.status,
-      this.dateTime,
-      this.url,
-      this.logo});
+  TransrepData({
+    this.id,
+    this.productId,
+    this.productTypeId,
+    this.productType,
+    this.productName,
+    this.productLogo,
+    this.paymentStatus,
+    this.transactionNo,
+    this.mobile,
+    this.availableBalance,
+    this.transactionAmount,
+    this.commission,
+    this.surcharge,
+    this.remainingBalance,
+    this.requestDateTime,
+    this.responseDateTime,
+    this.transactionId,
+    this.operator,
+    this.amount,
+    this.status,
+    this.dateTime,
+    this.url,
+    this.logo,
+  });
 
   TransrepData.fromJson(Map<String, dynamic> json) {
     id = json['id'];

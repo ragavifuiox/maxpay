@@ -157,14 +157,14 @@ class TransactionCard extends StatelessWidget {
                       );
                     }),
                     const SizedBox(width: 6),
-                    _button("View", Colors.blue, () {
+                    _button("View", Colors.green, () {
                       Get.toNamed(
                         AppRoutes.transactionDetails,
                         arguments: data,
                       );
                     }),
                     const SizedBox(width: 6),
-                    _button("Share", Colors.green, () {
+                    _button("Share", Colors.blue, () {
                       ShareReceipt.sharePdf(
                         pdfUrl: data.url ?? "",
                         phone: data.mobile ?? "",
@@ -206,8 +206,8 @@ class TransactionCard extends StatelessWidget {
               // Status Badge
               Container(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 4,
+                  horizontal: 12,
+                  vertical: 7,
                 ),
                 decoration: BoxDecoration(
                   color: statusColor,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:maxpay/controllers/earning_controller.dart';
 import 'package:maxpay/core/constants/colors.dart';
+import 'package:maxpay/core/extensions/currency.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
 import 'package:maxpay/view/my_earning/widget/earning_filter.dart';
 
@@ -65,14 +66,27 @@ class MyEarningsScreen extends GetView<EarningController> {
                       ),
                     ),
                     const SizedBox(height: 4),
-                    Text(
-                      "₹ ${(controller.earningsData.value?.data?.totalEarnings ?? 0).toDouble().toStringAsFixed(2)}",
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    controller.isLoading.value
+                        ? const Center(
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                            ),
+                          )
+                        : Text(
+                            (controller
+                                        .searchData
+                                        .value
+                                        ?.data
+                                        ?.todayTotalEarnings
+                                        ?.toString() ??
+                                    "0")
+                                .currencyIndian,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
                   ],
                 ),
               ),

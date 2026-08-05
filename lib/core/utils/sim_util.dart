@@ -10,8 +10,7 @@ class SimUtil {
     '9999999999',
     '6369497198',
     '9895762284',
-    '6369497196',
-    '8888444444'
+    '6235919100',
   ];
 
   /// Helper function to normalize and match
@@ -78,7 +77,9 @@ class SimUtil {
       final List<dynamic>? simList = await _simChannel.invokeMethod(
         'getSimList',
       );
-      AppLogger.logError("Detected SIM cards via channel: ${simList?.length ?? 0}");
+      AppLogger.logError(
+        "Detected SIM cards via channel: ${simList?.length ?? 0}",
+      );
 
       if (simList == null || simList.isEmpty) {
         if (showToasts) {
@@ -109,7 +110,9 @@ class SimUtil {
 
       // If we found a direct match on any readable SIM, permit immediately.
       if (numberMatched) {
-        AppLogger.logError("SIM check passed: Phone number matched active SIM.");
+        AppLogger.logError(
+          "SIM check passed: Phone number matched active SIM.",
+        );
         return true;
       }
 

@@ -76,15 +76,22 @@ class HomePageController extends GetxController {
     super.onInit();
 
     Future.microtask(() async {
-      await fetchNews();
-      await fetchWalletBalance();
-      await fetchComplaints();
-      await getTransactionSummary();
-      await fetchRefundCount();
-      await fetchtodaycredit();
-      await fetchGraph();
-      await fetchFaq();
+      await refreshHomeData();
     });
+  }
+
+  Future<void> refreshHomeData() async {
+    await Future.wait([
+      fetchNews(),
+      fetchWalletBalance(),
+      fetchComplaints(),
+      getTransactionSummary(),
+      fetchRefundCount(),
+      fetchtodaycredit(),
+      fetchGraph(),
+      fetchFaq(),
+      fetchpopupmessage("Home"),
+    ]);
   }
 
   Future<void> FaqReply({

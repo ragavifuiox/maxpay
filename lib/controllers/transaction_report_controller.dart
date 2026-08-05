@@ -36,6 +36,7 @@ class TransReportController extends GetxController {
   String currentStatus = '';
   final TextEditingController fromDateController = TextEditingController();
   final TextEditingController toDateController = TextEditingController();
+  Rx<TransactionReportModel> transreport = TransactionReportModel().obs;
   RxList<TransrepData> transreportList = <TransrepData>[].obs;
   Rx<SubmitDisputeData?> disputeData = Rx<SubmitDisputeData?>(null);
   Rx<CashbackProductType?> producttype = Rx<CashbackProductType?>(null);
@@ -206,11 +207,12 @@ class TransReportController extends GetxController {
 
           AppLogger.debugPrint(response.toJson());
 
-          print("Response Data Length: ${response.data?.length}");
+          print("Response Data Length: ${response.data?.list?.length}");
           print(response.toJson());
 
+          transreport.value = response;
           transreportList.clear();
-          transreportList.addAll(response.data ?? []);
+          transreportList.addAll(response.data?.list ?? []);
 
           update();
 
