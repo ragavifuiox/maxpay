@@ -41,15 +41,19 @@ class CreditList {
   CreditList({this.todayTotalCredit, this.list});
 
   factory CreditList.fromJson(Map<String, dynamic> json) => CreditList(
-    todayTotalCredit: json["today_total_credit"],
+    todayTotalCredit: json["total_credit"],
     list: json["list"] == null
         ? []
-        : List<CreditData>.from(json["list"]!.map((x) => x)),
+        : List<CreditData>.from(
+            json["list"]!.map((x) => CreditData.fromJson(x)),
+          ),
   );
 
   Map<String, dynamic> toJson() => {
-    "today_total_credit": todayTotalCredit,
-    "list": list == null ? [] : List<CreditData>.from(list!.map((x) => x)),
+    "total_credit": todayTotalCredit,
+    "list": list == null
+        ? []
+        : List<dynamic>.from(list!.map((x) => x.toJson())),
   };
 }
 

@@ -205,9 +205,9 @@ class TransactionReport {
 
   factory TransactionReport.fromJson(Map<String, dynamic> json) =>
       TransactionReport(
-        todaySuccessAmount: json["today_success_amount"],
-        todayFailedAmount: json["today_failed_amount"],
-        todayProcessingAmount: json["today_processing_amount"],
+        todaySuccessAmount: json["success_amount"],
+        todayFailedAmount: json["failed_amount"],
+        todayProcessingAmount: json["processing_amount"],
         list: json["list"] == null
             ? []
             : List<TransrepData>.from(
@@ -216,9 +216,9 @@ class TransactionReport {
       );
 
   Map<String, dynamic> toJson() => {
-    "today_success_amount": todaySuccessAmount,
-    "today_failed_amount": todayFailedAmount,
-    "today_processing_amount": todayProcessingAmount,
+    "success_amount": todaySuccessAmount,
+    "failed_amount": todayFailedAmount,
+    "processing_amount": todayProcessingAmount,
     "list": list == null
         ? []
         : List<dynamic>.from(list!.map((x) => x.toJson())),

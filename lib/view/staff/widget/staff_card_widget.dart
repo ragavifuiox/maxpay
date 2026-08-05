@@ -65,7 +65,6 @@ class StaffCardWidget extends StatelessWidget {
                       producttypeUseCase: sl(),
                       submitDisputeUsecase: sl(),
                       totalTransactionUsecase: sl(),
-
                       cashbackTypeUsecase: sl(),
                     ),
                   );

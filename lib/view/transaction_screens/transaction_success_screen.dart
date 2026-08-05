@@ -241,7 +241,17 @@ class TransactionScreen extends GetView<TransReportController> {
                             (transData?.todayFailedAmount.toString() ?? "0")
                                 .currencyIndian;
                       }
-
+                      if (controller.isLoading.value) {
+                        return SizedBox(
+                          height: 40,
+                          width: 40,
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              color: AppColors.background,
+                            ),
+                          ),
+                        );
+                      }
                       return Text(
                         displayAmount,
                         style: const TextStyle(

@@ -142,7 +142,7 @@ class _WalletCreditCard extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  "Transaction ID: ${data.transactionId ?? '-'}",
+                  "TXN ID: ${data.transactionId ?? '-'}",
                   style: TextHelper.max1.copyWith(
                     color: isDark
                         ? const Color(0xFFFFFFFF).withValues(alpha: 0.7)
