@@ -351,7 +351,6 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton<PaymnetStatusRepository>(
     () => PaymentStatusRepoImpl(sl()),
   );
-
   sl.registerLazySingleton<RefundRepository>(() => RefundRepoImpl(sl()));
   sl.registerLazySingleton<AllPlanRepository>(() => AllPlanRepoImpl(sl()));
   sl.registerLazySingleton<UpdatePinRepository>(() => UpdatePinRepoImpl(sl()));

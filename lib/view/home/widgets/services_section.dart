@@ -59,20 +59,17 @@ class MenuScreen extends StatelessWidget {
     ]);
   }
 
-
   String _toImageUrl(String? path) {
     if (path == null || path.isEmpty) return "";
 
-    
     String formattedPath = path.replaceAll(' ', '%20');
 
     if (formattedPath.startsWith("http://") ||
         formattedPath.startsWith("https://")) {
-      return formattedPath; 
+      return formattedPath;
     }
-    return formattedPath.addToBase(); 
+    return formattedPath.addToBase();
   }
-
 
   Widget _imageLoadingPlaceholder({
     double? height,
@@ -101,7 +98,9 @@ class MenuScreen extends StatelessWidget {
                 ),
               ),
               SizedBox(width: 16.w),
-           
+              // ✅ SVG loading icon — replace AssetImages.loadingImage with
+              // your actual svg asset key/path (also add it in AssetImages
+              // and register it under `assets:` in pubspec.yaml).
               SvgPicture.asset(
                 AssetImages.loadingImage,
                 width: 34.w,
@@ -698,11 +697,7 @@ class MenuScreen extends StatelessWidget {
                 if (productList.length > 11)
                   _dynamicServiceItem(context, productList[11], 11),
                 if (productList.length > 10)
-                  _dynamicServiceItem(
-                    context,
-                    productList[10]..name = 'Refresh',
-                    10,
-                  ),
+                  _dynamicServiceItem(context, productList[10], 10),
               ],
             ),
           ],
@@ -770,146 +765,151 @@ class MenuScreen extends StatelessWidget {
     );
   }
 
-  Widget _serviceItem(
-    BuildContext context,
-    String title,
-    String image,
-    Color bgColor, {
-    VoidCallback? onTap,
-  }) {
-    final theme = Theme.of(context);
+ Widget _serviceItem(
+  BuildContext context,
+  String title,
+  String image,
+  Color bgColor, {
+  VoidCallback? onTap,
+}) {
+  final theme = Theme.of(context);
 
-    String displayTitle = title;
-    if (title.toLowerCase() == "payment status") {
-      displayTitle = "Payment\nStatus";
-    } else if (title.toLowerCase() == "dth refresh") {
-      displayTitle = "DTH\nRefresh";
-    }
+  String displayTitle = title;
 
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(14.r),
-        onTap: onTap,
-        child: Padding(
-          padding: EdgeInsets.all(4.w),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 56.w,
-                height: 56.w,
-                padding: EdgeInsets.all(4.w),
-                decoration: BoxDecoration(
-                  color: bgColor,
-                  borderRadius: BorderRadius.circular(14.r),
-                ),
-                child: Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      SvgPicture.asset(image, fit: BoxFit.contain),
-                      if (title.toLowerCase() == "refresh")
-                        Text(
-                          "DTH",
-                          style: GoogleFonts.inter(
-                            color: Colors.black,
-                            fontSize: 8.sp,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                    ],
-                  ),
+  if (title.toLowerCase() == "payment status") {
+    displayTitle = "Payment\nStatus";
+  } else if (title.toLowerCase() == "bbps") {
+    displayTitle = "BBPS";
+  }
+
+  return Material(
+    color: Colors.transparent,
+    child: InkWell(
+      borderRadius: BorderRadius.circular(14.r),
+      onTap: onTap,
+      child: Padding(
+        padding: EdgeInsets.all(4.w),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 56.w,
+              height: 56.w,
+              padding: EdgeInsets.all(4.w),
+              decoration: BoxDecoration(
+                color: bgColor,
+                borderRadius: BorderRadius.circular(14.r),
+              ),
+              child: Center(
+                child: SvgPicture.asset(
+                  image,
+                  fit: BoxFit.contain,
                 ),
               ),
-              SizedBox(height: 4.h),
-              SizedBox(
-                width: 70.w,
-                child: Text(
-                  displayTitle,
-                  textAlign: TextAlign.center,
-                  maxLines: 2,
-                  overflow: TextOverflow.visible,
-                  style: TextStyle(
-                    fontSize: 11.sp,
-                    fontWeight: FontWeight.w500,
-                    color: theme.colorScheme.onSurface,
-                  ),
+            ),
+
+            SizedBox(height: 4.h),
+
+            SizedBox(
+              width: 70.w,
+              child: Text(
+                displayTitle,
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                overflow: TextOverflow.visible,
+                style: TextStyle(
+                  fontSize: 11.sp,
+                  fontWeight: FontWeight.w500,
+                  color: theme.colorScheme.onSurface,
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 
   /// ✅ Normalizes product names so matching is consistent everywhere
   /// (strips spaces/dashes, lowercases) — "Cable TV", "CableTV", "cable-tv"
   /// all become "cabletv".
   String _normalize(String name) =>
       name.toLowerCase().replaceAll(RegExp(r'[\s\-]+'), '');
-  String _getImage(String name) {
-    switch (_normalize(name)) {
-      case 'prepaid':
-        return AssetImages.prepaid;
-      case 'postpaid':
-        return AssetImages.prepaid;
-      case 'dth':
-        return AssetImages.dth;
-      case 'fastag':
-        return AssetImages.fastag;
-      case 'gas':
-        return AssetImages.gas;
-      case 'electricity':
-        return AssetImages.promoFrame;
-      case 'water':
-        return AssetImages.water;
-      case 'landline':
-        return AssetImages.landline;
-      case 'broadband':
-        return AssetImages.broadband;
-      case 'cabletv': // now matches "Cable TV" too
-        return AssetImages.cable;
-      case 'paymentstatus':
-      case 'pstatus':
-        return AssetImages.paymentStatus;
-      case 'refresh':
-      case 'dthrefresh':
-        return AssetImages.dthRefresh;
-      default:
-        return AssetImages.prepaid;
-    }
-  }
+ String _getImage(String name) {
+  switch (_normalize(name)) {
+    case 'prepaid':
+      return AssetImages.prepaid;
 
-  Color _getBgColor(String name) {
-    switch (name.toLowerCase()) {
-      case 'prepaid':
-        return AppColors.box1;
-      case 'postpaid':
-        return AppColors.box3;
-      case 'dth':
-        return AppColors.box2;
-      case 'fastag':
-        return AppColors.box2;
-      case 'gas':
-        return const Color.fromRGBO(255, 225, 180, 1);
-      case 'electricity':
-        return AppColors.box4;
-      case 'water':
-        return AppColors.box3;
-      case 'landline':
-        return AppColors.box2;
-      case 'broadband':
-        return AppColors.box3;
-      case 'cable tv':
-        return AppColors.box4;
-      case 'refresh':
-        return AppColors.box3;
-      default:
-        return AppColors.box1;
-    }
+    case 'postpaid':
+      return AssetImages.prepaid;
+
+    case 'dth':
+      return AssetImages.dth;
+
+    case 'fastag':
+      return AssetImages.fastag;
+
+    case 'gas':
+      return AssetImages.gas;
+
+    case 'electricity':
+      return AssetImages.promoFrame;
+
+    case 'water':
+      return AssetImages.water;
+
+    case 'landline':
+      return AssetImages.landline;
+
+    case 'broadband':
+      return AssetImages.broadband;
+
+    case 'cabletv':
+      return AssetImages.cable;
+
+    case 'paymentstatus':
+      return AssetImages.paymentStatus;
+
+    case 'bbps':
+      return AssetImages.bbps;
+
+    default:
+      return AssetImages.prepaid;
   }
+}
+
+ Color _getBgColor(String name) {
+  switch (_normalize(name)) {
+    case 'prepaid':
+      return AppColors.box1;
+    case 'postpaid':
+      return AppColors.box3;
+    case 'dth':
+      return AppColors.box2;
+    case 'fastag':
+      return AppColors.box2;
+    case 'gas':
+      return const Color.fromRGBO(255, 225, 180, 1);
+    case 'electricity':
+      return AppColors.box4;
+    case 'water':
+      return AppColors.box3;
+    case 'landline':
+      return AppColors.box2;
+    case 'broadband':
+      return AppColors.box3;
+    case 'cabletv':
+      return AppColors.box4;
+
+    // BBPS
+    case 'bbps':
+      return AppColors.box3;
+
+    default:
+      return AppColors.box1;
+  }
+}
 
   void _handleNavigation(Data item) {
     final key = _normalize(item.name ?? "");
@@ -975,10 +975,10 @@ class MenuScreen extends StatelessWidget {
       case 'postpaid': // ✅ fixed — was 'cable tv'
         Get.to(() => const PostpaidPage());
         break;
-      case 'refresh':
-      case 'dthrefresh': // ✅ fixed — now catches both spellings
-        Get.to(() => const DthRefreshScreen());
-        break;
+     case 'bbps':
+  
+  // Get.to(() => const BbspPage());
+  break;
 
       case 'landline': // ✅ fixed — now catches both spellings
         Get.to(() => const LandlineBillPage());

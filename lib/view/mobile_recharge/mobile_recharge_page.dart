@@ -105,7 +105,7 @@ class _MobileRechargePageState extends State<MobileRechargePage>
 
       controller.applyTabFilter();
 
-      // Scroll the page back to the top whenever a tab is selected.
+    
       _scrollToTop();
     });
 
@@ -143,6 +143,102 @@ class _MobileRechargePageState extends State<MobileRechargePage>
         }
       });
     });
+  }
+
+  void _showInactiveDialog(BuildContext context, Data operator) {
+    
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        final theme = Theme.of(context);
+        final isDark = theme.brightness == Brightness.dark;
+
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12.r),
+          ),
+          backgroundColor: isDark ? AppColors.darkplceholder : Colors.white,
+          surfaceTintColor: Colors.transparent, // prevents material 3 tint
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 24.h),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    // Operator Logo
+                    if ((operator.logo ?? "").isNotEmpty)
+                      Image.network(
+                        operator.logo!,
+                        width: 60.w,
+                        height: 60.w,
+                        fit: BoxFit.contain,
+                      )
+                    else
+                      SizedBox(width: 60.w, height: 60.w),
+
+                    SizedBox(width: 16.w),
+
+                    // Text Details
+                    Expanded(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            operator.name ?? "Prepaid",
+                            style: TextStyle(
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.w500,
+                              color: isDark ? Colors.white : Colors.black87,
+                            ),
+                          ),
+                          SizedBox(height: 6.h),
+                          Text(
+                            operator.inactiveMessage ?? "Temporary Down",
+                            style: TextStyle(
+                              fontSize: 14.sp,
+                              fontWeight: FontWeight.w400,
+                              color: isDark ? Colors.white70 : Colors.black87,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // Warning Icon
+                    Icon(
+                      Icons.warning_rounded,
+                      color: const Color(0xffEF4444),
+                      size: 45.w,
+                    ),
+                  ],
+                ),
+              ),
+
+              // Close button
+              Positioned(
+                top: 8.h,
+                right: 8.w,
+                child: InkWell(
+                  onTap: () => Navigator.of(context).pop(),
+                  child: Padding(
+                    padding: EdgeInsets.all(4.w),
+                    child: Icon(
+                      Icons.close,
+                      color: const Color(0xffEF4444),
+                      size: 20.w,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -306,6 +402,12 @@ class _MobileRechargePageState extends State<MobileRechargePage>
                       final matched = controller.selectedPlan.value;
 
                       if (matched != null) {
+                        if (matched.isActive == 0) {
+                          controller.selectedPlan.value = null;
+                          _showInactiveDialog(context, matched);
+                          return;
+                        }
+
                         selectedOperator = matched.name ?? "";
                         selectedProductId = matched.id.toString();
 
@@ -461,6 +563,11 @@ class _MobileRechargePageState extends State<MobileRechargePage>
                           }).toList(),
                           onChanged: (Data? value) async {
                             if (value == null) return;
+
+                            if (value.isActive == 0) {
+                              _showInactiveDialog(context, value);
+                              return;
+                            }
 
                             controller.selectedPlan.value = value;
                             selectedOperator = value.name ?? "";

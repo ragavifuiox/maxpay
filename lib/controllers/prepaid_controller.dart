@@ -524,8 +524,7 @@ class PrePaidController extends GetxController {
           }
         },
       );
-    }
-     catch (e, stack) {
+    } catch (e, stack) {
       AppLogger.logError("🔥 EXCEPTION OCCURRED: $e");
       AppLogger.logError("STACKTRACE: $stack");
 

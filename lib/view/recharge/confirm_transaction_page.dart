@@ -269,7 +269,7 @@ class _ConfirmTransactionPageState extends State<ConfirmTransactionPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildInputLabel(context, 'For Transaction Detail', true),
+                      _buildInputLabel(context, 'For Transaction Receipt', true),
                       SizedBox(height: 8.h),
                       _buildTextField(
                         context,

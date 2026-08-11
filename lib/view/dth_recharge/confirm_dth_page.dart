@@ -285,7 +285,7 @@ class _ConfirmDthPageState extends State<ConfirmDthPage> {
                       children: [
                         _buildInputLabel(
                           context,
-                          'For Transaction Detail',
+                          'For Transaction Receipt',
                           true,
                         ),
                         SizedBox(height: 8.h),
