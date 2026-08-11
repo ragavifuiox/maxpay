@@ -17,9 +17,10 @@ class TotalTransactionRepoImppl implements TotalTransactionRepsoitory {
       final response = await apiService.get(ApiRoutes.totalrecharge);
       final model = TotalTransaction.fromJson(response);
       return Right(model);
-    } catch (e) {
+    } catch (e, stackTrace) { print("API EXCEPTION IN REPO: `$e\n`$stackTrace");
       return Left(ServerFailure(message: e.toString()));
     }
   }
   
 }
+

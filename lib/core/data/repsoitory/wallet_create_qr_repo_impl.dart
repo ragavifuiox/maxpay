@@ -32,7 +32,7 @@ class WalletCreateQrRepoImpl implements WalletCreateQrRepo {
       } else {
         return Left(ServerFailure(message: responseData.status.toString()));
       }
-    } catch (e) {
+    } catch (e, stackTrace) { print("API EXCEPTION IN REPO: `$e\n`$stackTrace");
       return Left(ServerFailure(message: e.toString()));
     }
   }
@@ -48,7 +48,7 @@ class WalletCreateQrRepoImpl implements WalletCreateQrRepo {
       final responseData = response['status'];
 
       return Right(responseData);
-    } catch (e) {
+    } catch (e, stackTrace) { print("API EXCEPTION IN REPO: `$e\n`$stackTrace");
       return Left(ServerFailure(message: e.toString()));
     }
   }
@@ -65,8 +65,9 @@ class WalletCreateQrRepoImpl implements WalletCreateQrRepo {
       } else {
         return Left(UnexpectedFailure(responseData.message ?? ''));
       }
-    } catch (e) {
+    } catch (e, stackTrace) { print("API EXCEPTION IN REPO: `$e\n`$stackTrace");
       return Left(ServerFailure(message: e.toString()));
     }
   }
 }
+

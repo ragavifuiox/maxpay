@@ -80,6 +80,7 @@ import 'package:maxpay/view/web_sign_up/web_signup_otp_screen.dart';
 import 'package:maxpay/view/web_sign_up/web_signup_screen.dart';
 import 'package:maxpay/view/web_sign_up/web_signup_success_screen.dart';
 import 'package:maxpay/view/weblogin/web_login_screen.dart';
+import 'package:maxpay/internet/no_internet_screen.dart';
 
 class AppPages {
   static final pages = [
@@ -549,7 +550,7 @@ class AppPages {
     ),
     GetPage(name: AppRoutes.veirfypin, page: () => PinCodeEnterPage()),
     GetPage(name: AppRoutes.wallettrnsfer, page: () => WalletTransferScreen()),
-      GetPage(name: AppRoutes.bank, page: () => BankDetailsPage()),
+    GetPage(name: AppRoutes.bank, page: () => BankDetailsPage()),
     GetPage(
       name: AppRoutes.statementReadMore,
       page: () => const StatementReadMoreScreen(),
@@ -667,5 +668,6 @@ class AppPages {
         );
       }),
     ),
+    GetPage(name: AppRoutes.noInternet, page: () => const NoInternetScreen()),
   ];
 }

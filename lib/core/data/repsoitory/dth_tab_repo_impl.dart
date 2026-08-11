@@ -22,10 +22,11 @@ Future<Either<Failure, DthTab>> getdthplan() async {
     final model = DthTab.fromJson(response);
 
     return Right(model);
-  } catch (e) {
+  } catch (e, stackTrace) { print("API EXCEPTION IN REPO: `$e\n`$stackTrace");
     print("DTH TAB ERROR => $e");
 
     return Left(ServerFailure(message: e.toString()));
   }
 }
 }
+

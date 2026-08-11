@@ -16,8 +16,9 @@ class AdvertisementRepoImpl implements AdvertisementRepository {
       final response = await apiService.get(ApiRoutes.advertisement);
       final model = Advertisement.fromJson(response);
       return Right(model);
-    } catch (e) {
+    } catch (e, stackTrace) { print("API EXCEPTION IN REPO: `$e\n`$stackTrace");
       return Left(ServerFailure(message: e.toString()));
     }
   }
 }
+

@@ -54,7 +54,7 @@ class CableTvConfirmPage extends StatelessWidget {
 
 
    SizedBox(height: 18.h),
-                 _buildInputLabel(context, 'For Transaction Detail (Optional)'),
+                 _buildInputLabel(context, 'For Transaction receipt (Optional)'),
               _buildTextField(context, 'Enter Whatsapp no '),
               SizedBox(height: 18.h),
               _buildInputLabel(context, 'Re-enter Amount'),

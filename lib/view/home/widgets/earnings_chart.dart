@@ -9,59 +9,39 @@ class EarningsChart extends StatelessWidget {
   // Data for each series
   static const List<FlSpot> _purchaseSpots = [
     FlSpot(0, .4),
-    FlSpot(1, .9),
-    FlSpot(2, .6),
-    FlSpot(3, 1),
-    FlSpot(4, 1.5),
-    FlSpot(5, .4),
+    FlSpot(1, .76),
+    FlSpot(2, .5),
+    FlSpot(3, .89),
+    FlSpot(4, 1.45),
+    FlSpot(5, .3),
     FlSpot(6, 0),
     FlSpot(7, .5),
-    FlSpot(8, 1.5),
+    FlSpot(8, 1.45),
   ];
 
   static const List<FlSpot> _successSpots = [
     FlSpot(0, .1),
-    FlSpot(1, 1.2),
-    FlSpot(2, 1.4),
-    FlSpot(3, .6),
-    FlSpot(4, 2.6),
-    FlSpot(5, 3.4),
-    FlSpot(6, 2.6),
-    FlSpot(7, 3.3),
-    FlSpot(8, 1.9),
+    FlSpot(1, 1.05),
+    FlSpot(2, 1.3),
+    FlSpot(3, .55),
+    FlSpot(4, 2.9),
+    FlSpot(5, 1.79),
+    FlSpot(6, 1.25),
+    FlSpot(7, 2.45),
+    FlSpot(8, 1.8),
   ];
 
   static const List<FlSpot> _failedSpots = [
-    FlSpot(0, 1.6),
-    FlSpot(1, 2.4),
-    FlSpot(2, 1.8),
-    FlSpot(3, 2.6),
+    FlSpot(0, 1.5),
+    FlSpot(1, 2.35),
+    FlSpot(2, 1.75),
+    FlSpot(3, 2.5),
     FlSpot(4, 3.5),
     FlSpot(5, 1.4),
-    FlSpot(6, .5),
-    FlSpot(7, 1.7),
+    FlSpot(6, .45),
+    FlSpot(7, 1.6),
     FlSpot(8, 3.4),
   ];
-
-  // Every data point now gets a dot — not just peaks/valleys — so this
-  // helper is no longer used to gate visibility. Kept around only if you
-  // still want to distinguish "turning points" for other purposes (e.g.
-  // a bigger/highlighted dot), otherwise it can be deleted.
-  static bool _isTurningPoint(List<FlSpot> spots, double x) {
-    final index = spots.indexWhere((s) => s.x == x);
-    if (index == -1) return false;
-
-    if (index == 0 || index == spots.length - 1) return true;
-
-    final prevY = spots[index - 1].y;
-    final currY = spots[index].y;
-    final nextY = spots[index + 1].y;
-
-    final risingBefore = currY > prevY;
-    final risingAfter = nextY > currY;
-
-    return risingBefore != risingAfter;
-  }
 
   void _showDummyDataDialog(
     BuildContext context, {
@@ -150,16 +130,21 @@ class EarningsChart extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
 
+    final Color clrAddWallet = const Color(0xFF0088FF); // Blue
+    final Color clrTransaction = const Color(0xFFFF8D28); // Orange
+    final Color clrWallet = const Color(0xFF17A2B8); // Teal
+    final Color clrGrid = const Color(0xFF4cd964); // Dashed Green
+
     return Container(
-      padding: EdgeInsets.all(12.w),
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 15.h),
       decoration: BoxDecoration(
         color: isDark ? AppColors.darkbgBlack : Colors.white,
         borderRadius: BorderRadius.circular(22.r),
-        border: Border.all(color: Colors.redAccent, width: 1),
+        border: Border.all(color: const Color(0xFFFF6B6B), width: 1.2),
       ),
       child: Column(
         children: [
-          const SizedBox(height: 12),
+          const SizedBox(height: 5),
           SizedBox(
             height: 120.h,
             child: LineChart(
@@ -168,20 +153,8 @@ class EarningsChart extends StatelessWidget {
                 maxX: 8,
                 minY: 0,
                 maxY: 4,
-
-                borderData: FlBorderData(
-                  show: true,
-                  border: Border(
-                    bottom: BorderSide(
-                      color: isDark ? AppColors.chart1 : AppColors.chart2,
-                    ),
-                    top: BorderSide(
-                      color: isDark ? AppColors.chart1 : AppColors.chart2,
-                    ),
-                    left: BorderSide.none,
-                    right: BorderSide.none,
-                  ),
-                ),
+                clipData: FlClipData.none(),
+                borderData: FlBorderData(show: false),
 
                 gridData: FlGridData(
                   show: true,
@@ -190,10 +163,28 @@ class EarningsChart extends StatelessWidget {
                   drawHorizontalLine: true,
                   getDrawingHorizontalLine: (value) {
                     return FlLine(
-                      color: isDark ? AppColors.chart1 : AppColors.chart2,
+                      color: clrGrid,
                       strokeWidth: 1,
+                      dashArray: [4, 4],
                     );
                   },
+                ),
+
+                extraLinesData: ExtraLinesData(
+                  horizontalLines: [
+                    HorizontalLine(
+                      y: 0,
+                      color: clrGrid,
+                      strokeWidth: 1,
+                      dashArray: [4, 4],
+                    ),
+                    HorizontalLine(
+                      y: 4,
+                      color: clrGrid,
+                      strokeWidth: 1,
+                      dashArray: [4, 4],
+                    ),
+                  ],
                 ),
 
                 titlesData: FlTitlesData(
@@ -210,12 +201,14 @@ class EarningsChart extends StatelessWidget {
                     sideTitles: SideTitles(
                       showTitles: true,
                       interval: 1,
-                      reservedSize: 32,
+                      reservedSize: 28,
                       getTitlesWidget: (value, meta) {
                         final style = TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w400,
-                          color: isDark ? Colors.white : AppColors.chart,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w500,
+                          color: isDark
+                              ? Colors.white70
+                              : const Color(0xFF6C6C80),
                         );
 
                         switch (value.toInt()) {
@@ -259,15 +252,15 @@ class EarningsChart extends StatelessWidget {
                           switch (barSpot.barIndex) {
                             case 0:
                               seriesName = "Add Wallet";
-                              color = Colors.blue;
+                              color = clrAddWallet;
                               break;
                             case 1:
                               seriesName = "Transaction";
-                              color = Colors.green;
+                              color = clrTransaction;
                               break;
                             case 2:
-                              seriesName = "Balance";
-                              color = Colors.red;
+                              seriesName = "Wallet";
+                              color = clrWallet;
                               break;
                             default:
                               continue;
@@ -286,32 +279,32 @@ class EarningsChart extends StatelessWidget {
                 ),
 
                 lineBarsData: [
-                  /// PURCHASE (Add Wallet)
+                  /// Blue (Add Wallet)
                   LineChartBarData(
                     isCurved: false,
-                    color: Colors.blue,
+                    color: clrAddWallet,
                     barWidth: 2,
                     isStrokeCapRound: true,
-                    curveSmoothness: 0,
                     belowBarData: BarAreaData(show: false),
                     spots: _purchaseSpots,
                     dotData: FlDotData(
                       show: true,
                       getDotPainter: (spot, a, b, c) {
                         return FlDotCirclePainter(
-                          radius: 3,
-                          color: Colors.blue,
-                          strokeWidth: 0.1,
-                          strokeColor: Colors.blue,
+                          radius: 4,
+                          color: clrAddWallet,
+                          strokeWidth: 0,
+                          strokeColor: Colors.transparent,
                         );
                       },
                     ),
                   ),
 
+                  /// Orange (Transaction)
                   LineChartBarData(
                     isCurved: false,
-                    color: Colors.green,
-                    barWidth: 2.5,
+                    color: clrTransaction,
+                    barWidth: 2,
                     isStrokeCapRound: true,
                     belowBarData: BarAreaData(show: false),
                     spots: _successSpots,
@@ -319,31 +312,32 @@ class EarningsChart extends StatelessWidget {
                       show: true,
                       getDotPainter: (spot, a, b, c) {
                         return FlDotCirclePainter(
-                          radius: 3,
-                          color: Colors.green,
-                          strokeWidth: 0.1,
-                          strokeColor: Colors.green,
+                          radius: 4,
+                          color: clrTransaction,
+                          strokeWidth: 0,
+                          strokeColor: Colors.transparent,
                         );
                       },
                     ),
                   ),
 
-                  /// FAILED (Balance)
+                  /// Teal (Wallet)
                   LineChartBarData(
                     isCurved: false,
-                    color: Colors.red,
-                    barWidth: 2.5,
+                    color: clrWallet,
+                    barWidth: 2,
                     isStrokeCapRound: true,
                     belowBarData: BarAreaData(show: false),
                     spots: _failedSpots,
                     dotData: FlDotData(
                       show: true,
+                      checkToShowDot: (spot, barData) => spot.x != 3,
                       getDotPainter: (spot, a, b, c) {
                         return FlDotCirclePainter(
-                          radius: 3,
-                          color: Colors.red,
-                          strokeWidth: 0.1,
-                          strokeColor: Colors.red,
+                          radius: 4,
+                          color: clrWallet,
+                          strokeWidth: 0,
+                          strokeColor: Colors.transparent,
                         );
                       },
                     ),
@@ -353,18 +347,18 @@ class EarningsChart extends StatelessWidget {
             ),
           ),
 
-          SizedBox(height: 15.h),
+          SizedBox(height: 20.h),
 
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _Legend(color: Colors.blue, title: "Add Wallet", isDark: isDark),
+              _Legend(color: clrAddWallet, title: "Add Wallet", isDark: isDark),
               _Legend(
-                color: Colors.green,
+                color: clrTransaction,
                 title: "Transaction",
                 isDark: isDark,
               ),
-              _Legend(color: Colors.red, title: "Balance", isDark: isDark),
+              _Legend(color: clrWallet, title: "Wallet", isDark: isDark),
             ],
           ),
         ],
@@ -389,17 +383,17 @@ class _Legend extends StatelessWidget {
     return Row(
       children: [
         Container(
-          width: 12,
-          height: 12,
+          width: 14,
+          height: 14,
           decoration: BoxDecoration(color: color, shape: BoxShape.circle),
         ),
         SizedBox(width: 6.w),
         Text(
           title,
           style: TextStyle(
-            color: isDark ? Colors.white : AppColors.chart,
-            fontSize: 13.sp,
-            fontWeight: FontWeight.w400,
+            color: isDark ? Colors.white70 : const Color(0xFF555566),
+            fontSize: 14.sp,
+            fontWeight: FontWeight.w500,
           ),
         ),
       ],

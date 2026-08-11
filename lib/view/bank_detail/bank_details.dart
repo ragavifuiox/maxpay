@@ -26,8 +26,9 @@ class BankDetailsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: CommonAppBar(title: "Bank Details"),
       body: Obx(() {
         if (controller.isLoading.value) {
@@ -76,104 +77,109 @@ class BankAccountCard extends StatelessWidget {
   //   );
   // }
 
- @override
-Widget build(BuildContext context) {
-  return Container(
-    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-    decoration: BoxDecoration(
-      color: const Color(0xffF6F8FF),
-      border: Border.all(
-        color: AppColors.clrPrimary,
-        width: 1,
-      ),
-      borderRadius: BorderRadius.circular(10),
-    ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
-        /// Account Name (Top)
-        Row(
-          children: [
-            const Text(
-              "A/C Name : ",
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            Expanded(
-              child: Text(
-                account.accountName ?? "",
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF2F3349) : const Color(0xffF6F8FF),
+        border: Border.all(color: AppColors.clrPrimary, width: 1),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          /// Account Name (Top)
+          Row(
+            children: [
+              Text(
+                "A/C Name : ",
+                style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
+                  color: theme.colorScheme.onSurface,
                 ),
               ),
-            ),
-          ],
-        ),
-
-        const SizedBox(height: 18),
-
-        /// Bottom Row
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-
-            /// Bank Logo
-            SizedBox(
-              width: 60,
-              child: Column(
-                children: [
-                  Image.network(
-                    account.bankLogo ?? "",
-                    width: 42,
-                    height: 42,
-                    fit: BoxFit.contain,
-                    errorBuilder: (_, __, ___) =>
-                        const Icon(Icons.account_balance, size: 42),
+              Expanded(
+                child: Text(
+                  account.accountName ?? "",
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    color: theme.colorScheme.onSurface,
                   ),
-
-                  const SizedBox(height: 3),
-
-                  // Text(
-                  //   account.bankName ?? "",
-                  //   maxLines: 1,
-                  //   overflow: TextOverflow.ellipsis,
-                  //   textAlign: TextAlign.center,
-                  //   style: const TextStyle(
-                  //     fontSize: 8,
-                  //     fontWeight: FontWeight.bold,
-                  //   ),
-                  // ),
-                ],
+                ),
               ),
-            ),
+            ],
+          ),
 
-            const SizedBox(width: 1),
+          const SizedBox(height: 18),
 
-            /// Account Detail
-       Expanded(
-  child: Row(
-    children: [
-      SizedBox(
-        width: 120, // enough for "Account Detail"
-        child: Row(
-          children: [
-            const Text(
-              "Account Detail",
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
+          /// Bottom Row
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              /// Bank Logo
+              SizedBox(
+                width: 60,
+                child: Column(
+                  children: [
+                    Image.network(
+                      account.bankLogo ?? "",
+                      width: 42,
+                      height: 42,
+                      fit: BoxFit.contain,
+                      errorBuilder: (_, __, ___) => Icon(
+                        Icons.account_balance,
+                        size: 42,
+                        color: theme.colorScheme.onSurface,
+                      ),
+                    ),
+
+                    const SizedBox(height: 3),
+
+                    // Text(
+                    //   account.bankName ?? "",
+                    //   maxLines: 1,
+                    //   overflow: TextOverflow.ellipsis,
+                    //   textAlign: TextAlign.center,
+                    //   style: const TextStyle(
+                    //     fontSize: 8,
+                    //     fontWeight: FontWeight.bold,
+                    //   ),
+                    // ),
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(width: 4),
-            _CopyIconButton(
-              onTap: () {
-                final String allDetails = '''
+
+              const SizedBox(width: 1),
+
+              /// Account Detail
+              Expanded(
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: 120, // enough for "Account Detail"
+                      child: Row(
+                        children: [
+                          Text(
+                            "Account Detail",
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                              color: theme.colorScheme.onSurface,
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          _CopyIconButton(
+                            onTap: () {
+                              final String allDetails =
+                                  '''
 Bank Name: ${account.bankName ?? ''}
 Account Type: ${account.accountType ?? ''}
 Account Name: ${account.accountName ?? ''}
@@ -183,54 +189,59 @@ Branch: ${account.branch ?? ''}
 UPI ID: ${account.upiId ?? ''}
 ''';
 
-                _copyToClipboard(context, allDetails, "Bank Details");
-              },
-            ),
-          ],
-        ),
-      ),
+                              _copyToClipboard(
+                                context,
+                                allDetails,
+                                "Bank Details",
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
 
-      Expanded(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            const Text(
-              "UPI ID",
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
+                    Expanded(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Text(
+                            "UPI ID",
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                              color: theme.colorScheme.onSurface,
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          _CopyIconButton(
+                            onTap: () {
+                              _copyToClipboard(
+                                context,
+                                account.upiId ?? "",
+                                "UPI ID",
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(width: 4),
-            _CopyIconButton(
-              onTap: () {
-                _copyToClipboard(
-                  context,
-                  account.upiId ?? "",
-                  "UPI ID",
-                );
-              },
-            ),
-          ],
-        ),
+
+              const SizedBox(width: 10),
+
+              BracketedQrBox(
+                data: account.upiId ?? "",
+                boxSize: 60,
+                qrSize: 42,
+              ),
+            ],
+          ),
+        ],
       ),
-    ],
-  ),
-),
-
-const SizedBox(width: 1),
-
-BracketedQrBox(
-  data: account.upiId ?? "",
-  boxSize: 60,
-  qrSize: 42,
-),
-          ],
-        ),
-      ],
-    ),
-  );
-}
+    );
+  }
 }
 
 class _CopyIconButton extends StatelessWidget {
@@ -247,7 +258,15 @@ class _CopyIconButton extends StatelessWidget {
         child: SizedBox(
           width: 14,
           height: 14,
-          child: SvgPicture.asset(AssetImages.copy),
+          child: SvgPicture.asset(
+            AssetImages.copy,
+            // colorFilter: ColorFilter.mode(
+            //   Theme.of(context).brightness == Brightness.dark
+            //       ? Colors.white
+            //       : Colors.black,
+            //   BlendMode.srcIn,
+            // ),
+          ),
         ),
       ),
     );
@@ -262,6 +281,7 @@ class BankLogoBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return SizedBox(
       width: 48,
       height: 48,
@@ -272,9 +292,13 @@ class BankLogoBadge extends StatelessWidget {
             width: 48,
             height: 40,
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: isDark ? const Color(0xFF2F3349) : Colors.white,
               borderRadius: BorderRadius.circular(6),
-              border: Border.all(color: const Color(0xFFE0E0E0)),
+              border: Border.all(
+                color: isDark
+                    ? const Color(0xFF3C3F52)
+                    : const Color(0xFFE0E0E0),
+              ),
             ),
             padding: const EdgeInsets.all(6),
             child: (logoUrl != null && logoUrl!.isNotEmpty)
@@ -314,17 +338,17 @@ class BracketedQrBox extends StatelessWidget {
     this.bracketThickness = 2.5,
   });
 
-  @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       width: boxSize,
       height: boxSize,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? Colors.white : Colors.white, // Keep QR background white
         borderRadius: BorderRadius.circular(8),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.06),
+            color: Colors.black.withOpacity(isDark ? 0.2 : 0.06),
             blurRadius: 4,
             offset: const Offset(0, 1),
           ),
@@ -433,12 +457,13 @@ class QrPreviewDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Dialog(
       backgroundColor: Colors.transparent,
       insetPadding: const EdgeInsets.symmetric(horizontal: 28),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: isDark ? const Color(0xFF2F3349) : Colors.white,
           borderRadius: BorderRadius.circular(16),
         ),
         clipBehavior: Clip.antiAlias,

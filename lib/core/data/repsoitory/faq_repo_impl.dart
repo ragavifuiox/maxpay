@@ -17,9 +17,10 @@ class FaqRepoImpl implements FaqRepsoitory {
       final response = await apiService.get(ApiRoutes.faq);
       final model = Faq.fromJson(response);
       return Right(model);
-    } catch (e) {
+    } catch (e, stackTrace) { print("API EXCEPTION IN REPO: `$e\n`$stackTrace");
        AppLogger.logError("Api ${ApiRoutes.faq}$e");
       return Left(ServerFailure(message: e.toString()));
     }
   }
 }
+

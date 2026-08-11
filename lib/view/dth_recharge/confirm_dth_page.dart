@@ -117,10 +117,11 @@ class _ConfirmDthPageState extends State<ConfirmDthPage> {
           confirmData?.commission ?? args['commission'] ?? '0';
       final String commissionType = confirmData?.commissiontype ?? "Fixed";
 
-      final double transactionAmount =
-          double.tryParse(transactionAmountStr) ?? 0.0;
+      final double transactionAmount = parsedTransaction;
 
-      final double commissionValue = double.tryParse(commissionRaw) ?? 0.0;
+      final double commissionValue =
+          double.tryParse(commissionRaw.replaceAll(RegExp(r'[^0-9.]'), '')) ??
+          0.0;
       AppLogger.debugPrint("===== COMMISSION DEBUG =====");
       AppLogger.debugPrint("Transaction Amount: $transactionAmountStr");
       AppLogger.debugPrint("Commission Raw: $commissionRaw");
@@ -351,8 +352,24 @@ class _ConfirmDthPageState extends State<ConfirmDthPage> {
                               return;
                             }
 
-                            if (amountController.text.trim() !=
-                                selectedAmount.trim()) {
+                            final entered =
+                                double.tryParse(
+                                  selectedAmount.trim().replaceAll(
+                                    RegExp(r'[^0-9.]'),
+                                    '',
+                                  ),
+                                ) ??
+                                0.0;
+                            final reEntered =
+                                double.tryParse(
+                                  amountController.text.trim().replaceAll(
+                                    RegExp(r'[^0-9.]'),
+                                    '',
+                                  ),
+                                ) ??
+                                0.0;
+
+                            if (entered != reEntered) {
                               CustomToast.error(
                                 "Entered amount does not match the transaction amount",
                               );
@@ -405,8 +422,26 @@ class _ConfirmDthPageState extends State<ConfirmDthPage> {
                                       return;
                                     }
 
-                                    if (amountController.text.trim() !=
-                                        selectedAmount.trim()) {
+                                    final entered =
+                                        double.tryParse(
+                                          selectedAmount.trim().replaceAll(
+                                            RegExp(r'[^0-9.]'),
+                                            '',
+                                          ),
+                                        ) ??
+                                        0.0;
+                                    final reEntered =
+                                        double.tryParse(
+                                          amountController.text
+                                              .trim()
+                                              .replaceAll(
+                                                RegExp(r'[^0-9.]'),
+                                                '',
+                                              ),
+                                        ) ??
+                                        0.0;
+
+                                    if (entered != reEntered) {
                                       CustomToast.error(
                                         "Entered amount does not match the transaction amount",
                                       );

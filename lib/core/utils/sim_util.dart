@@ -5,12 +5,15 @@ import 'package:sim_card_code/sim_card_code.dart';
 import 'package:flutter/services.dart';
 
 class SimUtil {
-  /// Test numbers exception list
+
   static const List<String> testNumbers = [
     '9999999999',
     '6369497198',
     '9895762284',
     '6235919100',
+    '6369497196',
+    '6369497195',
+    '8838787878',
   ];
 
   /// Helper function to normalize and match

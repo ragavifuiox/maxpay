@@ -5,6 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:maxpay/controllers/profile_controller.dart';
 import 'package:maxpay/core/constants/asset_images.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
+import 'package:maxpay/core/di/service_locator.dart';
 import 'package:maxpay/core/utils/responsive.dart';
 import 'package:maxpay/core/utils/theme.dart';
 
@@ -15,7 +16,15 @@ class ReportPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final themeController = Get.find<ThemeController>();
     final isTablet = Responsive.isTablet(context);
-    final profileController = Get.find<ProfileController>();
+    final profileController = Get.isRegistered<ProfileController>()
+        ? Get.find<ProfileController>()
+        : Get.put(
+            ProfileController(
+              getProfileUseCase: sl(),
+              profileUpdateUseCase: sl(),
+              updateprofileotpusecase: sl(),
+            ),
+          );
 
     return Obx(() {
       print(

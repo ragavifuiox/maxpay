@@ -16,7 +16,7 @@ class StaffListRepoImpl implements StaffListRepository {
       final response = await apiService.get(ApiRoutes.stafflist);
       final model = StaffList.fromJson(response);
       return Right(model);
-    } catch (e) {
+    } catch (e, stackTrace) { print("API EXCEPTION IN REPO: `$e\n`$stackTrace");
       return Left(ServerFailure(message: e.toString()));
     }
   }
@@ -42,8 +42,9 @@ class StaffListRepoImpl implements StaffListRepository {
       );
       final model = TransactionReport.fromJson(response);
       return Right(model);
-    } catch (e) {
+    } catch (e, stackTrace) { print("API EXCEPTION IN REPO: `$e\n`$stackTrace");
       return Left(ServerFailure(message: e.toString()));
     }
   }
 }
+

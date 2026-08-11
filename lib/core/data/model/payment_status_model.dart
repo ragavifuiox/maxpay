@@ -35,29 +35,30 @@ class PaymentStatusData {
   String? dateTime;
   String? productName;
   String? productLogo;
-  Null transactionNo;
+  String? transactionNo;
   String? mobile;
   String? amount;
   String? paymentStatus;
 
-  PaymentStatusData(
-      {this.id,
-      this.dateTime,
-      this.productName,
-      this.productLogo,
-      this.transactionNo,
-      this.mobile,
-      this.amount,
-      this.paymentStatus});
+  PaymentStatusData({
+    this.id,
+    this.dateTime,
+    this.productName,
+    this.productLogo,
+    this.transactionNo,
+    this.mobile,
+    this.amount,
+    this.paymentStatus,
+  });
 
   PaymentStatusData.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     dateTime = json['date_time'];
     productName = json['product_name'];
     productLogo = json['product_logo'];
-    transactionNo = json['transaction_no'];
-    mobile = json['mobile'];
-    amount = json['amount'];
+    transactionNo = json['transaction_no']?.toString();
+    mobile = json['mobile']?.toString();
+    amount = json['amount']?.toString();
     paymentStatus = json['payment_status'];
   }
 

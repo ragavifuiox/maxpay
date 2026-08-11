@@ -67,17 +67,18 @@ class TransactionCard extends StatelessWidget {
             transaction.type.label,
             valueColor: typeColor,
             // Only Wallet Transfer rows get the icon next to the label.
-            showIcon: !isReverse,
+            // showIcon: !isReverse,
           ),
           _row(context, "User Type", transaction.userType),
           _row(context, "User Name", transaction.userName),
           _row(context, "Reg.Mob No", transaction.regMobNo),
-          _row(
-            context,
-            "Transaction Amount",
-            "₹${transaction.amount.toStringAsFixed(2)}",
-            valueColor: typeColor,
-          ),
+_row(
+  context,
+  "Transaction Amount",
+  "₹${transaction.amount.toStringAsFixed(2)}",
+  valueColor: typeColor,
+  showIcon: !isReverse, // Show icon only for Wallet Transfer
+),
         ],
       ),
     );
@@ -113,7 +114,7 @@ class TransactionCard extends StatelessWidget {
                 const SizedBox(height: 12),
                 Text(
                   "₹${transaction.amount.toStringAsFixed(2)}",
-                  style: const TextStyle(
+                            style: const TextStyle(
                     color: Color(0xFFE5484D),
                     fontWeight: FontWeight.bold,
                     fontSize: 18,
@@ -181,7 +182,7 @@ class TransactionCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           SizedBox(
-            width: 130,
+            width: 170,
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -199,37 +200,50 @@ class TransactionCard extends StatelessWidget {
                 ),
                 // Icon sits right after the label, like in the reference design.
                 // Tapping it opens the "Do you want to Reverse the amount?" confirmation.
-                if (showIcon) ...[
-                  const SizedBox(width: 4),
-                  GestureDetector(
-                    behavior: HitTestBehavior.opaque,
-                    onTap: () => _showReverseConfirmationDialog(context),
-                    child: SvgPicture.asset(
-                      AssetImages.transfer, // TODO: point this at your actual transfer icon asset
-                      width: 14,
-                      height: 14,
-                      colorFilter: ColorFilter.mode(
-                        valueColor ?? Colors.grey,
-                        BlendMode.srcIn,
-                      ),
-                    ),
-                  ),
-                ],
+               
               ],
             ),
           ),
           const Text(": ", style: TextStyle(fontSize: 12, fontFamily: 'Poppins')),
-          Expanded(
-            child: Text(
-              value,
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: valueColor,
-                fontFamily: 'Poppins',
-              ),
-            ),
+         Expanded(
+  child: Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      Expanded(
+  child: Row(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Text(
+        value,
+        style: TextStyle(
+          fontSize: 13,
+          fontWeight: FontWeight.w600,
+          color: valueColor,
+          fontFamily: 'Poppins',
+        ),
+      ),
+
+      if (showIcon) ...[
+        const SizedBox(width: 8),
+        GestureDetector(
+          onTap: () => _showReverseConfirmationDialog(context),
+          child: SvgPicture.asset(
+            AssetImages.transfer,
+            width: 18,
+            height: 18,
+            // colorFilter: ColorFilter.mode(
+            //   valueColor ?? Colors.grey,
+            //   BlendMode.srcIn,
+            // ),
           ),
+        ),
+      ],
+    ],
+  ),
+),
+    ],
+  ),
+),
         ],
       ),
     );

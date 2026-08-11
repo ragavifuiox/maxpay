@@ -50,21 +50,177 @@ class MenuScreen extends StatelessWidget {
   );
 
   Future<void> _refreshPage() async {
-    await Future.wait([controller.fetchProductTypes()]);
+    await Future.wait([
+      controller.fetchProductTypes(),
+      controller.fetchtodaytrnas(),
+      homeController.fetchWalletBalance(),
+      bannerController.fetchbanner(),
+      bannerController.fetchadv(),
+    ]);
   }
 
-  /// ✅ SAFE URL HELPER — handles both full URLs and relative paths
+
   String _toImageUrl(String? path) {
     if (path == null || path.isEmpty) return "";
 
-    // Replace spaces with %20 so Image.network can load them
+    
     String formattedPath = path.replaceAll(' ', '%20');
 
     if (formattedPath.startsWith("http://") ||
         formattedPath.startsWith("https://")) {
-      return formattedPath; // Already full URL, return as-is
+      return formattedPath; 
     }
-    return formattedPath.addToBase(); // Relative path, add base
+    return formattedPath.addToBase(); 
+  }
+
+
+  Widget _imageLoadingPlaceholder({
+    double? height,
+    double? width,
+    BorderRadius? borderRadius,
+  }) {
+    return Container(
+      height: height,
+      width: width ?? double.infinity,
+      decoration: BoxDecoration(
+        color: AppColors.clrPrimary,
+        borderRadius: borderRadius ?? BorderRadius.circular(16.r),
+      ),
+      child: Center(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20.w),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                "Image Loading ...",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20.sp,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(width: 16.w),
+           
+              SvgPicture.asset(
+                AssetImages.loadingImage,
+                width: 34.w,
+                height: 34.w,
+                colorFilter: const ColorFilter.mode(
+                  Colors.white,
+                  BlendMode.srcIn,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// ✅ PLACEHOLDER — shown when there is no advertisement/display image
+  Widget _adPlaceholder({
+    double? height,
+    double? width,
+    BorderRadius? borderRadius,
+  }) {
+    return Container(
+      height: height,
+      width: width ?? double.infinity,
+      decoration: BoxDecoration(
+        color: AppColors.clrPrimary,
+        borderRadius: borderRadius ?? BorderRadius.circular(16.r),
+      ),
+      child: Center(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20.w),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Your AD Here",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 4.h),
+                  Text(
+                    "Please Contact",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(width: 16.w),
+              // ✅ SVG "no ad" icon — replace AssetImages.adPlaceholderImage
+              // with your actual svg asset key/path (also add it in
+              // AssetImages and register it under `assets:` in pubspec.yaml).
+              SvgPicture.asset(
+                AssetImages.loadingImage,
+                width: 34.w,
+                height: 34.w,
+                colorFilter: const ColorFilter.mode(
+                  Colors.white,
+                  BlendMode.srcIn,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// ✅ Wraps Image.network with a loading placeholder + graceful fallback
+  /// to the "Your Ad Here" placeholder if the url is empty or fails to load.
+  Widget _networkImageWithStates({
+    required String imageUrl,
+    required double height,
+    BorderRadius? borderRadius,
+    bool isAdSlot = false,
+  }) {
+    if (imageUrl.isEmpty) {
+      return isAdSlot
+          ? _adPlaceholder(height: height, borderRadius: borderRadius)
+          : _imageLoadingPlaceholder(
+              height: height,
+              borderRadius: borderRadius,
+            );
+    }
+
+    return Image.network(
+      imageUrl,
+      fit: BoxFit.cover,
+      width: double.infinity,
+      height: height,
+      loadingBuilder: (context, child, loadingProgress) {
+        if (loadingProgress == null) return child;
+        return _imageLoadingPlaceholder(
+          height: height,
+          borderRadius: borderRadius,
+        );
+      },
+      errorBuilder: (_, __, ___) => isAdSlot
+          ? _adPlaceholder(height: height, borderRadius: borderRadius)
+          : Container(
+              height: height,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Colors.grey.shade300,
+                borderRadius: borderRadius ?? BorderRadius.circular(16.r),
+              ),
+              child: const Icon(Icons.broken_image),
+            ),
+    );
   }
 
   @override
@@ -194,11 +350,12 @@ class MenuScreen extends StatelessWidget {
                                           borderRadius: BorderRadius.circular(
                                             16.r,
                                           ),
-                                          child: Image.network(
-                                            imageUrl,
-                                            fit: BoxFit.cover,
-                                            width: double.infinity,
+                                          child: _networkImageWithStates(
+                                            imageUrl: imageUrl,
                                             height: 150.h,
+                                            borderRadius: BorderRadius.circular(
+                                              16.r,
+                                            ),
                                           ),
                                         ),
                                       );
@@ -344,7 +501,10 @@ class MenuScreen extends StatelessWidget {
 
                         SizedBox(height: 16.h),
 
-                        /// ✅ SMART LAYOUT: Ad = Image1, No Ad = Image2
+                        /// ✅ LAYOUT: icon rows + 2 ad slots.
+                        /// Ad slots always occupy the same position — when the
+                        /// backend returns no ad/display image, the slot shows
+                        /// the "Your Ad Here" placeholder instead of an image.
                         Obx(() {
                           final advList =
                               bannerController
@@ -353,20 +513,13 @@ class MenuScreen extends StatelessWidget {
                                   ?.data
                                   ?.advertisements ??
                               [];
-                          final hasAdImage =
-                              advList.isNotEmpty &&
-                              (advList.first.adImage ?? "").isNotEmpty;
 
-                          if (hasAdImage) {
-                            return _buildLayoutWithAds(
-                              context,
-                              productList,
-                              advList,
-                              bannerController.currentAdvIndex.value,
-                            );
-                          } else {
-                            return _buildCleanGrid(context, productList);
-                          }
+                          return _buildLayoutWithAds(
+                            context,
+                            productList,
+                            advList,
+                            bannerController.currentAdvIndex.value,
+                          );
                         }),
 
                         SizedBox(height: 20.h),
@@ -388,15 +541,32 @@ class MenuScreen extends StatelessWidget {
     List advList,
     int currentIndex,
   ) {
-    if (advList.isEmpty) return const SizedBox.shrink();
+    // ✅ No early return here anymore — the icon grid + ad slots must render
+    // even when advList is empty. The two slots below just fall back to the
+    // "Your Ad Here" placeholder when there's no data/image for them.
+    if (productList.isEmpty) {
+      return Center(
+        child: Padding(
+          padding: EdgeInsets.all(20.h),
+          child: Text(
+            "No services found",
+            style: TextStyle(fontSize: 14.sp, color: Colors.grey),
+          ),
+        ),
+      );
+    }
 
     // Use current index to animate ads. Ad 1 gets current index, Ad 2 gets the prior index
     // so they are usually different if there's more than 1 ad.
-    final ad1Index = currentIndex % advList.length;
-    final ad2Index = (currentIndex + 1) % advList.length;
+    final ad1Index = advList.isEmpty ? 0 : currentIndex % advList.length;
+    final ad2Index = advList.isEmpty ? 0 : (currentIndex + 1) % advList.length;
 
-    final adImageUrl1 = _toImageUrl(advList[ad1Index].displayImage);
-    final adImageUrl2 = _toImageUrl(advList[ad2Index].adImage);
+    final adImageUrl1 = advList.isEmpty
+        ? ""
+        : _toImageUrl(advList[ad1Index].displayImage);
+    final adImageUrl2 = advList.isEmpty
+        ? ""
+        : _toImageUrl(advList[ad2Index].adImage);
 
     return Column(
       children: [
@@ -433,12 +603,14 @@ class MenuScreen extends StatelessWidget {
 
             Expanded(
               child: InkWell(
-                onTap: () {
-                  final urls = advList
-                      .map((e) => _toImageUrl(e.displayImage))
-                      .toList();
-                  _showFullImage(context, urls, ad1Index);
-                },
+                onTap: adImageUrl1.isEmpty
+                    ? null
+                    : () {
+                        final urls = advList
+                            .map((e) => _toImageUrl(e.displayImage))
+                            .toList();
+                        _showFullImage(context, urls, ad1Index);
+                      },
                 child: SizedBox(
                   height: 160.h,
                   child: ClipRRect(
@@ -447,15 +619,13 @@ class MenuScreen extends StatelessWidget {
                       duration: const Duration(milliseconds: 600),
                       transitionBuilder: (child, animation) =>
                           FadeTransition(opacity: animation, child: child),
-                      child: Image.network(
-                        adImageUrl1,
+                      child: KeyedSubtree(
                         key: ValueKey<String>(adImageUrl1),
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                        height: double.infinity,
-                        errorBuilder: (_, _, _) => Container(
-                          color: Colors.grey.shade300,
-                          child: const Icon(Icons.broken_image),
+                        child: _networkImageWithStates(
+                          imageUrl: adImageUrl1,
+                          height: 160.h,
+                          borderRadius: BorderRadius.circular(16.r),
+                          isAdSlot: true,
                         ),
                       ),
                     ),
@@ -463,30 +633,6 @@ class MenuScreen extends StatelessWidget {
                 ),
               ),
             ),
-            // Expanded(
-            //   child: SizedBox(
-            //     height: 160.h,
-            //     child: ClipRRect(
-            //       borderRadius: BorderRadius.circular(16.r),
-            //       child: AnimatedSwitcher(
-            //         duration: const Duration(milliseconds: 600),
-            //         transitionBuilder: (child, animation) =>
-            //             FadeTransition(opacity: animation, child: child),
-            //         child: Image.network(
-            //           adImageUrl1,
-            //           key: ValueKey<String>(adImageUrl1),
-            //           fit: BoxFit.cover,
-            //           width: double.infinity,
-            //           height: double.infinity,
-            //           errorBuilder: (_, _, _) => Container(
-            //             color: Colors.grey.shade300,
-            //             child: const Icon(Icons.broken_image),
-            //           ),
-            //         ),
-            //       ),
-            //     ),
-            //   ),
-            // ),
           ],
         ),
 
@@ -515,12 +661,14 @@ class MenuScreen extends StatelessWidget {
           children: [
             Expanded(
               child: InkWell(
-                onTap: () {
-                  final urls = advList
-                      .map((e) => _toImageUrl(e.adImage))
-                      .toList();
-                  _showFullImage(context, urls, ad2Index);
-                },
+                onTap: adImageUrl2.isEmpty
+                    ? null
+                    : () {
+                        final urls = advList
+                            .map((e) => _toImageUrl(e.adImage))
+                            .toList();
+                        _showFullImage(context, urls, ad2Index);
+                      },
                 child: SizedBox(
                   height: 160.h,
                   child: ClipRRect(
@@ -529,15 +677,13 @@ class MenuScreen extends StatelessWidget {
                       duration: const Duration(milliseconds: 600),
                       transitionBuilder: (child, animation) =>
                           FadeTransition(opacity: animation, child: child),
-                      child: Image.network(
-                        adImageUrl2,
+                      child: KeyedSubtree(
                         key: ValueKey<String>(adImageUrl2),
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                        height: double.infinity,
-                        errorBuilder: (_, _, _) => Container(
-                          color: Colors.grey.shade300,
-                          child: const Icon(Icons.broken_image),
+                        child: _networkImageWithStates(
+                          imageUrl: adImageUrl2,
+                          height: 160.h,
+                          borderRadius: BorderRadius.circular(16.r),
+                          isAdSlot: true,
                         ),
                       ),
                     ),
@@ -562,36 +708,6 @@ class MenuScreen extends StatelessWidget {
           ],
         ),
       ],
-    );
-  }
-
-  /// ✅ IMAGE 2 LAYOUT — clean 4-column grid
-  Widget _buildCleanGrid(BuildContext context, List<Data> productList) {
-    if (productList.isEmpty) {
-      return Center(
-        child: Padding(
-          padding: EdgeInsets.all(20.h),
-          child: Text(
-            "No services found",
-            style: TextStyle(fontSize: 14.sp, color: Colors.grey),
-          ),
-        ),
-      );
-    }
-
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: productList.length,
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 4,
-        mainAxisSpacing: 16.h,
-        crossAxisSpacing: 8.w,
-        childAspectRatio: 0.75,
-      ),
-      itemBuilder: (context, index) {
-        return _dynamicServiceItem(context, productList[index], index);
-      },
     );
   }
 
@@ -649,8 +765,7 @@ class MenuScreen extends StatelessWidget {
       context,
       item.name ?? "",
       _getImage(item.name ?? ""),
-      [AppColors.box1, AppColors.box2, AppColors.box3, AppColors.box4][index %
-          4],
+      _getBgColor(item.name ?? ""),
       onTap: () => _handleNavigation(item),
     );
   }
@@ -772,23 +887,23 @@ class MenuScreen extends StatelessWidget {
       case 'prepaid':
         return AppColors.box1;
       case 'postpaid':
-        return AppColors.box1;
+        return AppColors.box3;
       case 'dth':
         return AppColors.box2;
       case 'fastag':
-        return AppColors.box3;
+        return AppColors.box2;
       case 'gas':
         return const Color.fromRGBO(255, 225, 180, 1);
       case 'electricity':
-        return AppColors.box3;
-      case 'water':
         return AppColors.box4;
-      case 'landline':
+      case 'water':
         return AppColors.box3;
-      case 'broadband':
+      case 'landline':
         return AppColors.box2;
+      case 'broadband':
+        return AppColors.box3;
       case 'cable tv':
-        return AppColors.box1;
+        return AppColors.box4;
       case 'refresh':
         return AppColors.box3;
       default:

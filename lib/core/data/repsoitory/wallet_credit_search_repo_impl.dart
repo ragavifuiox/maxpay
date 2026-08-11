@@ -37,11 +37,12 @@ class WalletCreditSearchRepoImpl implements WalletCreditSearchRepository {
 
       final model = CreditListModel.fromJson(response);
       return Right(model);
-    } on DioException catch (e) {
+    } on DioException catch (e, stackTrace) { print("API EXCEPTION IN REPO: `$e\n`$stackTrace");
       return Left(DioErrorHandler.handle(e));
-    } catch (e) {
+    } catch (e, stackTrace) { print("API EXCEPTION IN REPO: `$e\n`$stackTrace");
       AppLogger.logError("Unexpected Error: $e");
       return Left(ServerFailure(message: "Something went wrong"));
     }
   }
 }
+

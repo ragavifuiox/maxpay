@@ -16,7 +16,7 @@
 //       final response = await apiService.get(ApiRoutes.refundcount);
 //       final model = RefundCount.fromJson(response);
 //       return Right(model);
-//     } catch (e) {
+//     } catch (e, stackTrace) { print("API EXCEPTION IN REPO: `$e\n`$stackTrace");
 //       return Left(ServerFailure(message: e.toString()));
 //     }
 //   }
@@ -45,9 +45,9 @@ class RefundCountRepoImpl implements RefundCountRepository {
       final response = await apiService.get(ApiRoutes.refundcount);
       final model = RefundCount.fromJson(response);
       return Right(model);
-    } on DioException catch (e) {
+    } on DioException catch (e, stackTrace) { print("API EXCEPTION IN REPO: `$e\n`$stackTrace");
       return Left(DioErrorHandler.handle(e));
-    } catch (e) {
+    } catch (e, stackTrace) { print("API EXCEPTION IN REPO: `$e\n`$stackTrace");
       AppLogger.logError("Api ${ApiRoutes.refundcount}$e");
       return Left(ServerFailure(message: e.toString()));
     }

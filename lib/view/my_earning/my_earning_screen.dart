@@ -77,7 +77,7 @@ class MyEarningsScreen extends GetView<EarningController> {
                                         .searchData
                                         .value
                                         ?.data
-                                        ?.todayTotalEarnings
+                                        ?.totalEarnings
                                         ?.toString() ??
                                     "0")
                                 .currencyIndian,

@@ -79,11 +79,16 @@ class AssetImages {
   static const processIcon = "assets/images/process_icon1.svg";
  
   static const failedIcon = "assets/images/failed_icon1.svg";
-  static const transfer = "assets/images/transfer.svg";
+  static const transfer = "assets/images/trnsaferred.svg";
+
   static const walletcredit = "assets/images/wallet-check.svg";
   static const TransferDetial = "assets/images/card-tick.svg";
   static const bank = "assets/images/bank.svg";
   static const copy = "assets/images/copy.svg";
+  static const  loadingImage = "assets/images/load.svg";
+  static const  userAvatar = "assets/images/bal.svg";
+  static const  wal = "assets/images/wal.svg";
+  static const  sup = "assets/images/sup.svg";
 }
 
 SizedBox adjustWidth(double width) {

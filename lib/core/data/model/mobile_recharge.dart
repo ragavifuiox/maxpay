@@ -28,13 +28,17 @@ class MobileRecharge {
 class Data {
   Recharge? recharge;
   ApiResponse? apiResponse;
+  String? refId;
 
-  Data({this.recharge, this.apiResponse});
+  Data({this.recharge, this.apiResponse, this.refId});
 
   Data.fromJson(Map<String, dynamic> json) {
     recharge = json['recharge'] != null
         ? new Recharge.fromJson(json['recharge'])
         : null;
+
+    refId = json['refid']?.toString();
+
     apiResponse = json['api_response'] != null
         ? new ApiResponse.fromJson(json['api_response'])
         : null;
@@ -42,12 +46,17 @@ class Data {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
+
     if (this.recharge != null) {
       data['recharge'] = this.recharge!.toJson();
     }
+
+    data['refid'] = this.refId;
+
     if (this.apiResponse != null) {
       data['api_response'] = this.apiResponse!.toJson();
     }
+
     return data;
   }
 }
@@ -193,6 +202,8 @@ class ApiData {
         ? int.tryParse(json['resCode'].toString())
         : null;
     resText = json['resText']?.toString();
+
+    
   }
 
   Map<String, dynamic> toJson() {

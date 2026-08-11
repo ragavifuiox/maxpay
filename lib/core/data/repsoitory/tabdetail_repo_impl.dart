@@ -19,8 +19,9 @@ class TabdetailRepoImpl implements TabDetailRepository {
       final response = await apiService.get("${ApiRoutes.tabdetail}$tabid");
       final model = TabDetail.fromJson(response);
       return Right(model);
-    } catch (e) {
+    } catch (e, stackTrace) { print("API EXCEPTION IN REPO: `$e\n`$stackTrace");
       return Left(ServerFailure(message: e.toString()));
     }
   }
 }
+

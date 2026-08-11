@@ -5,6 +5,7 @@ import 'package:get/get.dart' as g;
 import 'package:maxpay/core/constants/api_routes.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/core/services/local_storage_service.dart';
+import 'package:maxpay/core/services/network_service.dart';
 import 'package:maxpay/core/utils/logg_helper.dart';
 
 class ApiService {
@@ -16,8 +17,7 @@ class ApiService {
     : _dio = Dio(
         BaseOptions(
           baseUrl: ApiRoutes.baseURL,
-          // connectTimeout: const Duration(seconds: 10),
-          // receiveTimeout: const Duration(seconds: 10),
+       
           contentType: 'application/json',
           headers: {
             "Accept": "application/json",
@@ -36,29 +36,7 @@ class ApiService {
 
           return handler.next(options);
         },
-        // onRequest: (options, handler) {
-        //   final token = _storage.getString("auth_token");
-        //   if (token != null) {
-        //     options.headers["Authorization"] = "Bearer $token";
-        //   }
-        //   return handler.next(options);
-        // },
-        // onError: (DioException e, handler) {
-        //   log("API Error: ${e.message}");
-        //   final statusCode = e.response?.statusCode;
-
-        //   if (statusCode == 401) {
-        //     _handleUnauthorized();
-        //   } else {
-        //     print( "asdfasdfasdf"+e.response?.data?['message'] ?? "Something went wrong");
-        //     g.Get.snackbar(
-        //       "Error",
-        //       e.response?.data?['message'] ?? "Something went wrong",
-        //     );
-        //   }
-
-        //   return handler.next(e);
-        // },
+        
         onError: (DioException e, handler) {
           print("FAILED URL => ${e.requestOptions.uri}");
           print("STATUS => ${e.response?.statusCode}");
@@ -70,11 +48,18 @@ class ApiService {
               "Something went wrong";
           log("API Error: $errorMessage");
 
-          // ✅ If NO INTERNET → go to network screen ONLY
+         
+          if (e.type == DioExceptionType.connectionError ||
+              e.type == DioExceptionType.connectionTimeout ||
+              e.type == DioExceptionType.unknown) {
+            if (g.Get.isRegistered<NetworkService>()) {
+              g.Get.find<NetworkService>().checkInternetNow();
+            }
+          }
 
-          // ✅ Only handle 401 if internet is available
+   
           if (e.response?.statusCode == 401) {
-            // _handleUnauthorized();
+          
           } else {
             AppLogger.logError(errorMessage);
             // CustomToast removed to prevent duplicate toasts in controllers
@@ -153,17 +138,12 @@ class ApiService {
     }
   }
 
-  // void _handleUnauthorized() {
-  //   _storage.remove("auth_token");
-  //   g.Get.offAllNamed(AppRoutes.login);
 
-  //   g.Get.snackbar("Session Expired", "Please login again.");
-  // }
 
   void _handleUnauthorized() {
     final token = _storage.getString("auth_token");
 
-    // Fresh install / logged out user
+ 
     if (token == null || token.isEmpty) {
       return;
     }
@@ -175,14 +155,5 @@ class ApiService {
     g.Get.snackbar("Session Expired", "Please login again.");
   }
 
-  // void _handleUnauthorized() {
-  //   if (_isUnauthorizedHandled) return;
-  //   _isUnauthorizedHandled = true;
-
-  //   _storage.remove("auth_token");
-
-  //   g.Get.offAllNamed(AppRoutes.welcome);
-
-  //   g.Get.snackbar("Session Expired", "Please login again.");
-  // }
 }
+

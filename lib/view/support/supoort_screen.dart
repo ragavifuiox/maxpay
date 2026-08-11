@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:maxpay/controllers/support_controller.dart';
+import 'package:maxpay/core/constants/asset_images.dart';
 import 'package:maxpay/core/di/service_locator.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class SupportScreen extends StatelessWidget {
   SupportScreen({super.key});
 
-  final SupportController controller = Get.put(SupportController(supportUseCase: sl()));
+  final SupportController controller = Get.put(
+    SupportController(supportUseCase: sl()),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -16,25 +20,20 @@ class SupportScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
-   appBar: AppBar(
-  automaticallyImplyLeading: false,
-  titleSpacing: 19,
-  title: const Text("Support"),
-
-),
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        titleSpacing: 19,
+        title: const Text("Support"),
+      ),
       body: Obx(() {
         if (controller.isLoading.value) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
+          return const Center(child: CircularProgressIndicator());
         }
 
         final supportList = controller.supportData.value?.data ?? [];
 
         if (supportList.isEmpty) {
-          return const Center(
-            child: Text("No Support Data Found"),
-          );
+          return const Center(child: Text("No Support Data Found"));
         }
 
         return ListView.separated(
@@ -45,18 +44,13 @@ class SupportScreen extends StatelessWidget {
             final item = supportList[index];
 
             return Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 18,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
               decoration: BoxDecoration(
                 color: theme.brightness == Brightness.dark
                     ? theme.cardColor
                     : Colors.white,
                 borderRadius: BorderRadius.circular(14),
-                border: Border.all(
-                  color: Colors.grey.withValues(alpha: .15),
-                ),
+                border: Border.all(color: Colors.grey.withValues(alpha: .15)),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withValues(alpha: .05),
@@ -70,11 +64,11 @@ class SupportScreen extends StatelessWidget {
                   /// Avatar
                   CircleAvatar(
                     radius: 24,
-                    backgroundColor: Colors.grey.shade200,
-                    child: Icon(
-                      Icons.person,
-                      color: Colors.grey.shade500,
-                      size: 28,
+                    backgroundColor: Colors.white,
+                    child: SvgPicture.asset(
+                      AssetImages.sup,
+                      width: 54,
+                      height: 54,
                     ),
                   ),
 
@@ -106,31 +100,33 @@ class SupportScreen extends StatelessWidget {
                   ),
 
                   /// Right Side Buttons
-              Column(
-  children: [
-    _SupportButton(
-      backgroundColor: const Color(0xFF25D366), // WhatsApp Green
-      icon: const FaIcon(
-        FontAwesomeIcons.whatsapp,
-        color: Colors.white,
-        size: 14,
-      ),
-      onTap: () => openWhatsApp(item.phoneNumber ?? ""),
-    ),
+                  Column(
+                    children: [
+                      _SupportButton(
+                        backgroundColor: const Color(
+                          0xFF25D366,
+                        ), // WhatsApp Green
+                        icon: const FaIcon(
+                          FontAwesomeIcons.whatsapp,
+                          color: Colors.white,
+                          size: 14,
+                        ),
+                        onTap: () => openWhatsApp(item.phoneNumber ?? ""),
+                      ),
 
-    const SizedBox(height: 8),
+                      const SizedBox(height: 8),
 
-    _SupportButton(
-      backgroundColor: const Color(0xFF3F51B5), // Blue
-      icon: const Icon(
-        Icons.call,
-        color: Colors.white,
-        size: 14,
-      ),
-      onTap: () => makeCall(item.phoneNumber ?? ""),
-    ),
-  ],
-)
+                      _SupportButton(
+                        backgroundColor: const Color(0xFF3F51B5), // Blue
+                        icon: const Icon(
+                          Icons.call,
+                          color: Colors.white,
+                          size: 14,
+                        ),
+                        onTap: () => makeCall(item.phoneNumber ?? ""),
+                      ),
+                    ],
+                  ),
                 ],
               ),
             );
@@ -169,18 +165,13 @@ class _SupportButton extends StatelessWidget {
     );
   }
 }
+
 /// Make Phone Call
 void makeCall(String phoneNumber) async {
-  final Uri url = Uri(
-    scheme: 'tel',
-    path: phoneNumber,
-  );
+  final Uri url = Uri(scheme: 'tel', path: phoneNumber);
 
   if (await canLaunchUrl(url)) {
-    await launchUrl(
-      url,
-      mode: LaunchMode.externalApplication,
-    );
+    await launchUrl(url, mode: LaunchMode.externalApplication);
   } else {
     Get.snackbar(
       "Error",
@@ -198,18 +189,14 @@ Future<void> openWhatsApp(String phoneNumber) async {
     number = "91$number";
   }
 
-  const message =
-      "👋 Hello! I need support regarding my account.";
+  const message = "👋 Hello! I need support regarding my account.";
 
   final Uri uri = Uri.parse(
     "https://wa.me/$number?text=${Uri.encodeComponent(message)}",
   );
 
   try {
-    await launchUrl(
-      uri,
-      mode: LaunchMode.externalApplication,
-    );
+    await launchUrl(uri, mode: LaunchMode.externalApplication);
   } catch (e) {
     Get.snackbar(
       "Error",

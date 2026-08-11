@@ -21,8 +21,10 @@ class _VerifyPinPageState extends State<ProfileUpdateOtp> {
   final TextEditingController otpController = TextEditingController();
 
   final ProfileController procontroller = Get.put(
-    ProfileController(getProfileUseCase: sl(), profileUpdateUseCase: sl(), updateprofileotpusecase: sl()
-      
+    ProfileController(
+      getProfileUseCase: sl(),
+      profileUpdateUseCase: sl(),
+      updateprofileotpusecase: sl(),
     ),
   );
 
@@ -62,14 +64,13 @@ class _VerifyPinPageState extends State<ProfileUpdateOtp> {
 
                   const SizedBox(height: 10),
 
-                 Obx(() => Text(
-      "Please type the verification code\nsent to +91 ${procontroller.updatedMobile.value}",
-      textAlign: TextAlign.center,
-      style: const TextStyle(
-        fontSize: 14,
-        color: Colors.grey,
-      ),
-    )),
+                  Obx(
+                    () => Text(
+                      "Please type the verification code\nsent to +91 ${procontroller.updatedMobile.value}",
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(fontSize: 14, color: Colors.grey),
+                    ),
+                  ),
 
                   const SizedBox(height: 40),
 
@@ -98,10 +99,11 @@ class _VerifyPinPageState extends State<ProfileUpdateOtp> {
                   const SizedBox(height: 30),
 
                   Obx(() {
-                    return controller.canResendOtp.value
+                    return procontroller.canResendOtp.value
                         ? GestureDetector(
                             onTap: () async {
-                              await controller.sendUpdatePinOtp();
+                              // If there is an API to resend, it needs to be hooked up here
+                              // await procontroller.resendOtp();
                             },
                             child: const Text(
                               "Resend OTP",
@@ -114,7 +116,7 @@ class _VerifyPinPageState extends State<ProfileUpdateOtp> {
                             ),
                           )
                         : Text(
-                            "Resend OTP in ${controller.remainingSeconds.value}s",
+                            "Resend OTP in ${procontroller.remainingSeconds.value}s",
                             style: const TextStyle(
                               color: Colors.grey,
                               fontSize: 15,
@@ -133,23 +135,23 @@ class _VerifyPinPageState extends State<ProfileUpdateOtp> {
                         title: "Continue",
                         width: 170,
                         isLoading: procontroller.isLoading.value,
-                       onTap: () async {
-  if (otpController.text.trim().length != 4) {
-    CustomToast.error("Please enter a valid OTP");
-    return;
-  }
+                        onTap: () async {
+                          if (otpController.text.trim().length != 4) {
+                            CustomToast.error("Please enter a valid OTP");
+                            return;
+                          }
 
-  final success = await procontroller.verifyOtp(
-    otpController.text.trim(),
-  );
+                          final success = await procontroller.verifyOtp(
+                            otpController.text.trim(),
+                          );
 
-  if (success) {
-    await procontroller.fetchProfile();
-    Get.offAll(() => LoginPhoneNamePage());
-  } else {
-    CustomToast.error("Invalid OTP");
-  }
-},
+                          if (success) {
+                            await procontroller.fetchProfile();
+                            Get.offAll(() => LoginPhoneNamePage());
+                          } else {
+                            CustomToast.error("Invalid OTP");
+                          }
+                        },
                       ),
                     ),
                   ),

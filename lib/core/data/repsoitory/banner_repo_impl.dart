@@ -16,8 +16,9 @@ class BannerRepoImpl implements BannerRepository {
       final response = await apiService.get(ApiRoutes.banner);
       final model = Banner.fromJson(response);
       return Right(model);
-    } catch (e) {
+    } catch (e, stackTrace) { print("API EXCEPTION IN REPO: `$e\n`$stackTrace");
       return Left(ServerFailure(message: e.toString()));
     }
   }
 }
+

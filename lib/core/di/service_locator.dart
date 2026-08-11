@@ -1,4 +1,5 @@
 import 'package:get_it/get_it.dart';
+import 'package:maxpay/core/data/repsoitory/active_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/add_kyc_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/add_staff_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/advertisement_repo_impl.dart';
@@ -77,6 +78,7 @@ import 'package:maxpay/core/data/repsoitory/wallet_transfer_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/wallet_trnasfer_detail_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/web_login_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/web_logout_repo_impl.dart';
+import 'package:maxpay/core/domain/repository/active_user_reposiotry.dart';
 import 'package:maxpay/core/domain/repository/add_staff_repository.dart';
 import 'package:maxpay/core/domain/repository/advertisement_repository.dart';
 import 'package:maxpay/core/domain/repository/all_plan_repository.dart';
@@ -152,6 +154,7 @@ import 'package:maxpay/core/domain/repository/wallet_transfer_repository.dart';
 import 'package:maxpay/core/domain/repository/wallet_trnsfer_detail_repository.dart';
 import 'package:maxpay/core/domain/repository/web_login_repository.dart';
 import 'package:maxpay/core/domain/repository/web_logout_repository.dart';
+import 'package:maxpay/core/domain/usecase/active_user_usecase.dart';
 import 'package:maxpay/core/domain/usecase/addd_staff_usecase.dart';
 import 'package:maxpay/core/domain/usecase/advertisement_usecase.dart';
 import 'package:maxpay/core/domain/usecase/all_plan_usecase.dart';
@@ -246,7 +249,7 @@ Future<void> initDependencies() async {
     sl.registerLazySingleton(() => ApiService());
   }
 
-  /*-------------------       REPOSITORY     ---------------------------*/
+  sl.registerLazySingleton<ActiveUserRepository>(() => ActiveRepoImpl(sl()));
   sl.registerLazySingleton<LoginRepository>(() => LoginRepositoryImpl(sl()));
   sl.registerLazySingleton<OtpRepository>(() => OtpRepoImpl(sl()));
   sl.registerLazySingleton<GetNewsRepository>(() => GetNewsRepoImpl(sl()));
@@ -260,9 +263,12 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton<TodayTrnsactionRepsoitory>(
     () => TodayTransactionRepoImppl(sl()),
   );
+
+  
   sl.registerLazySingleton<CheckOperatorRepository>(
     () => CheckOperatorRepoImpl(sl()),
   );
+
   sl.registerLazySingleton<DownloadRepository>(() => DownloadRepoImpl(sl()));
 
   sl.registerLazySingleton<GetProfileRepository>(
@@ -413,6 +419,7 @@ Future<void> initDependencies() async {
   );
 
   /*-------------------       USECASE    ---------------------------------*/
+  sl.registerLazySingleton<ActiveUserUsecase>(() => ActiveUserUsecase(sl()));
   sl.registerLazySingleton<LoginUseCase>(() => LoginUseCase(sl()));
   sl.registerLazySingleton<OtpUsecase>(() => OtpUsecase(sl()));
   sl.registerLazySingleton<GetNewsUseCase>(() => GetNewsUseCase(sl()));

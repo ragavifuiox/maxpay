@@ -288,7 +288,7 @@ class TransrepData {
     mobile = json['mobile'];
     availableBalance = json['available_balance'];
     transactionAmount = json['transaction_amount'];
-    commission = json['commission'];
+    commission = (json['commission'] ?? json['commision'])?.toString();
     surcharge = json['surcharge'];
     remainingBalance = json['remaining_balance'];
     requestDateTime = json['request_date_time'];

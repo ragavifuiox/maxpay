@@ -199,6 +199,7 @@ class CustomerTransConfirmationScreen extends GetView<PrePaidController> {
                                 dateTime:
                                     rechargeData.data?.recharge?.requestTime ??
                                     DateTime.now().toString(),
+                                    refId: rechargeData.data?.refId ?? "",
                               ),
                             );
                           } else {

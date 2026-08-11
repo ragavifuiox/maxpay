@@ -44,7 +44,7 @@ AppLogger.logError(response);
 AppLogger.logError("====================================");
       final model = IpAddress.fromJson(response);
       return Right(model);
-    } catch (e) {
+    } catch (e, stackTrace) { print("API EXCEPTION IN REPO: `$e\n`$stackTrace");
       return Left(ServerFailure(message: e.toString()));
     }
   }

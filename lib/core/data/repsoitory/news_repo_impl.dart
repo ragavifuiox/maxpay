@@ -16,7 +16,7 @@
 //       final response = await apiService.get(ApiRoutes.news);
 //       final model = News.fromJson(response);
 //       return Right(model);
-//     } catch (e) {
+//     } catch (e, stackTrace) { print("API EXCEPTION IN REPO: `$e\n`$stackTrace");
 //       return Left(ServerFailure(message: e.toString()));
 //     }
 //   }
@@ -45,9 +45,9 @@ class GetNewsRepoImpl implements GetNewsRepository {
       final model = News.fromJson(response);
 
       return Right(model);
-    } on DioException catch (e) {
+    } on DioException catch (e, stackTrace) { print("API EXCEPTION IN REPO: `$e\n`$stackTrace");
       return Left(DioErrorHandler.handle(e));
-    } catch (e) {
+    } catch (e, stackTrace) { print("API EXCEPTION IN REPO: `$e\n`$stackTrace");
       print("UNKNOWN ERROR : $e");
 
       return Left(

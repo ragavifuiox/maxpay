@@ -68,9 +68,11 @@ class ConfirmData {
 
     availableBalance = json['available_balance']?.toString();
     transactionAmount = json['transaction_amount']?.toString();
-    commissiontype = json['commission_type']?.toString();
+    commissiontype = (json['commission_type'] ?? json['commissiontype'])
+        ?.toString();
 
-    commision = json['commision']?.toString();
+    // Check both spellings "commission" and "commision"
+    commision = (json['commission'] ?? json['commision'])?.toString();
 
     remainingBalance = json['remaining_balance']?.toString();
 

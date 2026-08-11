@@ -16,8 +16,9 @@ class EarningsRepoImpl implements EarningsRepository {
       final response = await apiService.get(ApiRoutes.earning);
       final model = Earnings.fromJson(response);
       return Right(model);
-    } catch (e) {
+    } catch (e, stackTrace) { print("API EXCEPTION IN REPO: `$e\n`$stackTrace");
       return Left(ServerFailure(message: e.toString()));
     }
   }
 }
+

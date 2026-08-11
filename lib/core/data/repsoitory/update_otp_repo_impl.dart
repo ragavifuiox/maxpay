@@ -28,8 +28,9 @@ class UpdateOtpRepoImpl implements UpdateOtpRepository {
       AppLogger.logError("====================================");
       final model = UpdateOtp.fromJson(response);
       return Right(model);
-    } catch (e) {
+    } catch (e, stackTrace) { print("API EXCEPTION IN REPO: `$e\n`$stackTrace");
       return Left(DioErrorHandler.handle(e));
     }
   }
 }
+

@@ -84,17 +84,16 @@ class TransactionCard extends StatelessWidget {
 
           const SizedBox(height: 10),
 
-          /// Content
           Row(
             children: [
-              /// Logo
+         
               if ((data.logo ?? '').isNotEmpty)
                 ClipRRect(
                   borderRadius: BorderRadius.circular(0),
                   child: Image.network(
                     data.logo!,
-                    width: 32,
-                    height: 32,
+                    width: 42,
+                    height: 42,
                     fit: BoxFit.contain,
                     errorBuilder: (_, _, _) => _defaultLogo(),
                   ),
@@ -157,18 +156,16 @@ class TransactionCard extends StatelessWidget {
                       );
                     }),
                     const SizedBox(width: 6),
-                    _button("View", Colors.green, () {
+                    _button("View", const Color.fromARGB(255, 23, 21, 152), () {
                       Get.toNamed(
                         AppRoutes.transactionDetails,
                         arguments: data,
                       );
                     }),
+
                     const SizedBox(width: 6),
                     _button("Share", Colors.blue, () {
-                      ShareReceipt.sharePdf(
-                        pdfUrl: data.url ?? "",
-                        phone: data.mobile ?? "",
-                      );
+                      ShareReceipt.sharePdf(context: context, data: data);
                     }),
                   ],
 
@@ -270,54 +267,35 @@ class TransactionCard extends StatelessWidget {
   }
 
   void _onResend(BuildContext context) {
-    final productType = (data.productType ?? "").toLowerCase();
-    final productTypeId = (data.productTypeId ?? "").toString();
+  final productType = (data.productType ?? "").toLowerCase();
+  final productTypeId = (data.productTypeId ?? "").toString();
 
-    // Make type matching more robust
-    bool isPrepaid =
-        productType.contains("prepaid") ||
-        productType.contains("mobile") ||
-        productTypeId == "1";
+  final String productId = data.productId?.toString() ?? "";
 
-    bool isDth = productType.contains("dth") || productTypeId == "2";
+  print("========== RESEND ==========");
+  print("Product ID: $productId");
+  print("Product Type: ${data.productType}");
+  print("Product Type ID: ${data.productTypeId}");
 
-    if (isPrepaid) {
-      Get.toNamed(
-        AppRoutes.transconfirm,
-        arguments: {
-          "mobileNumber": data.mobile,
-          "amount": data.amount,
-          "productdetid":
-              data.productId?.toString() ?? "", // Must be operator/plan ID
-          "paymentStatus": data.paymentStatus ?? "Pending",
-          "operator": data.operator ?? "",
-          "logo": data.logo ?? "",
-          "commission": data.commission ?? "0",
-          "availableBalance": data.availableBalance ?? "0",
-          "isFromTranactionPage": true,
-        },
-      );
-    } else if (isDth) {
-      Get.toNamed(
-        AppRoutes.confirmdth,
-        arguments: {
-          "customerId": data.mobile,
-          "amount": data.amount,
-          "productdetid":
-              data.productId?.toString() ?? "", // Must be operator/plan ID
-          "paymentStatus": data.paymentStatus ?? "Pending",
-          "operator": data.operator ?? "",
-          "logo": data.logo ?? "",
-          "commission": data.commission ?? "0",
-          "availableBalance": data.availableBalance ?? "0",
-          "isFromTranactionPage": true,
-        },
-      );
-    } else {
-      Get.snackbar(
-        "Error",
-        "Unknown product type: ${data.productType} (ID: $productTypeId)",
-      );
-    }
+  if (productType.contains("prepaid") ||
+      productType.contains("mobile") ||
+      productTypeId == "1") {
+    Get.toNamed(
+      AppRoutes.transconfirm,
+      arguments: {
+        "mobileNumber": data.mobile,
+        "amount": data.amount,
+        "productdetid": productId,
+
+        "paymentStatus": data.paymentStatus ?? "Pending",
+        "operator": data.operator ?? "",
+        "logo": data.logo ?? "",
+        "availableBalance": data.availableBalance ?? "0",
+
+        // DON'T use failed report commission
+        "isFromTranactionPage": true,
+      },
+    );
   }
+}
 }

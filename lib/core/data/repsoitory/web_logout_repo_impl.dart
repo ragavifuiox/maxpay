@@ -32,8 +32,9 @@ class WebLogoutRepoImpl implements WebLogoutRepository {
       AppLogger.logError("====================================");
       final model = WebLogout.fromJson(response);
       return Right(model);
-    } catch (e) {
+    } catch (e, stackTrace) { print("API EXCEPTION IN REPO: `$e\n`$stackTrace");
       return Left(ServerFailure(message: e.toString()));
     }
   }
 }
+

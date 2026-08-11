@@ -16,8 +16,9 @@ class SupportRepoImpl implements SupportRepository {
       final response = await apiService.get(ApiRoutes.support);
       final model = Support.fromJson(response);
       return Right(model);
-    } catch (e) {
+    } catch (e, stackTrace) { print("API EXCEPTION IN REPO: `$e\n`$stackTrace");
       return Left(ServerFailure(message: e.toString()));
     }
   }
 }
+

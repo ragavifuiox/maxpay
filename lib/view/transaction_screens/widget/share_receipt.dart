@@ -1,109 +1,294 @@
 import 'dart:io';
-
-import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:maxpay/controllers/profile_controller.dart';
+import 'package:maxpay/core/constants/colors.dart';
+import 'package:maxpay/core/data/model/transaction_report_model.dart';
+import 'package:maxpay/core/extensions/currency.dart';
+import 'package:maxpay/core/constants/extension.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class ShareReceipt {
-  /// Downloads the PDF from [pdfUrl] and shares the actual file
-  /// to WhatsApp (or the system share sheet as a fallback).
+  /// Generates a local PDF from the UI layout and shares it out.
   static Future<void> sharePdf({
-    required String pdfUrl,
-    required String phone,
+    required BuildContext context,
+    required TransrepData data,
   }) async {
     try {
-      // 1. Normalize phone number (WhatsApp needs country code, no symbols)
-      String normalizedPhone = phone.replaceAll(RegExp(r'\D'), '');
-      if (normalizedPhone.length == 10) {
-        normalizedPhone = '91$normalizedPhone';
+      final screenshotController = ScreenshotController();
+      ProfileController? profileController;
+
+      if (Get.isRegistered<ProfileController>()) {
+        profileController = Get.find<ProfileController>();
       }
+      final profile = profileController?.profileData.value?.data;
 
-      // 2. Download the PDF to a local temp file first.
-      //    WhatsApp's whatsapp:// URL scheme can only prefill TEXT,
-      //    it cannot attach a file. To actually send the file itself
-      //    you must share a local file path via the OS share sheet.
-      final filePath = await _downloadPdf(pdfUrl);
+      final widgetToCapture = MediaQuery(
+        data: MediaQuery.of(context),
+        child: Directionality(
+          textDirection: TextDirection.ltr,
+          child: Theme(
+            data: Theme.of(context),
+            child: Material(
+              color: Colors.white,
+              child: Center(
+                child: _buildReceiptContent(context, profile, data),
+              ),
+            ),
+          ),
+        ),
+      );
 
-      if (filePath == null) {
-        // Download failed — fall back to sending just the link.
-        await _shareLinkFallback(pdfUrl, phone, normalizedPhone);
-        return;
-      }
+      final Uint8List imageBytes = await screenshotController.captureFromWidget(
+        widgetToCapture,
+        delay: const Duration(milliseconds: 200),
+      );
 
-      final xFile = XFile(filePath, mimeType: 'application/pdf');
+      final pdf = pw.Document();
+      final image = pw.MemoryImage(imageBytes);
 
-      // 3. Share the actual PDF file.
-      //    On Android you can target the WhatsApp app directly.
-      //    On iOS, Apple does not allow deep-linking straight into a
-      //    WhatsApp chat with a pre-attached file — the user must pick
-      //    the WhatsApp contact from the native share sheet themselves.
-      final result = await Share.shareXFiles(
+      pdf.addPage(
+        pw.Page(
+          pageFormat: PdfPageFormat.a4,
+          build: (pw.Context ctx) {
+            return pw.Center(child: pw.Image(image));
+          },
+        ),
+      );
+
+      final dir = await getTemporaryDirectory();
+      final id = data.transactionId?.isNotEmpty == true
+          ? data.transactionId!.replaceAll(RegExp(r'[^A-Za-z0-9_-]'), '_')
+          : DateTime.now().millisecondsSinceEpoch.toString();
+
+      final savePath = '${dir.path}/Receipt_$id.pdf';
+      final file = File(savePath);
+      await file.writeAsBytes(await pdf.save());
+
+      final xFile = XFile(file.path, mimeType: 'application/pdf');
+
+      await Share.shareXFiles(
         [xFile],
         text: 'Hello, here is your Transaction Receipt.',
         subject: 'Transaction Receipt',
       );
-
-      if (result.status != ShareResultStatus.success) {
-        // User cancelled or it failed — nothing more to do.
-        print('Share dismissed or failed: ${result.status}');
-      }
     } catch (e) {
-      print('SHARE ERROR : $e');
-      // Last-resort fallback: at least send the link.
-      await _shareLinkFallback(pdfUrl, phone, phone.replaceAll(RegExp(r'\D'), ''));
+      print('SHARE GENERATION ERROR : $e');
     }
   }
 
-  /// Downloads [pdfUrl] into the app's temp directory and
-  /// returns the local file path, or null on failure.
-  static Future<String?> _downloadPdf(String pdfUrl) async {
-    try {
-      final dir = await getTemporaryDirectory();
-      final fileName = 'receipt_${DateTime.now().millisecondsSinceEpoch}.pdf';
-      final savePath = '${dir.path}/$fileName';
+  static Widget _buildReceiptContent(
+    BuildContext context,
+    dynamic profile,
+    TransrepData data,
+  ) {
+    return Container(
+      width: 340.w,
+      padding: EdgeInsets.all(16.r),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(15.r),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.symmetric(vertical: 10.h),
+            decoration: BoxDecoration(
+              color: AppColors.clrPrimary,
+              borderRadius: BorderRadius.circular(6.r),
+            ),
+            child: Center(
+              child: Text(
+                "Transaction Details",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
 
-      final dio = Dio();
-      final response = await dio.download(
-        pdfUrl,
-        savePath,
-        options: Options(
-          responseType: ResponseType.bytes,
-          followRedirects: true,
-        ),
-      );
+          SizedBox(height: 15.h),
 
-      if (response.statusCode == 200) {
-        final file = File(savePath);
-        if (await file.exists() && await file.length() > 0) {
-          return savePath;
-        }
-      }
-      return null;
-    } catch (e) {
-      print('DOWNLOAD ERROR : $e');
-      return null;
-    }
-  }
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Transaction ID : ${data.transactionId ?? '-'}",
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    SizedBox(height: 5.h),
+                    Text(
+                      "Date & Time : ${data.dateTime?.isNotEmpty == true ? formatTransactionDate(data.dateTime!) : '-'}",
+                      style: TextStyle(fontSize: 12.sp),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(width: 10.w),
+              if (data.logo?.isNotEmpty == true)
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(20.r),
+                  child: Image.network(
+                    data.logo!,
+                    width: 40.w,
+                    height: 40.w,
+                    fit: BoxFit.contain,
+                    errorBuilder: (_, __, ___) => _fallbackLogo(data),
+                  ),
+                )
+              else
+                _fallbackLogo(data),
+            ],
+          ),
 
-  /// Fallback: open WhatsApp chat with just the text/link,
-  /// or use the generic share sheet if WhatsApp isn't available.
-  static Future<void> _shareLinkFallback(
-    String pdfUrl,
-    String rawPhone,
-    String normalizedPhone,
-  ) async {
-    final String message = 'Hello, here is your Transaction Receipt:\n$pdfUrl';
-    final Uri whatsappUri = Uri.parse(
-      'whatsapp://send?phone=$normalizedPhone&text=${Uri.encodeComponent(message)}',
+          SizedBox(height: 12.h),
+          Divider(),
+
+          _detailRow(
+            context,
+            "Transaction",
+            (data.status?.toLowerCase() == 'received' ||
+                    data.status?.toLowerCase() == 'success')
+                ? "Success"
+                : (data.status ?? "-"),
+            valueColor:
+                (data.status?.toLowerCase() == 'received' ||
+                    data.status?.toLowerCase() == 'success')
+                ? Colors.green
+                : Colors.black,
+          ),
+
+          _detailRow(
+            context,
+            "Transaction No",
+            data.transactionNo ?? data.transactionId ?? "-",
+          ),
+          _detailRow(
+            context,
+            "Amount",
+            (data.amount ?? data.transactionAmount ?? "0").currencyIndian,
+          ),
+          _detailRow(
+            context,
+            "Product",
+            data.productName ?? data.productType ?? "-",
+          ),
+          _detailRow(context, "Product Ref. Id", data.transactionId ?? "-"),
+
+          SizedBox(height: 12.h),
+
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.all(12.r),
+            decoration: BoxDecoration(
+              color: AppColors.clrPrimary,
+              borderRadius: BorderRadius.circular(8.r),
+            ),
+            child: Column(
+              children: [
+                _detailRow(
+                  context,
+                  "Retailer Name",
+                  profile?.name ?? "N/A",
+                  textColor: Colors.white,
+                ),
+                _detailRow(
+                  context,
+                  "Contact No",
+                  profile?.phoneNumber ?? "N/A",
+                  textColor: Colors.white,
+                ),
+              ],
+            ),
+          ),
+          SizedBox(height: 15.h),
+          Text(
+            "T & C Apply",
+            style: TextStyle(color: Colors.blue, fontSize: 12.sp),
+          ),
+        ],
+      ),
     );
+  }
 
-    if (await canLaunchUrl(whatsappUri)) {
-      await launchUrl(whatsappUri, mode: LaunchMode.externalApplication);
-    } else {
-      await Share.share(
-        'Transaction Receipt\nCustomer: $rawPhone\nReceipt Link: $pdfUrl',
-      );
-    }
+  static Widget _fallbackLogo(TransrepData data) {
+    return CircleAvatar(
+      radius: 20.r,
+      backgroundColor: Colors.red,
+      child: Text(
+        (data.operator?.isNotEmpty == true)
+            ? data.operator![0].toUpperCase()
+            : 'J',
+        style: const TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+
+  static Widget _detailRow(
+    BuildContext context,
+    String title,
+    String value, {
+    Color? valueColor,
+    Color? textColor,
+  }) {
+    final color = textColor ?? Colors.black;
+
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 6.h),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 120.w,
+            child: Text(
+              title,
+              style: TextStyle(
+                color: color,
+                fontSize: 13.sp,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+          SizedBox(
+            width: 10.w,
+            child: Text(
+              ":",
+              style: TextStyle(color: color, fontWeight: FontWeight.bold),
+            ),
+          ),
+          Expanded(
+            child: Text(
+              value,
+              textAlign: TextAlign.end,
+              style: TextStyle(
+                color: valueColor ?? color,
+                fontSize: 13.sp,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

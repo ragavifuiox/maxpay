@@ -33,21 +33,27 @@ class SearchEarning {
 }
 
 class Data {
-  int? todayTotalEarnings;
-  int? totalEarnings;
+  double? todayTotalEarnings;
+  double? totalEarnings;
   List<EarningItem>? list;
 
   Data({this.todayTotalEarnings, this.totalEarnings, this.list});
 
-  factory Data.fromJson(Map<String, dynamic> json) => Data(
-    todayTotalEarnings: json["today_total_earnings"],
-    totalEarnings: json["total_earnings"],
-    list: json["list"] == null
-        ? []
-        : List<EarningItem>.from(
-            json["list"]!.map((x) => EarningItem.fromJson(x)),
-          ),
-  );
+  factory Data.fromJson(Map<String, dynamic> json) {
+    return Data(
+      todayTotalEarnings: json["today_total_earnings"] != null
+          ? double.tryParse(json["today_total_earnings"].toString())
+          : null,
+      totalEarnings: json["total_earnings"] != null
+          ? double.tryParse(json["total_earnings"].toString())
+          : null,
+      list: json["list"] == null
+          ? []
+          : List<EarningItem>.from(
+              json["list"]!.map((x) => EarningItem.fromJson(x)),
+            ),
+    );
+  }
 
   Map<String, dynamic> toJson() => {
     "today_total_earnings": todayTotalEarnings,
@@ -90,19 +96,23 @@ class EarningItem {
   });
 
   EarningItem.fromJson(Map<String, dynamic> json) {
-    rechargeId = json['recharge_id'];
-    userName = json['user_name'];
-    mobile = json['mobile'];
-    productId = json['product_id'];
-    productName = json['product_name'];
-    productLogo = json['product_logo'];
-    amount = json['amount'];
-    status = json['status'];
-    rechargeDate = json['recharge_date'];
-    commissionType = json['commission_type'];
-    commissionAmount = json['commission_amount'];
-    commissionDate = json['commission_date'];
-    productType = json['product_type'];
+    rechargeId = json['recharge_id'] != null
+        ? int.tryParse(json['recharge_id'].toString())
+        : null;
+    userName = json['user_name']?.toString();
+    mobile = json['mobile']?.toString();
+    productId = json['product_id'] != null
+        ? int.tryParse(json['product_id'].toString())
+        : null;
+    productName = json['product_name']?.toString();
+    productLogo = json['product_logo']?.toString();
+    amount = json['amount']?.toString();
+    status = json['status']?.toString();
+    rechargeDate = json['recharge_date']?.toString();
+    commissionType = json['commission_type']?.toString();
+    commissionAmount = json['commission_amount']?.toString();
+    commissionDate = json['commission_date']?.toString();
+    productType = json['product_type']?.toString();
   }
 
   Map<String, dynamic> toJson() {

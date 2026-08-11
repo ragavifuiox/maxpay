@@ -35,13 +35,13 @@ class CreditListModel {
 }
 
 class CreditList {
-  int? todayTotalCredit;
+  double? todayTotalCredit;
   List<CreditData>? list;
 
   CreditList({this.todayTotalCredit, this.list});
 
   factory CreditList.fromJson(Map<String, dynamic> json) => CreditList(
-    todayTotalCredit: json["total_credit"],
+    todayTotalCredit: double.tryParse(json["total_credit"].toString()),
     list: json["list"] == null
         ? []
         : List<CreditData>.from(

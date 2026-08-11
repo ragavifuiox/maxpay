@@ -65,12 +65,15 @@ class BroadbandConfirmPage extends StatelessWidget {
                     title: "Customer Confirmation",
                     backgroundColor: AppColors.clrSecondary,
                   onTap: (){
+
                     Get.to(BroadBandCustomerPage());
+
                   },
                   ),
                 ),
                 const SizedBox(height: 21),
               Center(
+                
                 child: CommonButton(
                   title: 'Pay Now',
                   onTap:(){

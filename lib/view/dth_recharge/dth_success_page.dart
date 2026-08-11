@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:maxpay/controllers/download_controller.dart';
 import 'package:maxpay/controllers/earning_controller.dart';
 import 'package:maxpay/controllers/homepage_controller.dart';
 import 'package:maxpay/controllers/profile_controller.dart';
@@ -13,10 +12,18 @@ import 'package:maxpay/controllers/transaction_report_controller.dart';
 import 'package:maxpay/controllers/wallet_credit_controller.dart';
 import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
+import 'package:maxpay/core/constants/snackbar.dart';
 import 'package:maxpay/core/di/service_locator.dart';
 import 'package:maxpay/core/extensions/currency.dart';
 import 'package:maxpay/global_widget/commom_button.dart';
 import 'package:maxpay/core/constants/extension.dart';
+
+import 'dart:io';
+import 'package:flutter/services.dart';
+import 'package:open_file/open_file.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:screenshot/screenshot.dart';
 
 class DthSuccessPage extends StatelessWidget {
   final String productName;
@@ -27,7 +34,7 @@ class DthSuccessPage extends StatelessWidget {
   final String transactionId;
   final String dateTime;
   final String rechargeId;
-  final String operatorLogo; // image URL
+  final String operatorLogo;
 
   const DthSuccessPage({
     super.key,
@@ -139,7 +146,7 @@ class DthSuccessPage extends StatelessWidget {
                       context: context,
                     ),
                     _buildSummaryRow(
-                      'Transaction Amount',
+                      ' Amount',
                       rechargeAmount,
                       context: context,
                     ),
@@ -231,221 +238,294 @@ class DthSuccessPage extends StatelessWidget {
     BuildContext context,
     ProfileController profileController,
   ) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
     final profile = profileController.profileData.value?.data;
-
-    final DownloadController downloadController = Get.put(
-      DownloadController(downloadUseCase: sl()),
-    );
 
     showDialog(
       context: context,
       builder: (_) {
+        final screenshotController = ScreenshotController();
         return Dialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15.r),
           ),
           child: SingleChildScrollView(
-            child: Container(
-              width: 340.w,
-              padding: EdgeInsets.all(16.r),
-              decoration: BoxDecoration(
-                color: isDark ? AppColors.darkplceholder : Colors.white,
-                borderRadius: BorderRadius.circular(15.r),
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    width: double.infinity,
-                    padding: EdgeInsets.symmetric(vertical: 10.h),
-                    decoration: BoxDecoration(
-                      color: AppColors.clrPrimary,
-                      borderRadius: BorderRadius.circular(6.r),
-                    ),
-                    child: Center(
-                      child: Text(
-                        "Transaction Details",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  SizedBox(height: 15.h),
-
-                  /// Transaction ID / Date & Time on the left,
-                  /// operator logo (or colored initial fallback) on the right.
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "Transaction ID : $transactionId",
-                              style: TextStyle(
-                                fontSize: 12.sp,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            SizedBox(height: 5.h),
-                            Text(
-                              "Date & Time : ${formatTransactionDate(dateTime)}",
-                              style: TextStyle(fontSize: 12.sp),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      SizedBox(width: 10.w),
-
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(20.r),
-                        child: Image.network(
-                          operatorLogo,
-                          width: 40.w,
-                          height: 40.w,
-                          fit: BoxFit.contain,
-                          errorBuilder: (_, __, ___) {
-                            return CircleAvatar(
-                              radius: 20.r,
-                              backgroundColor: operatorColor,
-                              child: Text(
-                                operatorInitial,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  SizedBox(height: 12.h),
-
-                  Divider(),
-
-                  _detailRow(
-                    context,
-                    "Transaction",
-                    "Success",
-                    valueColor: Colors.green,
-                  ),
-
-                  _detailRow(context, "Transaction No", transactionNo),
-
-                  _detailRow(
-                    context,
-                    "Transaction Amount",
-                    rechargeAmount.currencyIndian,
-                  ),
-
-                  _detailRow(context, "Product", productName),
-
-                  _detailRow(context, "Product Ref Id", transactionId),
-
-                  SizedBox(height: 12.h),
-
-                  Container(
-                    width: double.infinity,
-                    padding: EdgeInsets.all(12.r),
-                    decoration: BoxDecoration(
-                      color: AppColors.clrPrimary,
-                      borderRadius: BorderRadius.circular(8.r),
-                    ),
-                    child: Column(
-                      children: [
-                        _detailRow(
-                          context,
-                          "Retailer Name",
-                          profile?.name ?? "N/A",
-                          textColor: Colors.white,
-                        ),
-                        _detailRow(
-                          context,
-                          "Contact No",
-                          profile?.phoneNumber ?? "N/A",
-                          textColor: Colors.white,
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  SizedBox(height: 15.h),
-
-                  Text(
-                    "T & C Apply",
-                    style: TextStyle(color: Colors.blue, fontSize: 12.sp),
-                  ),
-
-                  SizedBox(height: 20.h),
-
-                  Row(
-                    children: [
-                      Expanded(
-                        flex: 2,
-                        child: SizedBox(
-                          height: 42.h,
-                          child: ElevatedButton(
-                            onPressed: () {
-                              downloadController.downloadReceipt(rechargeId);
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.red,
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  "Download",
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                                SizedBox(width: 5.w),
-                                Icon(
-                                  Icons.download,
-                                  color: Colors.white,
-                                  size: 18.sp,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      SizedBox(width: 12.w),
-
-                      Expanded(
-                        child: SizedBox(
-                          height: 42.h,
-                          child: ElevatedButton(
-                            onPressed: () => Get.back(),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.blue,
-                            ),
-                            child: const Text(
-                              "Ok",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+            child: _buildReceiptContent(
+              context,
+              profile,
+              false,
+              screenshotController,
             ),
           ),
         );
       },
+    );
+  }
+
+  Future<void> _captureAndSavePdf(
+    BuildContext context,
+    dynamic profile,
+    ScreenshotController screenshotController,
+  ) async {
+    final widgetToCapture = MediaQuery(
+      data: MediaQuery.of(context),
+      child: Directionality(
+        textDirection: TextDirection.ltr,
+        child: Theme(
+          data: Theme.of(context),
+          child: Material(
+            color: Colors.white,
+            child: Center(
+              child: _buildReceiptContent(context, profile, true, null),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    try {
+      final Uint8List imageBytes = await screenshotController.captureFromWidget(
+        widgetToCapture,
+        delay: const Duration(milliseconds: 200),
+      );
+
+      final pdf = pw.Document();
+      final image = pw.MemoryImage(imageBytes);
+
+      pdf.addPage(
+        pw.Page(
+          pageFormat: PdfPageFormat.a4,
+          build: (pw.Context ctx) {
+            return pw.Center(child: pw.Image(image));
+          },
+        ),
+      );
+
+      final directory = Directory("/storage/emulated/0/Download");
+      if (!await directory.exists()) {
+        await directory.create(recursive: true);
+      }
+
+      final safeId = rechargeId.isNotEmpty
+          ? rechargeId.replaceAll(RegExp(r'[^A-Za-z0-9_-]'), '_')
+          : DateTime.now().millisecondsSinceEpoch.toString();
+
+      final savePath = "${directory.path}/Receipt_$safeId.pdf";
+      final file = File(savePath);
+      await file.writeAsBytes(await pdf.save());
+
+      CustomToast.success("Receipt saved to Downloads");
+      await OpenFile.open(savePath);
+    } catch (e) {
+      CustomToast.error("Failed to generate PDF");
+    }
+  }
+
+  Widget _buildReceiptContent(
+    BuildContext context,
+    dynamic profile,
+    bool isPdf,
+    ScreenshotController? screenshotController,
+  ) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Container(
+      width: 340.w,
+      padding: EdgeInsets.all(16.r),
+      decoration: BoxDecoration(
+        color: isPdf
+            ? Colors.white
+            : (isDark ? AppColors.darkplceholder : Colors.white),
+        borderRadius: BorderRadius.circular(15.r),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.symmetric(vertical: 10.h),
+            decoration: BoxDecoration(
+              color: AppColors.clrPrimary,
+              borderRadius: BorderRadius.circular(6.r),
+            ),
+            child: Center(
+              child: Text(
+                "Transaction Details",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+
+          SizedBox(height: 15.h),
+
+          /// Transaction ID / Date & Time on the left,
+          /// operator logo (or colored initial fallback) on the right.
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Transaction ID : $transactionId",
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    SizedBox(height: 5.h),
+                    Text(
+                      "Date & Time : ${formatTransactionDate(dateTime)}",
+                      style: TextStyle(fontSize: 12.sp),
+                    ),
+                  ],
+                ),
+              ),
+
+              SizedBox(width: 10.w),
+
+              ClipRRect(
+                borderRadius: BorderRadius.circular(20.r),
+                child: Image.network(
+                  operatorLogo,
+                  width: 40.w,
+                  height: 40.w,
+                  fit: BoxFit.contain,
+                  errorBuilder: (_, __, ___) {
+                    return CircleAvatar(
+                      radius: 20.r,
+                      backgroundColor: operatorColor,
+                      child: Text(
+                        operatorInitial,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+
+          SizedBox(height: 12.h),
+
+          Divider(),
+
+          _detailRow(
+            context,
+            "Transaction",
+            "Success",
+            valueColor: Colors.green,
+          ),
+
+          _detailRow(context, "Transaction No", transactionNo),
+
+          _detailRow(context, "Amount", rechargeAmount.currencyIndian),
+
+          _detailRow(context, "Product", productName),
+
+          _detailRow(context, "Product Ref.Id", transactionId),
+
+          SizedBox(height: 12.h),
+
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.all(12.r),
+            decoration: BoxDecoration(
+              color: AppColors.clrPrimary,
+              borderRadius: BorderRadius.circular(8.r),
+            ),
+            child: Column(
+              children: [
+                _detailRow(
+                  context,
+                  "Retailer Name",
+                  profile?.name ?? "N/A",
+                  textColor: Colors.white,
+                ),
+                _detailRow(
+                  context,
+                  "Contact No",
+                  profile?.phoneNumber ?? "N/A",
+                  textColor: Colors.white,
+                ),
+              ],
+            ),
+          ),
+
+          SizedBox(height: 15.h),
+
+          Text(
+            "T & C Apply",
+            style: TextStyle(color: Colors.blue, fontSize: 12.sp),
+          ),
+
+          SizedBox(height: 20.h),
+
+          if (!isPdf && screenshotController != null)
+            Row(
+              children: [
+                Expanded(
+                  flex: 2,
+                  child: SizedBox(
+                    height: 42.h,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        _captureAndSavePdf(
+                          context,
+                          profile,
+                          screenshotController,
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Download",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          SizedBox(width: 5.w),
+                          Icon(
+                            Icons.download,
+                            color: Colors.white,
+                            size: 18.sp,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+
+                SizedBox(width: 12.w),
+
+                Expanded(
+                  child: SizedBox(
+                    height: 42.h,
+                    child: ElevatedButton(
+                      onPressed: () => Navigator.pop(context),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                      ),
+                      child: const Text(
+                        "Ok",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+        ],
+      ),
     );
   }
 

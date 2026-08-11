@@ -17,9 +17,10 @@ class GraphRepoImpl implements GraphRepository {
       final response = await apiService.get(ApiRoutes.graph);
       final model = Graph.fromJson(response);
       return Right(model);
-    } catch (e) {
+    } catch (e, stackTrace) { print("API EXCEPTION IN REPO: `$e\n`$stackTrace");
        AppLogger.logError("Api ${ApiRoutes.graph}$e");
       return Left(ServerFailure(message: e.toString()));
     }
   }
 }
+

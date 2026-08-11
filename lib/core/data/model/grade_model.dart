@@ -53,7 +53,9 @@ class Data {
     retailer: json["retailer"] == null
         ? null
         : Retailer.fromJson(json["retailer"]),
-    walletBalance: json["wallet_balance"]?.toDouble(),
+    walletBalance: json["wallet_balance"] != null
+        ? double.tryParse(json["wallet_balance"].toString())
+        : null,
     currentMonth: json["current_month"] == null
         ? null
         : TMonth.fromJson(json["current_month"]),
@@ -102,13 +104,19 @@ class TMonth {
   });
 
   factory TMonth.fromJson(Map<String, dynamic> json) => TMonth(
-    grade: json["grade"],
-    monthKey: json["month_key"],
-    monthLabel: json["month_label"],
-    daysTracked: json["days_tracked"],
-    actualAvg: json["actual_avg"]?.toDouble(),
-    label: json["label"],
-    cashback: json["cashback"],
+    grade: json["grade"]?.toString(),
+    monthKey: json["month_key"]?.toString(),
+    monthLabel: json["month_label"]?.toString(),
+    daysTracked: json["days_tracked"] != null
+        ? int.tryParse(json["days_tracked"].toString())
+        : null,
+    actualAvg: json["actual_avg"] != null
+        ? double.tryParse(json["actual_avg"].toString())
+        : null,
+    label: json["label"]?.toString(),
+    cashback: json["cashback"] != null
+        ? int.tryParse(json["cashback"].toString())
+        : null,
   );
 
   Map<String, dynamic> toJson() => {
@@ -131,10 +139,10 @@ class DisplayCard {
   DisplayCard({this.grade, this.label, this.monthLabel, this.source});
 
   factory DisplayCard.fromJson(Map<String, dynamic> json) => DisplayCard(
-    grade: json["grade"],
-    label: json["label"],
-    monthLabel: json["month_label"],
-    source: json["source"],
+    grade: json["grade"]?.toString(),
+    label: json["label"]?.toString(),
+    monthLabel: json["month_label"]?.toString(),
+    source: json["source"]?.toString(),
   );
 
   Map<String, dynamic> toJson() => {
@@ -148,7 +156,7 @@ class DisplayCard {
 class GradeSlab {
   int? sno;
   String? grade;
-  int? dailyAverageBalance;
+  double? dailyAverageBalance;
   double? monthlyCashBack;
 
   GradeSlab({
@@ -159,10 +167,14 @@ class GradeSlab {
   });
 
   factory GradeSlab.fromJson(Map<String, dynamic> json) => GradeSlab(
-    sno: json["sno"],
-    grade: json["grade"],
-    dailyAverageBalance: json["daily_average_balance"],
-    monthlyCashBack: json["monthly_cash_back"]?.toDouble(),
+    sno: json["sno"] != null ? int.tryParse(json["sno"].toString()) : null,
+    grade: json["grade"]?.toString(),
+    dailyAverageBalance: json["daily_average_balance"] != null
+        ? double.tryParse(json["daily_average_balance"].toString())
+        : null,
+    monthlyCashBack: json["monthly_cash_back"] != null
+        ? double.tryParse(json["monthly_cash_back"].toString())
+        : null,
   );
 
   Map<String, dynamic> toJson() => {

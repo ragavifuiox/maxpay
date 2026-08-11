@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:maxpay/controllers/auth_controller.dart';
+import 'package:maxpay/controllers/update_pin_controller.dart';
 import 'package:maxpay/core/constants/colors.dart';
+import 'package:maxpay/core/di/service_locator.dart';
 import 'package:maxpay/core/utils/responsive.dart';
 import 'package:maxpay/global_widget/commom_button.dart';
 import 'package:maxpay/view/login/widgets/custom_numeric_keyboard.dart';
@@ -16,6 +18,7 @@ class PinCodeEnterPage extends StatefulWidget {
 
 class _PinCodeEnterPageState extends State<PinCodeEnterPage> {
   final AuthController controller = Get.find<AuthController>();
+  late final UpdatePinController updatePinController;
 
   final TextEditingController pinController = TextEditingController();
   bool isUpdatePin = false;
@@ -23,6 +26,15 @@ class _PinCodeEnterPageState extends State<PinCodeEnterPage> {
   @override
   void initState() {
     super.initState();
+    updatePinController = Get.isRegistered<UpdatePinController>()
+        ? Get.find<UpdatePinController>()
+        : Get.put(
+            UpdatePinController(
+              updatepinusecase: sl(),
+              updateSendOtpUsecase: sl(),
+              updateotpusecase: sl(),
+            ),
+          );
     isUpdatePin = (Get.arguments as bool?) ?? false;
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -163,7 +175,34 @@ class _PinCodeEnterPageState extends State<PinCodeEnterPage> {
                   ),
                 ),
 
-                SizedBox(height: isTablet ? 40.h : 32.h),
+                SizedBox(height: 8.h),
+
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: InkWell(
+                    onTap: () {
+                      updatePinController.sendUpdatePinOtp(isForgotFlow: true);
+                    },
+                    borderRadius: BorderRadius.circular(4),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 4,
+                        vertical: 6,
+                      ),
+                      child: Text(
+                        'Forgot M-PIN?',
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w500,
+                          fontSize: isTablet ? 16.sp : 13.sp,
+                          color: AppColors.clrPrimary,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+
+                SizedBox(height: isTablet ? 24.h : 16.h),
 
                 /// Fingerprint Icon
                 if (!isUpdatePin)

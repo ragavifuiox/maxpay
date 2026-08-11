@@ -17,9 +17,10 @@ class DueAmountRepoImpl implements DueAmountRepository {
       final response = await apiService.get(ApiRoutes.dueamount);
       final model = DueAmount.fromJson(response);
       return Right(model);
-    } catch (e) {
+    } catch (e, stackTrace) { print("API EXCEPTION IN REPO: `$e\n`$stackTrace");
       AppLogger.logError("Api ${ApiRoutes.dueamount} $e");
       return Left(ServerFailure(message: e.toString()));
     }
   }
 }
+

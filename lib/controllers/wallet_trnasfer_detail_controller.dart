@@ -21,6 +21,7 @@ class WalletTrnasferDetailController extends GetxController {
   final fromDateController = TextEditingController();
   final toDateController = TextEditingController();
 
+
   // Date formats
   final String _apiFormat = 'yyyy-MM-dd';
   final String _displayFormat = 'dd.MM.yyyy';
@@ -100,12 +101,15 @@ class WalletTrnasferDetailController extends GetxController {
         CustomToast.error(failure.message);
       },
       (data) {
+
         print("✅ API Success");
         print("Success          : ${data.success}");
         print("Message          : ${data.message}");
         print("Transaction Type : ${data.data?.transactionType}");
         print("Total Amount     : ${data.data?.totalAmount}");
         print("Count            : ${data.data?.count}");
+
+
 
         walletTransferDetail.value = data;
 
@@ -132,6 +136,7 @@ print("TOTAL AMOUNT UPDATED => ${totalAmount.value}");
           print("Amount       : ${item.amount}");
           print("Created At   : ${item.createdAt}");
           print("Updated At   : ${item.updatedAt}");
+        
         }
 
         print("=============================================");
@@ -156,6 +161,8 @@ print("TOTAL AMOUNT UPDATED => ${totalAmount.value}");
 
         CustomToast.error(failure.message);
       },
+
+
       (data) {
         print("✅ API Success");
         print("Success      : ${data.success}");
@@ -222,6 +229,8 @@ print("TOTAL AMOUNT UPDATED => ${totalAmount.value}");
       firstDate: DateTime(2024),
       lastDate: DateTime(2030),
     );
+    
+
 
     if (pickedDate != null) {
       toDate = DateFormat(_apiFormat).format(pickedDate);

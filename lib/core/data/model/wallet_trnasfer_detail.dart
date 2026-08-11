@@ -4,18 +4,11 @@ class WalletTransferDetail {
   String? message;
   int? code;
 
-  WalletTransferDetail({
-    this.success,
-    this.data,
-    this.message,
-    this.code,
-  });
+  WalletTransferDetail({this.success, this.data, this.message, this.code});
 
   WalletTransferDetail.fromJson(Map<String, dynamic> json) {
     success = json['success'];
-    data = json['data'] != null
-        ? TransferData.fromJson(json['data'])
-        : null;
+    data = json['data'] != null ? TransferData.fromJson(json['data']) : null;
     message = json['message'];
     code = json['code'];
   }

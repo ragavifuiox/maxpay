@@ -44,7 +44,7 @@
 //     final model = walletTransfer.fromJson(response);
 //     return Right(model);
 
-//   } catch (e) {
+//   } catch (e, stackTrace) { print("API EXCEPTION IN REPO: `$e\n`$stackTrace");
 //     return Left(ServerFailure(message: e.toString()));
 //   }
 // }}
@@ -91,9 +91,9 @@ class WalletTransferRepoImpl implements WalletTransferRepository {
 
       return Right(model);
 
-    } on DioException catch (e) {
+    } on DioException catch (e, stackTrace) { print("API EXCEPTION IN REPO: `$e\n`$stackTrace");
       return Left(DioErrorHandler.handle(e));
-    } catch (e) {
+    } catch (e, stackTrace) { print("API EXCEPTION IN REPO: `$e\n`$stackTrace");
       return Left(
         ServerFailure(message: e.toString()),
       );

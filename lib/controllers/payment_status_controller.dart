@@ -10,23 +10,38 @@ import 'package:maxpay/core/domain/usecase/update_payment_status_usecase.dart';
 class PaymentStatusController extends GetxController {
   final PaymentStatusUsecase paymentStatusUsecase;
   final CashbackTypeUsecase paymentStatusTypeUsecase;
-    final UpdatePaymentStatusUsecase updatePaymentStatusUsecase;
+  final UpdatePaymentStatusUsecase updatePaymentStatusUsecase;
 
   PaymentStatusController({
     required this.paymentStatusUsecase,
     required this.paymentStatusTypeUsecase,
-     required this.updatePaymentStatusUsecase,
+    required this.updatePaymentStatusUsecase,
   });
 
-  Rx<CashbackProductType?> productTypeData =
-      Rx<CashbackProductType?>(null);
+  Rx<CashbackProductType?> productTypeData = Rx<CashbackProductType?>(null);
   RxBool isLoading = false.obs;
-  RxList<PaymentStatusData> paymentstatus =
-      <PaymentStatusData>[].obs;
+  RxList<PaymentStatusData> paymentstatus = <PaymentStatusData>[].obs;
 
   String fromDate = '';
   String toDate = '';
   String search = '';
+
+  @override
+  void onInit() {
+    super.onInit();
+
+    final today = DateTime.now();
+
+    final todayDate =
+        "${today.year}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}";
+
+    // Default today date
+    fromDate = todayDate;
+    toDate = todayDate;
+
+    // Load today's payment status data
+    getPaymentStatus();
+  }
 
   Future<void> getPaymentStatus() async {
     if (fromDate.isEmpty || toDate.isEmpty) return;
@@ -34,22 +49,15 @@ class PaymentStatusController extends GetxController {
     try {
       isLoading.value = true;
 
-      final result = await paymentStatusUsecase(
-        toDate,
-        fromDate,
-        search,
-      );
+      final result = await paymentStatusUsecase(toDate, fromDate, search);
 
       result.fold(
         (failure) {
-          CustomToast.error(
-            failure.message.toString(),
-          );
+          CustomToast.error(failure.message.toString());
         },
         (response) {
           if (response.success == true) {
-            paymentstatus.value =
-                response.data ?? [];
+            paymentstatus.value = response.data ?? [];
 
             paymentstatus.refresh();
           }
@@ -60,12 +68,12 @@ class PaymentStatusController extends GetxController {
     }
   }
 
-  Future<void> selectFromDate(
-      BuildContext context) async {
-    DateTime? pickedDate =
-        await showDatePicker(
+  Future<void> selectFromDate(BuildContext context) async {
+    DateTime? pickedDate = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
+      initialDate: fromDate.isNotEmpty
+          ? DateTime.parse(fromDate)
+          : DateTime.now(),
       firstDate: DateTime(2024),
       lastDate: DateTime(2030),
     );
@@ -82,12 +90,10 @@ class PaymentStatusController extends GetxController {
     }
   }
 
-  Future<void> selectToDate(
-      BuildContext context) async {
-    DateTime? pickedDate =
-        await showDatePicker(
+  Future<void> selectToDate(BuildContext context) async {
+    DateTime? pickedDate = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
+      initialDate: toDate.isNotEmpty ? DateTime.parse(toDate) : DateTime.now(),
       firstDate: DateTime(2024),
       lastDate: DateTime(2030),
     );
@@ -107,27 +113,21 @@ class PaymentStatusController extends GetxController {
   void onSearch(String value) {
     search = value;
 
-    if (fromDate.isNotEmpty &&
-        toDate.isNotEmpty) {
+    if (fromDate.isNotEmpty && toDate.isNotEmpty) {
       getPaymentStatus();
     }
   }
 
-
   Future<void> fetchPaymentProductTypes() async {
     isLoading.value = true;
 
-    final result =
-        await paymentStatusTypeUsecase();
+    final result = await paymentStatusTypeUsecase();
 
     result.fold(
       (failure) {
         isLoading.value = false;
 
-        Get.snackbar(
-          'Error',
-          failure.message,
-        );
+        Get.snackbar('Error', failure.message);
       },
       (data) {
         productTypeData.value = data;
@@ -138,57 +138,53 @@ class PaymentStatusController extends GetxController {
   }
 
   Future<void> updatePaymentStatus({
-  required String rechargeId,
-  required String status,
-}) async {
-  try {
-    isLoading.value = true;
+    required String rechargeId,
+    required String status,
+  }) async {
+    try {
+      isLoading.value = true;
 
-    print("========= UPDATE PAYMENT STATUS =========");
-    print("Recharge ID : $rechargeId");
-    print("Status      : $status");
+      print("========= UPDATE PAYMENT STATUS =========");
+      print("Recharge ID : $rechargeId");
+      print("Status      : $status");
 
-   final result = await updatePaymentStatusUsecase(
-  rechargeId: rechargeId,
-  status: status,
-);
-    print("API Called Successfully");
+      final result = await updatePaymentStatusUsecase(
+        rechargeId: rechargeId,
+        status: status,
+      );
+      print("API Called Successfully");
 
-    result.fold(
-      (failure) {
-        isLoading.value = false;
+      result.fold(
+        (failure) {
+          isLoading.value = false;
 
-        print("API Failed");
-        print("Error : ${failure.message}");
+          print("API Failed");
+          print("Error : ${failure.message}");
 
-        CustomToast.error(failure.message);
-      },
-      (response) async {
-        isLoading.value = false;
+          CustomToast.error(failure.message);
+        },
+        (response) async {
+          isLoading.value = false;
 
-        print("API Success");
-        print("Success : ${response.success}");
-        print("Message : ${response.message}");
-        print("Response : $response");
+          print("API Success");
+          print("Success : ${response.success}");
+          print("Message : ${response.message}");
+          print("Response : $response");
 
-        if (response.success == true) {
-          CustomToast.success(
-            response.message ?? "Status Updated",
-          );
+          if (response.success == true) {
+            CustomToast.success(response.message ?? "Status Updated");
 
-          await getPaymentStatus();
-        } else {
-          CustomToast.error(
-            response.message ?? "Failed",
-          );
-        }
-      },
-    );
-  } catch (e, stackTrace) {
-    isLoading.value = false;
+            await getPaymentStatus();
+          } else {
+            CustomToast.error(response.message ?? "Failed");
+          }
+        },
+      );
+    } catch (e, stackTrace) {
+      isLoading.value = false;
 
-    print("Exception : $e");
-    print(stackTrace);
+      print("Exception : $e");
+      print(stackTrace);
+    }
   }
-}
 }

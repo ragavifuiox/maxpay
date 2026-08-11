@@ -5,6 +5,7 @@ import 'package:maxpay/core/constants/snackbar.dart';
 import 'package:maxpay/core/domain/usecase/web_login_usecase.dart';
 import 'package:maxpay/core/domain/usecase/web_logout_usecase.dart';
 import 'package:maxpay/core/utils/logg_helper.dart';
+import 'package:maxpay/view/weblogin/web_login_sucess_screen.dart';
 
 class WebLoginController extends GetxController {
   final WebLoginUsecase webloginusecase;
@@ -67,7 +68,7 @@ class WebLoginController extends GetxController {
             CustomToast.success(response.message ?? "Web Login Success");
 
             print("Navigating to Success Screen...");
-             Get.back(); // Returns to Settings page with bottom bar
+          Get.to(WebLoginSuccessPage());
           } else {
             print("LOGIN FAILED BLOCK");
             CustomToast.error(response.message ?? "Login failed");

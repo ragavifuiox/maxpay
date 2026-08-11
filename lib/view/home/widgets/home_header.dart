@@ -10,6 +10,7 @@ import 'package:maxpay/core/di/service_locator.dart';
 import 'package:maxpay/core/utils/date_uttils.dart';
 import 'package:maxpay/core/utils/responsive.dart';
 import 'package:maxpay/core/utils/theme.dart';
+import 'package:maxpay/view/home/widgets/search_screen.dart';
 import 'package:maxpay/view/notification/notification_page.dart';
 
 class HomeHeaderSection extends StatelessWidget {
@@ -126,7 +127,9 @@ class HomeHeaderSection extends StatelessWidget {
                     IconButton(
                       padding: EdgeInsets.zero,
                       constraints: const BoxConstraints(),
-                      onPressed: () {},
+                      onPressed: () {
+                        Get.to(SearchScreen());
+                      },
                       icon: Icon(
                         Ionicons.search_outline,
                         size: isTablet ? 32.sp : 25.sp,

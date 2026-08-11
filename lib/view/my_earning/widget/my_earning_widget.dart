@@ -6,10 +6,7 @@ import 'package:maxpay/core/data/model/my_earnings_model.dart';
 class EarningsCard extends StatelessWidget {
   final EarningItem item;
 
-  const EarningsCard({
-    super.key,
-    required this.item,
-  });
+  const EarningsCard({super.key, required this.item});
 
   @override
   Widget build(BuildContext context) {
@@ -41,15 +38,15 @@ class EarningsCard extends StatelessWidget {
                 ),
               ),
               Text(
-  item.commissionDate != null
-      ? formatTransactionDate(item.commissionDate!)
-      : "-",
-  style: TextStyle(
-    fontSize: 12,
-    color: theme.colorScheme.onSurface,
-    fontWeight: FontWeight.w500,
-  ),
-),
+                item.commissionDate != null
+                    ? formatTransactionDate(item.commissionDate!)
+                    : "-",
+                style: TextStyle(
+                  fontSize: 12,
+                  color: theme.colorScheme.onSurface,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
             ],
           ),
 
@@ -66,38 +63,33 @@ class EarningsCard extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-            CircleAvatar(
-  radius: 18,
-  backgroundColor: AppColors.background,
-  child: ClipOval(
-    child: (item.productLogo != null &&
-            item.productLogo!.isNotEmpty)
-        ? Image.network(
-            item.productLogo!,
-            width: 36,
-            height: 36,
-            fit: BoxFit.contain, // shows full logo
-            errorBuilder: (context, error, stackTrace) {
-              return const Icon(
-                Icons.image,
-                size: 20,
-                color: Colors.grey,
-              );
-            },
-          )
-        : const Icon(
-            Icons.image,
-            size: 20,
-            color: Colors.grey,
-          ),
-  ),
-),
+              CircleAvatar(
+                radius: 18,
+                backgroundColor: AppColors.background,
+                child: ClipOval(
+                  child:
+                      (item.productLogo != null && item.productLogo!.isNotEmpty)
+                      ? Image.network(
+                          item.productLogo!,
+                          width: 36,
+                          height: 36,
+                          fit: BoxFit.contain, // shows full logo
+                          errorBuilder: (context, error, stackTrace) {
+                            return const Icon(
+                              Icons.image,
+                              size: 20,
+                              color: Colors.grey,
+                            );
+                          },
+                        )
+                      : const Icon(Icons.image, size: 20, color: Colors.grey),
+                ),
+              ),
               const SizedBox(width: 10),
 
               Expanded(
                 child: Column(
-                  crossAxisAlignment:
-                      CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       item.productName ?? "",
@@ -133,8 +125,7 @@ class EarningsCard extends StatelessWidget {
               ),
 
               Column(
-                crossAxisAlignment:
-                    CrossAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
                     "My Earnings",

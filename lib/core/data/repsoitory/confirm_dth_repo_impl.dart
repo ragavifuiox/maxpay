@@ -31,8 +31,9 @@ class ConfirmDthRepoImpl implements ConfirmDthRepository {
 
       final model = ConfirmDth.fromJson(jsonMap);
       return Right(model);
-    } catch (e) {
+    } catch (e, stackTrace) { print("API EXCEPTION IN REPO: `$e\n`$stackTrace");
       return Left(DioErrorHandler.handle(e));
     }
   }
 }
+

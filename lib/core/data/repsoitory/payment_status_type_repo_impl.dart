@@ -16,8 +16,9 @@ class CashbackTypeRepoImpl implements CashbackTypeRepository {
       final response = await apiService.get(ApiRoutes.paymentstatustype);
       final model = CashbackProductType.fromJson(response);
       return Right(model);
-    } catch (e) {
+    } catch (e, stackTrace) { print("API EXCEPTION IN REPO: `$e\n`$stackTrace");
       return Left(ServerFailure(message: e.toString()));
     }
   }
 }
+

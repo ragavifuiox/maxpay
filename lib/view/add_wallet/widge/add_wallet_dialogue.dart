@@ -204,6 +204,8 @@ Obx(() {
     children: controller.upiApps.map((app) {
       return InkWell(
         onTap: () {
+            debugPrint("UPI URL = $url");
+  debugPrint("PACKAGE = ${app["packageName"]}");
           controller.openSpecificUpiApp(
             packageName: app["packageName"],
             url: url,

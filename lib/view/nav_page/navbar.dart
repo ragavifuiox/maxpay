@@ -40,7 +40,7 @@ class CustomBottomNavBar extends GetView<NavbarController> {
         selectedLabelStyle: TextStyle(
           color: activeColor,
           fontSize: 10.sp,
-          fontWeight: FontWeight.w500,
+          fontWeight: FontWeight.w700,
           fontFamily: 'Poppins',
         ),
         unselectedLabelStyle: TextStyle(

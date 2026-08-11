@@ -11,7 +11,6 @@ class Advertisement {
     data = json['data'] != null ? Data.fromJson(json['data']) : null;
     message = json['message'];
     code = json['code'];
-    
   }
 
   Map<String, dynamic> toJson() {
@@ -43,8 +42,7 @@ class Data {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     if (advertisements != null) {
-      data['advertisements'] =
-          advertisements!.map((v) => v.toJson()).toList();
+      data['advertisements'] = advertisements!.map((v) => v.toJson()).toList();
     }
     return data;
   }
@@ -69,41 +67,48 @@ class Advertisements {
   String? createdAt;
   String? updatedAt;
 
-  Advertisements(
-      {this.id,
-      this.mobile,
-      this.name,
-      this.companyName,
-      this.adFor,
-      this.districtId,
-      this.pincodeId,
-      this.webLink,
-      this.youtubeLink,
-      this.contactNo,
-      this.fromDate,
-      this.toDate,
-      this.displayImage,
-      this.adImage,
-      this.status,
-      this.createdAt,
-      this.updatedAt});
+  Advertisements({
+    this.id,
+    this.mobile,
+    this.name,
+    this.companyName,
+    this.adFor,
+    this.districtId,
+    this.pincodeId,
+    this.webLink,
+    this.youtubeLink,
+    this.contactNo,
+    this.fromDate,
+    this.toDate,
+    this.displayImage,
+    this.adImage,
+    this.status,
+    this.createdAt,
+    this.updatedAt,
+  });
 
   Advertisements.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    mobile = json['mobile'];
-    name = json['name'];
-    companyName = json['company_name'];
-    adFor = json['ad_for'];
-    districtId = json['district_id'];
-    pincodeId = json['pincode_id'];
-    webLink = json['web_link'];
-    youtubeLink = json['youtube_link'];
-    contactNo = json['contact_no'];
-    fromDate = json['from_date'];
-    toDate = json['to_date'];
-    displayImage = json['display_image'];
-    adImage = json['ad_image'];
-    status = json['status'];
+    id = json['id'] != null ? int.tryParse(json['id'].toString()) : null;
+    mobile = json['mobile']?.toString();
+    name = json['name']?.toString();
+    companyName = json['company_name']?.toString();
+    adFor = json['ad_for']?.toString();
+    districtId = json['district_id'] != null
+        ? int.tryParse(json['district_id'].toString())
+        : null;
+    pincodeId = json['pincode_id'] != null
+        ? int.tryParse(json['pincode_id'].toString())
+        : null;
+    webLink = json['web_link']?.toString();
+    youtubeLink = json['youtube_link']?.toString();
+    contactNo = json['contact_no']?.toString();
+    fromDate = json['from_date']?.toString();
+    toDate = json['to_date']?.toString();
+    displayImage = json['display_image']?.toString();
+    adImage = json['ad_image']?.toString();
+    status = json['status'] != null
+        ? int.tryParse(json['status'].toString())
+        : null;
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
   }

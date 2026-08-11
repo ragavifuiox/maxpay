@@ -32,7 +32,7 @@ class LoginRepositoryImpl implements LoginRepository {
 
       final model = Login.fromJson(response);
       return Right(model);
-    }catch (e) {
+    }catch (e, stackTrace) { print("API EXCEPTION IN REPO: `$e\n`$stackTrace");
   if (e is DioException) {
     final data = e.response?.data;
 
@@ -63,10 +63,11 @@ class LoginRepositoryImpl implements LoginRepository {
       } else {
         return Left(AuthFailure(response['message']));
       }
-    } on DioException catch (e) {
+    } on DioException catch (e, stackTrace) { print("API EXCEPTION IN REPO: `$e\n`$stackTrace");
       return Left(DioErrorHandler.handle(e));
-    } catch (e) {
+    } catch (e, stackTrace) { print("API EXCEPTION IN REPO: `$e\n`$stackTrace");
       return Left(ServerFailure(message: e.toString()));
     }
   }
 }
+

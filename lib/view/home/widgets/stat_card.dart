@@ -51,7 +51,7 @@ class StatCard extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              /// IMAGE / ICON
+     
               Flexible(
                 flex: 3,
                 child: SizedBox(
@@ -62,7 +62,7 @@ class StatCard extends StatelessWidget {
 
               if (needSpacingbwImage) SizedBox(height: 2.h),
 
-              /// TITLE - Wrapped with FittedBox so it never gets clipped vertically
+           
               Flexible(
                 flex: 2,
                 child: FittedBox(
@@ -76,7 +76,7 @@ class StatCard extends StatelessWidget {
                     style: TextStyle(
                       fontFamily: 'Poppins',
                       fontWeight: FontWeight.w700,
-                      fontSize: 10.sp,
+                      fontSize: 12.sp,
                       color: textColor ?? theme.colorScheme.onSurface,
                     ),
                   ),
@@ -98,7 +98,7 @@ class StatCard extends StatelessWidget {
                       style: TextStyle(
                         fontFamily: 'Poppins',
                         fontWeight: FontWeight.w600,
-                        fontSize: 10.sp,
+                        fontSize: 16.sp,
                         color: valueColor ?? theme.textTheme.bodyLarge?.color,
                       ),
                     ),

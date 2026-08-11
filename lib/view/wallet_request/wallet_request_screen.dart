@@ -70,7 +70,7 @@ class WalletRequestScreen extends StatelessWidget {
           style: TextStyle(
             color: Theme.of(context).colorScheme.onSurface,
 
-            fontSize: 16.sp,
+            fontSize: 18.sp,
             fontWeight: FontWeight.w500,
             fontFamily: 'Poppins',
           ),
@@ -78,17 +78,16 @@ class WalletRequestScreen extends StatelessWidget {
       ),
 
       body: Form(
-        key: _formKey,
+   key: _formKey,
 
         child: SingleChildScrollView(
           padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
 
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
 
-            children: [
-              /// Due Amount
-              Container(
+          children: [
+             Container(
                 width: double.infinity,
 
                 padding: EdgeInsets.symmetric(vertical: 12.h),

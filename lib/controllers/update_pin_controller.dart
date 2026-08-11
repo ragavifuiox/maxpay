@@ -9,60 +9,60 @@ import 'package:maxpay/core/domain/usecase/update_otp_usecase.dart';
 import 'package:maxpay/core/domain/usecase/update_pin_usecase.dart';
 import 'package:maxpay/core/domain/usecase/update_send_otp_usecase.dart';
 import 'package:maxpay/core/utils/logg_helper.dart';
-import 'package:maxpay/view/login/login_phone_name.dart';
 
 class UpdatePinController extends GetxController {
   final UpdatePinUsecase updatepinusecase;
- final UpdateSendOtpUsecase updateSendOtpUsecase;
- final UpdateOtpUsecase updateotpusecase;
+  final UpdateSendOtpUsecase updateSendOtpUsecase;
+  final UpdateOtpUsecase updateotpusecase;
   UpdatePinController({
     required this.updatepinusecase,
     required this.updateSendOtpUsecase,
     required this.updateotpusecase,
-    
   });
- Rxn<UpdateOtp> updateOtpResponse = Rxn<UpdateOtp>();
+  Rxn<UpdateOtp> updateOtpResponse = Rxn<UpdateOtp>();
   RxBool isLoading = false.obs;
- Rx<SendUpdatePinOtpResponse?> otpResponse =
-      Rx<SendUpdatePinOtpResponse?>(null);
-RxInt remainingSeconds = 60.obs;
-RxBool canResendOtp = false.obs;
+  Rx<SendUpdatePinOtpResponse?> otpResponse = Rx<SendUpdatePinOtpResponse?>(
+    null,
+  );
+  RxInt remainingSeconds = 60.obs;
+  RxBool canResendOtp = false.obs;
 
-Timer? _timer;
-     Future<void> sendUpdatePinOtp() async {
-  try {
-    isLoading.value = true;
+  Timer? _timer;
 
-    final result = await updateSendOtpUsecase();
+  bool isForgotPinFlow = false;
 
-    result.fold(
-      (failure) {
-        CustomToast.error(failure.message);
-      },
-      (response) {
-        otpResponse.value = response;
+  Future<void> sendUpdatePinOtp({bool isForgotFlow = false}) async {
+    isForgotPinFlow = isForgotFlow;
+    try {
+      isLoading.value = true;
 
-        CustomToast.success(
-          response.message ?? "OTP sent successfully",
-        );
-   startOtpTimer(); // Start countdown
-        Get.toNamed(
-          AppRoutes.verify,
-          arguments: true,
-        );
-      },
-    );
-  } finally {
-    isLoading.value = false;
+      final result = await updateSendOtpUsecase();
+
+      result.fold(
+        (failure) {
+          CustomToast.error(failure.message);
+        },
+        (response) {
+          otpResponse.value = response;
+
+          CustomToast.success(response.message ?? "OTP sent successfully");
+          startOtpTimer(); // Start countdown
+          Get.toNamed(AppRoutes.verify, arguments: true);
+        },
+      );
+    } finally {
+
+      isLoading.value = false;
+      
+    }
   }
-}
 
-
- Future<bool> verifyOtp(String otp) async {
+  Future<bool> verifyOtp(String otp) async {
     try {
       isLoading.value = true;
 
       final result = await updateotpusecase(otp);
+
       return result.fold(
         (failure) {
           AppLogger.logError("OTP Verify Failed: ${failure.message}");
@@ -84,14 +84,12 @@ Timer? _timer;
       isLoading.value = false;
     }
   }
-  Future<void> updatePin({
-    required int newPin,
-    required int confirmPin,
-  }) async {
+
+  Future<void> updatePin({required int newPin, required int confirmPin}) async {
     isLoading.value = true;
 
     final result = await updatepinusecase(
-       newPin.toString(),
+      newPin.toString(),
       confirmPin.toString(),
     );
 
@@ -103,43 +101,42 @@ Timer? _timer;
       },
       (response) {
         if (response.success == true) {
-          Get.to(LoginPhoneNamePage());
-          CustomToast.success(
-            response.message ?? "Pin Updated Successfully",
-          );
+          if (isForgotPinFlow) {
+            Get.offAllNamed(AppRoutes.enterPin);
+          } else {
+            Get.offAllNamed(AppRoutes.loginPhoneName);
+          }
+          CustomToast.success(response.message ?? "Pin Updated Successfully");
         } else {
-          CustomToast.error(
-            response.message ?? "Failed to update pin",
-          );
+          CustomToast.error(response.message ?? "Failed to update pin");
         }
       },
     );
   }
 
-
   void startOtpTimer() {
-  _timer?.cancel();
+    _timer?.cancel();
 
-  remainingSeconds.value = 60;
-  canResendOtp.value = false;
+    remainingSeconds.value = 60;
+    canResendOtp.value = false;
 
-  _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-    if (remainingSeconds.value > 0) {
-      remainingSeconds.value--;
-    } else {
-      canResendOtp.value = true;
-      timer.cancel();
-    }
-  });
-}
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (remainingSeconds.value > 0) {
+        remainingSeconds.value--;
+      } else {
+        canResendOtp.value = true;
+        timer.cancel();
+      }
+    });
+  }
 
-void stopTimer() {
-  _timer?.cancel();
-}
+  void stopTimer() {
+    _timer?.cancel();
+  }
 
-@override
-void onClose() {
-  stopTimer();
-  super.onClose();
-}
+  @override
+  void onClose() {
+    stopTimer();
+    super.onClose();
+  }
 }

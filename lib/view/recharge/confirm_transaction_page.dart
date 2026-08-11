@@ -108,10 +108,11 @@ class _ConfirmTransactionPageState extends State<ConfirmTransactionPage> {
       }
       // final String commissionStr = calculatedCommission.toStringAsFixed(2);
 
-      final double transactionAmount =
-          double.tryParse(transactionAmountStr) ?? 0.0;
+      final double transactionAmount = parsedTransaction;
 
-      final double commissionValue = double.tryParse(commissionRaw) ?? 0.0;
+      final double commissionValue =
+          double.tryParse(commissionRaw.replaceAll(RegExp(r'[^0-9.]'), '')) ??
+          0.0;
 
       String commissionStr = "0";
       double commissionAmount = 0.0;
@@ -553,9 +554,20 @@ class _ConfirmTransactionPageState extends State<ConfirmTransactionPage> {
                               return;
                             }
                             final entered =
-                                double.tryParse(enteredAmount.trim()) ?? 0.0;
+                                double.tryParse(
+                                  enteredAmount.trim().replaceAll(
+                                    RegExp(r'[^0-9.]'),
+                                    '',
+                                  ),
+                                ) ??
+                                0.0;
                             final reEntered =
-                                double.tryParse(amountController.text.trim()) ??
+                                double.tryParse(
+                                  amountController.text.trim().replaceAll(
+                                    RegExp(r'[^0-9.]'),
+                                    '',
+                                  ),
+                                ) ??
                                 0.0;
 
                             if (entered != reEntered) {
@@ -615,11 +627,21 @@ class _ConfirmTransactionPageState extends State<ConfirmTransactionPage> {
                                       return;
                                     }
                                     final entered =
-                                        double.tryParse(enteredAmount.trim()) ??
+                                        double.tryParse(
+                                          enteredAmount.trim().replaceAll(
+                                            RegExp(r'[^0-9.]'),
+                                            '',
+                                          ),
+                                        ) ??
                                         0.0;
                                     final reEntered =
                                         double.tryParse(
-                                          amountController.text.trim(),
+                                          amountController.text
+                                              .trim()
+                                              .replaceAll(
+                                                RegExp(r'[^0-9.]'),
+                                                '',
+                                              ),
                                         ) ??
                                         0.0;
 
@@ -691,6 +713,7 @@ class _ConfirmTransactionPageState extends State<ConfirmTransactionPage> {
                                                   ?.recharge
                                                   ?.requestTime ??
                                               DateTime.now().toString(),
+                                          refId: rechargeData.data?.refId ?? "",
                                         ),
                                       );
                                     } else {

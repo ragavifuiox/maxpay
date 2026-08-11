@@ -30,6 +30,8 @@ class AppLifecycleController extends GetxController
       return true;
     }
 
+
+
     final datesToCheck = [
       DateTime(lastActive.year, lastActive.month, lastActive.day),
       DateTime(current.year, current.month, current.day),
@@ -74,7 +76,7 @@ class AppLifecycleController extends GetxController
       final token = storage.getString("auth_token");
       final loggedInPhone = storage.getString("logged_in_phone");
 
-      // 1. Verify SIM binding if user is logged in
+
       if (token != null && token.isNotEmpty && loggedInPhone != null && loggedInPhone.isNotEmpty) {
         final bool isSimValid = await SimUtil.verifySimPresent(loggedInPhone);
         if (!isSimValid) {
@@ -87,11 +89,10 @@ class AppLifecycleController extends GetxController
             await storage.clear();
             Get.offAllNamed(AppRoutes.intro);
           }
-          return; // Stop further checks
+          return; 
         }
       }
 
-      // 2. Check if a logout boundary was crossed when resuming
       final isPin = storage.getInt("is_pin") ?? 0;
       final isFingerPrint = storage.getInt("is_fingerprint") ?? 0;
 

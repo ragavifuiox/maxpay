@@ -17,8 +17,9 @@ class AddWalletController extends GetxController with WidgetsBindingObserver {
   }
   RxBool isLoading = false.obs;
   final TextEditingController amountController = TextEditingController();
-static const MethodChannel _channel =
-    MethodChannel("com.paylink.retailor/upi_choose");
+  static const MethodChannel _channel = MethodChannel(
+    "com.paylink.retailor/upi_choose",
+  );
   Timer? _timer;
   final RxInt remainingSeconds = 300.obs;
   String? _activeTxnId;
@@ -26,8 +27,8 @@ static const MethodChannel _channel =
 
   RxBool isCheckingStatus = false.obs;
   Rx<WalletQrHistory> walletQrHistory = WalletQrHistory().obs;
-RxList<Map<String, dynamic>> upiApps = <Map<String, dynamic>>[].obs;
-RxBool isLoadingUpiApps = false.obs;
+  RxList<Map<String, dynamic>> upiApps = <Map<String, dynamic>>[].obs;
+  RxBool isLoadingUpiApps = false.obs;
   @override
   void onInit() {
     super.onInit();
@@ -38,7 +39,7 @@ RxBool isLoadingUpiApps = false.obs;
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       AppLogger.debugPrint("App resumed. Active Txn ID: $_activeTxnId");
-       getWalletHistory();
+      getWalletHistory();
 
       if (_activeTxnId != null && remainingSeconds.value > 0) {
         checkPaymentStatus(_activeTxnId!);
@@ -75,13 +76,13 @@ RxBool isLoadingUpiApps = false.obs;
     _timer = null;
     _activeTxnId = null;
   }
-// Future<void> loadInstalledUpiApps() async {
-//   if (upiApps.isNotEmpty) return;
+  // Future<void> loadInstalledUpiApps() async {
+  //   if (upiApps.isNotEmpty) return;
 
-//   isLoadingUpiApps.value = true;
-//   upiApps.value = await getInstalledUpiApps();
-//   isLoadingUpiApps.value = false;
-// }
+  //   isLoadingUpiApps.value = true;
+  //   upiApps.value = await getInstalledUpiApps();
+  //   isLoadingUpiApps.value = false;
+  // }
   Future<void> checkPaymentStatus(String txnId) async {
     if (isCheckingStatus.value) return;
     isCheckingStatus.value = true;
@@ -194,8 +195,7 @@ RxBool isLoadingUpiApps = false.obs;
     );
   }
 
-
-Future<void> createQr(String amount) async {
+  Future<void> createQr(String amount) async {
     isLoading.value = true;
     update();
     _lastAmount = amount;
@@ -216,21 +216,21 @@ Future<void> createQr(String amount) async {
         startTimer(response.txnId ?? '');
         loadInstalledUpiApps(); // <-- ADDED: fetch UPI apps before showing dialog
 
-      Get.dialog(
-  AddWalletPopup(
-    amount: amount,
-    txtionId: response.txnId ?? '',
-    url: response.upiLink ?? '',
-  ),
-).then((_) async {
-  stopTimer();
-  amountController.clear();
+        Get.dialog(
+          AddWalletPopup(
+            amount: amount,
+            txtionId: response.txnId ?? '',
+            url: response.upiLink ?? '',
+          ),
+        ).then((_) async {
+          stopTimer();
+          amountController.clear();
 
-  // Give backend time to update
-  await Future.delayed(const Duration(seconds: 1));
+          // Give backend time to update
+          await Future.delayed(const Duration(seconds: 1));
 
-  await getWalletHistory();
-});
+          await getWalletHistory();
+        });
         AppLogger.debugPrint("------------CREATE QR END----------");
       },
     );
@@ -247,11 +247,14 @@ Future<void> createQr(String amount) async {
 
   Future<List<Map<String, dynamic>>> getInstalledUpiApps() async {
     try {
-      final List<dynamic> result =
-          await _channel.invokeMethod("getInstalledUpiApps");
+      final List<dynamic> result = await _channel.invokeMethod(
+        "getInstalledUpiApps",
+      );
       return result.map((e) => Map<String, dynamic>.from(e)).toList();
     } on PlatformException catch (e) {
-      AppLogger.debugPrint("getInstalledUpiApps PlatformException: ${e.message}");
+      AppLogger.debugPrint(
+        "getInstalledUpiApps PlatformException: ${e.message}",
+      );
       return [];
     } catch (e) {
       AppLogger.debugPrint("getInstalledUpiApps error: $e");
@@ -321,47 +324,64 @@ Future<void> createQr(String amount) async {
     update();
   }
 
+ 
 Future<void> openSpecificUpiApp({
   required String packageName,
   required String url,
 }) async {
   try {
-    await _channel.invokeMethod(
+    debugPrint("========== OPEN UPI ==========");
+    debugPrint("Package: $packageName");
+    debugPrint("UPI URL: $url");
+
+    final result = await _channel.invokeMethod(
       "openSpecificUpiApp",
       {
         "packageName": packageName,
-        "url": url,
+        "url": url, // IMPORTANT: Don't encode here
       },
     );
+
+    debugPrint("UPI launch result: $result");
+    debugPrint("========== OPEN UPI END ==========");
+  } on PlatformException catch (e) {
+    debugPrint("UPI PlatformException: ${e.code}");
+    debugPrint("UPI Error: ${e.message}");
+
+    CustomToast.error(
+      e.message ?? "Unable to open UPI app",
+    );
   } catch (e) {
-       CustomToast.error(e.toString());
-  
+    debugPrint("UPI Error: $e");
+
+    CustomToast.error(
+      "Unable to open UPI app",
+    );
   }
 }
 
-// Future<List<Map<String, dynamic>>> getInstalledUpiApps() async {
 
-//   try {
+  // Future<List<Map<String, dynamic>>> getInstalledUpiApps() async {
 
-//     final result =
-//         await _channel.invokeMethod("getInstalledUpiApps");
+  //   try {
 
+  //     final result =
+  //         await _channel.invokeMethod("getInstalledUpiApps");
 
-//     print(" 😊UPI APPS ===== $result");
+  //     print(" 😊UPI APPS ===== $result");
 
+  //     return (result as List)
+  //         .map((e)=>Map<String,dynamic>.from(e))
+  //         .toList();
 
-//     return (result as List)
-//         .map((e)=>Map<String,dynamic>.from(e))
-//         .toList();
+  //   } catch(e){
 
-//   } catch(e){
+  //     print("UPI ERROR ===== $e");
 
-//     print("UPI ERROR ===== $e");
+  //     return [];
 
-//     return [];
-
-//   }
-// }
+  //   }
+  // }
   @override
   void onClose() {
     WidgetsBinding.instance.removeObserver(this);

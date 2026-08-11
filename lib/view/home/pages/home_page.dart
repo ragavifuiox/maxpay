@@ -282,22 +282,47 @@ class HomePageScreen extends GetView<HomePageController> {
                               childAspectRatio: safeAspectRatio,
                               padding: EdgeInsets.zero,
                               children: [
-                                StatCard(
-                                  onTap: () => Get.toNamed(AppRoutes.addwallet),
-                                  title: 'Add Wallet',
-                                  borderColor: isDark
-                                      ? AppColors.clrPrimary
-                                      : Color.fromRGBO(73, 91, 255, 0.4),
+                                // StatCard(
+                                //   onTap: () => Get.toNamed(AppRoutes.addwallet),
+                                //   title: 'Add Wallet',
+                                //   borderColor: isDark
+                                //       ? AppColors.clrPrimary
+                                //       : Color.fromRGBO(73, 91, 255, 0.4),
 
-                                  bgColor: AppColors.darkBlue.withValues(
-                                    alpha: 0.04,
-                                  ),
-                                  imageWidget: SvgPicture.asset(
-                                    AssetImages.addWallet,
-                                    height: 32.h,
-                                  ),
-                                ),
+                                //   bgColor:AppColors.clrPrimary.withValues(
+                                  
+                                //   ),
+                                //   imageWidget: SvgPicture.asset(
+                                //     AssetImages.wal,
+                                //     height: 38.h,
+                                //   ),
+                                // ),
 
+
+
+BlinkingZoomCard(
+  onTap: () => Get.toNamed(AppRoutes.addwallet),
+  child: Container(
+    padding: const EdgeInsets.all(3), // Border thickness
+    // decoration: BoxDecoration(
+    //   color: Theme.of(context).brightness == Brightness.dark
+    //       ? Colors.white
+    //       : Colors.red,
+    //   borderRadius: BorderRadius.circular(15.r),
+    // ),
+    child: StatCard(
+      title: 'Add Wallet',
+      bgColor: AppColors.clrPrimary,
+      textColor: Colors.white,
+      borderColor: Colors.transparent,
+      onTap: () => Get.toNamed(AppRoutes.addwallet),
+      imageWidget: SvgPicture.asset(
+        AssetImages.wal,
+        height: 38.h,
+      ),
+    ),
+  ),
+),
                                 Obx(() {
                                   final balance =
                                       controller
@@ -307,20 +332,20 @@ class HomePageScreen extends GetView<HomePageController> {
                                           ?.balance ??
                                       0.0;
                                   return StatCard(
-                                    title: 'Wallet Balance',
-                                    borderColor: isDark
-                                        ? AppColors.clrPrimary
-                                        : Color(0x66495BFF),
-                                    onTap: () =>
-                                        Get.toNamed(AppRoutes.walletbal),
-                                    value: balance.toString().currencyIndian,
-                                    bgColor: AppColors.darkBlue.withValues(
-                                      alpha: 0.04,
-                                    ),
-                                    imageWidget: SvgPicture.asset(
-                                      AssetImages.walletBalance,
-                                    ),
-                                  );
+  title: 'Balance',
+  borderColor: isDark
+      ? AppColors.clrPrimary
+      : const Color(0x66495BFF),
+  onTap: () => Get.toNamed(AppRoutes.walletbal),
+  value: balance.toString().currencyIndian,
+  bgColor: AppColors.clrPrimary,
+  textColor: Colors.white,     // Title color
+  valueColor: Colors.white,    // Balance amount color
+  imageWidget: SvgPicture.asset(
+    AssetImages.userAvatar,
+    height: 35,
+  ),
+);
                                 }),
 
                                 // ✅ TRANSACTIONS — animated border dot + zoom
@@ -433,7 +458,7 @@ class HomePageScreen extends GetView<HomePageController> {
                                           ?.complaintCount ??
                                       0;
                                   return StatCard(
-                                    title: 'Complaints',
+                                    title: 'Dispute',
                                     value: complaintCount.toString(),
                                     borderColor: isDark
                                         ? AppColors.clrPrimary

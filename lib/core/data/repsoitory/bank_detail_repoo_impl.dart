@@ -15,8 +15,9 @@ class BankDetailRepooImpl implements BankDetailRepository {
       final response = await apiService.get(ApiRoutes.bankdetail);
       final model = BankDetails.fromJson(response);
       return Right(model);
-    } catch (e) {
+    } catch (e, stackTrace) { print("API EXCEPTION IN REPO: `$e\n`$stackTrace");
       return Left(ServerFailure(message: e.toString()));
     }
   }
 }
+

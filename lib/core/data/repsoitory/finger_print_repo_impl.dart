@@ -52,7 +52,7 @@ class FingerPrintRepoImpl
 
       return Right(model);
 
-    } catch (e) {
+    } catch (e, stackTrace) { print("API EXCEPTION IN REPO: `$e\n`$stackTrace");
 
       AppLogger.logError(
           "=========== API ERROR ==========");

@@ -61,19 +61,56 @@ class ProfileScreen extends GetView<ProfileController> {
             final profile = controller.profileData.value?.data;
             final isActive = (profile?.status ?? "Active") == "Active";
 
-            return Container(
-              margin: const EdgeInsets.only(right: 16),
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-              decoration: BoxDecoration(
-                color: isActive ? Colors.green : Colors.grey,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Text(
-                isActive ? "Active" : "Inactive",
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
+            return GestureDetector(
+              onTap: () {
+                if (isActive) {
+                  Get.defaultDialog(
+                    title: "Confirm",
+                    titleStyle: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                      fontFamily: 'Poppins',
+                      color: theme.colorScheme.onSurface,
+                    ),
+                    middleText:
+                        "If you deactivate this, you can only activate it again by contacting Customer Care. Do you want to continue?",
+                    middleTextStyle: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      fontFamily: 'Poppins',
+                      color: theme.colorScheme.onSurface,
+                    ),
+                    textCancel: "No",
+                    textConfirm: "Yes",
+                    confirmTextColor: Colors.white,
+                    cancelTextColor: Colors.grey,
+                    buttonColor: theme.colorScheme.primary,
+                    barrierDismissible: false,
+                    onCancel: () {},
+                    onConfirm: () {
+                      Get.back(); // close the dialog
+                      controller.deactivateUser();
+                    },
+                  );
+                }
+              },
+              child: Container(
+                margin: const EdgeInsets.only(right: 16),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 6,
+                ),
+                decoration: BoxDecoration(
+                  color: isActive ? Colors.green : Colors.grey,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  isActive ? "Active" : "Inactive",
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
             );

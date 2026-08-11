@@ -60,4 +60,5 @@ class AppRoutes {
   static const String dthrefresh='/dthrefresh';
   static const String transactionDetails='/transactionDetails';
   static const String bank='/bank';
+  static const String noInternet='/noInternet';
 }
