@@ -7,17 +7,25 @@ import 'package:maxpay/core/domain/usecase/login_history_usecase.dart';
 class LoginHistoryController extends GetxController {
   final LoginHistoryUsecase loginHistoryUsecase;
 
-  LoginHistoryController({
-    required this.loginHistoryUsecase,
-  });
+  LoginHistoryController({required this.loginHistoryUsecase});
 
   RxBool isLoading = false.obs;
-  RxList<LogHistoryData> loghistory =
-      <LogHistoryData>[].obs;
+  RxList<LogHistoryData> loghistory = <LogHistoryData>[].obs;
 
   String fromDate = '';
   String toDate = '';
   String search = '';
+
+  @override
+  void onInit() {
+    super.onInit();
+    final now = DateTime.now();
+    final today =
+        "${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}";
+    fromDate = today;
+    toDate = today;
+    LoginHistory();
+  }
 
   Future<void> LoginHistory() async {
     if (fromDate.isEmpty || toDate.isEmpty) return;
@@ -25,28 +33,20 @@ class LoginHistoryController extends GetxController {
     try {
       isLoading.value = true;
 
-      final result = await loginHistoryUsecase(
-        toDate,
-        fromDate,
-        search,
-      );
+      final result = await loginHistoryUsecase(toDate, fromDate, search);
 
       result.fold(
         (failure) {
-          CustomToast.error(
-            failure.message.toString(),
-          );
+          CustomToast.error(failure.message.toString());
         },
         (response) {
-         if (response.status == true) {
-  loghistory.value = response.data ?? [];
+          if (response.status == true) {
+            loghistory.value = response.data ?? [];
 
-  loghistory.refresh();
-} else {
-  CustomToast.error(
-    response.message ?? "No data found",
-  );
-}
+            loghistory.refresh();
+          } else {
+            CustomToast.error(response.message ?? "No data found");
+          }
         },
       );
     } finally {
@@ -54,10 +54,8 @@ class LoginHistoryController extends GetxController {
     }
   }
 
-  Future<void> selectFromDate(
-      BuildContext context) async {
-    DateTime? pickedDate =
-        await showDatePicker(
+  Future<void> selectFromDate(BuildContext context) async {
+    DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime(2024),
@@ -76,10 +74,8 @@ class LoginHistoryController extends GetxController {
     }
   }
 
-  Future<void> selectToDate(
-      BuildContext context) async {
-    DateTime? pickedDate =
-        await showDatePicker(
+  Future<void> selectToDate(BuildContext context) async {
+    DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime(2024),
@@ -101,8 +97,7 @@ class LoginHistoryController extends GetxController {
   void onSearch(String value) {
     search = value;
 
-    if (fromDate.isNotEmpty &&
-        toDate.isNotEmpty) {
+    if (fromDate.isNotEmpty && toDate.isNotEmpty) {
       LoginHistory();
     }
   }

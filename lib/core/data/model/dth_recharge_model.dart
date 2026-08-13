@@ -59,6 +59,7 @@ class TransactionDetails {
   String? transactionDatetime;
   String? status;
   String? message;
+  String? refid;
 
   TransactionDetails({
     this.txnId,
@@ -67,25 +68,28 @@ class TransactionDetails {
     this.transactionDatetime,
     this.status,
     this.message,
+    this.refid,
   });
 
   TransactionDetails.fromJson(Map<String, dynamic> json) {
     txnId = json['txn_id']?.toString();
-    referenceId = json['reference_id']?.toString();
+    referenceId = json['ref_id']?.toString();
     operatorId = json['operator_id']?.toString();
     transactionDatetime = json['transaction_datetime']?.toString();
     status = json['status']?.toString();
     message = json['message']?.toString();
+    refid = json['ref_id']?.toString() ?? json['ref_id']?.toString();
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['txn_id'] = this.txnId;
-    data['reference_id'] = this.referenceId;
+    data['ref_id'] = this.referenceId;
     data['operator_id'] = this.operatorId;
     data['transaction_datetime'] = this.transactionDatetime;
     data['status'] = this.status;
     data['message'] = this.message;
+    data['ref_id'] = this.refid;
     return data;
   }
 }

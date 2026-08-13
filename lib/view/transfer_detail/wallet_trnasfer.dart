@@ -1,8 +1,5 @@
 /// Filter / transaction type shown in the dropdown.
-enum TransferFilterType {
-  reverse,
-  walletTransfer,
-}
+enum TransferFilterType { reverse, walletTransfer }
 
 extension TransferFilterTypeLabel on TransferFilterType {
   String get label {
@@ -24,9 +21,10 @@ class WalletTransaction {
   final String userName;
   final String regMobNo;
   final double amount;
-  final int id; 
+  final String status;
+  final int id;
   const WalletTransaction({
-        required this.id,
+    required this.id,
     required this.transactionId,
     required this.dateTime,
     required this.type,
@@ -34,5 +32,6 @@ class WalletTransaction {
     required this.userName,
     required this.regMobNo,
     required this.amount,
+    required this.status,
   });
 }

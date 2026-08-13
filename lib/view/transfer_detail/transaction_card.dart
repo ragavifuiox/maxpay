@@ -12,7 +12,7 @@ class TransactionCard extends StatelessWidget {
   final WalletTransaction transaction;
   final WalletTrnasferDetailController controller =
       Get.find<WalletTrnasferDetailController>();
-   TransactionCard({super.key, required this.transaction});
+  TransactionCard({super.key, required this.transaction});
 
   String _twoDigits(int n) => n.toString().padLeft(2, '0');
 
@@ -24,8 +24,9 @@ class TransactionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isReverse = transaction.type == TransferFilterType.reverse;
-    final typeColor =
-        isReverse ? const Color(0xFFE5484D) : const Color(0xFF1E9E5A);
+    final typeColor = isReverse
+        ? const Color(0xFFE5484D)
+        : const Color(0xFF1E9E5A);
     final theme = Theme.of(context);
 
     return Container(
@@ -69,16 +70,27 @@ class TransactionCard extends StatelessWidget {
             // Only Wallet Transfer rows get the icon next to the label.
             // showIcon: !isReverse,
           ),
+          if (transaction.status.isNotEmpty)
+            _row(
+              context,
+              "Payment Status",
+              transaction.status,
+              valueColor: transaction.status.toLowerCase() == 'failed'
+                  ? Colors.red
+                  : (transaction.status.toLowerCase() == 'success'
+                        ? Colors.green
+                        : Colors.orange),
+            ),
           _row(context, "User Type", transaction.userType),
           _row(context, "User Name", transaction.userName),
           _row(context, "Reg.Mob No", transaction.regMobNo),
-_row(
-  context,
-  "Transaction Amount",
-  "₹${transaction.amount.toStringAsFixed(2)}",
-  valueColor: typeColor,
-  showIcon: !isReverse, // Show icon only for Wallet Transfer
-),
+          _row(
+            context,
+            "Transaction Amount",
+            "₹${transaction.amount.toStringAsFixed(2)}",
+            valueColor: typeColor,
+            showIcon: !isReverse, // Show icon only for Wallet Transfer
+          ),
         ],
       ),
     );
@@ -114,7 +126,7 @@ _row(
                 const SizedBox(height: 12),
                 Text(
                   "₹${transaction.amount.toStringAsFixed(2)}",
-                            style: const TextStyle(
+                  style: const TextStyle(
                     color: Color(0xFFE5484D),
                     fontWeight: FontWeight.bold,
                     fontSize: 18,
@@ -132,25 +144,24 @@ _row(
                         borderRadius: BorderRadius.circular(8),
                       ),
                     ),
+
                     // onPressed: () {
-                    
 
                     //   Navigator.of(dialogContext).pop(); // close the dialog
                     //   Navigator.of(context).pop(); // go back from this screen
                     // },
-
                     onPressed: () async {
-  await controller.staffWalletReverse(
-    id: transaction.id.toString(), // Pass transaction id
-  );
+                      await controller.staffWalletReverse(
+                        id: transaction.id.toString(), // Pass transaction id
+                      );
 
-  Navigator.of(dialogContext).pop(); // Close dialog
+                      Navigator.of(dialogContext).pop(); // Close dialog
 
-  // If API is successful, go back
-  if (controller.reverseResponse.value?.success == true) {
-    Navigator.of(context).pop();
-  }
-},
+                      // If API is successful, go back
+                      if (controller.reverseResponse.value?.success == true) {
+                        Navigator.of(context).pop();
+                      }
+                    },
                     child: const Text(
                       "Submit",
                       style: TextStyle(
@@ -198,52 +209,55 @@ _row(
                     ),
                   ),
                 ),
+
                 // Icon sits right after the label, like in the reference design.
                 // Tapping it opens the "Do you want to Reverse the amount?" confirmation.
-               
               ],
             ),
           ),
-          const Text(": ", style: TextStyle(fontSize: 12, fontFamily: 'Poppins')),
-         Expanded(
-  child: Row(
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    children: [
-      Expanded(
-  child: Row(
-    mainAxisSize: MainAxisSize.min,
-    children: [
-      Text(
-        value,
-        style: TextStyle(
-          fontSize: 13,
-          fontWeight: FontWeight.w600,
-          color: valueColor,
-          fontFamily: 'Poppins',
-        ),
-      ),
-
-      if (showIcon) ...[
-        const SizedBox(width: 8),
-        GestureDetector(
-          onTap: () => _showReverseConfirmationDialog(context),
-          child: SvgPicture.asset(
-            AssetImages.transfer,
-            width: 18,
-            height: 18,
-            // colorFilter: ColorFilter.mode(
-            //   valueColor ?? Colors.grey,
-            //   BlendMode.srcIn,
-            // ),
+          const Text(
+            ": ",
+            style: TextStyle(fontSize: 12, fontFamily: 'Poppins'),
           ),
-        ),
-      ],
-    ],
-  ),
-),
-    ],
-  ),
-),
+          Expanded(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        value,
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: valueColor,
+                          fontFamily: 'Poppins',
+                        ),
+                      ),
+
+                      if (showIcon) ...[
+                        const SizedBox(width: 8),
+                        GestureDetector(
+                          onTap: () => _showReverseConfirmationDialog(context),
+                          child: SvgPicture.asset(
+                            AssetImages.transfer,
+                            width: 18,
+                            height: 18,
+                            // colorFilter: ColorFilter.mode(
+                            //   valueColor ?? Colors.grey,
+                            //   BlendMode.srcIn,
+                            // ),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );

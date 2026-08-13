@@ -1,6 +1,7 @@
 import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:maxpay/controllers/profile_controller.dart';
@@ -9,14 +10,11 @@ import 'package:maxpay/core/data/model/transaction_report_model.dart';
 import 'package:maxpay/core/extensions/currency.dart';
 import 'package:maxpay/core/constants/extension.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:pdf/pdf.dart';
-import 'package:pdf/widgets.dart' as pw;
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 
 class ShareReceipt {
-  /// Generates a local PDF from the UI layout and shares it out.
-  static Future<void> sharePdf({
+  static Future<void> shareScreenshot({
     required BuildContext context,
     required TransrepData data,
   }) async {
@@ -29,6 +27,13 @@ class ShareReceipt {
       }
       final profile = profileController?.profileData.value?.data;
 
+      // Show loader
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => const Center(child: CircularProgressIndicator()),
+      );
+
       final widgetToCapture = MediaQuery(
         data: MediaQuery.of(context),
         child: Directionality(
@@ -36,9 +41,9 @@ class ShareReceipt {
           child: Theme(
             data: Theme.of(context),
             child: Material(
-              color: Colors.white,
-              child: Center(
-                child: _buildReceiptContent(context, profile, data),
+              color: Colors.transparent,
+              child: Wrap(
+                children: [_buildReceiptContent(context, profile, data)],
               ),
             ),
           ),
@@ -50,28 +55,23 @@ class ShareReceipt {
         delay: const Duration(milliseconds: 200),
       );
 
-      final pdf = pw.Document();
-      final image = pw.MemoryImage(imageBytes);
+      final directory = Directory("/storage/emulated/0/Download");
+      if (!await directory.exists()) {
+        await directory.create(recursive: true);
+      }
 
-      pdf.addPage(
-        pw.Page(
-          pageFormat: PdfPageFormat.a4,
-          build: (pw.Context ctx) {
-            return pw.Center(child: pw.Image(image));
-          },
-        ),
-      );
-
-      final dir = await getTemporaryDirectory();
       final id = data.transactionId?.isNotEmpty == true
           ? data.transactionId!.replaceAll(RegExp(r'[^A-Za-z0-9_-]'), '_')
           : DateTime.now().millisecondsSinceEpoch.toString();
 
-      final savePath = '${dir.path}/Receipt_$id.pdf';
+      final savePath = '${directory.path}/Receipt_$id.png';
       final file = File(savePath);
-      await file.writeAsBytes(await pdf.save());
+      await file.writeAsBytes(imageBytes);
 
-      final xFile = XFile(file.path, mimeType: 'application/pdf');
+      final xFile = XFile(file.path, mimeType: 'image/png');
+
+      // Close loader
+      if (context.mounted) Navigator.pop(context);
 
       await Share.shareXFiles(
         [xFile],
@@ -79,7 +79,85 @@ class ShareReceipt {
         subject: 'Transaction Receipt',
       );
     } catch (e) {
-      print('SHARE GENERATION ERROR : $e');
+      debugPrint('SHARE ERROR: $e');
+      if (context.mounted) {
+        Navigator.pop(context);
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Unable to share receipt: $e')));
+      }
+    }
+  }
+
+  static Future<void> downloadScreenshot({
+    required BuildContext context,
+    required TransrepData data,
+  }) async {
+    try {
+      final screenshotController = ScreenshotController();
+      ProfileController? profileController;
+
+      if (Get.isRegistered<ProfileController>()) {
+        profileController = Get.find<ProfileController>();
+      }
+      final profile = profileController?.profileData.value?.data;
+
+      // Show loader
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => const Center(child: CircularProgressIndicator()),
+      );
+
+      final widgetToCapture = MediaQuery(
+        data: MediaQuery.of(context),
+        child: Directionality(
+          textDirection: TextDirection.ltr,
+          child: Theme(
+            data: Theme.of(context),
+            child: Material(
+              color: Colors.transparent,
+              child: Wrap(
+                children: [_buildReceiptContent(context, profile, data)],
+              ),
+            ),
+          ),
+        ),
+      );
+
+      final Uint8List imageBytes = await screenshotController.captureFromWidget(
+        widgetToCapture,
+        delay: const Duration(milliseconds: 200),
+      );
+
+      final directory = Directory("/storage/emulated/0/Download");
+      if (!await directory.exists()) {
+        await directory.create(recursive: true);
+      }
+
+      final id = data.transactionId?.isNotEmpty == true
+          ? data.transactionId!.replaceAll(RegExp(r'[^A-Za-z0-9_-]'), '_')
+          : DateTime.now().millisecondsSinceEpoch.toString();
+
+      final savePath = '${directory.path}/Receipt_$id.png';
+      final file = File(savePath);
+      await file.writeAsBytes(imageBytes);
+
+      // Close loader
+      if (context.mounted) {
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Receipt saved to Downloads')),
+        );
+      }
+    } catch (e) {
+      debugPrint('DOWNLOAD ERROR: $e');
+      if (context.mounted) {
+        Navigator.pop(context);
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Unable to save receipt: $e')));
+      }
     }
   }
 

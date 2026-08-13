@@ -12,6 +12,7 @@ import 'package:maxpay/core/utils/logg_helper.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
 import 'package:maxpay/view/dth_recharge/dth_failed_recharge_screen.dart';
 import 'package:maxpay/view/dth_recharge/dth_success_page.dart';
+import 'package:maxpay/view/dth_recharge/dth_pending_page.dart';
 import 'package:get/get.dart';
 
 class ConfirmDthPage extends StatefulWidget {
@@ -463,7 +464,46 @@ class _ConfirmDthPageState extends State<ConfirmDthPage> {
                                     if (rechargeData != null) {
                                       final apiData = rechargeData.response;
 
-                                      if (success) {
+                                      final actStatus =
+                                          (rechargeData.status ?? "")
+                                              .toLowerCase();
+
+                                      if (actStatus == "pending" ||
+                                          actStatus == "peind") {
+                                        Get.to(
+                                          () => DthPendingPage(
+                                            productName: productName,
+                                            operatorLogo: logoUrl,
+                                            rechargeId:
+                                                rechargeData.transactionId
+                                                    ?.toString() ??
+                                                "",
+                                            operatorInitial:
+                                                productName.isNotEmpty
+                                                ? productName[0]
+                                                : "J",
+                                            operatorColor: const Color(
+                                              0xffD98200,
+                                            ),
+                                            transactionNo:
+                                                apiData?.mobileNo ?? customerId,
+                                            rechargeAmount:
+                                                (apiData?.amount?.toString() ??
+                                                        amountController.text)
+                                                    .currencyIndian,
+                                            transactionId:
+                                                rechargeData
+                                                    .transactionDetails
+                                                    ?.txnId ??
+                                                apiData?.tnxId ??
+                                                "",
+                                            dateTime:
+                                                apiData?.rechargeDate ??
+                                                DateTime.now().toString(),
+                                          ),
+                                        );
+                                      } else if (success &&
+                                          actStatus != "failed") {
                                         Get.to(
                                           () => DthSuccessPage(
                                             productName: productName,
@@ -494,6 +534,11 @@ class _ConfirmDthPageState extends State<ConfirmDthPage> {
                                             dateTime:
                                                 apiData?.rechargeDate ??
                                                 DateTime.now().toString(),
+                                            refid:
+                                                rechargeData
+                                                    .transactionDetails
+                                                    ?.refid ??
+                                                "",
                                           ),
                                         );
                                       } else {
@@ -520,6 +565,11 @@ class _ConfirmDthPageState extends State<ConfirmDthPage> {
                                             dateTime:
                                                 apiData?.rechargeDate ??
                                                 DateTime.now().toString(),
+                                            refid:
+                                                rechargeData
+                                                    .transactionDetails
+                                                    ?.refid ??
+                                                "",
                                           ),
                                         );
                                       }

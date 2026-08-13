@@ -21,8 +21,8 @@ class AddWalletPopup extends StatelessWidget {
   static const MethodChannel _upiChannel =
       MethodChannel('com.paylink.retailor/upi_choose');
 
-  
-  @override
+
+ @override
   Widget build(BuildContext context) {
     
     final theme = Theme.of(context);
@@ -81,7 +81,7 @@ final isDark = Theme.of(context).brightness == Brightness.dark;
     ),
 
     const SizedBox(height: 18),
-              /// QR
+    
               Container(
                 width: 220,
                 height: 220,

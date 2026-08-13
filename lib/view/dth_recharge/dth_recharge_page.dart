@@ -48,6 +48,7 @@ class _DTHRechargePageState extends State<DTHRechargePage>
       downloadusecase: sl(),
       checkOperatorUsecase: sl(),
       offerRechargeUsecase: sl(),
+       termusecase: sl()
     ),
   );
 

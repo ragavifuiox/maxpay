@@ -3,12 +3,9 @@ import 'package:maxpay/core/constants/snackbar.dart';
 import 'package:maxpay/core/data/model/cash_back_model.dart';
 import 'package:maxpay/core/data/model/payment_product_model.dart';
 
-
-
 import 'package:maxpay/core/domain/usecase/cash_back_usecase.dart';
 import 'package:maxpay/core/domain/usecase/payment_status_type_usecase.dart';
 import 'package:maxpay/core/utils/logg_helper.dart';
-
 
 class CashbackController extends GetxController {
   final CashbackTypeUsecase allPlanUsecase;
@@ -18,7 +15,7 @@ class CashbackController extends GetxController {
     required this.allPlanUsecase,
     required this.cashbackUsecase,
   });
-RxString selectedProductId = ''.obs;
+  RxString selectedProductId = ''.obs;
   RxBool isLoading = false.obs;
 
   Rx<CashbackProductType?> allPlan = Rx<CashbackProductType?>(null);
@@ -44,74 +41,65 @@ RxString selectedProductId = ''.obs;
       },
       (data) {
         allPlan.value = data;
+
+        if (data.data != null && data.data!.isNotEmpty) {
+          final defaultItem = data.data!.firstWhere(
+            (element) => element.name?.toLowerCase() == 'prepaid',
+            orElse: () => data.data!.first,
+          );
+
+          selectedProductName.value = defaultItem.name ?? '';
+          selectedProductType.value = defaultItem.name ?? '';
+          selectedProductId.value = defaultItem.id.toString();
+
+          fetchCashback(defaultItem.id.toString());
+        }
       },
     );
 
     isLoading.value = false;
   }
 
- Future<void> fetchCashback(
-  String productType,
-) async {
-  try {
-    isLoading.value = true;
+  Future<void> fetchCashback(String productType) async {
+    try {
+      isLoading.value = true;
 
-    AppLogger.debugPrint(
-      "===== CASHBACK REQUEST =====",
-    );
+      AppLogger.debugPrint("===== CASHBACK REQUEST =====");
 
-    AppLogger.debugPrint({
-      "productType": productType,
-    });
+      AppLogger.debugPrint({"productType": productType});
 
-    final result = await cashbackUsecase(
-      producttype: productType,
-    );
+      final result = await cashbackUsecase(producttype: productType);
 
-    AppLogger.debugPrint(
-      "Cashback Response Received",
-    );
+      AppLogger.debugPrint("Cashback Response Received");
 
-    result.fold(
-      (failure) {
-        AppLogger.logError(
-          "CASHBACK FAILURE",
-        );
+      result.fold(
+        (failure) {
+          AppLogger.logError("CASHBACK FAILURE");
 
-        AppLogger.logError(
-          failure.message,
-        );
+          AppLogger.logError(failure.message);
 
-        CustomToast.error(
-          failure.message,
-        );
-      },
-      (response) {
-        AppLogger.debugPrint(
-          "CASHBACK SUCCESS",
-        );
+          CustomToast.error(failure.message);
+        },
+        (response) {
+          AppLogger.debugPrint("CASHBACK SUCCESS");
 
-        AppLogger.debugPrint(
-          response.toJson(),
-        );
+          AppLogger.debugPrint(response.toJson());
 
-        cashBack.value = response;
+          cashBack.value = response;
 
-        AppLogger.debugPrint(
-          "Total Cashback Records : ${response.code?.length ?? 0}",
-        );
-      },
-    );
-  } catch (e, stackTrace) {
-    AppLogger.logError(
-      "CASHBACK EXCEPTION",
-    );
+          AppLogger.debugPrint(
+            "Total Cashback Records : ${response.code?.length ?? 0}",
+          );
+        },
+      );
+    } catch (e, stackTrace) {
+      AppLogger.logError("CASHBACK EXCEPTION");
 
-    AppLogger.logError(e);
+      AppLogger.logError(e);
 
-    AppLogger.logError(stackTrace);
-  } finally {
-    isLoading.value = false;
+      AppLogger.logError(stackTrace);
+    } finally {
+      isLoading.value = false;
+    }
   }
-}
 }

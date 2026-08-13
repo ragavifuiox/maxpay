@@ -1,4 +1,3 @@
-
 package com.paylink.retailor
 
 import android.Manifest
@@ -72,7 +71,7 @@ class MainActivity : FlutterFragmentActivity() {
 
                         if (chooser.resolveActivity(packageManager) != null) {
 
-                            startActivity(chooser)
+                            startActivityForResult(chooser, 1002)
 
                             result.success(true)
 
@@ -279,6 +278,8 @@ class MainActivity : FlutterFragmentActivity() {
 
                         // --------------------------------------------
                         // PARSE ORIGINAL UPI URL
+                        // (READ-ONLY — used only to validate 'pa',
+                        //  the Uri itself is never rebuilt)
                         // --------------------------------------------
 
                         val originalUri =
@@ -286,12 +287,6 @@ class MainActivity : FlutterFragmentActivity() {
 
                         val pa =
                             originalUri.getQueryParameter("pa")
-
-                        val pn =
-                            originalUri.getQueryParameter("pn")
-
-                        val am =
-                            originalUri.getQueryParameter("am")
 
                         // --------------------------------------------
                         // VALIDATE VPA
@@ -314,59 +309,19 @@ class MainActivity : FlutterFragmentActivity() {
                         }
 
                         // --------------------------------------------
-                        // BUILD CLEAN UPI URI
-                        //
-                        // We intentionally do NOT add:
-                        //
-                        // tn
-                        // tr
-                        //
-                        // because we are testing direct GPay payment.
-                        // --------------------------------------------
-
-                        val builder = Uri.Builder()
-                            .scheme("upi")
-                            .authority("pay")
-                            .appendQueryParameter(
-                                "pa",
-                                pa
-                            )
-
-                        if (!pn.isNullOrBlank()) {
-
-                            builder.appendQueryParameter(
-                                "pn",
-                                pn
-                            )
-                        }
-
-                        if (!am.isNullOrBlank()) {
-
-                            builder.appendQueryParameter(
-                                "am",
-                                am
-                            )
-                        }
-
-                        // --------------------------------------------
-                        // CURRENCY
-                        // --------------------------------------------
-
-                        builder.appendQueryParameter(
-                            "cu",
-                            "INR"
-                        )
-
-                        val cleanUpiUri =
-                            builder.build()
-
-                        // --------------------------------------------
-                        // LOG EVERYTHING
+                        // NOTE: we intentionally do NOT call
+                        // buildUpon()/appendQueryParameter()/build()
+                        // here anymore. Doing so re-encodes the query
+                        // string and breaks the PSP's signed 'sign'
+                        // parameter, which causes PhonePe/GPay to
+                        // decline the payment as untrusted, even
+                        // though the same link works fine when
+                        // scanned as a QR code.
                         // --------------------------------------------
 
                         Log.d(
                             TAG,
-                            "Clean UPI URL: $cleanUpiUri"
+                            "Launching UPI URL as-is (unmodified): $originalUri"
                         )
 
                         Log.d(
@@ -376,27 +331,17 @@ class MainActivity : FlutterFragmentActivity() {
 
                         Log.d(
                             TAG,
-                            "AMOUNT: $am"
-                        )
-
-                        Log.d(
-                            TAG,
-                            "CURRENCY: INR"
-                        )
-
-                        Log.d(
-                            TAG,
                             "FINAL PACKAGE: $packageName"
                         )
 
                         // --------------------------------------------
-                        // CREATE INTENT
+                        // CREATE INTENT (using untouched Uri)
                         // --------------------------------------------
 
                         val intent =
                             Intent(Intent.ACTION_VIEW).apply {
 
-                                data = cleanUpiUri
+                                data = originalUri
 
                                 setPackage(packageName)
 
@@ -429,7 +374,10 @@ class MainActivity : FlutterFragmentActivity() {
                                 "Launching UPI app..."
                             )
 
-                            startActivity(intent)
+                            // Launching with startActivityForResult securely passes the
+                            // calling package name to the UPI App (eg: GPay).
+                            // This prevents 'payment declined by UPI network' security errors.
+                            startActivityForResult(intent, 1001)
 
                             result.success(true)
 
@@ -997,4 +945,3 @@ class MainActivity : FlutterFragmentActivity() {
         return emptyList()
     }
 }
-

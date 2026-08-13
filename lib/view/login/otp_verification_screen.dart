@@ -38,7 +38,7 @@ class _ScreenOtpVerificationState extends State<ScreenOtpVerification> {
 
     ever<String>(authController.otp, (otp) {
       if (otp.isNotEmpty) {
-        Future.delayed(const Duration(seconds: 5), () {
+        Future.delayed(const Duration(seconds: 10), () {
           if (mounted) {
             _otpController.text = otp;
             setState(() {
@@ -56,7 +56,7 @@ class _ScreenOtpVerificationState extends State<ScreenOtpVerification> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (authController.otp.value.isNotEmpty) {
-        Future.delayed(const Duration(seconds: 2), () {
+        Future.delayed(const Duration(seconds: 5), () {
           if (mounted) {
             setState(() {
               _otpController.text = authController.otp.value;

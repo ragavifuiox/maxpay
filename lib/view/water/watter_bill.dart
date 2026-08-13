@@ -6,11 +6,7 @@ import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
 import 'package:maxpay/view/water/water_confirm_screen.dart';
 
-
-
 class _BillColors {
-  
- 
   // static const fieldGrey = Color(0xFFF3F4F6);
   static const fieldGreyDark = Color(0xFF2A2E33);
 }
@@ -23,25 +19,21 @@ class WatterBill extends StatefulWidget {
 }
 
 class _WatterBillageState extends State<WatterBill> {
-  String _selectedBoard = 'Kerala State Electricity';
+  String _selectedBoard = '';
   bool _isBillFetched = false;
 
   // Payment status toggle: true = Received, false = Not Received
   bool _isReceived = true;
 
   final TextEditingController _customerIdController = TextEditingController();
-  final TextEditingController _mobileController =
-      TextEditingController(text: '9876543213');
-  final TextEditingController _amountController =
-      TextEditingController(text: '500.00');
+  final TextEditingController _mobileController = TextEditingController(
+    text: '9876543213',
+  );
+  final TextEditingController _amountController = TextEditingController(
+    text: '500.00',
+  );
 
-  final List<String> _boards = [
-    'Kerala State Electricity',
-    'TATA Power',
-    'Adani Electricity',
-    'BESCOM',
-    'MSEDCL',
-  ];
+  final List<String> _boards = [];
 
   @override
   void dispose() {
@@ -83,7 +75,11 @@ class _WatterBillageState extends State<WatterBill> {
                       ),
                     ),
                     IconButton(
-                      icon: Icon(Icons.close, color: Colors.orange, size: 20.sp),
+                      icon: Icon(
+                        Icons.close,
+                        color: Colors.orange,
+                        size: 20.sp,
+                      ),
                       onPressed: () => Navigator.pop(context),
                     ),
                   ],
@@ -121,7 +117,6 @@ class _WatterBillageState extends State<WatterBill> {
     );
   }
 
-
   void _showDetailDialog(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
@@ -148,7 +143,9 @@ class _WatterBillageState extends State<WatterBill> {
                     padding: EdgeInsets.all(3.r),
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      border: Border.all(color: Colors.grey.withValues(alpha: 0.4)),
+                      border: Border.all(
+                        color: Colors.grey.withValues(alpha: 0.4),
+                      ),
                     ),
                     child: Icon(Icons.close, size: 12.sp, color: Colors.grey),
                   ),
@@ -163,11 +160,11 @@ class _WatterBillageState extends State<WatterBill> {
                   width: double.infinity,
                   height: 42.h,
                   child: ElevatedButton(
-                    onPressed: (){
+                    onPressed: () {
                       Get.to(WaterConfirmScreen());
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor:AppColors.clrPrimary,
+                      backgroundColor: AppColors.clrPrimary,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8.r),
                       ),
@@ -226,7 +223,9 @@ class _WatterBillageState extends State<WatterBill> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    final fieldColor = isDark ? AppColors.darkFilterBorder : AppColors.background;
+    final fieldColor = isDark
+        ? AppColors.darkFilterBorder
+        : AppColors.background;
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -247,7 +246,7 @@ class _WatterBillageState extends State<WatterBill> {
                       width: double.infinity,
                       padding: EdgeInsets.symmetric(vertical: 15.h),
                       decoration: BoxDecoration(
-                        color:AppColors.clrPrimary,
+                        color: AppColors.clrPrimary,
                         borderRadius: BorderRadius.circular(12.r),
                       ),
                       child: Column(
@@ -277,82 +276,83 @@ class _WatterBillageState extends State<WatterBill> {
                     SizedBox(height: 20.h),
 
                     /// 🔹 BOARD SELECTION
-                      Container(
-  padding: EdgeInsets.symmetric(horizontal: 12.w),
-  decoration: BoxDecoration(
-    color: fieldColor,
-    borderRadius: BorderRadius.circular(10.r),
-  ),
-  child: DropdownButtonHideUnderline(
-    child: DropdownButton<String>(
-      value: _selectedBoard,
-      isExpanded: true,
-      icon: const Icon(Icons.keyboard_arrow_down),
-      items: _boards.map((board) {
-        return DropdownMenuItem<String>(
-          value: board,
-          child: Text(
-            board,
-            style: TextStyle(
-              fontSize: 14.sp,
-              color: isDark ? Colors.white : Colors.black,
-            ),
-          ),
-        );
-      }).toList(),
-      onChanged: (value) {
-        setState(() {
-          _selectedBoard = value!;
-        });
-      },
-    ),
-  ),
-),
+                    GestureDetector(
+                      onTap: () => _showBoardSelector(context),
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 16.w,
+                          vertical: 16.h,
+                        ),
+                        decoration: BoxDecoration(
+                          color: fieldColor,
+                          borderRadius: BorderRadius.circular(10.r),
+                        ),
+                        child: Row(
+                          children: [
+                            Text(
+                              _selectedBoard.isNotEmpty
+                                  ? _selectedBoard
+                                  : 'Select',
+                              style: TextStyle(
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w500,
+                                color: isDark ? Colors.white : Colors.black,
+                              ),
+                            ),
+                            const Spacer(),
+                            Icon(
+                              Icons.arrow_drop_down,
+                              color: isDark ? Colors.white : Colors.black,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                     SizedBox(height: 15.h),
 
                     /// 🔹 CUSTOMER ID INPUT
-                   Container(
-  decoration: BoxDecoration(
-    color: fieldColor,
-    borderRadius: BorderRadius.circular(10.r),
-  ),
-  child: TextField(
-    controller: _customerIdController,
-    enabled: !_isBillFetched,
-    onChanged: (_) {
-      setState(() {}); // Refresh to show/hide X icon
-    },
-    style: TextStyle(
-      fontSize: 14.sp,
-      color: isDark ? Colors.white : Colors.black,
-    ),
-    decoration: InputDecoration(
-      hintText: 'Customer Id',
-      hintStyle: TextStyle(
-        color: Colors.grey,
-        fontSize: 14.sp,
-      ),
-      border: InputBorder.none,
-      contentPadding: EdgeInsets.symmetric(
-        horizontal: 16.w,
-        vertical: 15.h,
-      ),
-     suffixIcon: _customerIdController.text.isNotEmpty
-    ? IconButton(
-        icon: Icon(
-          Icons.cancel,
-          color: Colors.red,
-          size: 20.sp,
-        ),
-        onPressed: () {
-          _customerIdController.clear();
-          setState(() {});
-        },
-      )
-    : null,
-    ),
-  ),
-),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: fieldColor,
+                        borderRadius: BorderRadius.circular(10.r),
+                      ),
+                      child: TextField(
+                        controller: _customerIdController,
+                        enabled: !_isBillFetched,
+                        onChanged: (_) {
+                          setState(() {}); // Refresh to show/hide X icon
+                        },
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          color: isDark ? Colors.white : Colors.black,
+                        ),
+                        decoration: InputDecoration(
+                          hintText: 'Customer Id',
+                          hintStyle: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 14.sp,
+                          ),
+                          border: InputBorder.none,
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: 16.w,
+                            vertical: 15.h,
+                          ),
+                          suffixIcon: _customerIdController.text.isNotEmpty
+                              ? IconButton(
+                                  icon: Icon(
+                                    Icons.cancel,
+                                    color: Colors.red,
+                                    size: 20.sp,
+                                  ),
+                                  onPressed: () {
+                                    _customerIdController.clear();
+                                    setState(() {});
+                                  },
+                                )
+                              : null,
+                        ),
+                      ),
+                    ),
 
                     if (_isBillFetched) ...[
                       SizedBox(height: 12.h),
@@ -363,7 +363,10 @@ class _WatterBillageState extends State<WatterBill> {
                         child: GestureDetector(
                           onTap: () => _showDetailDialog(context),
                           child: Container(
-                            padding: EdgeInsets.symmetric(horizontal: 22.w, vertical: 8.h),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 22.w,
+                              vertical: 8.h,
+                            ),
                             decoration: BoxDecoration(
                               color: Colors.red,
                               borderRadius: BorderRadius.circular(8.r),
@@ -395,8 +398,15 @@ class _WatterBillageState extends State<WatterBill> {
                           ),
                           decoration: InputDecoration(
                             border: InputBorder.none,
-                            contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 15.h),
-                            suffixIcon: Icon(Icons.edit, size: 18.sp, color:AppColors.clrPrimary),
+                            contentPadding: EdgeInsets.symmetric(
+                              horizontal: 16.w,
+                              vertical: 15.h,
+                            ),
+                            suffixIcon: Icon(
+                              Icons.edit,
+                              size: 18.sp,
+                              color: AppColors.clrPrimary,
+                            ),
                           ),
                         ),
                       ),
@@ -422,7 +432,10 @@ class _WatterBillageState extends State<WatterBill> {
                               color: isDark ? Colors.white : Colors.black,
                             ),
                             border: InputBorder.none,
-                            contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 15.h),
+                            contentPadding: EdgeInsets.symmetric(
+                              horizontal: 16.w,
+                              vertical: 15.h,
+                            ),
                           ),
                         ),
                       ),
@@ -431,10 +444,15 @@ class _WatterBillageState extends State<WatterBill> {
                       /// 🔹 CUSTOMER PAYMENT STATUS
                       Container(
                         width: double.infinity,
-                        padding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 16.w),
+                        padding: EdgeInsets.symmetric(
+                          vertical: 14.h,
+                          horizontal: 16.w,
+                        ),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10.r),
-                          border: Border.all(color:AppColors.clrPrimary.withValues(alpha: 0.6)),
+                          border: Border.all(
+                            color: AppColors.clrPrimary.withValues(alpha: 0.6),
+                          ),
                         ),
                         child: Column(
                           children: [
@@ -443,7 +461,7 @@ class _WatterBillageState extends State<WatterBill> {
                               style: TextStyle(
                                 fontSize: 13.sp,
                                 fontWeight: FontWeight.w700,
-                                color:AppColors.clrPrimary,
+                                color: AppColors.clrPrimary,
                               ),
                             ),
                             SizedBox(height: 10.h),
@@ -454,13 +472,15 @@ class _WatterBillageState extends State<WatterBill> {
                                   label: 'Not Received',
                                   color: Colors.red,
                                   selected: !_isReceived,
-                                  onTap: () => setState(() => _isReceived = false),
+                                  onTap: () =>
+                                      setState(() => _isReceived = false),
                                 ),
                                 _paymentOption(
                                   label: 'Received',
                                   color: Colors.green,
                                   selected: _isReceived,
-                                  onTap: () => setState(() => _isReceived = true),
+                                  onTap: () =>
+                                      setState(() => _isReceived = true),
                                 ),
                               ],
                             ),
@@ -500,7 +520,7 @@ class _WatterBillageState extends State<WatterBill> {
                     }
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor:AppColors.clrPrimary,
+                    backgroundColor: AppColors.clrPrimary,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10.r),
                     ),

@@ -13,6 +13,7 @@ import 'package:maxpay/core/data/model/plan_tab_model.dart';
 import 'package:maxpay/core/data/model/rehcarge_offer_model.dart';
 import 'package:maxpay/core/data/model/search_plan_model.dart';
 import 'package:maxpay/core/data/model/tab_detail.dart';
+import 'package:maxpay/core/data/model/terms_model.dart';
 import 'package:maxpay/core/data/model/trans_confirm_model.dart';
 import 'package:maxpay/core/domain/usecase/check_operator_usecase.dart';
 import 'package:maxpay/core/domain/usecase/downlaod_usecase.dart';
@@ -23,6 +24,7 @@ import 'package:maxpay/core/domain/usecase/plan_tab_usecase.dart';
 import 'package:maxpay/core/domain/usecase/plan_usecase.dart';
 import 'package:maxpay/core/domain/usecase/search_plan_usecase.dart';
 import 'package:maxpay/core/domain/usecase/tab_detail_usecase.dart';
+import 'package:maxpay/core/domain/usecase/terms_usecase.dart';
 import 'package:maxpay/core/domain/usecase/trans_confirm_usecase.dart';
 import 'package:maxpay/core/utils/logg_helper.dart';
 
@@ -37,6 +39,7 @@ class PrePaidController extends GetxController {
   final TabDetailUsecase tabdetailusecase;
   final DownloadUsecase downloadusecase;
   final OfferRechargeUsecase offerRechargeUsecase;
+  final TermsUsecase termusecase;
   final String productdetid = Get.arguments?['productId'] ?? '';
 
   PrePaidController({
@@ -50,6 +53,7 @@ class PrePaidController extends GetxController {
     required this.tabdetailusecase,
     required this.downloadusecase,
     required this.offerRechargeUsecase,
+    required this.termusecase,
   });
   RxBool isSearching = false.obs;
   RxBool isLoading = false.obs;
@@ -66,6 +70,7 @@ class PrePaidController extends GetxController {
 
   RxList<PlanDetailData> planDetailList = <PlanDetailData>[].obs;
   RxList<TabDetailData> filteredTabPlans = <TabDetailData>[].obs;
+  Rx<Terms?> term = Rx<Terms?>(null);
   RxList<PlanData> filteredSearchPlans = <PlanData>[].obs;
   RxString errorMessage = ''.obs;
   RxBool isRechargeLoading = false.obs;
@@ -133,6 +138,25 @@ class PrePaidController extends GetxController {
     } finally {
       isLoading.value = false;
     }
+  }
+
+  Future<void> fetchTerms() async {
+    isLoading.value = true;
+
+    final result = await termusecase();
+
+    result.fold(
+      (failure) {
+        isLoading.value = false;
+
+        Get.snackbar('Error', failure.message);
+      },
+      (data) {
+        term.value = data;
+
+        isLoading.value = false;
+      },
+    );
   }
 
   void resetOperatorSelection() {

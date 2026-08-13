@@ -249,6 +249,7 @@ class TransrepData {
   String? dateTime;
   String? logo;
   String? url;
+  String? refid;
 
   TransrepData({
     this.id,
@@ -274,6 +275,7 @@ class TransrepData {
     this.dateTime,
     this.url,
     this.logo,
+    this.refid,
   });
 
   TransrepData.fromJson(Map<String, dynamic> json) {
@@ -300,6 +302,7 @@ class TransrepData {
     dateTime = json['date_time'];
     logo = json['logo'];
     url = json['receipt_url'];
+    refid = json['ref_id'];
   }
 
   Map<String, dynamic> toJson() {
@@ -327,6 +330,7 @@ class TransrepData {
     data['date_time'] = dateTime;
     data['logo'] = logo;
     data['receipt_url'] = url;
+    data['ref_id'] = refid;
     return data;
   }
 }

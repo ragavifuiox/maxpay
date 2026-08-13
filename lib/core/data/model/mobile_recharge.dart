@@ -75,6 +75,7 @@ class Recharge {
   String? userType;
   String? time;
   String? txnId;
+  String? refid;
   String? requestTime;
   String? paymentStatus;
   String? whatsappNo;
@@ -95,6 +96,7 @@ class Recharge {
     this.userType,
     this.time,
     this.txnId,
+    this.refid,
     this.requestTime,
     this.paymentStatus,
     this.whatsappNo,
@@ -122,6 +124,7 @@ class Recharge {
     userType = json['user_type']?.toString();
     time = json['time']?.toString();
     txnId = json['txn_id']?.toString();
+    refid = json['ref_id']?.toString();
     requestTime = json['request_time']?.toString();
     paymentStatus = json['payment_status']?.toString();
     whatsappNo = json['whatsapp_no']?.toString();
@@ -144,6 +147,8 @@ class Recharge {
     data['user_type'] = this.userType;
     data['time'] = this.time;
     data['txn_id'] = this.txnId;
+    data['txn_id'] = this.txnId;
+    data['ref_id'] = this.refid;
     data['request_time'] = this.requestTime;
     data['payment_status'] = this.paymentStatus;
     data['whatsapp_no'] = this.whatsappNo;

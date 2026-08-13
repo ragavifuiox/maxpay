@@ -82,4 +82,5 @@ class ApiRoutes {
   static const totalrecharge = "/total_recharge";
   static const bankdetail = "/get_bank_details";
   static const activeuser = "/active_user";
+  static const terms = "/get_terms_settings";
 }

@@ -19,9 +19,9 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:maxpay/global_widget/commom_button.dart';
 import 'package:open_file/open_file.dart';
-import 'package:pdf/pdf.dart';
-import 'package:pdf/widgets.dart' as pw;
 import 'package:screenshot/screenshot.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:media_store_plus/media_store_plus.dart';
 
 class SuccessRechargePage extends StatelessWidget {
   final String productName;
@@ -32,8 +32,7 @@ class SuccessRechargePage extends StatelessWidget {
   final String transactionId;
   final String refId;
   final String dateTime;
-  
-  final String operatorLogo; 
+  final String operatorLogo;
   final String rechargeId;
 
   const SuccessRechargePage({
@@ -251,7 +250,7 @@ class SuccessRechargePage extends StatelessWidget {
     );
   }
 
-  Future<void> _captureAndSavePdf(
+  Future<void> _captureAndSaveImage(
     BuildContext context,
     dynamic profile,
     ScreenshotController screenshotController,
@@ -263,9 +262,9 @@ class SuccessRechargePage extends StatelessWidget {
         child: Theme(
           data: Theme.of(context),
           child: Material(
-            color: Colors.white,
-            child: Center(
-              child: _buildReceiptContent(context, profile, true, null),
+            color: Colors.transparent,
+            child: Wrap(
+              children: [_buildReceiptContent(context, profile, true, null)],
             ),
           ),
         ),
@@ -278,18 +277,6 @@ class SuccessRechargePage extends StatelessWidget {
         delay: const Duration(milliseconds: 200),
       );
 
-      final pdf = pw.Document();
-      final image = pw.MemoryImage(imageBytes);
-
-      pdf.addPage(
-        pw.Page(
-          pageFormat: PdfPageFormat.a4,
-          build: (pw.Context ctx) {
-            return pw.Center(child: pw.Image(image));
-          },
-        ),
-      );
-
       final directory = Directory("/storage/emulated/0/Download");
       if (!await directory.exists()) {
         await directory.create(recursive: true);
@@ -299,14 +286,13 @@ class SuccessRechargePage extends StatelessWidget {
           ? rechargeId.replaceAll(RegExp(r'[^A-Za-z0-9_-]'), '_')
           : DateTime.now().millisecondsSinceEpoch.toString();
 
-      final savePath = "${directory.path}/Receipt_$safeId.pdf";
+      final savePath = "${directory.path}/Receipt_$safeId.png";
       final file = File(savePath);
-      await file.writeAsBytes(await pdf.save());
+      await file.writeAsBytes(imageBytes);
 
       CustomToast.success("Receipt saved to Downloads");
-      await OpenFile.open(savePath);
     } catch (e) {
-      CustomToast.error("Failed to generate PDF");
+      CustomToast.error("Failed to save receipt image: $e");
     }
   }
 
@@ -465,7 +451,7 @@ class SuccessRechargePage extends StatelessWidget {
                     height: 42.h,
                     child: ElevatedButton(
                       onPressed: () {
-                        _captureAndSavePdf(
+                        _captureAndSaveImage(
                           context,
                           profile,
                           screenshotController,

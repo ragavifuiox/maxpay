@@ -32,6 +32,7 @@ class AppColors {
   static const Color chart = Color(0xff615E83);
   static const Color chart1 = Color(0xff6D4E3F);
   static const Color chart2 = Color(0xffFFDDBE);
+  static const Color pending1 = Color(0xffD98200);
   
   static const Color totalborder1 = Color.fromARGB(255, 122, 122, 122);
  

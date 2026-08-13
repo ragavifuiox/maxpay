@@ -21,6 +21,8 @@ class TransactionCard extends StatelessWidget {
     final status = (data.status ?? "").trim().toLowerCase();
 
     final isSuccess = status == "success" || status == "received";
+    final isPending = status == "pending";
+    final isFailed = !isSuccess && !isPending;
 
     Color statusColor;
     Color bgColor;
@@ -86,7 +88,6 @@ class TransactionCard extends StatelessWidget {
 
           Row(
             children: [
-         
               if ((data.logo ?? '').isNotEmpty)
                 ClipRRect(
                   borderRadius: BorderRadius.circular(0),
@@ -156,7 +157,7 @@ class TransactionCard extends StatelessWidget {
                       );
                     }),
                     const SizedBox(width: 6),
-                    _button("View", const Color.fromARGB(255, 23, 21, 152), () {
+                    _button("Success", statusColor, () {
                       Get.toNamed(
                         AppRoutes.transactionDetails,
                         arguments: data,
@@ -165,15 +166,23 @@ class TransactionCard extends StatelessWidget {
 
                     const SizedBox(width: 6),
                     _button("Share", Colors.blue, () {
-                      ShareReceipt.sharePdf(context: context, data: data);
+                      ShareReceipt.shareScreenshot(
+                        context: context,
+                        data: data,
+                      );
                     }),
                   ],
 
-                  if (status == "pending")
-                    _button("Processing", Colors.orange, () {}),
+                  if (isPending)
+                    _button("Processing", Colors.orange, () {
+                      Get.toNamed(
+                        AppRoutes.transactionDetails,
+                        arguments: data,
+                      );
+                    }),
 
-                  if (status == "failed") ...[
-                    _button("View", Colors.blue, () {
+                  if (isFailed) ...[
+                    _button("Failed", statusColor, () {
                       Get.toNamed(
                         AppRoutes.transactionDetails,
                         arguments: data,
@@ -201,24 +210,24 @@ class TransactionCard extends StatelessWidget {
               const SizedBox(width: 8),
 
               // Status Badge
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 7,
-                ),
-                decoration: BoxDecoration(
-                  color: statusColor,
-                  borderRadius: BorderRadius.circular(5),
-                ),
-                child: Text(
-                  status == "received" ? "Success" : (data.status ?? ""),
-                  style: const TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
+              // Container(
+              //   padding: const EdgeInsets.symmetric(
+              //     horizontal: 12,
+              //     vertical: 7,
+              //   ),
+              //   decoration: BoxDecoration(
+              //     color: statusColor,
+              //     borderRadius: BorderRadius.circular(5),
+              //   ),
+              //   child: Text(
+              //     status == "received" ? "Success" : (data.status ?? ""),
+              //     style: const TextStyle(
+              //       fontSize: 10,
+              //       fontWeight: FontWeight.w600,
+              //       color: Colors.white,
+              //     ),
+              //   ),
+              // ),
             ],
           ),
         ],
@@ -267,35 +276,35 @@ class TransactionCard extends StatelessWidget {
   }
 
   void _onResend(BuildContext context) {
-  final productType = (data.productType ?? "").toLowerCase();
-  final productTypeId = (data.productTypeId ?? "").toString();
+    final productType = (data.productType ?? "").toLowerCase();
+    final productTypeId = (data.productTypeId ?? "").toString();
 
-  final String productId = data.productId?.toString() ?? "";
+    final String productId = data.productId?.toString() ?? "";
 
-  print("========== RESEND ==========");
-  print("Product ID: $productId");
-  print("Product Type: ${data.productType}");
-  print("Product Type ID: ${data.productTypeId}");
+    print("========== RESEND ==========");
+    print("Product ID: $productId");
+    print("Product Type: ${data.productType}");
+    print("Product Type ID: ${data.productTypeId}");
 
-  if (productType.contains("prepaid") ||
-      productType.contains("mobile") ||
-      productTypeId == "1") {
-    Get.toNamed(
-      AppRoutes.transconfirm,
-      arguments: {
-        "mobileNumber": data.mobile,
-        "amount": data.amount,
-        "productdetid": productId,
+    if (productType.contains("prepaid") ||
+        productType.contains("mobile") ||
+        productTypeId == "1") {
+      Get.toNamed(
+        AppRoutes.transconfirm,
+        arguments: {
+          "mobileNumber": data.mobile,
+          "amount": data.amount,
+          "productdetid": productId,
 
-        "paymentStatus": data.paymentStatus ?? "Pending",
-        "operator": data.operator ?? "",
-        "logo": data.logo ?? "",
-        "availableBalance": data.availableBalance ?? "0",
+          "paymentStatus": data.paymentStatus ?? "Pending",
+          "operator": data.operator ?? "",
+          "logo": data.logo ?? "",
+          "availableBalance": data.availableBalance ?? "0",
 
-        // DON'T use failed report commission
-        "isFromTranactionPage": true,
-      },
-    );
+          // DON'T use failed report commission
+          "isFromTranactionPage": true,
+        },
+      );
+    }
   }
-}
 }

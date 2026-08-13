@@ -139,6 +139,7 @@ class AppPages {
             downloadusecase: sl(),
             checkOperatorUsecase: sl(),
             offerRechargeUsecase: sl(),
+            termusecase: sl()
           ),
 
           fenix: true,
@@ -368,6 +369,7 @@ class AppPages {
             downloadusecase: sl(),
             checkOperatorUsecase: sl(),
             offerRechargeUsecase: sl(),
+             termusecase: sl()
           ),
 
           fenix: true,
@@ -446,6 +448,7 @@ class AppPages {
             downloadusecase: sl(),
             checkOperatorUsecase: sl(),
             offerRechargeUsecase: sl(),
+             termusecase: sl()
           ),
 
           fenix: true,

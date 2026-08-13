@@ -35,14 +35,16 @@ class Code {
   String? name;
   String? logo;
   String? debitCommission;
+  String? commissiontype;
 
-  Code({this.productId, this.name, this.logo, this.debitCommission});
+  Code({this.productId, this.name, this.logo, this.debitCommission, this.commissiontype});
 
   Code.fromJson(Map<String, dynamic> json) {
     productId = json['product_id'];
     name = json['name'];
     logo = json['logo'];
     debitCommission = json['debit_commission'];
+    commissiontype = json['commission_type'];
   }
 
   Map<String, dynamic> toJson() {
@@ -51,6 +53,7 @@ class Code {
     data['name'] = name;
     data['logo'] = logo;
     data['debit_commission'] = debitCommission;
+    data['commission_type'] = commissiontype;
     return data;
   }
 }

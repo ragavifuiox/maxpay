@@ -25,7 +25,7 @@ class NetworkService extends GetxService {
       _checkInternet(result);
     });
 
-    // Initial check after UI builds
+   
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final results = await _connectivity.checkConnectivity();
       final result = results.isNotEmpty
@@ -38,26 +38,35 @@ class NetworkService extends GetxService {
     return this;
   }
 
-  // 🔍 Real internet check
+
   Future<bool> _hasInternet(ConnectivityResult result) async {
     if (result == ConnectivityResult.none) {
-      return false; // Fast fail if no physical connection
+      return false; 
     }
-    try {
-      final lookupResult = await InternetAddress.lookup(
-        'google.com',
-      ).timeout(const Duration(seconds: 3)); // Add timeout to prevent hanging
-      final hasNet =
-          lookupResult.isNotEmpty && lookupResult[0].rawAddress.isNotEmpty;
-      print("🌍 Internet check -> $hasNet");
-      return hasNet;
-    } catch (e) {
-      print("❌ Internet check failed -> $e");
-      return false;
+
+    for (int i = 0; i < 3; i++) {
+      try {
+        final lookupResult = await InternetAddress.lookup(
+          'google.com',
+        ).timeout(const Duration(seconds: 3));
+        final hasNet =
+            lookupResult.isNotEmpty && lookupResult[0].rawAddress.isNotEmpty;
+        if (hasNet) {
+          print("🌍 Internet check -> $hasNet");
+          return true;
+        }
+      } catch (e) {
+        print("❌ Internet check failed (attempt $i) -> $e");
+      }
+
+    
+      if (i < 2) {
+        await Future.delayed(const Duration(milliseconds: 500));
+      }
     }
+    return false;
   }
 
-  // 🚀 Main logic
   Future<void> checkInternetNow() async {
     final results = await _connectivity.checkConnectivity();
     final result = results.isNotEmpty ? results.first : ConnectivityResult.none;
@@ -84,8 +93,7 @@ class NetworkService extends GetxService {
         Get.toNamed(AppRoutes.noInternet);
       }
     }
-    // ✅ INTERNET RESTORED
-    else {
+   else {
       if (_isOffline) {
         _isOffline = false;
         print("✅ Internet Restored");

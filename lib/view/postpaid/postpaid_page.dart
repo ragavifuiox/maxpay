@@ -16,21 +16,18 @@ class PostpaidPage extends StatefulWidget {
   @override
   State<PostpaidPage> createState() => _PostPaidPageState();
 }
+
 final TextEditingController _mobileController = TextEditingController();
+
 class _PostPaidPageState extends State<PostpaidPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  String _selectedOperator = 'Jio';
-  Color _selectedOperatorColor = Colors.red;
+  String _selectedOperator = 'Select';
+  Color _selectedOperatorColor = Colors.transparent;
   bool _isPlanSelected = true;
   final bool _isPaymentReceived = false;
-bool _isReceived = true;
-  final List<Map<String, dynamic>> _operators = [
-    {'name': 'Jio', 'color': Colors.red},
-    {'name': 'Airtel', 'color': Colors.orange},
-    {'name': 'VI', 'color': Colors.redAccent},
-    {'name': 'BSNL', 'color': Colors.blue},
-  ];
+  bool _isReceived = true;
+  final List<Map<String, dynamic>> _operators = [];
 
   @override
   void initState() {
@@ -185,46 +182,40 @@ bool _isReceived = true;
                   borderRadius: BorderRadius.circular(10.r),
                 ),
                 child: TextField(
-  controller: _mobileController,
-  keyboardType: TextInputType.phone,
-  inputFormatters: [
-    FilteringTextInputFormatter.digitsOnly,
-  ],
-  onChanged: (_) => setState(() {}), // Refresh UI
-  style: TextStyle(
-    fontSize: 14.sp,
-    color: isDark ? Colors.white : Colors.black,
-  ),
-  decoration: InputDecoration(
-    hintText: 'Enter Mobile Number',
-    hintStyle: TextStyle(
-      color: Colors.grey,
-      fontSize: 14.sp,
-    ),
-    border: InputBorder.none,
-    contentPadding: EdgeInsets.symmetric(
-      horizontal: 16.w,
-      vertical: 12.h,
-    ),
-    suffixIcon: _mobileController.text.isNotEmpty
-        ? IconButton(
-            icon: Icon(
-              Icons.cancel,
-              color: Colors.red,
-              size: 20.sp,
-            ),
-            onPressed: () {
-              _mobileController.clear();
-              setState(() {});
-            },
-          )
-        : null,
-  ),
-),
+                  controller: _mobileController,
+                  keyboardType: TextInputType.phone,
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  onChanged: (_) => setState(() {}), // Refresh UI
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    color: isDark ? Colors.white : Colors.black,
+                  ),
+                  decoration: InputDecoration(
+                    hintText: 'Enter Mobile Number',
+                    hintStyle: TextStyle(color: Colors.grey, fontSize: 14.sp),
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 12.h,
+                    ),
+                    suffixIcon: _mobileController.text.isNotEmpty
+                        ? IconButton(
+                            icon: Icon(
+                              Icons.cancel,
+                              color: Colors.red,
+                              size: 20.sp,
+                            ),
+                            onPressed: () {
+                              _mobileController.clear();
+                              setState(() {});
+                            },
+                          )
+                        : null,
+                  ),
+                ),
               ),
               SizedBox(height: 15.h),
 
-          
               GestureDetector(
                 onTap: () => _showOperatorSelector(context),
                 child: Container(
@@ -357,23 +348,23 @@ bool _isReceived = true;
               SizedBox(height: 15.h),
 
               /// 🔹 PAYMENT RECEIVED CHECKBOX
-            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                _paymentOption(
-                                  label: 'Not Received',
-                                  color: Colors.red,
-                                  selected: !_isReceived,
-                                  onTap: () => setState(() => _isReceived = false),
-                                ),
-                                _paymentOption(
-                                  label: 'Received',
-                                  color: Colors.green,
-                                  selected: _isReceived,
-                                  onTap: () => setState(() => _isReceived = true),
-                                ),
-                              ],
-                            ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  _paymentOption(
+                    label: 'Not Received',
+                    color: Colors.red,
+                    selected: !_isReceived,
+                    onTap: () => setState(() => _isReceived = false),
+                  ),
+                  _paymentOption(
+                    label: 'Received',
+                    color: Colors.green,
+                    selected: _isReceived,
+                    onTap: () => setState(() => _isReceived = true),
+                  ),
+                ],
+              ),
               SizedBox(height: 20.h),
 
               /// 🔹 TABS
@@ -515,11 +506,10 @@ bool _isReceived = true;
                 ],
               ),
               GestureDetector(
-               
-                  onTap: () {
-  _showBillDetailsPopup(context);
-},
-              
+                onTap: () {
+                  _showBillDetailsPopup(context);
+                },
+
                 child: Container(
                   padding: EdgeInsets.symmetric(
                     horizontal: 16.w,
@@ -607,7 +597,6 @@ bool _isReceived = true;
     );
   }
 
-
   Widget _paymentOption({
     required String label,
     required Color color,
@@ -645,116 +634,113 @@ bool _isReceived = true;
       ),
     );
   }
+
   void _showBillDetailsPopup(BuildContext context) {
-  final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
-  showDialog(
-    context: context,
-    barrierDismissible: true,
-    builder: (context) {
-      return Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12.r),
-        ),
-        backgroundColor: Colors.transparent,
-        child: Stack(
-          clipBehavior: Clip.none,
-          children: [
-            Container(
-              padding: EdgeInsets.all(16.r),
-              decoration: BoxDecoration(
-                color: isDark ? AppColors.darkbgBlack : Colors.white,
-                borderRadius: BorderRadius.circular(12.r),
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _billRow("Customer Name", "John"),
-                  SizedBox(height: 10.h),
-                  _billRow("Customer ID", "#10011887"),
-                  SizedBox(height: 10.h),
-                  _billRow("Bill Number", "#10011887"),
-                  SizedBox(height: 10.h),
-                  _billRow("Bill Date", "11/12/2024"),
-                  SizedBox(height: 10.h),
-                  _billRow("Bill Due Date", "11/12/2025"),
-                  SizedBox(height: 10.h),
-                  _billRow("Amount", "₹ 10,000"),
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12.r),
+          ),
+          backgroundColor: Colors.transparent,
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              Container(
+                padding: EdgeInsets.all(16.r),
+                decoration: BoxDecoration(
+                  color: isDark ? AppColors.darkbgBlack : Colors.white,
+                  borderRadius: BorderRadius.circular(12.r),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _billRow("Customer Name", "John"),
+                    SizedBox(height: 10.h),
+                    _billRow("Customer ID", "#10011887"),
+                    SizedBox(height: 10.h),
+                    _billRow("Bill Number", "#10011887"),
+                    SizedBox(height: 10.h),
+                    _billRow("Bill Date", "11/12/2024"),
+                    SizedBox(height: 10.h),
+                    _billRow("Bill Due Date", "11/12/2025"),
+                    SizedBox(height: 10.h),
+                    _billRow("Amount", "₹ 10,000"),
 
-                  SizedBox(height: 20.h),
+                    SizedBox(height: 20.h),
 
-                  SizedBox(
-                    width: 130.w,
-                    height: 42.h,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.clrPrimary,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.r),
+                    SizedBox(
+                      width: 130.w,
+                      height: 42.h,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.clrPrimary,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.r),
+                          ),
+                        ),
+                        onPressed: () {
+                          Get.to(PostpaidConfirmTransactionPage());
+                        },
+                        child: const Text(
+                          "Next",
+                          style: TextStyle(color: Colors.white),
                         ),
                       ),
-                      onPressed: () {
-                       Get.to(PostpaidConfirmTransactionPage());
-
-                       
-                      },
-                      child: const Text(
-                        "Next",
-                        style: TextStyle(color: Colors.white),
-                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
 
-            Positioned(
-              top: -8,
-              right: -8,
-              child: GestureDetector(
-                onTap: () => Navigator.pop(context),
-                child: Container(
-                  padding: const EdgeInsets.all(2),
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.close,
-                    color: Colors.orange,
-                    size: 20,
+              Positioned(
+                top: -8,
+                right: -8,
+                child: GestureDetector(
+                  onTap: () => Navigator.pop(context),
+                  child: Container(
+                    padding: const EdgeInsets.all(2),
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.close,
+                      color: Colors.orange,
+                      size: 20,
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
-        ),
-      );
-    },
-  );
-}
-Widget _billRow(String title, String value) {
-  final isDark = Theme.of(context).brightness == Brightness.dark;
+            ],
+          ),
+        );
+      },
+    );
+  }
 
-  return Row(
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    children: [
-      Text(
-        title,
-        style: TextStyle(
-          fontSize: 13.sp,
-          color: Colors.grey,
+  Widget _billRow(String title, String value) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          title,
+          style: TextStyle(fontSize: 13.sp, color: Colors.grey),
         ),
-      ),
-      Text(
-        value,
-        style: TextStyle(
-          fontSize: 13.sp,
-          fontWeight: FontWeight.w600,
-          color: isDark ? Colors.white : Colors.black,
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: 13.sp,
+            fontWeight: FontWeight.w600,
+            color: isDark ? Colors.white : Colors.black,
+          ),
         ),
-      ),
-    ],
-  );
-}
+      ],
+    );
+  }
 }

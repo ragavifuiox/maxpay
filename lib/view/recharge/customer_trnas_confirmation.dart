@@ -11,6 +11,7 @@ import 'package:maxpay/global_widget/commom_button.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
 import 'package:maxpay/view/recharge/failed_recharge_page.dart';
 import 'package:maxpay/view/recharge/success_recharge_page.dart';
+import 'package:maxpay/view/recharge/pending_screen.dart';
 
 class CustomerTransConfirmationScreen extends GetView<PrePaidController> {
   CustomerTransConfirmationScreen({super.key});
@@ -93,7 +94,7 @@ class CustomerTransConfirmationScreen extends GetView<PrePaidController> {
 
                     _buildRow(
                       context,
-                      "Transaction Amount",
+                      "Amount",
                       (transactionAmount as String).currencyIndian,
                     ),
 
@@ -173,7 +174,41 @@ class CustomerTransConfirmationScreen extends GetView<PrePaidController> {
                               controller.rechargeResponse.value;
                           final apiData = rechargeData?.data?.apiResponse;
 
-                          if (success && rechargeData != null) {
+                          final actStatus =
+                              (rechargeData?.data?.recharge?.status ?? "")
+                                  .toLowerCase();
+
+                          if (actStatus == "pending" || actStatus == "peind") {
+                            Get.to(
+                              () => PendingScreen(
+                                rechargeId:
+                                    rechargeData?.data?.recharge?.id
+                                        ?.toString() ??
+                                    "",
+                                productName:
+                                    confirmData?.productName ?? productName,
+                                operatorLogo: apiData?.logo ?? operatorLogo,
+                                operatorInitial: productName.isNotEmpty
+                                    ? productName[0]
+                                    : "J",
+                                operatorColor: const Color(0xffD98200),
+                                transactionNo:
+                                    rechargeData?.data?.recharge?.mobile ??
+                                    mobileNumber,
+                                rechargeAmount:
+                                    (rechargeData?.data?.recharge?.amount ??
+                                            transactionAmount.toString())
+                                        .currencyIndian,
+                                transactionId:
+                                    rechargeData?.data?.recharge?.txnId ?? "",
+                                dateTime:
+                                    rechargeData?.data?.recharge?.requestTime ??
+                                    DateTime.now().toString(),
+                              ),
+                            );
+                          } else if (success &&
+                              rechargeData != null &&
+                              actStatus != "failed") {
                             Get.to(
                               () => SuccessRechargePage(
                                 rechargeId:
@@ -199,7 +234,7 @@ class CustomerTransConfirmationScreen extends GetView<PrePaidController> {
                                 dateTime:
                                     rechargeData.data?.recharge?.requestTime ??
                                     DateTime.now().toString(),
-                                    refId: rechargeData.data?.refId ?? "",
+                                refId: rechargeData.data?.recharge?.refid ?? "",
                               ),
                             );
                           } else {

@@ -77,6 +77,7 @@ class _MobileRechargePageState extends State<MobileRechargePage>
       AppLogger.logError(e.toString());
     }
     controller.getPlans(productid: widget.productId);
+    controller.fetchTerms();
   }
 
   Future<void> loadTabs() async {
@@ -105,7 +106,6 @@ class _MobileRechargePageState extends State<MobileRechargePage>
 
       controller.applyTabFilter();
 
-    
       _scrollToTop();
     });
 
@@ -146,7 +146,6 @@ class _MobileRechargePageState extends State<MobileRechargePage>
   }
 
   void _showInactiveDialog(BuildContext context, Data operator) {
-    
     showDialog(
       context: context,
       barrierDismissible: true,
@@ -1455,25 +1454,40 @@ class _MobileRechargePageState extends State<MobileRechargePage>
             "Terms",
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
-          content: const SingleChildScrollView(
-            child: Text('''
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+          content: SingleChildScrollView(
+  child: Obx(() {
+    if (controller.isLoading.value) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    final termsMessage =
+        controller.term.value?.data?.message ?? "Terms not available.";
 
-• Please verify the mobile number before proceeding.
+    final lines = termsMessage
+        .split('\n')
+        .where((e) => e.trim().isNotEmpty)
+        .toList();
 
-• Recharge once completed cannot be cancelled or refunded.
+    if (lines.isEmpty) {
+      return const Text("Terms not available.");
+    }
 
-• Ensure customer payment has been received before processing the recharge.
-
-• The operator is responsible for service activation and validity.
-
-• Network delays may occur during peak hours.
-
-• For any issues, please contact customer support.
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-            ''', style: TextStyle(fontSize: 14, height: 1.5)),
-          ),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: lines
+          .map(
+            (line) => Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Text(
+                line.bulletText,
+                style: const TextStyle(fontSize: 14, height: 1.5),
+              ),
+            ),
+          )
+          .toList(),
+    );
+  }),
+),
           actions: [
             ElevatedButton(
               style: ElevatedButton.styleFrom(

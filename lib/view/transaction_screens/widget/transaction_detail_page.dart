@@ -44,7 +44,7 @@ class TransactionDetailsPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 productRow(context, "Product Name", data.productLogo),
-
+                detailRow(context, "Product Ref. ID", data.refid ?? "-"),
                 detailRow(
                   context,
                   "Payment Status",

@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-
+import 'package:get/get.dart';
+import 'package:maxpay/core/services/network_service.dart';
 
 class NoInternetScreen extends StatefulWidget {
-  
-  
   const NoInternetScreen({super.key, this.onRetry});
   final Future<void> Function()? onRetry;
 
@@ -12,7 +11,6 @@ class NoInternetScreen extends StatefulWidget {
   @override
   State<NoInternetScreen> createState() => _NoInternetScreenState();
 }
-
 
 class _NoInternetScreenState extends State<NoInternetScreen>
     with TickerProviderStateMixin {
@@ -39,23 +37,31 @@ class _NoInternetScreenState extends State<NoInternetScreen>
 
     _waveAnimation = TweenSequence<double>([
       TweenSequenceItem(
-        tween: Tween(begin: 0.0, end: 0.35)
-            .chain(CurveTween(curve: Curves.easeInOut)),
+        tween: Tween(
+          begin: 0.0,
+          end: 0.35,
+        ).chain(CurveTween(curve: Curves.easeInOut)),
         weight: 25,
       ),
       TweenSequenceItem(
-        tween: Tween(begin: 0.35, end: -0.2)
-            .chain(CurveTween(curve: Curves.easeInOut)),
+        tween: Tween(
+          begin: 0.35,
+          end: -0.2,
+        ).chain(CurveTween(curve: Curves.easeInOut)),
         weight: 25,
       ),
       TweenSequenceItem(
-        tween: Tween(begin: -0.2, end: 0.2)
-            .chain(CurveTween(curve: Curves.easeInOut)),
+        tween: Tween(
+          begin: -0.2,
+          end: 0.2,
+        ).chain(CurveTween(curve: Curves.easeInOut)),
         weight: 25,
       ),
       TweenSequenceItem(
-        tween: Tween(begin: 0.2, end: 0.0)
-            .chain(CurveTween(curve: Curves.easeInOut)),
+        tween: Tween(
+          begin: 0.2,
+          end: 0.0,
+        ).chain(CurveTween(curve: Curves.easeInOut)),
         weight: 25,
       ),
     ]).animate(_waveController);
@@ -65,9 +71,10 @@ class _NoInternetScreenState extends State<NoInternetScreen>
       duration: const Duration(milliseconds: 1800),
     )..repeat();
 
-    _pulseAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _pulseController, curve: Curves.easeOut),
-    );
+    _pulseAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _pulseController, curve: Curves.easeOut));
 
     _entranceController = AnimationController(
       vsync: this,
@@ -79,12 +86,13 @@ class _NoInternetScreenState extends State<NoInternetScreen>
       curve: Curves.easeOut,
     );
 
-    _entranceSlide = Tween<Offset>(
-      begin: const Offset(0, 0.08),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(parent: _entranceController, curve: Curves.easeOutCubic),
-    );
+    _entranceSlide =
+        Tween<Offset>(begin: const Offset(0, 0.08), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _entranceController,
+            curve: Curves.easeOutCubic,
+          ),
+        );
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) _entranceController.forward();
@@ -105,6 +113,14 @@ class _NoInternetScreenState extends State<NoInternetScreen>
     if (widget.onRetry != null) {
       await widget.onRetry!();
     } else {
+      // Request a fresh check from the NetworkService
+      try {
+        final networkService = Get.find<NetworkService>();
+        await networkService.checkInternetNow();
+      } catch (e) {
+        debugPrint(e.toString());
+      }
+      // Add a small delay for the check to process and UI to react
       await Future.delayed(const Duration(milliseconds: 900));
     }
 
@@ -130,184 +146,185 @@ class _NoInternetScreenState extends State<NoInternetScreen>
                 child: SlideTransition(
                   position: _entranceSlide,
                   child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // ----- Box containing the toy hand + "no signal" badge -----
-                  Container(
-                    width: 170,
-                    height: 170,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(28),
-                      border: Border.all(
-                        color: themeColor.withOpacity(0.25),
-                        width: 1.4,
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: themeColor.withOpacity(0.12),
-                          blurRadius: 24,
-                          offset: const Offset(0, 10),
-                        ),
-                      ],
-                    ),
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        // Expanding pulse ring
-                        AnimatedBuilder(
-                          animation: _pulseAnimation,
-                          builder: (context, child) {
-                            final double scale =
-                                1.0 + (_pulseAnimation.value * 0.5);
-                            final double opacity =
-                                (1.0 - _pulseAnimation.value).clamp(0.0, 1.0);
-                            return Opacity(
-                              opacity: opacity * 0.35,
-                              child: Transform.scale(
-                                scale: scale,
-                                child: Container(
-                                  width: 120,
-                                  height: 120,
-                                  decoration: BoxDecoration(
-                                    color: themeColor.withOpacity(0.15),
-                                    shape: BoxShape.circle,
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                        Container(
-                          width: 120,
-                          height: 120,
-                          decoration: BoxDecoration(
-                            color: themeColor.withOpacity(0.08),
-                            shape: BoxShape.circle,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // ----- Box containing the toy hand + "no signal" badge -----
+                      Container(
+                        width: 170,
+                        height: 170,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(28),
+                          border: Border.all(
+                            color: themeColor.withOpacity(0.25),
+                            width: 1.4,
                           ),
-                        ),
-                    
-                        AnimatedBuilder(
-                          animation: _waveAnimation,
-                          builder: (context, child) {
-                            return Transform.rotate(
-                              angle: _waveAnimation.value,
-                              alignment: Alignment.bottomCenter,
-                              child: child,
-                            );
-                          },
-                          child: Icon(
-                            Icons.front_hand_rounded,
-                            size: 72,
-                            color: themeColor,
-                          ),
-                        ),
-                        Positioned(
-                          top: 16,
-                          right: 16,
-                          child: Container(
-                            padding: const EdgeInsets.all(6),
-                            decoration: const BoxDecoration(
-                              color: Colors.white,
-                              shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black12,
-                                  blurRadius: 6,
-                                  offset: Offset(0, 2),
-                                ),
-                              ],
+                          boxShadow: [
+                            BoxShadow(
+                              color: themeColor.withOpacity(0.12),
+                              blurRadius: 24,
+                              offset: const Offset(0, 10),
                             ),
-                            child: AnimatedBuilder(
-                              animation: _pulseController,
+                          ],
+                        ),
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            // Expanding pulse ring
+                            AnimatedBuilder(
+                              animation: _pulseAnimation,
                               builder: (context, child) {
-                                final double t = _pulseController.value;
-                              
-                                final double blink =
-                                    (0.55 + 0.45 * (1 - (2 * t - 1).abs()));
+                                final double scale =
+                                    1.0 + (_pulseAnimation.value * 0.5);
+                                final double opacity =
+                                    (1.0 - _pulseAnimation.value).clamp(
+                                      0.0,
+                                      1.0,
+                                    );
                                 return Opacity(
-                                  opacity: blink,
+                                  opacity: opacity * 0.35,
+                                  child: Transform.scale(
+                                    scale: scale,
+                                    child: Container(
+                                      width: 120,
+                                      height: 120,
+                                      decoration: BoxDecoration(
+                                        color: themeColor.withOpacity(0.15),
+                                        shape: BoxShape.circle,
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                            Container(
+                              width: 120,
+                              height: 120,
+                              decoration: BoxDecoration(
+                                color: themeColor.withOpacity(0.08),
+                                shape: BoxShape.circle,
+                              ),
+                            ),
+
+                            AnimatedBuilder(
+                              animation: _waveAnimation,
+                              builder: (context, child) {
+                                return Transform.rotate(
+                                  angle: _waveAnimation.value,
+                                  alignment: Alignment.bottomCenter,
                                   child: child,
                                 );
                               },
-
-
-
-
                               child: Icon(
-                                Icons.wifi_off_rounded,
-                                size: 20,
+                                Icons.front_hand_rounded,
+                                size: 72,
                                 color: themeColor,
                               ),
                             ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                            Positioned(
+                              top: 16,
+                              right: 16,
+                              child: Container(
+                                padding: const EdgeInsets.all(6),
+                                decoration: const BoxDecoration(
+                                  color: Colors.white,
+                                  shape: BoxShape.circle,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black12,
+                                      blurRadius: 6,
+                                      offset: Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: AnimatedBuilder(
+                                  animation: _pulseController,
+                                  builder: (context, child) {
+                                    final double t = _pulseController.value;
 
-                  const SizedBox(height: 28),
+                                    final double blink =
+                                        (0.55 + 0.45 * (1 - (2 * t - 1).abs()));
+                                    return Opacity(
+                                      opacity: blink,
+                                      child: child,
+                                    );
+                                  },
 
-                  const Text(
-                    'No Internet',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.black87,
-                    ),
-                  ),
-
-                  const SizedBox(height: 10),
-
-                  const Text(
-                    'No internet, please try again.',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.black54,
-                      height: 1.4,
-                    ),
-                  ),
-
-                  const SizedBox(height: 32),
-
-                  // ----- Retry button -----
-                  SizedBox(
-                    width: double.infinity,
-                    height: 48,
-                    child: ElevatedButton(
-                      onPressed: _isChecking ? null : _retryConnection,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: themeColor,
-                        disabledBackgroundColor: themeColor.withOpacity(0.6),
-                        foregroundColor: Colors.white,
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(999),
-                        ),
-                      ),
-                      child: _isChecking
-                          ? const SizedBox(
-                              width: 22,
-                              height: 22,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2.4,
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  Colors.white,
+                                  child: Icon(
+                                    Icons.wifi_off_rounded,
+                                    size: 20,
+                                    color: themeColor,
+                                  ),
                                 ),
                               ),
-                            )
-                          : const Text(
-                              'Try Again',
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w700,
-                              ),
                             ),
-                    ),
-                  ),
-                ],
+                          ],
+                        ),
+                      ),
+
+                      const SizedBox(height: 28),
+
+                      const Text(
+                        'No Internet',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.black87,
+                        ),
+                      ),
+
+                      const SizedBox(height: 10),
+
+                      // const Text(
+                      //   'No internet, please try again.',
+                      //   textAlign: TextAlign.center,
+                      //   style: TextStyle(
+                      //     fontSize: 14,
+                      //     color: Colors.black54,
+                      //     height: 1.4,
+                      //   ),
+                      // ),
+                      const SizedBox(height: 32),
+
+                      // ----- Retry button -----
+                      SizedBox(
+                        width: double.infinity,
+                        height: 48,
+                        child: ElevatedButton(
+                          onPressed: _isChecking ? null : _retryConnection,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: themeColor,
+                            disabledBackgroundColor: themeColor.withOpacity(
+                              0.6,
+                            ),
+                            foregroundColor: Colors.white,
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(999),
+                            ),
+                          ),
+                          child: _isChecking
+                              ? const SizedBox(
+                                  width: 22,
+                                  height: 22,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2.4,
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.white,
+                                    ),
+                                  ),
+                                )
+                              : const Text(
+                                  'Try Again',
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                        ),
+                      ),
+                    ],
                   ), // Column
                 ), // SlideTransition
               ), // FadeTransition

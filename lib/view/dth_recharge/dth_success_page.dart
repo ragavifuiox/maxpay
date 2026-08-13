@@ -32,6 +32,7 @@ class DthSuccessPage extends StatelessWidget {
   final String transactionNo;
   final String rechargeAmount;
   final String transactionId;
+  final String refid;
   final String dateTime;
   final String rechargeId;
   final String operatorLogo;
@@ -47,6 +48,7 @@ class DthSuccessPage extends StatelessWidget {
     required this.dateTime,
     required this.rechargeId,
     required this.operatorLogo,
+    required this.refid,
   });
 
   @override
@@ -261,7 +263,7 @@ class DthSuccessPage extends StatelessWidget {
     );
   }
 
-  Future<void> _captureAndSavePdf(
+  Future<void> _captureAndSaveImage(
     BuildContext context,
     dynamic profile,
     ScreenshotController screenshotController,
@@ -273,9 +275,9 @@ class DthSuccessPage extends StatelessWidget {
         child: Theme(
           data: Theme.of(context),
           child: Material(
-            color: Colors.white,
-            child: Center(
-              child: _buildReceiptContent(context, profile, true, null),
+            color: Colors.transparent,
+            child: Wrap(
+              children: [_buildReceiptContent(context, profile, true, null)],
             ),
           ),
         ),
@@ -288,18 +290,6 @@ class DthSuccessPage extends StatelessWidget {
         delay: const Duration(milliseconds: 200),
       );
 
-      final pdf = pw.Document();
-      final image = pw.MemoryImage(imageBytes);
-
-      pdf.addPage(
-        pw.Page(
-          pageFormat: PdfPageFormat.a4,
-          build: (pw.Context ctx) {
-            return pw.Center(child: pw.Image(image));
-          },
-        ),
-      );
-
       final directory = Directory("/storage/emulated/0/Download");
       if (!await directory.exists()) {
         await directory.create(recursive: true);
@@ -309,14 +299,13 @@ class DthSuccessPage extends StatelessWidget {
           ? rechargeId.replaceAll(RegExp(r'[^A-Za-z0-9_-]'), '_')
           : DateTime.now().millisecondsSinceEpoch.toString();
 
-      final savePath = "${directory.path}/Receipt_$safeId.pdf";
+      final savePath = "${directory.path}/Receipt_$safeId.png";
       final file = File(savePath);
-      await file.writeAsBytes(await pdf.save());
+      await file.writeAsBytes(imageBytes);
 
       CustomToast.success("Receipt saved to Downloads");
-      await OpenFile.open(savePath);
     } catch (e) {
-      CustomToast.error("Failed to generate PDF");
+      CustomToast.error("Failed to save receipt image: $e");
     }
   }
 
@@ -430,7 +419,7 @@ class DthSuccessPage extends StatelessWidget {
 
           _detailRow(context, "Product", productName),
 
-          _detailRow(context, "Product Ref.Id", transactionId),
+          _detailRow(context, "Product Ref.Id", refid),
 
           SizedBox(height: 12.h),
 
@@ -477,7 +466,7 @@ class DthSuccessPage extends StatelessWidget {
                     height: 42.h,
                     child: ElevatedButton(
                       onPressed: () {
-                        _captureAndSavePdf(
+                        _captureAndSaveImage(
                           context,
                           profile,
                           screenshotController,

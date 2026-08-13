@@ -77,8 +77,7 @@ class AssetImages {
   static const whatsapp = "assets/images/whatsapp.svg";
   static const successIcon = "assets/images/successs_icon1.svg";
   static const processIcon = "assets/images/process_icon1.svg";
-  static const bbps = "assets/images/bbps.svg";
- 
+  static const bbps = "assets/images/bbps_new.png";
   static const failedIcon = "assets/images/failed_icon1.svg";
   static const transfer = "assets/images/trnsaferred.svg";
 

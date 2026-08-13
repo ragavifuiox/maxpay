@@ -23,10 +23,12 @@ class TransferDetial extends StatefulWidget {
 class _TransferDetialState extends State<TransferDetial> {
   TransferFilterType? _selectedFilter;
   final String _searchQuery = "";
- final WalletTrnasferDetailController controller = Get.put(WalletTrnasferDetailController(walletTransferDetailUseCase: sl(), staffWalletReverseUsecase: sl()));
-
-
-  
+  final WalletTrnasferDetailController controller = Get.put(
+    WalletTrnasferDetailController(
+      walletTransferDetailUseCase: sl(),
+      staffWalletReverseUsecase: sl(),
+    ),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -41,93 +43,89 @@ class _TransferDetialState extends State<TransferDetial> {
         padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
         child: Column(
           children: [
-         TransferdetailFilter(
-  selectedFilter: _selectedFilter,
-  onFilterChanged: (value) {
-    setState(() {
-      _selectedFilter = value;
-    });
+            TransferdetailFilter(
+              selectedFilter: _selectedFilter,
+              onFilterChanged: (value) {
+                setState(() {
+                  _selectedFilter = value;
+                });
 
-    // update transaction type
-    controller.transactionType.value =
-        value == TransferFilterType.walletTransfer
-            ? "Wallet Transfer"
-            : "Wallet Reverse";
+                // update transaction type
+                controller.transactionType.value =
+                    value == TransferFilterType.walletTransfer
+                    ? "Wallet Transfer"
+                    : "Wallet Reverse";
 
-    // API call
-    controller.getWalletTransferDetail(
-      search: controller.search.value,
-      startDate: controller.fromDate,
-      endDate: controller.toDate,
-      transferType: controller.transactionType.value,
-    );
-  },
-  onSearchChanged: (value) {
-    controller.search.value = value;
+                // API call
+                controller.getWalletTransferDetail(
+                  search: controller.search.value,
+                  startDate: controller.fromDate,
+                  endDate: controller.toDate,
+                  transferType: controller.transactionType.value,
+                );
+              },
+              onSearchChanged: (value) {
+                controller.search.value = value;
 
-    controller.getWalletTransferDetail(
-      search: value,
-      startDate: controller.fromDate,
-      endDate: controller.toDate,
-      transferType: controller.transactionType.value,
-    );
-  },
-),
+                controller.getWalletTransferDetail(
+                  search: value,
+                  startDate: controller.fromDate,
+                  endDate: controller.toDate,
+                  transferType: controller.transactionType.value,
+                );
+              },
+            ),
 
             const SizedBox(height: 16),
 
-           
-           if (_selectedFilter != null) ...[
-  Obx(() => TransferSummaryCard(
-        filterType: controller.selectedFilter.value,
-        amount: controller.totalAmount.value,
-      )),
-  const SizedBox(height: 16),
-],
+            if (_selectedFilter != null) ...[
+              Obx(
+                () => TransferSummaryCard(
+                  filterType: controller.selectedFilter.value,
+                  amount: controller.totalAmount.value,
+                ),
+              ),
+              const SizedBox(height: 16),
+            ],
 
             Divider(color: AppColors.darktextclr.withValues(alpha: 0.5)),
 
             const SizedBox(height: 16),
 
-           Expanded(
-  child: Obx(() {
+            Expanded(
+              child: Obx(() {
+                if (controller.isLoading.value) {
+                  return const Center(child: CircularProgressIndicator());
+                }
 
-    if (controller.isLoading.value) {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
-    }
+                if (controller.transferList.isEmpty) {
+                  return const Center(child: Text("No Transactions Found"));
+                }
 
-   if (controller.transferList.isEmpty) {
-      return const Center(
-        child: Text("No Transactions Found"),
-      );
-    }
+                return ListView.builder(
+                  itemCount: controller.transferList.length,
+                  itemBuilder: (context, index) {
+                    final item = controller.transferList[index];
 
-    return ListView.builder(
-      itemCount: controller.transferList.length,
-      itemBuilder: (context, index) {
-
-  final item = controller.transferList[index];
-
-        return TransactionCard(
-          transaction: WalletTransaction(
-             id: item.id ?? 0,
-            transactionId: item.txnId ?? "",
-            dateTime: DateTime.parse(item.createdAt ?? ""),
-          type: item.paymentType == "Wallet Reverse"
-    ? TransferFilterType.reverse
-    : TransferFilterType.walletTransfer,
-            userType: item.userType ?? "",
-            userName: item.name ?? "",
-            regMobNo: item.mobileNumber ?? "",
-            amount: double.tryParse(item.amount ?? "0") ?? 0,
-          ),
-        );
-      },
-    );
-  }),
-)
+                    return TransactionCard(
+                      transaction: WalletTransaction(
+                        id: item.id ?? 0,
+                        transactionId: item.txnId ?? "",
+                        dateTime: DateTime.parse(item.createdAt ?? ""),
+                        type: item.paymentType == "Wallet Reverse"
+                            ? TransferFilterType.reverse
+                            : TransferFilterType.walletTransfer,
+                        userType: item.userType ?? "",
+                        userName: item.name ?? "",
+                        regMobNo: item.mobileNumber ?? "",
+                        amount: double.tryParse(item.amount ?? "0") ?? 0,
+                        status: item.status ?? "",
+                      ),
+                    );
+                  },
+                );
+              }),
+            ),
           ],
         ),
       ),

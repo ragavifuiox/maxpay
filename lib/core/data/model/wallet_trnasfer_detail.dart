@@ -71,6 +71,7 @@ class TransferHistory {
   String? userType;
   String? name;
   String? mobileNumber;
+  String? status;
 
   TransferHistory({
     this.id,
@@ -84,6 +85,7 @@ class TransferHistory {
     this.userType,
     this.name,
     this.mobileNumber,
+    this.status,
   });
 
   TransferHistory.fromJson(Map<String, dynamic> json) {
@@ -98,6 +100,7 @@ class TransferHistory {
     userType = json['user_type'];
     name = json['name'];
     mobileNumber = json['mobile_number'];
+    status = json['status'];
   }
 
   Map<String, dynamic> toJson() {
@@ -113,6 +116,7 @@ class TransferHistory {
       'user_type': userType,
       'name': name,
       'mobile_number': mobileNumber,
+      'status': status,
     };
   }
 

@@ -11,6 +11,7 @@ import 'package:maxpay/global_widget/commom_button.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
 import 'package:maxpay/view/dth_recharge/dth_failed_recharge_screen.dart';
 import 'package:maxpay/view/dth_recharge/dth_success_page.dart';
+import 'package:maxpay/view/dth_recharge/dth_pending_page.dart';
 
 class CustomerDthPage extends GetView<DthController> {
   CustomerDthPage({super.key});
@@ -94,11 +95,9 @@ class CustomerDthPage extends GetView<DthController> {
 
                     _buildRow(
                       context,
-                      "Transaction Amount",
+                      "Amount",
                       (transactionAmount as String).currencyIndian,
                     ),
-
-                    SizedBox(height: 14.h),
 
                     SizedBox(height: 14.h),
 
@@ -176,7 +175,36 @@ class CustomerDthPage extends GetView<DthController> {
                             final status =
                                 rechargeData.status?.toLowerCase() ?? "";
 
-                            if (success && status == "success") {
+                            if (status == "pending" || status == "peind") {
+                              Get.to(
+                                () => DthPendingPage(
+                                  rechargeId:
+                                      rechargeData.transactionId?.toString() ??
+                                      "",
+                                  productName:
+                                      confirmData?.productName ?? productName,
+                                  operatorLogo: operatorLogo,
+                                  operatorInitial: productName.isNotEmpty
+                                      ? productName[0]
+                                      : "J",
+                                  operatorColor: const Color(0xffD98200),
+                                  transactionNo:
+                                      apiData?.mobileNo ?? mobileNumber,
+                                  rechargeAmount:
+                                      (apiData?.amount?.toString() ??
+                                              transactionAmount)
+                                          .toString()
+                                          .currencyIndian,
+                                  transactionId:
+                                      rechargeData.transactionDetails?.txnId ??
+                                      apiData?.tnxId ??
+                                      "",
+                                  dateTime:
+                                      apiData?.rechargeDate ??
+                                      DateTime.now().toString(),
+                                ),
+                              );
+                            } else if (success && status != "failed") {
                               Get.to(
                                 () => DthSuccessPage(
                                   rechargeId:
@@ -205,7 +233,9 @@ class CustomerDthPage extends GetView<DthController> {
                                       rechargeData.transactionDetails?.txnId ??
                                       apiData?.tnxId ??
                                       "",
-
+                                  refid:
+                                      rechargeData.transactionDetails?.refid ??
+                                      "",
                                   dateTime:
                                       apiData?.rechargeDate ??
                                       DateTime.now().toString(),
@@ -240,6 +270,9 @@ class CustomerDthPage extends GetView<DthController> {
                                   dateTime:
                                       apiData?.rechargeDate ??
                                       DateTime.now().toString(),
+                                  refid:
+                                      rechargeData.transactionDetails?.refid ??
+                                      "",
                                 ),
                               );
                             }

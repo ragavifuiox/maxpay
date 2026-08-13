@@ -1,34 +1,33 @@
-// ignore_for_file: unused_local_variable
-
 import 'package:flutter/material.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:maxpay/controllers/earning_controller.dart';
-import 'package:maxpay/controllers/homepage_controller.dart';
+import 'package:maxpay/controllers/download_controller.dart';
 import 'package:maxpay/controllers/profile_controller.dart';
-import 'package:maxpay/controllers/refund_controller.dart';
+import 'package:maxpay/controllers/homepage_controller.dart';
+import 'package:maxpay/controllers/earning_controller.dart';
 import 'package:maxpay/controllers/transaction_report_controller.dart';
+import 'package:maxpay/controllers/refund_controller.dart';
 import 'package:maxpay/controllers/wallet_credit_controller.dart';
 import 'package:maxpay/core/constants/colors.dart';
+import 'package:maxpay/core/constants/extension.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/core/di/service_locator.dart';
 import 'package:maxpay/core/extensions/currency.dart';
 import 'package:maxpay/global_widget/commom_button.dart';
-import 'package:maxpay/core/constants/extension.dart';
 
-class DthFailedRechargeScreen extends StatelessWidget {
+class PendingScreen extends StatelessWidget {
   final String productName;
   final String operatorInitial;
   final Color operatorColor;
   final String transactionNo;
   final String rechargeAmount;
   final String transactionId;
-  final String refid;
   final String dateTime;
-  // final String operatorLogo; // image URL
+  final String operatorLogo; // image URL
+  final String rechargeId;
 
-  const DthFailedRechargeScreen({
+  const PendingScreen({
     super.key,
     required this.productName,
     required this.operatorInitial,
@@ -36,9 +35,9 @@ class DthFailedRechargeScreen extends StatelessWidget {
     required this.transactionNo,
     required this.rechargeAmount,
     required this.transactionId,
-    required this.refid,
     required this.dateTime,
-    // required this.operatorLogo,
+    required this.operatorLogo,
+    required this.rechargeId,
   });
 
   @override
@@ -52,18 +51,9 @@ class DthFailedRechargeScreen extends StatelessWidget {
         updateprofileotpusecase: sl(),
       ),
     );
-
-    final bool isMobileOrDTH =
-        productName.toLowerCase().contains('jio') ||
-        productName.toLowerCase().contains('airtel') ||
-        productName.toLowerCase().contains('vi') ||
-        productName.toLowerCase().contains('bsnl') ||
-        productName.toLowerCase().contains('tv') ||
-        productName.toLowerCase().contains('dish') ||
-        productName.toLowerCase().contains('tata') ||
-        productName.toLowerCase().contains('sun') ||
-        productName.toLowerCase().contains('videocon');
-
+    final DownloadController downloadController = Get.put(
+      DownloadController(downloadUseCase: sl()),
+    );
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
@@ -79,7 +69,7 @@ class DthFailedRechargeScreen extends StatelessWidget {
                   width: 100.w,
                   height: 100.w,
                   decoration: BoxDecoration(
-                    color: Colors.red.withValues(alpha: 0.2),
+                    color: AppColors.pending1,
                     shape: BoxShape.circle,
                   ),
                   child: Center(
@@ -87,11 +77,11 @@ class DthFailedRechargeScreen extends StatelessWidget {
                       width: 70.w,
                       height: 70.w,
                       decoration: const BoxDecoration(
-                        color: Colors.red,
+                        color: AppColors.pending1,
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
-                        Icons.close,
+                        Icons.pending,
                         color: Colors.white,
                         size: 40.sp,
                       ),
@@ -103,7 +93,7 @@ class DthFailedRechargeScreen extends StatelessWidget {
               SizedBox(height: 30.h),
 
               Text(
-                'Recharge Failed !!!',
+                'Recharge Pending !!!',
                 style: TextStyle(
                   color: isDark ? Colors.white : Colors.black,
                   fontSize: 18.sp,
@@ -125,20 +115,20 @@ class DthFailedRechargeScreen extends StatelessWidget {
                 ),
                 child: Column(
                   children: [
-                    //                    _buildSummaryRow(
-                    //   'Product',
-                    //   '',
-                    //   isIcon: true,
-                    //   imageUrl: operatorLogo,
-                    //   context: context,
-                    // ),
+                    _buildSummaryRow(
+                      'Product',
+                      '',
+                      isIcon: true,
+                      imageUrl: operatorLogo,
+                      context: context,
+                    ),
                     _buildSummaryRow(
                       'Transaction No',
                       transactionNo,
                       context: context,
                     ),
                     _buildSummaryRow(
-                      'Transaction Amount',
+                      'Recharge Amount',
                       rechargeAmount,
                       context: context,
                     ),
@@ -148,7 +138,6 @@ class DthFailedRechargeScreen extends StatelessWidget {
                       formatTransactionDate(dateTime),
                       context: context,
                     ),
-
                     SizedBox(height: 10.h),
                   ],
                 ),
@@ -214,6 +203,9 @@ class DthFailedRechargeScreen extends StatelessWidget {
     ProfileController profileController,
   ) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final DownloadController downloadController = Get.put(
+      DownloadController(downloadUseCase: sl()),
+    );
 
     showDialog(
       context: context,
@@ -300,13 +292,14 @@ class DthFailedRechargeScreen extends StatelessWidget {
                   _detailRow(
                     context,
                     "Transaction Amount",
-                    (rechargeAmount).currencyIndian,
+                    rechargeAmount.currencyIndian,
                   ),
 
                   _detailRow(context, "Product Type", "Mobile Prepaid"),
 
-                  // _logoRow("Product", operatorLogo, context),
-                  _detailRow(context, "Product Ref Id", refid),
+                  _logoRow("Product", operatorLogo, context),
+
+                  _detailRow(context, "Product Ref Id", transactionId),
 
                   SizedBox(height: 10.h),
 
@@ -348,7 +341,9 @@ class DthFailedRechargeScreen extends StatelessWidget {
                         child: SizedBox(
                           height: 42.h,
                           child: ElevatedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              downloadController.downloadReceipt(rechargeId);
+                            },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.red,
                               elevation: 0,
@@ -449,6 +444,15 @@ class DthFailedRechargeScreen extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  String _receiptFileName() {
+    final id = rechargeId.isNotEmpty
+        ? rechargeId
+        : DateTime.now().millisecondsSinceEpoch.toString();
+    final safeId = id.replaceAll(RegExp(r'[^A-Za-z0-9_-]'), '_');
+
+    return "Receipt_$safeId.pdf";
   }
 
   Widget _buildSummaryRow(

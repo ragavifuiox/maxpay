@@ -80,9 +80,7 @@ class SettingsPage extends StatelessWidget {
             actions: [
               InkWell(
                 onTap: () {
-                  Share.share(
-                    'http://139.59.91.7/test_paylinkonline.in/public/retailer/login',
-                  );
+                  Share.share('https://paylinkonline.in/admin@303391/login');
                 },
                 child: Container(
                   margin: EdgeInsets.only(right: 8.w),
@@ -154,9 +152,14 @@ class SettingsPage extends StatelessWidget {
                     Get.toNamed(AppRoutes.kyc);
                   }, SvgPicture.asset(AssetImages.kyc, width: 24.w)),
 
-                   _buildMenuTile(context, 'Bank Details', () {
-                    Get.toNamed(AppRoutes.bank);
-                  }, SvgPicture.asset(AssetImages.cashback, width: 24.w)),
+                  _buildMenuTile(
+                    context,
+                    'Bank Details',
+                    () {
+                      Get.toNamed(AppRoutes.bank);
+                    },
+                    SvgPicture.asset(AssetImages.cashback, width: 24.w),
+                  ),
                   _buildMenuTile(
                     context,
                     'Update M-Pin',
@@ -250,7 +253,7 @@ class SettingsPage extends StatelessWidget {
                   // ),
 
                   /// 🔹 LOGOUT BUTTONS
-                  /// 
+                  ///
                   Padding(
                     padding: EdgeInsets.symmetric(
                       horizontal: 20.w,

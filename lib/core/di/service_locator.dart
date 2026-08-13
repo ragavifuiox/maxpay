@@ -56,6 +56,7 @@ import 'package:maxpay/core/data/repsoitory/statement_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/submit_dispute_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/tabdetail_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/today_credit_repo_impl.dart';
+import 'package:maxpay/core/data/repsoitory/terms_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/today_transaction_repo_imppl.dart';
 import 'package:maxpay/core/data/repsoitory/total_transaction_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/trans_confirm_repo_impl.dart';
@@ -133,6 +134,7 @@ import 'package:maxpay/core/domain/repository/submit_dsipute_repository.dart';
 import 'package:maxpay/core/domain/repository/support_repository.dart';
 import 'package:maxpay/core/domain/repository/tab_detail_repository.dart';
 import 'package:maxpay/core/domain/repository/today_credit_repository.dart';
+import 'package:maxpay/core/domain/repository/terms_repository.dart';
 import 'package:maxpay/core/domain/repository/today_trnsaction_repsoitory.dart';
 import 'package:maxpay/core/domain/repository/total_transaction_repository.dart';
 import 'package:maxpay/core/domain/repository/trans_confirm_repository.dart';
@@ -209,6 +211,7 @@ import 'package:maxpay/core/domain/usecase/statment_usecase.dart';
 import 'package:maxpay/core/domain/usecase/submit_dispute_usecase.dart';
 import 'package:maxpay/core/domain/usecase/tab_detail_usecase.dart';
 import 'package:maxpay/core/domain/usecase/today_credit_usecase.dart';
+import 'package:maxpay/core/domain/usecase/terms_usecase.dart';
 import 'package:maxpay/core/domain/usecase/today_trnsaction_usecase.dart';
 import 'package:maxpay/core/domain/usecase/total_transaction_usecase.dart';
 import 'package:maxpay/core/domain/usecase/trans_confirm_usecase.dart';
@@ -264,7 +267,6 @@ Future<void> initDependencies() async {
     () => TodayTransactionRepoImppl(sl()),
   );
 
-  
   sl.registerLazySingleton<CheckOperatorRepository>(
     () => CheckOperatorRepoImpl(sl()),
   );
@@ -392,6 +394,7 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton<TodayCreditRepository>(
     () => TodayCreditRepoImpl(sl()),
   );
+  sl.registerLazySingleton<TermsRepository>(() => TermsRepoImpl(sl()));
   sl.registerLazySingleton<CustomerInfoRepository>(
     () => CustomerInfoRepoImpl(sl()),
   );
@@ -555,6 +558,7 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton<WalletCreateQrUsecase>(
     () => WalletCreateQrUsecase(sl()),
   );
+  sl.registerLazySingleton<TermsUsecase>(() => TermsUsecase(sl()));
   sl.registerLazySingleton<TodayCreditUsecase>(() => TodayCreditUsecase(sl()));
   // sl.registerLazySingleton<GetPrivacyPolicyUseCase>(
   //   () => GetPrivacyPolicyUseCase(sl()),

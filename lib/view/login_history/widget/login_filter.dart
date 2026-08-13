@@ -155,7 +155,7 @@ class LoginFilterwidget extends GetView<LoginHistoryController> {
                       ),
                     ),
                   ),
-                  hintText: "Search (Mobile / City / IP Address / Network)",
+                  hintText: "Search",
                   hintStyle: TextHelper.max1.copyWith(
                     color: isDark ? AppColors.textclr : AppColors.clrTextgrey,
                   ),

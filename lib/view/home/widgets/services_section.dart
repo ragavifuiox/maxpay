@@ -4,223 +4,110 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
+
 import 'package:maxpay/controllers/banner_controller.dart';
 import 'package:maxpay/controllers/homepage_controller.dart';
 import 'package:maxpay/controllers/menu_controlller.dart';
 import 'package:maxpay/controllers/transaction_report_controller.dart';
+
 import 'package:maxpay/core/constants/asset_images.dart';
 import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/core/di/service_locator.dart';
 import 'package:maxpay/core/extensions/currency.dart';
+import 'package:maxpay/core/constants/extension.dart';
+
 import 'package:maxpay/view/broadband/broad_band_page.dart';
 import 'package:maxpay/view/cabletv/cable_tv_page.dart';
-import 'package:maxpay/view/dth_refresh/dth_refresh_page.dart';
 import 'package:maxpay/view/electricity_bill/electricity_bill_page.dart';
 import 'package:maxpay/view/fastag_recharge/fastag_recharge_page.dart';
 import 'package:maxpay/view/gas_bill/gas_bill_page.dart';
 import 'package:maxpay/view/home/widgets/home_header.dart';
-import 'package:maxpay/core/constants/extension.dart';
 import 'package:maxpay/view/landline/landline_bill_page.dart';
 import 'package:maxpay/view/postpaid/postpaid_page.dart';
 import 'package:maxpay/view/transaction_screens/transaction_success_screen.dart';
 import 'package:maxpay/view/water/watter_bill.dart';
+
+import '../../../core/data/model/advertisement_model.dart' hide Data;
 import '../../../core/data/model/product_type.dart';
 
 class MenuScreen extends StatelessWidget {
   MenuScreen({super.key});
 
+  // ============================================================
+  // CONTROLLERS
+  // ============================================================
+
   final ServiceController controller = Get.put(
-    ServiceController(productTypeUseCase: sl(), todayTrnsactionUsecase: sl()),
+    ServiceController(
+      productTypeUseCase: sl(),
+      todayTrnsactionUsecase: sl(),
+    ),
   );
-  final HomePageController homeController = Get.find<HomePageController>();
+
+  final HomePageController homeController =
+      Get.find<HomePageController>();
+
   final BannerController bannerController = Get.put(
-    BannerController(bannerUsecase: sl(), advusecase: sl()),
+    BannerController(
+      bannerUsecase: sl(),
+      advusecase: sl(),
+    ),
   );
+
   final TransReportController transReportController = Get.put(
     TransReportController(
       cashbackTypeUsecase: sl(),
       transreportUsecase: sl(),
       producttypeUseCase: sl(),
       submitDisputeUsecase: sl(),
-
       totalTransactionUsecase: sl(),
     ),
   );
 
+  // ============================================================
+  // REFRESH
+  // ============================================================
+
   Future<void> _refreshPage() async {
     await Future.wait([
       controller.fetchProductTypes(),
-      controller.fetchtodaytrnas(),
-      homeController.fetchWalletBalance(),
-      bannerController.fetchbanner(),
-      bannerController.fetchadv(),
     ]);
   }
 
-  String _toImageUrl(String? path) {
-    if (path == null || path.isEmpty) return "";
+  // ============================================================
+  // IMAGE URL
+  // ============================================================
 
-    String formattedPath = path.replaceAll(' ', '%20');
+  String _toImageUrl(String? path) {
+    if (path == null || path.trim().isEmpty) {
+      return "";
+    }
+
+    final formattedPath = path.trim().replaceAll(' ', '%20');
 
     if (formattedPath.startsWith("http://") ||
         formattedPath.startsWith("https://")) {
       return formattedPath;
     }
+
     return formattedPath.addToBase();
   }
 
-  Widget _imageLoadingPlaceholder({
-    double? height,
-    double? width,
-    BorderRadius? borderRadius,
-  }) {
-    return Container(
-      height: height,
-      width: width ?? double.infinity,
-      decoration: BoxDecoration(
-        color: AppColors.clrPrimary,
-        borderRadius: borderRadius ?? BorderRadius.circular(16.r),
-      ),
-      child: Center(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.w),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                "Image Loading ...",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 20.sp,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(width: 16.w),
-              // ✅ SVG loading icon — replace AssetImages.loadingImage with
-              // your actual svg asset key/path (also add it in AssetImages
-              // and register it under `assets:` in pubspec.yaml).
-              SvgPicture.asset(
-                AssetImages.loadingImage,
-                width: 34.w,
-                height: 34.w,
-                colorFilter: const ColorFilter.mode(
-                  Colors.white,
-                  BlendMode.srcIn,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+  // ============================================================
+  // CHECK VALID AD
+  // ============================================================
+
+  bool _hasValidAd(Advertisements ad) {
+    final displayImage = ad.displayImage?.trim() ?? "";
+    final adImage = ad.adImage?.trim() ?? "";
+
+    return displayImage.isNotEmpty || adImage.isNotEmpty;
   }
 
-  /// ✅ PLACEHOLDER — shown when there is no advertisement/display image
-  Widget _adPlaceholder({
-    double? height,
-    double? width,
-    BorderRadius? borderRadius,
-  }) {
-    return Container(
-      height: height,
-      width: width ?? double.infinity,
-      decoration: BoxDecoration(
-        color: AppColors.clrPrimary,
-        borderRadius: borderRadius ?? BorderRadius.circular(16.r),
-      ),
-      child: Center(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.w),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Your AD Here",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20.sp,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(height: 4.h),
-                  Text(
-                    "Please Contact",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(width: 16.w),
-              // ✅ SVG "no ad" icon — replace AssetImages.adPlaceholderImage
-              // with your actual svg asset key/path (also add it in
-              // AssetImages and register it under `assets:` in pubspec.yaml).
-              SvgPicture.asset(
-                AssetImages.loadingImage,
-                width: 34.w,
-                height: 34.w,
-                colorFilter: const ColorFilter.mode(
-                  Colors.white,
-                  BlendMode.srcIn,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  /// ✅ Wraps Image.network with a loading placeholder + graceful fallback
-  /// to the "Your Ad Here" placeholder if the url is empty or fails to load.
-  Widget _networkImageWithStates({
-    required String imageUrl,
-    required double height,
-    BorderRadius? borderRadius,
-    bool isAdSlot = false,
-  }) {
-    if (imageUrl.isEmpty) {
-      return isAdSlot
-          ? _adPlaceholder(height: height, borderRadius: borderRadius)
-          : _imageLoadingPlaceholder(
-              height: height,
-              borderRadius: borderRadius,
-            );
-    }
-
-    return Image.network(
-      imageUrl,
-      fit: BoxFit.cover,
-      width: double.infinity,
-      height: height,
-      loadingBuilder: (context, child, loadingProgress) {
-        if (loadingProgress == null) return child;
-        return _imageLoadingPlaceholder(
-          height: height,
-          borderRadius: borderRadius,
-        );
-      },
-      errorBuilder: (_, __, ___) => isAdSlot
-          ? _adPlaceholder(height: height, borderRadius: borderRadius)
-          : Container(
-              height: height,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: Colors.grey.shade300,
-                borderRadius: borderRadius ?? BorderRadius.circular(16.r),
-              ),
-              child: const Icon(Icons.broken_image),
-            ),
-    );
-  }
+  // ============================================================
+  // BUILD
+  // ============================================================
 
   @override
   Widget build(BuildContext context) {
@@ -234,11 +121,18 @@ class MenuScreen extends StatelessWidget {
       backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: Obx(() {
+          // ======================================================
+          // PRODUCT LOADING
+          // ======================================================
+
           if (controller.isProductLoading.value) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
           }
 
-          final productList = controller.productTypeData.value?.data ?? [];
+          final productList =
+              controller.productTypeData.value?.data ?? [];
 
           return RefreshIndicator(
             onRefresh: _refreshPage,
@@ -246,6 +140,10 @@ class MenuScreen extends StatelessWidget {
               physics: const AlwaysScrollableScrollPhysics(),
               child: Column(
                 children: [
+                  // ==================================================
+                  // HEADER
+                  // ==================================================
+
                   const HomeHeaderSection(),
 
                   Padding(
@@ -256,13 +154,19 @@ class MenuScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        /// WALLET CARD
+                        // ==================================================
+                        // WALLET
+                        // ==================================================
+
                         Container(
                           width: double.infinity,
-                          padding: EdgeInsets.symmetric(vertical: 18.h),
+                          padding: EdgeInsets.symmetric(
+                            vertical: 18.h,
+                          ),
                           decoration: BoxDecoration(
                             color: AppColors.clrPrimary,
-                            borderRadius: BorderRadius.circular(14.r),
+                            borderRadius:
+                                BorderRadius.circular(14.r),
                           ),
                           child: Column(
                             children: [
@@ -276,11 +180,15 @@ class MenuScreen extends StatelessWidget {
                               ),
                               SizedBox(height: 6.h),
                               Obx(() {
-                                final balance = Get.find<HomePageController>()
-                                    .walletBalance
-                                    .value;
+                                final balance =
+                                    Get.find<HomePageController>()
+                                        .walletBalance
+                                        .value;
+
                                 return Text(
-                                  balance?.data?.balance
+                                  balance
+                                          ?.data
+                                          ?.balance
                                           ?.toString()
                                           .currencyIndian ??
                                       '0.00',
@@ -297,94 +205,118 @@ class MenuScreen extends StatelessWidget {
 
                         SizedBox(height: 16.h),
 
-                        /// TOP BANNER
+                        // ==================================================
+                        // TOP BANNER
+                        // ==================================================
+
                         Obx(() {
                           final list =
-                              bannerController.bannerData.value?.data ?? [];
+                              bannerController
+                                      .bannerData
+                                      .value
+                                      ?.data ??
+                                  [];
 
                           if (bannerController.isLoading.value) {
                             return const Center(
                               child: CircularProgressIndicator(),
                             );
                           }
-                          if (list.isEmpty) return const SizedBox.shrink();
 
-                          return Column(
-                            children: [
-                              SizedBox(
-                                height: 150.h,
-                                width: double.infinity,
-                                child: Stack(
-                                  children: [
-                                    // 1. VISUAL LAYER (Fading Animation)
-                                    Obx(() {
-                                      final currentIndex =
-                                          bannerController.currentIndex.value;
-                                      final list =
-                                          bannerController
+                          if (list.isEmpty) {
+                            return const SizedBox.shrink();
+                          }
+
+                          return SizedBox(
+                            height: 150.h,
+                            width: double.infinity,
+                            child: Stack(
+                              children: [
+                                Obx(() {
+                                  final currentIndex =
+                                      bannerController
+                                          .currentIndex
+                                          .value;
+
+                                  final currentList =
+                                      bannerController
                                               .bannerData
                                               .value
                                               ?.data ??
                                           [];
 
-                                      if (list.isEmpty)
-                                        return const SizedBox.shrink();
+                                  if (currentList.isEmpty) {
+                                    return const SizedBox.shrink();
+                                  }
 
-                                      final imageUrl = _toImageUrl(
-                                        list[currentIndex].image,
-                                      );
+                                  if (currentIndex >=
+                                      currentList.length) {
+                                    return const SizedBox.shrink();
+                                  }
 
-                                      return AnimatedSwitcher(
-                                        duration: const Duration(
-                                          milliseconds: 600,
-                                        ),
-                                        transitionBuilder: (child, animation) {
-                                          return FadeTransition(
-                                            opacity: animation,
-                                            child: child,
-                                          );
-                                        },
-                                        child: ClipRRect(
-                                          key: ValueKey<int>(currentIndex),
-                                          borderRadius: BorderRadius.circular(
-                                            16.r,
-                                          ),
-                                          child: _networkImageWithStates(
-                                            imageUrl: imageUrl,
-                                            height: 150.h,
-                                            borderRadius: BorderRadius.circular(
-                                              16.r,
-                                            ),
-                                          ),
-                                        ),
-                                      );
-                                    }),
+                                  final imageUrl = _toImageUrl(
+                                    currentList[currentIndex].image,
+                                  );
 
-                                    // 2. GESTURE LAYER (Native PageView)
-                                    // This intercepts swipe gestures correctly without interfering with vertical scroll
-                                    PageView.builder(
-                                      controller:
-                                          bannerController.pageController,
-                                      itemCount: list.length,
-                                      onPageChanged: (index) {
-                                        bannerController.currentIndex.value =
-                                            index;
-                                        bannerController
-                                            .startAutoSlide(); // Reset timer on manual swipe
-                                      },
-                                      itemBuilder: (context, index) {
-                                        // Invisible widget to capture gestures
-                                        return const SizedBox.expand();
-                                      },
+                                  if (imageUrl.isEmpty) {
+                                    return const SizedBox.shrink();
+                                  }
+
+                                  return AnimatedSwitcher(
+                                    duration: const Duration(
+                                      milliseconds: 600,
                                     ),
-                                  ],
+                                    child: ClipRRect(
+                                      key: ValueKey(currentIndex),
+                                      borderRadius:
+                                          BorderRadius.circular(16.r),
+                                      child: Image.network(
+                                        imageUrl,
+                                        fit: BoxFit.cover,
+                                        width: double.infinity,
+                                        height: 150.h,
+                                        errorBuilder:
+                                            (
+                                              context,
+                                              error,
+                                              stackTrace,
+                                            ) {
+                                          return const SizedBox.shrink();
+                                        },
+                                      ),
+                                    ),
+                                  );
+                                }),
+
+                                PageView.builder(
+                                  controller: bannerController
+                                      .pageController,
+                                  itemCount: list.length,
+                                  onPageChanged: (index) {
+                                    bannerController
+                                        .currentIndex
+                                        .value = index;
+
+                                    bannerController.startAutoSlide();
+                                  },
+                                  itemBuilder: (
+                                    context,
+                                    index,
+                                  ) {
+                                    return const SizedBox.expand();
+                                  },
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           );
                         }),
 
                         SizedBox(height: 10.h),
+
+                        // ==================================================
+                        // TRANSACTION TITLE
+                        // ==================================================
+
                         Row(
                           children: [
                             Expanded(
@@ -393,6 +325,7 @@ class MenuScreen extends StatelessWidget {
                                 thickness: 1.2,
                               ),
                             ),
+                            SizedBox(width: 8.w),
                             Text(
                               "No of Today Transations",
                               style: TextStyle(
@@ -407,9 +340,13 @@ class MenuScreen extends StatelessWidget {
 
                         const SizedBox(height: 12),
 
-                        /// STATUS CARDS
+                        // ==================================================
+                        // TRANSACTION CARDS
+                        // ==================================================
+
                         Obx(() {
-                          final transaction = controller.todaytrans.value?.data;
+                          final transaction =
+                              controller.todaytrans.value?.data;
 
                           return Row(
                             children: [
@@ -418,55 +355,63 @@ class MenuScreen extends StatelessWidget {
                                   onTap: () {
                                     Get.to(
                                       () => const TransactionScreen(
-                                        status: TransactionStatus.success,
+                                        status:
+                                            TransactionStatus.success,
                                       ),
                                     );
                                   },
                                   child: _statusCard(
-                                    image: AssetImages.successIcon,
-                                    value: "${transaction?.successCount ?? 0}",
-                                    bgColor: const Color(0xffC0FFDF),
-                                    textColor: const Color(0xff22C55E),
+                                    image:
+                                        AssetImages.successIcon,
+                                    value:
+                                        "${transaction?.successCount ?? 0}",
+                                    bgColor:
+                                        const Color(0xffC0FFDF),
+                                    textColor:
+                                        const Color(0xff22C55E),
                                   ),
                                 ),
                               ),
-
                               SizedBox(width: 12.w),
-
                               Expanded(
                                 child: InkWell(
                                   onTap: () {
                                     Get.to(
                                       () => const TransactionScreen(
-                                        status: TransactionStatus.pending,
+                                        status:
+                                            TransactionStatus.pending,
                                       ),
                                     );
                                   },
                                   child: _statusCard(
-                                    image: AssetImages.processIcon,
+                                    image:
+                                        AssetImages.processIcon,
                                     value:
                                         "${transaction?.processingCount ?? 0}",
-                                    bgColor: const Color(0xffFFE1B4),
+                                    bgColor:
+                                        const Color(0xffFFE1B4),
                                     textColor: Colors.orange,
                                   ),
                                 ),
                               ),
-
                               SizedBox(width: 12.w),
-
                               Expanded(
                                 child: InkWell(
                                   onTap: () {
                                     Get.to(
                                       () => const TransactionScreen(
-                                        status: TransactionStatus.failed,
+                                        status:
+                                            TransactionStatus.failed,
                                       ),
                                     );
                                   },
                                   child: _statusCard(
-                                    image: AssetImages.failedIcon,
-                                    value: "${transaction?.failedCount ?? 0}",
-                                    bgColor: const Color(0xffFFCCD3),
+                                    image:
+                                        AssetImages.failedIcon,
+                                    value:
+                                        "${transaction?.failedCount ?? 0}",
+                                    bgColor:
+                                        const Color(0xffFFCCD3),
                                     textColor: Colors.red,
                                   ),
                                 ),
@@ -477,7 +422,10 @@ class MenuScreen extends StatelessWidget {
 
                         SizedBox(height: 18.h),
 
-                        /// SERVICES TITLE
+                        // ==================================================
+                        // SERVICES TITLE
+                        // ==================================================
+
                         Row(
                           children: [
                             Text(
@@ -500,24 +448,83 @@ class MenuScreen extends StatelessWidget {
 
                         SizedBox(height: 16.h),
 
-                        /// ✅ LAYOUT: icon rows + 2 ad slots.
-                        /// Ad slots always occupy the same position — when the
-                        /// backend returns no ad/display image, the slot shows
-                        /// the "Your Ad Here" placeholder instead of an image.
-                        Obx(() {
-                          final advList =
-                              bannerController
-                                  .advdata
-                                  .value
-                                  ?.data
-                                  ?.advertisements ??
-                              [];
+                        // ==================================================
+                        // ADVERTISEMENT + SERVICES
+                        // ==================================================
 
-                          return _buildLayoutWithAds(
+                        Obx(() {
+                          final allAds =
+                              bannerController
+                                      .advdata
+                                      .value
+                                      ?.data
+                                      ?.advertisements ??
+                                  [];
+
+                          log("================================");
+                          log("ADVERTISEMENT DATA");
+                          log("TOTAL ADS : ${allAds.length}");
+
+                          for (final ad in allAds) {
+                            log("--------------------------------");
+                            log(
+                              "imageScreen : ${ad.imageScreen}",
+                            );
+                            log(
+                              "displayImage : ${ad.displayImage}",
+                            );
+                            log("adImage : ${ad.adImage}");
+                          }
+
+                          // ==================================================
+                          // FILTER VALID ADS
+                          // ==================================================
+
+                          final validAds =
+                              allAds.where(_hasValidAd).toList();
+
+                          // ==================================================
+                          // IMPORTANT:
+                          // KEEP ALL UP ADS
+                          // KEEP ALL DOWN ADS
+                          // ==================================================
+
+                          final List<Advertisements> upAds = [];
+
+                          final List<Advertisements> downAds = [];
+
+                          for (final ad in validAds) {
+                            final screen =
+                                (ad.imageScreen ?? "")
+                                    .trim()
+                                    .toLowerCase();
+
+                            if (screen == "up") {
+                              upAds.add(ad);
+                            }
+
+                            if (screen == "down") {
+                              downAds.add(ad);
+                            }
+                          }
+
+                          log(
+                            "TOTAL UP ADS : ${upAds.length}",
+                          );
+
+                          log(
+                            "TOTAL DOWN ADS : ${downAds.length}",
+                          );
+
+                          // ==================================================
+                          // BUILD SERVICES
+                          // ==================================================
+
+                          return _buildServicesWithAdSlots(
                             context,
                             productList,
-                            advList,
-                            bannerController.currentAdvIndex.value,
+                            upAds,
+                            downAds,
                           );
                         }),
 
@@ -534,184 +541,510 @@ class MenuScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildLayoutWithAds(
+  // ============================================================
+  // SERVICES + AD SLOTS
+  // ============================================================
+
+  Widget _buildServicesWithAdSlots(
     BuildContext context,
     List<Data> productList,
-    List advList,
-    int currentIndex,
+    List<Advertisements> upAds,
+    List<Advertisements> downAds,
   ) {
-    // ✅ No early return here anymore — the icon grid + ad slots must render
-    // even when advList is empty. The two slots below just fall back to the
-    // "Your Ad Here" placeholder when there's no data/image for them.
-    if (productList.isEmpty) {
-      return Center(
-        child: Padding(
-          padding: EdgeInsets.all(20.h),
-          child: Text(
-            "No services found",
-            style: TextStyle(fontSize: 14.sp, color: Colors.grey),
-          ),
-        ),
-      );
-    }
-
-    // Use current index to animate ads. Ad 1 gets current index, Ad 2 gets the prior index
-    // so they are usually different if there's more than 1 ad.
-    final ad1Index = advList.isEmpty ? 0 : currentIndex % advList.length;
-    final ad2Index = advList.isEmpty ? 0 : (currentIndex + 1) % advList.length;
-
-    final adImageUrl1 = advList.isEmpty
-        ? ""
-        : _toImageUrl(advList[ad1Index].displayImage);
-    final adImageUrl2 = advList.isEmpty
-        ? ""
-        : _toImageUrl(advList[ad2Index].adImage);
-
     return Column(
       children: [
-        /// ROW 1: icons 0,1,2,3
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            if (productList.isNotEmpty)
-              _dynamicServiceItem(context, productList[0], 0),
-            if (productList.length > 1)
-              _dynamicServiceItem(context, productList[1], 1),
-            if (productList.length > 2)
-              _dynamicServiceItem(context, productList[2], 2),
-            if (productList.length > 3)
-              _dynamicServiceItem(context, productList[3], 3),
-          ],
+        // ========================================================
+        // FIRST 4 SERVICES
+        // ========================================================
+
+        _buildFirstFourServices(
+          context,
+          productList,
         ),
 
-        SizedBox(height: 20.h),
+        SizedBox(height: 18.h),
 
-        /// ROW 2: icons 4,5 + CENTER AD
+        // ========================================================
+        // UP SLOT
+        //
+        // SERVICE LEFT
+        // AD RIGHT
+        // ========================================================
+
         Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment:
+              CrossAxisAlignment.start,
           children: [
             Column(
               children: [
                 if (productList.length > 4)
-                  _dynamicServiceItem(context, productList[4], 4),
+                  _dynamicServiceItem(
+                    context,
+                    productList[4],
+                    4,
+                  ),
+
                 if (productList.length > 5)
-                  _dynamicServiceItem(context, productList[5], 5),
+                  _dynamicServiceItem(
+                    context,
+                    productList[5],
+                    5,
+                  ),
               ],
             ),
+
             SizedBox(width: 12.w),
 
             Expanded(
-              child: InkWell(
-                onTap: adImageUrl1.isEmpty
-                    ? null
-                    : () {
-                        final urls = advList
-                            .map((e) => _toImageUrl(e.displayImage))
-                            .toList();
-                        _showFullImage(context, urls, ad1Index);
-                      },
-                child: SizedBox(
-                  height: 160.h,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(16.r),
-                    child: AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 600),
-                      transitionBuilder: (child, animation) =>
-                          FadeTransition(opacity: animation, child: child),
-                      child: KeyedSubtree(
-                        key: ValueKey<String>(adImageUrl1),
-                        child: _networkImageWithStates(
-                          imageUrl: adImageUrl1,
-                          height: 160.h,
-                          borderRadius: BorderRadius.circular(16.r),
-                          isAdSlot: true,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+              child: upAds.isNotEmpty
+                  ? _buildAdCarousel(
+                      context,
+                      upAds,
+                      "UP",
+                    )
+                  : _buildPlaceholderCard(),
             ),
-          ],
-        ),
-
-        SizedBox(height: 10.h),
-
-        /// ROW 3: icons 6,7,8,9
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            if (productList.length > 6)
-              _dynamicServiceItem(context, productList[6], 6),
-            if (productList.length > 7)
-              _dynamicServiceItem(context, productList[7], 7),
-            if (productList.length > 8)
-              _dynamicServiceItem(context, productList[8], 8),
-            if (productList.length > 9)
-              _dynamicServiceItem(context, productList[9], 9),
           ],
         ),
 
         SizedBox(height: 18.h),
 
-        /// ROW 4: LEFT AD + icons 11,10
+        // ========================================================
+        // NEXT 4 SERVICES
+        // ========================================================
+
+        _buildFourServicesAt(
+          context,
+          productList,
+          6,
+        ),
+
+        SizedBox(height: 18.h),
+
+        // ========================================================
+        // DOWN SLOT
+        //
+        // AD LEFT
+        // SERVICE RIGHT
+        //
+        // IMPORTANT:
+        // DON'T HIDE THE SLOT WHEN PRODUCT 10/11 IS MISSING
+        // ========================================================
+
         Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment:
+              CrossAxisAlignment.start,
           children: [
             Expanded(
-              child: InkWell(
-                onTap: adImageUrl2.isEmpty
-                    ? null
-                    : () {
-                        final urls = advList
-                            .map((e) => _toImageUrl(e.adImage))
-                            .toList();
-                        _showFullImage(context, urls, ad2Index);
-                      },
-                child: SizedBox(
-                  height: 160.h,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(16.r),
-                    child: AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 600),
-                      transitionBuilder: (child, animation) =>
-                          FadeTransition(opacity: animation, child: child),
-                      child: KeyedSubtree(
-                        key: ValueKey<String>(adImageUrl2),
-                        child: _networkImageWithStates(
-                          imageUrl: adImageUrl2,
-                          height: 160.h,
-                          borderRadius: BorderRadius.circular(16.r),
-                          isAdSlot: true,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+              child: downAds.isNotEmpty
+                  ? _buildAdCarousel(
+                      context,
+                      downAds,
+                      "DOWN",
+                    )
+                  : _buildPlaceholderCard(),
             ),
+
             SizedBox(width: 12.w),
+
             Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (productList.length > 11)
-                  _dynamicServiceItem(context, productList[11], 11),
                 if (productList.length > 10)
-                  _dynamicServiceItem(context, productList[10], 10),
+                  _dynamicServiceItem(
+                    context,
+                    productList[10],
+                    10,
+                  ),
+
+                if (productList.length > 11)
+                  _dynamicServiceItem(
+                    context,
+                    productList[11],
+                    11,
+                  ),
               ],
             ),
           ],
         ),
+
+        SizedBox(height: 18.h),
+
+        // ========================================================
+        // REMAINING SERVICES
+        // ========================================================
+
+        _buildRemainingServices(
+          context,
+          productList,
+          12,
+        ),
       ],
     );
   }
+
+  // ============================================================
+  // AD CAROUSEL
+  //
+  // ALL BACKEND ADS WILL BE SHOWN HERE
+  //
+  // USER CAN SWIPE LEFT / RIGHT
+  //
+  // DISPLAY IMAGE IS SHOWN
+  //
+  // CLICK DISPLAY IMAGE
+  // -> OPEN CORRESPONDING AD IMAGE
+  // ============================================================
+
+  Widget _buildAdCarousel(
+    BuildContext context,
+    List<Advertisements> ads,
+    String position,
+  ) {
+    if (ads.isEmpty) {
+      return _buildPlaceholderCard();
+    }
+
+    return SizedBox(
+      height: 160.h,
+      width: double.infinity,
+      child: Stack(
+        children: [
+          // ======================================================
+          // PAGE VIEW
+          // ======================================================
+
+          PageView.builder(
+            itemCount: ads.length,
+
+            // ==================================================
+            // HORIZONTAL SWIPE
+            // ==================================================
+
+            scrollDirection: Axis.horizontal,
+
+            itemBuilder: (
+              context,
+              index,
+            ) {
+              final ad = ads[index];
+
+              final displayImage =
+                  (ad.displayImage ?? "").trim();
+
+              final adImage =
+                  (ad.adImage ?? "").trim();
+
+              // ==================================================
+              // DISPLAY IMAGE PRIORITY
+              //
+              // displayImage first
+              // if empty use adImage
+              // ==================================================
+
+              final image = displayImage.isNotEmpty
+                  ? displayImage
+                  : adImage;
+
+              if (image.isEmpty) {
+                return _buildPlaceholderCard();
+              }
+
+              final imageUrl = _toImageUrl(image);
+
+              if (imageUrl.isEmpty) {
+                return _buildPlaceholderCard();
+              }
+
+              log(
+                "$position AD [$index] DISPLAY : $imageUrl",
+              );
+
+              return InkWell(
+                borderRadius:
+                    BorderRadius.circular(8.r),
+
+                // ==================================================
+                // CLICK CURRENT AD
+                // ==================================================
+
+                onTap: () {
+                  // ================================================
+                  // OPEN CURRENT AD'S adImage
+                  // ================================================
+
+                  if (adImage.isEmpty) {
+                    log(
+                      "$position AD [$index] has no adImage",
+                    );
+                    return;
+                  }
+
+                  final fullImageUrl =
+                      _toImageUrl(adImage);
+
+                  if (fullImageUrl.isEmpty) {
+                    return;
+                  }
+
+                  log(
+                    "$position AD [$index] OPEN : $fullImageUrl",
+                  );
+
+                  _showFullImage(
+                    context,
+                    [fullImageUrl],
+                    0,
+                  );
+                },
+
+                child: ClipRRect(
+                  borderRadius:
+                      BorderRadius.circular(8.r),
+                  child: Image.network(
+                    imageUrl,
+                    width: double.infinity,
+                    height: 160.h,
+                    fit: BoxFit.cover,
+
+                    // ==================================================
+                    // IMAGE ERROR
+                    // ==================================================
+
+                    errorBuilder: (
+                      context,
+                      error,
+                      stackTrace,
+                    ) {
+                      log(
+                        "$position AD [$index] ERROR : $error",
+                      );
+
+                      return _buildPlaceholderCard();
+                    },
+                  ),
+                ),
+              );
+            },
+          ),
+        if (ads.length > 1)
+            Positioned(
+              bottom: 8.h,
+              left: 0,
+              right: 0,
+              child: IgnorePointer(
+                child: Row(
+                  mainAxisAlignment:
+                      MainAxisAlignment.center,
+                  children: List.generate(
+                    ads.length,
+                    (index) {
+                      return Container(
+                        width: 6.w,
+                        height: 6.w,
+                        margin: EdgeInsets.symmetric(
+                          horizontal: 3.w,
+                        ),
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white,
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ),
+          ],
+      ),
+    );
+  }
+
+  // ============================================================
+  // PLACEHOLDER
+  // ============================================================
+
+  Widget _buildPlaceholderCard() {
+    return Container(
+      height: 160.h,
+      width: double.infinity,
+      padding: EdgeInsets.symmetric(
+        horizontal: 16.w,
+      ),
+      decoration: BoxDecoration(
+        color: AppColors.clrPrimary,
+        borderRadius:
+            BorderRadius.circular(12.r),
+      ),
+      child: Row(
+        mainAxisAlignment:
+            MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            crossAxisAlignment:
+                CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                "Your AD Here",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 17.sp,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 4.h),
+              Text(
+                "Please Contact",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 12.sp,
+                ),
+              ),
+            ],
+          ),
+          Container(
+            width: 22.w,
+            height: 22.w,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: Colors.white,
+                width: 1.5,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ============================================================
+  // FIRST 4 SERVICES
+  // ============================================================
+
+  Widget _buildFirstFourServices(
+    BuildContext context,
+    List<Data> productList,
+  ) {
+    return Row(
+      mainAxisAlignment:
+          MainAxisAlignment.spaceBetween,
+      children: [
+        if (productList.length > 0)
+          _dynamicServiceItem(
+            context,
+            productList[0],
+            0,
+          ),
+        if (productList.length > 1)
+          _dynamicServiceItem(
+            context,
+            productList[1],
+            1,
+          ),
+        if (productList.length > 2)
+          _dynamicServiceItem(
+            context,
+            productList[2],
+            2,
+          ),
+        if (productList.length > 3)
+          _dynamicServiceItem(
+            context,
+            productList[3],
+            3,
+          ),
+      ],
+    );
+  }
+
+  // ============================================================
+  // FOUR SERVICES
+  // ============================================================
+
+  Widget _buildFourServicesAt(
+    BuildContext context,
+    List<Data> productList,
+    int startIndex,
+  ) {
+    if (productList.length <= startIndex) {
+      return const SizedBox.shrink();
+    }
+
+    return Row(
+      mainAxisAlignment:
+          MainAxisAlignment.spaceBetween,
+      children: [
+        for (
+          int i = startIndex;
+          i < startIndex + 4 &&
+              i < productList.length;
+          i++
+        )
+          _dynamicServiceItem(
+            context,
+            productList[i],
+            i,
+          ),
+      ],
+    );
+  }
+
+  // ============================================================
+  // REMAINING SERVICES
+  // ============================================================
+
+  Widget _buildRemainingServices(
+    BuildContext context,
+    List<Data> productList,
+    int startIndex,
+  ) {
+    if (productList.length <= startIndex) {
+      return const SizedBox.shrink();
+    }
+
+    return GridView.builder(
+      shrinkWrap: true,
+      physics:
+          const NeverScrollableScrollPhysics(),
+      itemCount:
+          productList.length - startIndex,
+      gridDelegate:
+          SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 4,
+        mainAxisSpacing: 16.h,
+        crossAxisSpacing: 8.w,
+        childAspectRatio: 0.75,
+      ),
+      itemBuilder: (
+        context,
+        index,
+      ) {
+        final actualIndex =
+            startIndex + index;
+
+        return _dynamicServiceItem(
+          context,
+          productList[actualIndex],
+          actualIndex,
+        );
+      },
+    );
+  }
+
+  // ============================================================
+  // FULL IMAGE
+  // ============================================================
 
   void _showFullImage(
     BuildContext context,
     List<String> imageUrls,
     int initialIndex,
   ) {
-    final PageController controller = PageController(initialPage: initialIndex);
+    final pageController =
+        PageController(
+      initialPage: initialIndex,
+    );
 
     showDialog(
       context: context,
@@ -723,23 +1056,32 @@ class MenuScreen extends StatelessWidget {
             child: Stack(
               children: [
                 PageView.builder(
-                  controller: controller,
-                  itemCount: imageUrls.length,
-                  itemBuilder: (context, index) {
-                    final imageUrl = imageUrls[index];
-
+                  controller:
+                      pageController,
+                  itemCount:
+                      imageUrls.length,
+                  itemBuilder: (
+                    context,
+                    index,
+                  ) {
                     return InteractiveViewer(
                       child: Center(
-                        child: Image.network(imageUrl, fit: BoxFit.contain),
+                        child: Image.network(
+                          imageUrls[index],
+                          fit: BoxFit.contain,
+                        ),
                       ),
                     );
                   },
                 ),
+
                 Positioned(
                   top: 20,
                   right: 20,
                   child: IconButton(
-                    onPressed: () => Get.back(),
+                    onPressed: () {
+                      Get.back();
+                    },
                     icon: const Icon(
                       Icons.close,
                       color: Colors.white,
@@ -755,172 +1097,212 @@ class MenuScreen extends StatelessWidget {
     );
   }
 
-  Widget _dynamicServiceItem(BuildContext context, Data item, [int index = 0]) {
+  // ============================================================
+  // SERVICE ITEM
+  // ============================================================
+
+  Widget _dynamicServiceItem(
+    BuildContext context,
+    Data item, [
+    int index = 0,
+  ]) {
     return _serviceItem(
       context,
       item.name ?? "",
       _getImage(item.name ?? ""),
-      _getBgColor(item.name ?? ""),
-      onTap: () => _handleNavigation(item),
+      [
+        AppColors.box1,
+        AppColors.box2,
+        AppColors.box3,
+        AppColors.box4,
+      ][index % 4],
+      onTap: () {
+        _handleNavigation(item);
+      },
     );
   }
 
- Widget _serviceItem(
-  BuildContext context,
-  String title,
-  String image,
-  Color bgColor, {
-  VoidCallback? onTap,
-}) {
-  final theme = Theme.of(context);
+  // ============================================================
+  // SERVICE UI
+  // ============================================================
 
-  String displayTitle = title;
+  Widget _serviceItem(
+    BuildContext context,
+    String title,
+    String image,
+    Color bgColor, {
+    VoidCallback? onTap,
+  }) {
+    final theme =
+        Theme.of(context);
 
-  if (title.toLowerCase() == "payment status") {
-    displayTitle = "Payment\nStatus";
-  } else if (title.toLowerCase() == "bbps") {
-    displayTitle = "BBPS";
-  }
+    String displayTitle = title;
 
-  return Material(
-    color: Colors.transparent,
-    child: InkWell(
-      borderRadius: BorderRadius.circular(14.r),
-      onTap: onTap,
-      child: Padding(
-        padding: EdgeInsets.all(4.w),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 56.w,
-              height: 56.w,
-              padding: EdgeInsets.all(4.w),
-              decoration: BoxDecoration(
-                color: bgColor,
-                borderRadius: BorderRadius.circular(14.r),
-              ),
-              child: Center(
-                child: SvgPicture.asset(
-                  image,
-                  fit: BoxFit.contain,
+    if (title.toLowerCase() ==
+        "payment status") {
+      displayTitle =
+          "Payment\nStatus";
+    } else if (title.toLowerCase() ==
+        "bbps") {
+      displayTitle = "BBPS";
+    }
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius:
+            BorderRadius.circular(14.r),
+        onTap: onTap,
+        child: Padding(
+          padding:
+              EdgeInsets.all(4.w),
+          child: Column(
+            mainAxisSize:
+                MainAxisSize.min,
+            children: [
+              Container(
+                width: 56.w,
+                height: 56.w,
+                padding: EdgeInsets.all(
+                  displayTitle == "BBPS"
+                      ? 12.w
+                      : 4.w,
+                ),
+                decoration:
+                    BoxDecoration(
+                  color: bgColor,
+                  borderRadius:
+                      BorderRadius.circular(
+                    14.r,
+                  ),
+                ),
+                child: Center(
+                  child: image
+                          .toLowerCase()
+                          .endsWith(
+                            '.svg',
+                          )
+                      ? SvgPicture.asset(
+                          image,
+                          fit: BoxFit.contain,
+                        )
+                      : Image.asset(
+                          image,
+                          fit: BoxFit.contain,
+                        ),
                 ),
               ),
-            ),
-
-            SizedBox(height: 4.h),
-
-            SizedBox(
-              width: 70.w,
-              child: Text(
-                displayTitle,
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                overflow: TextOverflow.visible,
-                style: TextStyle(
-                  fontSize: 11.sp,
-                  fontWeight: FontWeight.w500,
-                  color: theme.colorScheme.onSurface,
+              SizedBox(height: 4.h),
+              SizedBox(
+                width: 70.w,
+                child: Text(
+                  displayTitle,
+                  textAlign:
+                      TextAlign.center,
+                  maxLines: 2,
+                  overflow:
+                      TextOverflow.visible,
+                  style: TextStyle(
+                    fontSize: 11.sp,
+                    fontWeight:
+                        FontWeight.w500,
+                    color: theme
+                        .colorScheme
+                        .onSurface,
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
-    ),
-  );
-}
-
-  /// ✅ Normalizes product names so matching is consistent everywhere
-  /// (strips spaces/dashes, lowercases) — "Cable TV", "CableTV", "cable-tv"
-  /// all become "cabletv".
-  String _normalize(String name) =>
-      name.toLowerCase().replaceAll(RegExp(r'[\s\-]+'), '');
- String _getImage(String name) {
-  switch (_normalize(name)) {
-    case 'prepaid':
-      return AssetImages.prepaid;
-
-    case 'postpaid':
-      return AssetImages.prepaid;
-
-    case 'dth':
-      return AssetImages.dth;
-
-    case 'fastag':
-      return AssetImages.fastag;
-
-    case 'gas':
-      return AssetImages.gas;
-
-    case 'electricity':
-      return AssetImages.promoFrame;
-
-    case 'water':
-      return AssetImages.water;
-
-    case 'landline':
-      return AssetImages.landline;
-
-    case 'broadband':
-      return AssetImages.broadband;
-
-    case 'cabletv':
-      return AssetImages.cable;
-
-    case 'paymentstatus':
-      return AssetImages.paymentStatus;
-
-    case 'bbps':
-      return AssetImages.bbps;
-
-    default:
-      return AssetImages.prepaid;
+    );
   }
-}
 
- Color _getBgColor(String name) {
-  switch (_normalize(name)) {
-    case 'prepaid':
-      return AppColors.box1;
-    case 'postpaid':
-      return AppColors.box3;
-    case 'dth':
-      return AppColors.box2;
-    case 'fastag':
-      return AppColors.box2;
-    case 'gas':
-      return const Color.fromRGBO(255, 225, 180, 1);
-    case 'electricity':
-      return AppColors.box4;
-    case 'water':
-      return AppColors.box3;
-    case 'landline':
-      return AppColors.box2;
-    case 'broadband':
-      return AppColors.box3;
-    case 'cabletv':
-      return AppColors.box4;
+  // ============================================================
+  // NORMALIZE
+  // ============================================================
 
-    // BBPS
-    case 'bbps':
-      return AppColors.box3;
-
-    default:
-      return AppColors.box1;
+  String _normalize(
+    String name,
+  ) {
+    return name
+        .toLowerCase()
+        .replaceAll(
+          RegExp(r'[\s\-]+'),
+          '',
+        );
   }
-}
 
-  void _handleNavigation(Data item) {
-    final key = _normalize(item.name ?? "");
+  // ============================================================
+  // SERVICE IMAGE
+  // ============================================================
+
+  String _getImage(
+    String name,
+  ) {
+    switch (_normalize(name)) {
+      case 'prepaid':
+        return AssetImages.prepaid;
+
+      case 'postpaid':
+        return AssetImages.prepaid;
+
+      case 'dth':
+        return AssetImages.dth;
+
+      case 'fastag':
+        return AssetImages.fastag;
+
+      case 'gas':
+        return AssetImages.gas;
+
+      case 'electricity':
+        return AssetImages.promoFrame;
+
+      case 'water':
+        return AssetImages.water;
+
+      case 'landline':
+        return AssetImages.landline;
+
+      case 'broadband':
+        return AssetImages.broadband;
+
+      case 'cabletv':
+        return AssetImages.cable;
+
+      case 'paymentstatus':
+      case 'pstatus':
+        return AssetImages.paymentStatus;
+
+      case 'bbps':
+        return AssetImages.bbps;
+
+      default:
+        return AssetImages.prepaid;
+    }
+  }
+
+  // ============================================================
+  // NAVIGATION
+  // ============================================================
+
+  void _handleNavigation(
+    Data item,
+  ) {
+    final key =
+        _normalize(item.name ?? "");
 
     switch (key) {
       case 'prepaid':
         Get.toNamed(
           AppRoutes.prepaid,
           arguments: {
-            "productId": item.id.toString(),
-            "productName": item.name ?? "",
+            "productId":
+                item.id.toString(),
+            "productName":
+                item.name ?? "",
           },
         );
         break;
@@ -929,8 +1311,10 @@ class MenuScreen extends StatelessWidget {
         Get.toNamed(
           AppRoutes.dth,
           arguments: {
-            "productId": item.id.toString(),
-            "productName": item.name ?? "",
+            "productId":
+                item.id.toString(),
+            "productName":
+                item.name ?? "",
           },
         );
         break;
@@ -939,55 +1323,80 @@ class MenuScreen extends StatelessWidget {
         Get.toNamed(
           AppRoutes.paymentstatus,
           arguments: {
-            "productId": item.id.toString(),
-            "productName": item.name ?? "",
+            "productId":
+                item.id.toString(),
+            "productName":
+                item.name ?? "",
           },
         );
         break;
 
       case 'fastag':
-        Get.to(() => const FastagRechargePage());
+        Get.to(
+          () =>
+              const FastagRechargePage(),
+        );
         break;
 
       case 'water':
-        Get.to(() => const WatterBill());
-        break;
-      case '':
-        Get.to(() => const WatterBill());
+        Get.to(
+          () => const WatterBill(),
+        );
         break;
 
       case 'gas':
-        Get.to(() => const GasBillPage());
+        Get.to(
+          () => const GasBillPage(),
+        );
         break;
 
       case 'electricity':
-        Get.to(() => const ElectricityBillPage());
+        Get.to(
+          () =>
+              const ElectricityBillPage(),
+        );
         break;
 
       case 'broadband':
-        Get.to(() => const BroadBandPage());
+        Get.to(
+          () =>
+              const BroadBandPage(),
+        );
         break;
 
-      case 'cabletv': // ✅ fixed — was 'cable tv'
-        Get.to(() => const CableTvPage());
+      case 'cabletv':
+        Get.to(
+          () => const CableTvPage(),
+        );
         break;
 
-      case 'postpaid': // ✅ fixed — was 'cable tv'
-        Get.to(() => const PostpaidPage());
+      case 'postpaid':
+        Get.to(
+          () => const PostpaidPage(),
+        );
         break;
-     case 'bbps':
-  
-  // Get.to(() => const BbspPage());
-  break;
 
-      case 'landline': // ✅ fixed — now catches both spellings
-        Get.to(() => const LandlineBillPage());
+      case 'bbps':
         break;
+
+      case 'landline':
+        Get.to(
+          () =>
+              const LandlineBillPage(),
+        );
+        break;
+
       default:
-        log("No navigation mapped for product: ${item.name}");
+        log(
+          "No navigation mapped for product: ${item.name}",
+        );
         break;
     }
   }
+
+  // ============================================================
+  // STATUS CARD
+  // ============================================================
 
   Widget _statusCard({
     required String image,
@@ -997,24 +1406,35 @@ class MenuScreen extends StatelessWidget {
   }) {
     return Container(
       height: 52.h,
-      decoration: BoxDecoration(
+      decoration:
+          BoxDecoration(
         color: bgColor,
-        borderRadius: BorderRadius.circular(12.r),
+        borderRadius:
+            BorderRadius.circular(
+          12.r,
+        ),
         border: Border.all(
-          color: AppColors.clrPrimary, // Same border color for all cards
+          color:
+              AppColors.clrPrimary,
           width: 2,
         ),
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment:
+            MainAxisAlignment.center,
         children: [
-          SvgPicture.asset(image, width: 24.w, height: 24.h),
+          SvgPicture.asset(
+            image,
+            width: 24.w,
+            height: 24.h,
+          ),
           SizedBox(width: 8.w),
           Text(
             value,
             style: TextStyle(
               fontSize: 19.sp,
-              fontWeight: FontWeight.bold,
+              fontWeight:
+                  FontWeight.bold,
               color: textColor,
             ),
           ),
