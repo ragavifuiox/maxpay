@@ -80,7 +80,7 @@ class SettingsPage extends StatelessWidget {
             actions: [
               InkWell(
                 onTap: () {
-                  Share.share('https://paylinkonline.in/admin@303391/login');
+                  Share.share('https://paylinkonline.in/retailer/login');
                 },
                 child: Container(
                   margin: EdgeInsets.only(right: 8.w),

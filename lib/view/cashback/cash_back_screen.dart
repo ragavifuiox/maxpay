@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:maxpay/controllers/cash_back_controller.dart';
 import 'package:maxpay/core/data/model/payment_product_model.dart';
 import 'package:maxpay/core/constants/colors.dart';
-
 import 'package:maxpay/core/utils/texthelper.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
 
@@ -49,9 +48,7 @@ class CashbackScreen extends GetView<CashbackController> {
                       ),
                     ),
                   ),
-
                   const SizedBox(height: 8),
-
                   Container(
                     height: 52,
                     padding: const EdgeInsets.symmetric(horizontal: 14),
@@ -72,7 +69,7 @@ class CashbackScreen extends GetView<CashbackController> {
                           isExpanded: true,
                           hint: Text(
                             controller.selectedProductName.value.isEmpty
-                                ? "Select "
+                                ? "Select"
                                 : controller.selectedProductName.value,
                             style: TextHelper.max2.copyWith(
                               color: theme.colorScheme.onSurface,
@@ -82,14 +79,13 @@ class CashbackScreen extends GetView<CashbackController> {
                             Icons.keyboard_arrow_down,
                             color: theme.colorScheme.onSurface,
                           ),
-                          items:
-                              controller.allPlan.value?.data
+                          items: controller.allPlan.value?.data
                                   ?.map(
-                                    (item) =>
-                                        DropdownMenuItem<CashbackProductData>(
-                                          value: item,
-                                          child: Text(item.name ?? ''),
-                                        ),
+                                    (item) => DropdownMenuItem<
+                                        CashbackProductData>(
+                                      value: item,
+                                      child: Text(item.name ?? ''),
+                                    ),
                                   )
                                   .toList() ??
                               [],
@@ -102,8 +98,8 @@ class CashbackScreen extends GetView<CashbackController> {
                             controller.selectedProductType.value =
                                 value.name ?? '';
 
-                            controller.selectedProductId.value = value.id
-                                .toString();
+                            controller.selectedProductId.value =
+                                value.id.toString();
 
                             controller.fetchCashback(value.id.toString());
                           },
@@ -120,18 +116,24 @@ class CashbackScreen extends GetView<CashbackController> {
             Expanded(
               child: Obx(() {
                 if (controller.isLoading.value) {
-                  return const Center(child: CircularProgressIndicator());
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
                 }
 
-                final cashbackList = controller.cashBack.value?.code ?? [];
+                final cashbackList =
+                    controller.cashBack.value?.code ?? [];
 
                 if (cashbackList.isEmpty) {
-                  return const Center(child: Text("Select Product Type"));
+                  return const Center(
+                    child: Text("Select Product Type"),
+                  );
                 }
 
                 return ListView.separated(
                   itemCount: cashbackList.length,
-                  separatorBuilder: (_, _) => const SizedBox(height: 12),
+                  separatorBuilder: (_, __) =>
+                      const SizedBox(height: 12),
                   itemBuilder: (context, index) {
                     final item = cashbackList[index];
 
@@ -140,8 +142,10 @@ class CashbackScreen extends GetView<CashbackController> {
 
                     final String commType =
                         item.commissiontype?.toLowerCase() ?? '';
+
                     final bool isFixed =
                         commType == 'fixed' || commType == 'flat';
+
                     final String formattedCashback = isFixed
                         ? "₹${item.debitCommission ?? '0'}"
                         : "${item.debitCommission ?? '0'}%";
@@ -150,12 +154,12 @@ class CashbackScreen extends GetView<CashbackController> {
                       name: item.name ?? '',
                       logo: item.logo ?? '',
                       cashback: formattedCashback,
-                      commissionType: item.commissiontype?.isNotEmpty == true
-                          ? "${item.commissiontype} Cashback"
-                          : "Cashback",
-                      cashbackColor: commission >= 0
-                          ? Colors.green
-                          : Colors.red,
+                      commissionType:
+                          item.commissiontype?.isNotEmpty == true
+                              ? item.commissiontype!
+                              : "Cashback",
+                      cashbackColor:
+                          commission >= 0 ? Colors.green : Colors.red,
                     );
                   },
                 );
@@ -189,62 +193,84 @@ class CashbackTile extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+      padding: const EdgeInsets.symmetric(
+        horizontal: 14,
+        vertical: 14,
+      ),
       decoration: BoxDecoration(
         color: theme.brightness == Brightness.light
             ? AppColors.background
             : theme.colorScheme.surfaceContainer,
         borderRadius: BorderRadius.circular(12),
         border: theme.brightness == Brightness.dark
-            ? Border.all(color: const Color(0xFF3C3F52))
+            ? Border.all(
+                color: const Color(0xFF3C3F52),
+              )
             : null,
       ),
-      child: Container(
-        child: Row(
-          children: [
-            Container(
-              height: 45,
-              width: 45,
-              clipBehavior: Clip.hardEdge,
-              decoration: BoxDecoration(borderRadius: BorderRadius.circular(5)),
-              child: Image.network(
-                logo,
-                fit: BoxFit.contain,
-                errorBuilder: (context, error, stackTrace) {
-                  return const Icon(Icons.image, size: 25);
-                },
+      child: Row(
+        children: [
+          // LOGO
+          Container(
+            height: 45,
+            width: 45,
+            clipBehavior: Clip.hardEdge,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(5),
+            ),
+            child: Image.network(
+              logo,
+              fit: BoxFit.contain,
+              errorBuilder: (context, error, stackTrace) {
+                return const Icon(
+                  Icons.image,
+                  size: 25,
+                );
+              },
+            ),
+          ),
+
+          const SizedBox(width: 12),
+
+          // PRODUCT NAME
+          Expanded(
+            child: Text(
+              name,
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: theme.colorScheme.onSurface,
               ),
             ),
+          ),
 
-            const SizedBox(width: 12),
-
-            Expanded(
-              child: Text(
-                name,
-                style: TextStyle(
-                  fontSize: 16,
+          // COMMISSION TYPE + AMOUNT
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(
+                commissionType,
+                style: TextHelper.max2.copyWith(
                   fontWeight: FontWeight.w500,
-                  color: theme.colorScheme.onSurface,
+                  color: theme.brightness == Brightness.light
+                      ? AppColors.darktextclr
+                      : Colors.white,
                 ),
               ),
-            ),
 
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(
-                  commissionType,
-                  style: TextHelper.max2.copyWith(
-                    color: theme.brightness == Brightness.light
-                        ? AppColors.darktextclr
-                        : Colors.white,
-                  ),
+              const SizedBox(height: 4),
+
+              Text(
+                cashback,
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
+                  color: cashbackColor,
                 ),
-                const SizedBox(height: 3),
-              ],
-            ),
-          ],
-        ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

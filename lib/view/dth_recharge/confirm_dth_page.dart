@@ -327,7 +327,7 @@ class _ConfirmDthPageState extends State<ConfirmDthPage> {
                       ),
                       child: Center(
                         child: Text(
-                          "Note: Wrong recharge amount is not refundable",
+                          "Note:  Transaction amount is not refundable.",
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 12.sp,

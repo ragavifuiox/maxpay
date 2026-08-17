@@ -15,6 +15,8 @@ class CreateQrResponse {
   String? txnId;
   String? amount;
   String? upiLink;
+  String? gpayLink;
+  String? phonepeLink;
   dynamic qrImage;
 
   CreateQrResponse({
@@ -22,6 +24,8 @@ class CreateQrResponse {
     this.txnId,
     this.amount,
     this.upiLink,
+    this.gpayLink,
+    this.phonepeLink,
     this.qrImage,
   });
 
@@ -30,12 +34,16 @@ class CreateQrResponse {
     String? txnId,
     String? amount,
     String? upiLink,
+    String? gpayLink,
+    String? phonepeLink,
     dynamic qrImage,
   }) => CreateQrResponse(
     status: status ?? this.status,
     txnId: txnId ?? this.txnId,
     amount: amount ?? this.amount,
     upiLink: upiLink ?? this.upiLink,
+    gpayLink: gpayLink ?? this.gpayLink,
+    phonepeLink: phonepeLink ?? this.phonepeLink,
     qrImage: qrImage ?? this.qrImage,
   );
 
@@ -45,6 +53,8 @@ class CreateQrResponse {
         txnId: json["txn_id"],
         amount: json["amount"],
         upiLink: json["upi_link"],
+        gpayLink: json["gpay_link"],
+        phonepeLink: json["phonepe_link"],
         qrImage: json["qr_image"],
       );
 
@@ -53,6 +63,8 @@ class CreateQrResponse {
     "txn_id": txnId,
     "amount": amount,
     "upi_link": upiLink,
+    "gpay_link": gpayLink,
+    "phonepe_link": phonepeLink,
     "qr_image": qrImage,
   };
 }

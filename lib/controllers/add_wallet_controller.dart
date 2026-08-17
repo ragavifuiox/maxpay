@@ -220,7 +220,9 @@ class AddWalletController extends GetxController with WidgetsBindingObserver {
           AddWalletPopup(
             amount: amount,
             txtionId: response.txnId ?? '',
-            url: response.upiLink ?? '',
+            url: response.gpayLink ?? '',
+            phonepeLink: response.phonepeLink ?? '',
+          
           ),
         ).then((_) async {
           stopTimer();

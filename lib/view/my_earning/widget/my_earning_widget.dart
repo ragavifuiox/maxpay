@@ -104,7 +104,7 @@ class EarningsCard extends StatelessWidget {
                     const SizedBox(height: 4),
 
                     Text(
-                      "Total Amount : ₹${item.amount ?? "0"}",
+                      " Amount : ₹${item.amount ?? "0"}",
                       style: TextStyle(
                         fontWeight: FontWeight.w500,
                         color: theme.colorScheme.onSurface,
@@ -127,13 +127,13 @@ class EarningsCard extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Text(
-                    "My Earnings",
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: theme.colorScheme.onSurface,
-                    ),
-                  ),
+                  // Text(
+                   
+                  //   style: TextStyle(
+                  //     fontSize: 11,
+                  //     color: theme.colorScheme.onSurface,
+                  //   ),
+                  // ),
 
                   const SizedBox(height: 4),
 

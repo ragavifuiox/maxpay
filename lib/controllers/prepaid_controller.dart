@@ -541,7 +541,7 @@ class PrePaidController extends GetxController {
 
             // Backend error message only
             CustomToast.error(
-              response.data?.apiResponse?.data?.resText ?? "Recharge Failed",
+              response.data?.apiResponse?.data?.resText ?? "Transaction Failed",
             );
 
             return false;

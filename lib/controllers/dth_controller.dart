@@ -204,7 +204,7 @@ class DthController extends GetxController {
             return true;
           } else {
             AppLogger.logError("⚠️ Recharge FAILED");
-            CustomToast.error(response.message ?? "Recharge Failed");
+            CustomToast.error(response.message ?? "Transaction Failed");
             return false;
           }
         },

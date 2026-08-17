@@ -75,7 +75,7 @@ class CustomerTransConfirmationScreen extends GetView<PrePaidController> {
 
                 child: Column(
                   children: [
-                    _buildRow(context, "Operator", operatorLogo, isLogo: true),
+                    _buildRow(context, "Product", operatorLogo, isLogo: true),
 
                     SizedBox(height: 14.h),
 
@@ -100,9 +100,8 @@ class CustomerTransConfirmationScreen extends GetView<PrePaidController> {
 
                     SizedBox(height: 14.h),
 
-                    SizedBox(height: 14.h),
 
-                    _buildRow(context, "Whatsapp no", whatsappNumber),
+   _buildRow(context, "Whatsapp no", whatsappNumber),
                   ],
                 ),
               ),

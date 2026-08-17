@@ -323,9 +323,9 @@ class _ConfirmTransactionPageState extends State<ConfirmTransactionPage> {
                     ),
                     child: Center(
                       child: Text(
-                        "Note: Wrong recharge amount is not refundable",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
+                          "Note:Transaction amount is not refundable",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
                           fontSize: 12.sp,
                           fontWeight: FontWeight.w500,
                           color: const Color(0xffFF001F),

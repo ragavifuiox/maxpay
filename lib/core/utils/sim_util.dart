@@ -16,7 +16,7 @@ class SimUtil {
     '8838787878',
   ];
 
-  /// Helper function to normalize and match
+
   static bool _matches(String entered, String? sim) {
     if (sim == null || sim.isEmpty) return false;
     final cleanEntered = entered.replaceAll(RegExp(r'\D'), '');

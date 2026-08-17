@@ -72,7 +72,7 @@ class CustomerDthPage extends GetView<DthController> {
 
                 child: Column(
                   children: [
-                    _buildRow(context, "Operator", operatorLogo, isLogo: true),
+                    _buildRow(context, "Product", operatorLogo, isLogo: true),
 
                     SizedBox(height: 14.h),
 

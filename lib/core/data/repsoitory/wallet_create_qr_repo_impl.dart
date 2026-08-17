@@ -5,11 +5,15 @@ import 'package:maxpay/core/data/model/wallet_qr_history.dart';
 import 'package:maxpay/core/domain/repository/wallet_create_qr_repo.dart';
 import 'package:maxpay/core/error/failure.dart';
 import 'package:maxpay/core/services/api_services.dart';
+import 'package:maxpay/core/utils/logg_helper.dart';
+import 'package:maxpay/core/utils/service/dio_error_handler.dart';
 
 class WalletCreateQrRepoImpl implements WalletCreateQrRepo {
   final ApiService apiService;
 
   WalletCreateQrRepoImpl(this.apiService);
+
+
 
   @override
   Future<Either<Failure, CreateQrResponse>> createQr({
@@ -20,20 +24,18 @@ class WalletCreateQrRepoImpl implements WalletCreateQrRepo {
         ApiRoutes.createQr,
         data: {'amount': amount},
       );
+      AppLogger.logError(response);
 
       final responseData = CreateQrResponse.fromJson(response);
 
       if (responseData.status == true) {
-        if (responseData.upiLink != null) {
-          return Right(responseData);
-        } else {
-          return Left(ServerFailure(message: "Url Not found"));
-        }
+        return Right(responseData);
       } else {
         return Left(ServerFailure(message: responseData.status.toString()));
       }
-    } catch (e, stackTrace) { print("API EXCEPTION IN REPO: `$e\n`$stackTrace");
-      return Left(ServerFailure(message: e.toString()));
+    } catch (e, stackTrace) {
+      print("API EXCEPTION IN REPO: `$e\n`$stackTrace");
+      return Left(DioErrorHandler.handle(e));
     }
   }
 
@@ -48,7 +50,8 @@ class WalletCreateQrRepoImpl implements WalletCreateQrRepo {
       final responseData = response['status'];
 
       return Right(responseData);
-    } catch (e, stackTrace) { print("API EXCEPTION IN REPO: `$e\n`$stackTrace");
+    } catch (e, stackTrace) {
+      print("API EXCEPTION IN REPO: `$e\n`$stackTrace");
       return Left(ServerFailure(message: e.toString()));
     }
   }
@@ -65,9 +68,9 @@ class WalletCreateQrRepoImpl implements WalletCreateQrRepo {
       } else {
         return Left(UnexpectedFailure(responseData.message ?? ''));
       }
-    } catch (e, stackTrace) { print("API EXCEPTION IN REPO: `$e\n`$stackTrace");
+    } catch (e, stackTrace) {
+      print("API EXCEPTION IN REPO: `$e\n`$stackTrace");
       return Left(ServerFailure(message: e.toString()));
     }
   }
 }
-

@@ -182,7 +182,10 @@ class Advertisements {
     data['image_screen'] = imageScreen;
     data['created_at'] = createdAt;
     data['updated_at'] = updatedAt;
-
     return data;
   }
 }
+
+
+
+

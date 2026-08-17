@@ -93,7 +93,7 @@ class FailedRechargePage extends StatelessWidget {
               SizedBox(height: 30.h),
 
               Text(
-                'Recharge Failed !!!',
+                'Transaction Failed !!!',
                 style: TextStyle(
                   color: isDark ? Colors.white : Colors.black,
                   fontSize: 18.sp,
@@ -128,7 +128,7 @@ class FailedRechargePage extends StatelessWidget {
                       context: context,
                     ),
                     _buildSummaryRow(
-                      'Recharge Amount',
+                      'Transaction Amount',
                       rechargeAmount,
                       context: context,
                     ),

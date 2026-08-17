@@ -8,7 +8,9 @@ class UpdatePaymentStatus {
 
   UpdatePaymentStatus.fromJson(Map<String, dynamic> json) {
     success = json['success'];
-    data = json['data'] != null ? UpdatePaymentData.fromJson(json['data']) : null;
+    data = json['data'] != null
+        ? UpdatePaymentData.fromJson(json['data'])
+        : null;
     message = json['message'];
     code = json['code'];
   }
@@ -61,30 +63,31 @@ class Recharge {
   String? apiResponse;
   String? userType;
   String? time;
-  Null txnId;
+  String? txnId;
   String? requestTime;
   String? paymentStatus;
   String? createdAt;
   String? updatedAt;
 
-  Recharge(
-      {this.id,
-      this.userId,
-      this.userName,
-      this.productId,
-      this.apiId,
-      this.mappingId,
-      this.mobile,
-      this.amount,
-      this.status,
-      this.apiResponse,
-      this.userType,
-      this.time,
-      this.txnId,
-      this.requestTime,
-      this.paymentStatus,
-      this.createdAt,
-      this.updatedAt});
+  Recharge({
+    this.id,
+    this.userId,
+    this.userName,
+    this.productId,
+    this.apiId,
+    this.mappingId,
+    this.mobile,
+    this.amount,
+    this.status,
+    this.apiResponse,
+    this.userType,
+    this.time,
+    this.txnId,
+    this.requestTime,
+    this.paymentStatus,
+    this.createdAt,
+    this.updatedAt,
+  });
 
   Recharge.fromJson(Map<String, dynamic> json) {
     id = json['id'];

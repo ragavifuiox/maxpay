@@ -103,7 +103,7 @@ class DthFailedRechargeScreen extends StatelessWidget {
               SizedBox(height: 30.h),
 
               Text(
-                'Recharge Failed !!!',
+                'Transaction Failed !!!',
                 style: TextStyle(
                   color: isDark ? Colors.white : Colors.black,
                   fontSize: 18.sp,
