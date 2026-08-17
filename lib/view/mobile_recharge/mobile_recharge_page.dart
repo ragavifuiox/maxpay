@@ -17,6 +17,7 @@ import 'package:maxpay/global_widget/custom_app.dart';
 import 'package:maxpay/view/mobile_recharge/contact_list_page.dart';
 import 'package:maxpay/view/mobile_recharge/webview.dart';
 import 'package:permission_handler/permission_handler.dart' as ph;
+import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 
 class MobileRechargePage extends StatefulWidget {
   final String productId;
@@ -1455,44 +1456,38 @@ class _MobileRechargePageState extends State<MobileRechargePage>
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
           content: SingleChildScrollView(
-  child: Obx(() {
-    if (controller.isLoading.value) {
-      return const Center(child: CircularProgressIndicator());
-    }
-    final termsMessage =
-        controller.term.value?.data?.message ?? "Terms not available.";
+            child: Obx(() {
+              if (controller.isLoading.value) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              final termsMessage =
+                  controller.term.value?.data?.message ??
+                  "Terms not available.";
 
-    final lines = termsMessage
-        .split('\n')
-        .where((e) => e.trim().isNotEmpty)
-        .toList();
+              if (termsMessage.isEmpty ||
+                  termsMessage == "Terms not available.") {
+                return const Text("Terms not available.");
+              }
 
-    if (lines.isEmpty) {
-      return const Text("Terms not available.");
-    }
-
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: lines
-          .map(
-            (line) => Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: Text(
-                line.bulletText,
-                style: const TextStyle(fontSize: 14, height: 1.5),
-              ),
-            ),
-          )
-          .toList(),
-    );
-  }),
-),
+              return HtmlWidget(
+                termsMessage,
+                textStyle: const TextStyle(fontSize: 14, height: 1.5),
+                customStylesBuilder: (element) {
+                  if (element.localName == 'ul') {
+                    // Bring bullet points to the left edge by reducing padding
+                    return {'padding-left': '12px', 'margin-bottom': '0'};
+                  }
+                  return null;
+                },
+              );
+            }),
+          ),
           actions: [
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xff19A7CE),
               ),
+
               onPressed: () {
                 Navigator.pop(context);
               },

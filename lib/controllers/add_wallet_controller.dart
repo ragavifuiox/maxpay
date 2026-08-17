@@ -220,9 +220,8 @@ class AddWalletController extends GetxController with WidgetsBindingObserver {
           AddWalletPopup(
             amount: amount,
             txtionId: response.txnId ?? '',
-            url: response.gpayLink ?? '',
+            url: convertToStandardUpiUrl(response.gpayLink ?? ''),
             phonepeLink: response.phonepeLink ?? '',
-          
           ),
         ).then((_) async {
           stopTimer();
@@ -326,42 +325,33 @@ class AddWalletController extends GetxController with WidgetsBindingObserver {
     update();
   }
 
- 
-Future<void> openSpecificUpiApp({
-  required String packageName,
-  required String url,
-}) async {
-  try {
-    debugPrint("========== OPEN UPI ==========");
-    debugPrint("Package: $packageName");
-    debugPrint("UPI URL: $url");
+  Future<void> openSpecificUpiApp({
+    required String packageName,
+    required String url,
+  }) async {
+    try {
+      debugPrint("========== OPEN UPI ==========");
+      debugPrint("Package: $packageName");
+      debugPrint("UPI URL: $url");
 
-    final result = await _channel.invokeMethod(
-      "openSpecificUpiApp",
-      {
+      final result = await _channel.invokeMethod("openSpecificUpiApp", {
         "packageName": packageName,
         "url": url, // IMPORTANT: Don't encode here
-      },
-    );
+      });
 
-    debugPrint("UPI launch result: $result");
-    debugPrint("========== OPEN UPI END ==========");
-  } on PlatformException catch (e) {
-    debugPrint("UPI PlatformException: ${e.code}");
-    debugPrint("UPI Error: ${e.message}");
+      debugPrint("UPI launch result: $result");
+      debugPrint("========== OPEN UPI END ==========");
+    } on PlatformException catch (e) {
+      debugPrint("UPI PlatformException: ${e.code}");
+      debugPrint("UPI Error: ${e.message}");
 
-    CustomToast.error(
-      e.message ?? "Unable to open UPI app",
-    );
-  } catch (e) {
-    debugPrint("UPI Error: $e");
+      CustomToast.error(e.message ?? "Unable to open UPI app");
+    } catch (e) {
+      debugPrint("UPI Error: $e");
 
-    CustomToast.error(
-      "Unable to open UPI app",
-    );
+      CustomToast.error("Unable to open UPI app");
+    }
   }
-}
-
 
   // Future<List<Map<String, dynamic>>> getInstalledUpiApps() async {
 
@@ -398,5 +388,21 @@ Future<void> openSpecificUpiApp({
     stopTimer();
     amountController.dispose();
     super.dispose();
+  }
+}
+
+String convertToStandardUpiUrl(String customUrl) {
+  try {
+    final uri = Uri.parse(customUrl);
+
+    // If the URL has a query string, append it to the standard upi://pay format
+    if (uri.hasQuery) {
+      return 'upi://pay?${uri.query}';
+    }
+
+    return customUrl; // Fallback
+  } catch (e) {
+    debugPrint("Error converting UPI URL: $e");
+    return customUrl;
   }
 }

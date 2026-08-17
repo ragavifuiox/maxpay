@@ -78,16 +78,16 @@ class WalletRequestScreen extends StatelessWidget {
       ),
 
       body: Form(
-   key: _formKey,
+        key: _formKey,
 
         child: SingleChildScrollView(
           padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
 
           child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
 
-          children: [
-             Container(
+            children: [
+              Container(
                 width: double.infinity,
 
                 padding: EdgeInsets.symmetric(vertical: 12.h),
@@ -173,12 +173,17 @@ class WalletRequestScreen extends StatelessWidget {
                   },
 
                   items: const [
-                    DropdownMenuItem(value: "received", child: Text("Paid")),
-
                     DropdownMenuItem(
-                      value: "not_received",
-
-                      child: Text("Pending"),
+                      value: "Bank Transfer",
+                      child: Text("Bank Transfer"),
+                    ),
+                    DropdownMenuItem(
+                      value: "UPI Transfer",
+                      child: Text("UPI Transfer"),
+                    ),
+                    DropdownMenuItem(
+                      value: "Stock Exchange",
+                      child: Text("Stock Exchange"),
                     ),
                   ],
 
@@ -482,11 +487,8 @@ class WalletRequestScreen extends StatelessWidget {
       maxLines: maxLines,
 
       style: TextStyle(
-        color:
-            Theme.of(context)
-                .colorScheme
-                .onSurface,
-                fontSize: 15
+        color: Theme.of(context).colorScheme.onSurface,
+        fontSize: 15,
       ),
 
       validator: (value) {
@@ -508,33 +510,18 @@ class WalletRequestScreen extends StatelessWidget {
       hintText: hint,
 
       hintStyle: TextStyle(
-        color:
-            Theme.of(context)
-                .colorScheme
-                .onSurfaceVariant,
-               
-              
+        color: Theme.of(context).colorScheme.onSurfaceVariant,
 
         fontSize: 14.sp,
         fontFamily: 'Poppins',
-        fontWeight: FontWeight.w400
+        fontWeight: FontWeight.w400,
       ),
 
       filled: true,
 
-      fillColor:
-          isDark
-              ? AppColors.darkFilterBorder
-              : const Color(
-                0xFFF2F2F2,
-              ),
+      fillColor: isDark ? AppColors.darkFilterBorder : const Color(0xFFF2F2F2),
 
-
-      contentPadding:
-          const EdgeInsets.symmetric(
-        horizontal: 14,
-        vertical: 14,
-      ),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
 
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(8.r),

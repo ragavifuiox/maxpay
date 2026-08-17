@@ -32,12 +32,11 @@ class AddWalletPopup extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final size = MediaQuery.of(context).size;
     final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Dialog(
       backgroundColor: Colors.transparent,
       insetPadding: const EdgeInsets.symmetric(horizontal: 24),
-
       child: Container(
         width: 340,
         padding: const EdgeInsets.all(18),
@@ -49,6 +48,9 @@ class AddWalletPopup extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              // ----------------------------------------------------------
+              // Header
+              // ----------------------------------------------------------
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -65,7 +67,8 @@ class AddWalletPopup extends StatelessWidget {
 
                   InkWell(
                     onTap: () async {
-                      final controller = Get.find<AddWalletController>();
+                      final controller =
+                          Get.find<AddWalletController>();
 
                       controller.stopTimer();
                       controller.amountController.clear();
@@ -85,6 +88,9 @@ class AddWalletPopup extends StatelessWidget {
 
               const SizedBox(height: 18),
 
+              // ----------------------------------------------------------
+              // QR Code
+              // ----------------------------------------------------------
               Container(
                 width: 220,
                 height: 220,
@@ -92,7 +98,9 @@ class AddWalletPopup extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Colors.grey.shade300),
+                  border: Border.all(
+                    color: Colors.grey.shade300,
+                  ),
                 ),
                 child: Center(
                   child: QrImageView(
@@ -105,7 +113,9 @@ class AddWalletPopup extends StatelessWidget {
 
               const SizedBox(height: 18),
 
-              /// Amount
+              // ----------------------------------------------------------
+              // Amount
+              // ----------------------------------------------------------
               SizedBox(
                 width: 270,
                 child: Column(
@@ -118,7 +128,9 @@ class AddWalletPopup extends StatelessWidget {
                         fontSize: 15,
                       ),
                     ),
+
                     const SizedBox(height: 8),
+
                     Container(
                       width: double.infinity,
                       padding: const EdgeInsets.symmetric(
@@ -150,17 +162,22 @@ class AddWalletPopup extends StatelessWidget {
 
               const SizedBox(height: 14),
 
-              /// Expiry
+              // ----------------------------------------------------------
+              // Expiry Timer
+              // ----------------------------------------------------------
               Obx(() {
-                final controller = Get.find<AddWalletController>();
+                final controller =
+                    Get.find<AddWalletController>();
 
-                final minutes = (controller.remainingSeconds.value ~/ 60)
-                    .toString()
-                    .padLeft(2, '0');
+                final minutes =
+                    (controller.remainingSeconds.value ~/ 60)
+                        .toString()
+                        .padLeft(2, '0');
 
-                final seconds = (controller.remainingSeconds.value % 60)
-                    .toString()
-                    .padLeft(2, '0');
+                final seconds =
+                    (controller.remainingSeconds.value % 60)
+                        .toString()
+                        .padLeft(2, '0');
 
                 return Text(
                   "Expiry: $minutes:$seconds",
@@ -172,138 +189,22 @@ class AddWalletPopup extends StatelessWidget {
                 );
               }),
 
-              const SizedBox(height: 16),
-
               const SizedBox(height: 20),
 
-              const Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  "Pay Using",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              // ----------------------------------------------------------
+              // QR Code Instruction
+              // ----------------------------------------------------------
+              const Text(
+                "Note: Please scan this QR code and add the amount.",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.red,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
-              const SizedBox(height: 12),
-              // Obx(() {
-              //   final controller = Get.find<AddWalletController>();
 
-              //   if (controller.isLoadingUpiApps.value) {
-              //     return const Center(child: CircularProgressIndicator());
-              //   }
-
-              //   if (controller.upiApps.isEmpty) {
-              //     return const Text("No UPI apps installed");
-              //   }
-
-              //   return Wrap(
-              //     spacing: 12,
-              //     runSpacing: 12,
-              //     children: controller.upiApps.map((app) {
-              //       return InkWell(
-              //         onTap: () {
-              //           debugPrint("UPI URL = $url");
-              //           debugPrint("PACKAGE = ${app["packageName"]}");
-              //           controller.payUsingQrData(
-              //             app["packageName"],
-              //             app['name'],
-              //             url,
-              //           );
-              //           // controller.openSpecificUpiApp(
-              //           //   packageName: app["packageName"],
-              //           //   url: url,
-              //           // );
-              //           // (
-              //           //   packageName: app["packageName"],
-              //           //   url: url,
-              //           // );
-              //         },
-              //         child: Container(
-              //           width: 70,
-              //           padding: const EdgeInsets.all(10),
-              //           decoration: BoxDecoration(
-              //             border: Border.all(color: Colors.grey.shade300),
-              //             borderRadius: BorderRadius.circular(10),
-              //           ),
-              //           child: Column(
-              //             children: [
-              //               Image.memory(app["icon"], width: 40, height: 40),
-              //               const SizedBox(height: 5),
-              //               Text(
-              //                 app["name"],
-              //                 overflow: TextOverflow.ellipsis,
-              //                 textAlign: TextAlign.center,
-              //                 style: const TextStyle(fontSize: 11),
-              //               ),
-              //             ],
-              //           ),
-              //         ),
-              //       );
-              //     }).toList(),
-              //   );
-              // }),
-              CustomElevatedButton(
-                text: "PAY NOW",
-                onPressed: () {
-                  openUpiPayment(url);
-                },
-              ),
-
-              // FutureBuilder<List<Map<String, dynamic>>>(
-              //   future: Get.find<AddWalletController>().getInstalledUpiApps(),
-              //   builder: (context, snapshot) {
-              //     if (!snapshot.hasData) {
-              //       return const Center(
-              //         child: CircularProgressIndicator(),
-              //       );
-              //     }
-
-              //     final apps = snapshot.data!;
-
-              //     if (apps.isEmpty) {
-              //       return const Text("No UPI apps installed");
-              //     }
-
-              //     return Wrap(
-              //       spacing: 12,
-              //       runSpacing: 12,
-              //       children: apps.map((app) {
-              //         return InkWell(
-              //           onTap: () {
-              //             Get.find<AddWalletController>().openSpecificUpiApp(
-              //               packageName: app["packageName"],
-              //               url: url,
-              //             );
-              //           },
-              //           child: Container(
-              //             width: 70,
-              //             padding: const EdgeInsets.all(10),
-              //             decoration: BoxDecoration(
-              //               border: Border.all(color: Colors.grey.shade300),
-              //               borderRadius: BorderRadius.circular(10),
-              //             ),
-              //             child: Column(
-              //               mainAxisSize: MainAxisSize.min,
-              //               children: [
-              //                 Image.memory(
-              //                   app["icon"],
-              //                   width: 40,
-              //                   height: 40,
-              //                 ),
-              //                 const SizedBox(height: 5),
-              //                 Text(
-              //                   app["name"],
-              //                   overflow: TextOverflow.ellipsis,
-              //                   textAlign: TextAlign.center,
-              //                   style: const TextStyle(fontSize: 11),
-              //                 ),
-              //               ],
-              //             ),
-              //           ),
-              //         );
-              //       }).toList(),
-              //     );
-              //   },
-              // ),
+              const SizedBox(height: 10),
             ],
           ),
         ),
@@ -312,27 +213,36 @@ class AddWalletPopup extends StatelessWidget {
   }
 }
 
+// ----------------------------------------------------------------------
+// Open UPI Payment
+// ----------------------------------------------------------------------
 Future<void> openUpiPayment(String paymentUrl) async {
   final uri = Uri.parse(paymentUrl);
+
   AppLogger.debugPrint("UPI URL = $paymentUrl");
 
   if (await canLaunchUrl(uri)) {
-    await launchUrl((uri), mode: LaunchMode.externalApplication);
+    await launchUrl(
+      uri,
+      mode: LaunchMode.externalApplication,
+    );
   } else {
     CustomToast.error("No UPI app installed");
   }
 }
 
+// ----------------------------------------------------------------------
+// Convert UPI URL
+// ----------------------------------------------------------------------
 String convertToStandardUpiUrl(String customUrl) {
   try {
     final uri = Uri.parse(customUrl);
 
-    // If the URL has a query string, append it to the standard upi://pay format
     if (uri.hasQuery) {
       return 'upi://pay?${uri.query}';
     }
 
-    return customUrl; // Fallback
+    return customUrl;
   } catch (e) {
     debugPrint("Error converting UPI URL: $e");
     return customUrl;

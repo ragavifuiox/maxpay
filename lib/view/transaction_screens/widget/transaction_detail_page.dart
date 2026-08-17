@@ -17,6 +17,20 @@ class TransactionDetailsPage extends StatelessWidget {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
+    final String statusVal = (data.paymentStatus ?? data.status ?? "")
+        .trim()
+        .toLowerCase();
+    final bool isSuccess = statusVal == "success" || statusVal == "received";
+    final bool isPending = statusVal == "processing" || statusVal == "pending";
+    final bool isFailed = !isSuccess && !isPending;
+
+    final String availableBal = data.availableBalance ?? "0";
+    final String transAmount = isFailed ? "0" : (data.transactionAmount ?? "0");
+    final String comm = isFailed ? "0" : (data.commission ?? "0");
+    final String remBal = isFailed
+        ? availableBal
+        : (data.remainingBalance ?? "0");
+
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: CommonAppBar(title: "View Details"),
@@ -44,7 +58,15 @@ class TransactionDetailsPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 productRow(context, "Product Name", data.productLogo),
-                detailRow(context, "Product Ref. ID", data.refid ?? "-"),
+
+                if (!isFailed && !isPending)
+                  detailRow(
+                    context,
+                    "Product Ref. ID",
+                    (data.refid != null && data.refid!.isNotEmpty)
+                        ? data.refid!
+                        : (data.refid ?? "-"),
+                  ),
                 detailRow(
                   context,
                   "Payment Status",
@@ -58,31 +80,23 @@ class TransactionDetailsPage extends StatelessWidget {
                       : null,
                 ),
 
-                detailRow(context, "Transaction No", data.transactionNo ?? "-"),
+                detailRow(context, "Transaction No", data.transactionId ?? "-"),
 
                 detailRow(
                   context,
                   "Available Balance",
-                  (data.availableBalance ?? "0").currencyIndian,
+                  availableBal.currencyIndian,
                 ),
 
                 detailRow(
                   context,
                   "Transaction Amount",
-                  (data.transactionAmount ?? "0").currencyIndian,
+                  transAmount.currencyIndian,
                 ),
 
-                detailRow(
-                  context,
-                  "Commission",
-                  (data.commission ?? "0").currencyIndian,
-                ),
+                detailRow(context, "Commission", comm.currencyIndian),
 
-                detailRow(
-                  context,
-                  "Remaining Balance",
-                  (data.remainingBalance ?? "0").currencyIndian,
-                ),
+                detailRow(context, "Remaining Balance", remBal.currencyIndian),
 
                 detailRow(
                   context,

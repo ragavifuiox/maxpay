@@ -92,7 +92,7 @@ class EarningsCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      item.productName ?? "",
+                      item.productType ?? "",
                       style: TextStyle(
                         fontSize: 14,
                         fontFamily: 'Poppins',

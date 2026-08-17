@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:maxpay/core/constants/colors.dart';
@@ -21,7 +22,7 @@ class TransactionCard extends StatelessWidget {
     final status = (data.status ?? "").trim().toLowerCase();
 
     final isSuccess = status == "success" || status == "received";
-    final isPending = status == "pending";
+    final isPending = status == "Processing";
     final isFailed = !isSuccess && !isPending;
 
     Color statusColor;
@@ -192,6 +193,67 @@ class TransactionCard extends StatelessWidget {
                     const SizedBox(width: 6),
 
                     _button("Resend", Colors.green, () {
+                      final dtStr = data.dateTime;
+                      DateTime? parsedTime;
+
+                      if (dtStr != null && dtStr.isNotEmpty) {
+                        try {
+                          final normalized = dtStr.replaceAll(' ', 'T');
+                          // Assume UTC if no indicator is present so we check properly with local time gap
+                          parsedTime = DateTime.tryParse(
+                            normalized +
+                                (normalized.contains('Z') ||
+                                        normalized.contains('+')
+                                    ? ""
+                                    : "Z"),
+                          );
+                        } catch (_) {}
+
+                        if (parsedTime == null) {
+                          final formattedDate = formatTransactionDate(dtStr);
+                          if (formattedDate != '-' && formattedDate != dtStr) {
+                            try {
+                              parsedTime = DateFormat(
+                                'dd-MM-yyyy, hh:mm a',
+                              ).parseLoose(formattedDate);
+                            } catch (_) {}
+                          }
+                        }
+                      }
+
+                      bool isExpired = false;
+                      if (parsedTime != null) {
+                        // Ensure we diff local with local
+                        final diff = DateTime.now()
+                            .difference(parsedTime.toLocal())
+                            .inSeconds;
+                        // Only block it if it's > 3 hours. Ignore negatives.
+                        if (diff > 10800) {
+                          isExpired = true;
+                        }
+                      }
+
+                      if (isExpired) {
+                        showDialog(
+                          context: context,
+                          builder: (_) => AlertDialog(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            title: const Text("Notice"),
+                            content: const Text(
+                              "Resend button is available only for 3 hours.",
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(context),
+                                child: const Text("Close"),
+                              ),
+                            ],
+                          ),
+                        );
+                        return;
+                      }
                       print("========== RESEND ==========");
                       print("ID: ${data.id}");
                       print("Transaction ID: ${data.transactionId}");
@@ -301,7 +363,22 @@ class TransactionCard extends StatelessWidget {
           "logo": data.logo ?? "",
           "availableBalance": data.availableBalance ?? "0",
 
-          // DON'T use failed report commission
+          "isFromTranactionPage": true,
+        },
+      );
+      
+    } else if (productType.contains("dth") || productTypeId == "2") {
+      Get.toNamed(
+        AppRoutes.confirmdth,
+        arguments: {
+          "customerId": data.mobile,
+          "amount": data.amount,
+          "productdetid": productId,
+          "paymentStatus": data.paymentStatus ?? "Pending",
+          "operator": data.operator ?? "",
+          "logo": data.logo ?? "",
+          "availableBalance": data.availableBalance ?? "0",
+
           "isFromTranactionPage": true,
         },
       );
