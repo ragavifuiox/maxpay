@@ -61,7 +61,48 @@ class DthController extends GetxController {
         Get.snackbar('Error', failure.message);
       },
       (response) {
-        planTabs.value = response.data ?? [];
+        final tabs = response.data ?? [];
+
+        // Sort tabs so that specific languages are at the top, then alphabetically
+        tabs.sort((a, b) {
+          String getBaseName(String name) {
+            return name
+                .replaceAll(RegExp(r'\b(HD|SD)\b', caseSensitive: false), '')
+                .trim();
+          }
+
+          int getPriority(String baseName, String fullName) {
+            final base = baseName.toLowerCase();
+            final full = fullName.toLowerCase();
+            if (base == 'malayalam') {
+              return full.contains('sd') ? 1 : 2;
+            } else if (base == 'tamil') {
+              return full.contains('sd') ? 3 : 4;
+            }
+            return 99;
+          }
+
+          final aFullName = a.planType ?? '';
+          final bFullName = b.planType ?? '';
+
+          final aBase = getBaseName(aFullName);
+          final bBase = getBaseName(bFullName);
+
+          final aPriority = getPriority(aBase, aFullName);
+          final bPriority = getPriority(bBase, bFullName);
+
+          if (aPriority != bPriority) {
+            return aPriority.compareTo(bPriority);
+          }
+
+          final baseCompare = aBase.compareTo(bBase);
+          if (baseCompare != 0) return baseCompare;
+
+          // If base language is the same, sort by the full name
+          return aFullName.compareTo(bFullName);
+        });
+
+        planTabs.value = tabs;
 
         AppLogger.debugPrint("✅ Tab API Success");
         AppLogger.debugPrint("Tabs Count: ${planTabs.length}");

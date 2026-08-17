@@ -15,9 +15,9 @@ class DeviceInfoService {
     }
 
     try {
-      final response = await http.get(
-        Uri.parse("http://ip-api.com/json"),
-      );
+      final response = await http
+          .get(Uri.parse("http://ip-api.com/json"))
+          .timeout(const Duration(seconds: 5));
 
       final data = jsonDecode(response.body);
 
@@ -28,12 +28,7 @@ class DeviceInfoService {
         "network": network,
       };
     } catch (_) {
-      return {
-        "ip": "",
-        "city": "",
-        "state": "",
-        "network": network,
-      };
+      return {"ip": "", "city": "", "state": "", "network": network};
     }
   }
 }

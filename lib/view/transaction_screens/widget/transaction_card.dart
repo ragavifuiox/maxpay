@@ -242,7 +242,7 @@ class TransactionCard extends StatelessWidget {
                             ),
                             title: const Text("Notice"),
                             content: const Text(
-                              "Resend button is available only for 3 hours.",
+                              "A transaction can only be resent within 3 hours of being created.",
                             ),
                             actions: [
                               TextButton(
@@ -366,7 +366,6 @@ class TransactionCard extends StatelessWidget {
           "isFromTranactionPage": true,
         },
       );
-      
     } else if (productType.contains("dth") || productTypeId == "2") {
       Get.toNamed(
         AppRoutes.confirmdth,

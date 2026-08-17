@@ -150,8 +150,8 @@ class AuthController extends GetxController {
 
       final result = await otpUsecase(phoneNumber.value, enteredOtp);
 
-      result.fold(
-        (failure) {
+      await result.fold(
+        (failure) async {
           CustomToast.error(failure.message);
         },
         (response) async {

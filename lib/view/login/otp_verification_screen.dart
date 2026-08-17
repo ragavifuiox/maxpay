@@ -373,6 +373,7 @@ class _ScreenOtpVerificationState extends State<ScreenOtpVerification> {
 
                           child: CommonButton(
                             title: "Verify",
+                            isLoading: authController.isLoading.value,
                             onTap: () async {
                               /// OTP EXPIRED
                               if (isOtpExpired) {
