@@ -295,7 +295,7 @@ class TransrepData {
     remainingBalance = json['remaining_balance'];
     requestDateTime = json['request_date_time'];
     responseDateTime = json['response_date_time'];
-    transactionId = json['transaction_id'];
+    transactionId = json['txn_id'];
     operator = json['operator'];
     amount = json['amount'];
     status = json['status'];
@@ -323,7 +323,7 @@ class TransrepData {
     data['remaining_balance'] = remainingBalance;
     data['request_date_time'] = requestDateTime;
     data['response_date_time'] = responseDateTime;
-    data['transaction_id'] = transactionId;
+    data['txn_id'] = transactionId;
     data['operator'] = operator;
     data['amount'] = amount;
     data['status'] = status;

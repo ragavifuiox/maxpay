@@ -22,16 +22,16 @@ class TransactionCard extends StatelessWidget {
     final status = (data.status ?? "").trim().toLowerCase();
 
     final isSuccess = status == "success" || status == "received";
-    final isPending = status == "Processing";
+    final isPending = status == "processing" || status == "pending";
     final isFailed = !isSuccess && !isPending;
 
     Color statusColor;
     Color bgColor;
 
-    if (status == "success" || status == "received") {
+    if (isSuccess) {
       statusColor = Colors.green;
       bgColor = const Color(0xFFE8F8EC);
-    } else if (status == "pending") {
+    } else if (isPending) {
       statusColor = Colors.orange;
       bgColor = const Color(0xFFFFF4E5);
     } else {
@@ -52,7 +52,7 @@ class TransactionCard extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  "Transaction ID: ${data.transactionId ?? '-'}",
+                  "Transaction ID: ${data.transactionNo ?? '-'}",
                   style: TextHelper.max1.copyWith(color: AppColors.darktextclr),
                 ),
               ),

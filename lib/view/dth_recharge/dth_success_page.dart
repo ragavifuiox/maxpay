@@ -153,7 +153,7 @@ class DthSuccessPage extends StatelessWidget {
                       context: context,
                     ),
                     _buildSummaryRow(
-                      'Transaction ID',
+                      'Product Ref. ID',
                       transactionId,
                       context: context,
                     ),

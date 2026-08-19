@@ -47,7 +47,6 @@ class CustomerDthPage extends GetView<DthController> {
         child: Column(
           children: [
             SizedBox(height: 20.h),
-
             RotatedBox(
               quarterTurns: 2,
               child: Container(
@@ -62,11 +61,13 @@ class CustomerDthPage extends GetView<DthController> {
                   borderRadius: BorderRadius.circular(12.r),
 
                   boxShadow: [
+
                     BoxShadow(
                       color: Colors.black.withValues(alpha: 0.05),
                       blurRadius: 6,
                       offset: const Offset(0, 2),
                     ),
+                    
                   ],
                 ),
 
@@ -230,11 +231,11 @@ class CustomerDthPage extends GetView<DthController> {
                                           .currencyIndian,
 
                                   transactionId:
-                                      rechargeData.transactionDetails?.txnId ??
+                                      rechargeData.transactionDetails?.transactionId ??
                                       apiData?.tnxId ??
                                       "",
                                   refid:
-                                      rechargeData.transactionDetails?.refid ??
+                                      rechargeData.transactionDetails?.txnId ??
                                       "",
                                   dateTime:
                                       apiData?.rechargeDate ??

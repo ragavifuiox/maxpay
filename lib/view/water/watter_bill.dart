@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_navigation/src/extension_navigation.dart';
+import 'package:get/get.dart';
+import 'package:maxpay/controllers/prepaid_controller.dart';
+import 'package:maxpay/core/data/model/plan_model.dart';
+import 'package:maxpay/core/di/service_locator.dart';
 import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
 import 'package:maxpay/view/water/water_confirm_screen.dart';
@@ -33,7 +35,34 @@ class _WatterBillageState extends State<WatterBill> {
     text: '500.00',
   );
 
-  final List<String> _boards = [];
+  final PrePaidController controller = Get.put(
+    PrePaidController(
+      planUseCase: sl(),
+      searchPlanUsecase: sl(),
+      planDetailUseCase: sl(),
+      transConfirmUseCase: sl(),
+      mobileRechargeUseCase: sl(),
+      plantabusecase: sl(),
+      tabdetailusecase: sl(),
+      downloadusecase: sl(),
+      checkOperatorUsecase: sl(),
+      offerRechargeUsecase: sl(),
+      termusecase: sl(),
+    ),
+  );
+
+  Data? selectedBoardObj;
+  String productId = "";
+
+  @override
+  void initState() {
+    super.initState();
+    final args = Get.arguments;
+    if (args != null && args['productId'] != null) {
+      productId = args['productId'];
+      controller.getPlans(productid: productId);
+    }
+  }
 
   @override
   void dispose() {
@@ -88,25 +117,42 @@ class _WatterBillageState extends State<WatterBill> {
                 ConstrainedBox(
                   constraints: BoxConstraints(maxHeight: 300.h),
                   child: SingleChildScrollView(
-                    child: Column(
-                      children: _boards
-                          .map(
-                            (board) => ListTile(
-                              title: Text(
-                                board,
-                                style: TextStyle(
-                                  color: isDark ? Colors.white : Colors.black,
-                                  fontSize: 14.sp,
+                    child: Obx(() {
+                      if (controller.isLoading.value) {
+                        return const Padding(
+                          padding: EdgeInsets.all(20.0),
+                          child: Center(child: CircularProgressIndicator()),
+                        );
+                      }
+                      if (controller.plans.isEmpty) {
+                        return const Padding(
+                          padding: EdgeInsets.all(20.0),
+                          child: Center(child: Text("No boards found")),
+                        );
+                      }
+                      return Column(
+                        children: controller.plans
+                            .map(
+                              (board) => ListTile(
+                                title: Text(
+                                  board.name ?? "",
+                                  style: TextStyle(
+                                    color: isDark ? Colors.white : Colors.black,
+                                    fontSize: 14.sp,
+                                  ),
                                 ),
+                                onTap: () {
+                                  setState(() {
+                                    _selectedBoard = board.name ?? "";
+                                    selectedBoardObj = board;
+                                  });
+                                  Navigator.pop(context);
+                                },
                               ),
-                              onTap: () {
-                                setState(() => _selectedBoard = board);
-                                Navigator.pop(context);
-                              },
-                            ),
-                          )
-                          .toList(),
-                    ),
+                            )
+                            .toList(),
+                      );
+                    }),
                   ),
                 ),
               ],

@@ -89,6 +89,7 @@ class AssetImages {
   static const  userAvatar = "assets/images/bal.svg";
   static const  wal = "assets/images/wal.svg";
   static const  sup = "assets/images/sup.svg";
+  static const  share = "assets/images/share.svg";
 }
 
 SizedBox adjustWidth(double width) {

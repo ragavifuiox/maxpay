@@ -404,7 +404,11 @@ class SuccessRechargePage extends StatelessWidget {
 
           _detailRow(context, "Product", "Prepaid"),
 
-          _detailRow(context, "Product Ref. Id", refId),
+          _detailRow(
+            context,
+            "Product Ref. Id",
+            refId.length > 15 ? refId.substring(0, 15) : refId,
+          ),
 
           SizedBox(height: 12.h),
 

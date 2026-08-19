@@ -1,4 +1,3 @@
-// ignore_for_file: must_be_immutable
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -158,7 +157,6 @@ class _ConfirmDthPageState extends State<ConfirmDthPage> {
                 children: [
                   SizedBox(height: 20.h),
 
-                  // ===== Transaction summary card =====
                   Container(
                     padding: EdgeInsets.all(15.w),
                     decoration: BoxDecoration(
@@ -306,15 +304,15 @@ class _ConfirmDthPageState extends State<ConfirmDthPage> {
                           'Enter amount',
                           isHighlighted: true,
                           controller: amountController,
+                          textColor: Colors.red,
+                          hintColor: Colors.red,
                         ),
                       ],
                     ),
                   ),
 
                   SizedBox(height: 20.h),
-
-                  // ===== Warning note =====
-                  Center(
+                Center(
                     child: Container(
                       width: 380.w,
                       padding: EdgeInsets.symmetric(
@@ -528,7 +526,7 @@ class _ConfirmDthPageState extends State<ConfirmDthPage> {
                                             transactionId:
                                                 rechargeData
                                                     .transactionDetails
-                                                    ?.txnId ??
+                                                    ?.transactionId ??
                                                 apiData?.tnxId ??
                                                 "",
                                             dateTime:
@@ -537,7 +535,7 @@ class _ConfirmDthPageState extends State<ConfirmDthPage> {
                                             refid:
                                                 rechargeData
                                                     .transactionDetails
-                                                    ?.refid ??
+                                                    ?.txnId ??
                                                 "",
                                           ),
                                         );
@@ -734,6 +732,8 @@ Widget _buildTextField(
   TextInputType? keyboardType,
   bool isHighlighted = false,
   List<TextInputFormatter>? inputFormatters,
+  Color? textColor,
+  Color? hintColor,
 }) {
   final isDark = Theme.of(context).brightness == Brightness.dark;
 
@@ -753,9 +753,13 @@ Widget _buildTextField(
       keyboardType: keyboardType ?? TextInputType.number,
       inputFormatters:
           inputFormatters ?? [FilteringTextInputFormatter.digitsOnly],
+      style: TextStyle(
+        color: textColor ?? (isDark ? Colors.white : Colors.black),
+      ),
       decoration: InputDecoration(
         prefixIcon: prefixIcon,
         hintText: hint,
+        hintStyle: hintColor != null ? TextStyle(color: hintColor) : null,
         border: InputBorder.none,
         enabledBorder: InputBorder.none,
         focusedBorder: InputBorder.none,

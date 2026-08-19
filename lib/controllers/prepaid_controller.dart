@@ -91,32 +91,7 @@ class PrePaidController extends GetxController {
       print("GET PLAN PRODUCT ID => $productid");
 
       final result = await planUseCase(productid: productid);
-
-      //       result.fold(
-      //         (failure) {
-      //           CustomToast.error(failure.message);
-      //         },
-      //         (response) {
-      //           print(
-      //             "API RESPONSE PRODUCT IDS => ${response.data?.map((e) => e.id).toList()}",
-      //           );
-      //           response.data?.sort((a, b) => (a.name ?? "").compareTo(b.name ?? ""));
-
-      //          plans.assignAll(response.data ?? []);
-
-      // if (plans.isNotEmpty) {
-      //   selectedPlan.value = plans.first;
-
-      //   defaultOperator.value = plans.first.name ?? "";
-      //   operatorName.value = defaultOperator.value;
-      // }
-
-      //           if (plans.isNotEmpty) {
-      //             selectedPlan.value = plans.first;
-      //           }
-      //         },
-      //       );
-
+      
       result.fold(
         (failure) {
           CustomToast.error(failure.message);
@@ -507,47 +482,47 @@ class PrePaidController extends GetxController {
 
       AppLogger.logError("👉 API RESPONSE RECEIVED");
 
-      return result.fold(
-        (failure) {
-          AppLogger.logError("❌ FAILURE RESPONSE");
-          AppLogger.logError("Error message: ${failure.message}");
+     return result.fold(
+  (failure) {
+    AppLogger.logError("❌ FAILURE RESPONSE");
+    AppLogger.logError("Error message: ${failure.message}");
 
-          CustomToast.error(failure.message);
-          return false;
-        },
-        (response) {
-          rechargeResponse.value = response;
+    // Show backend response only
+    CustomToast.error(failure.message);
 
-          AppLogger.logError("✅ SUCCESS RESPONSE OBJECT");
-          AppLogger.logError("Full response: $response");
+    return false;
+  },
+  (response) {
+    rechargeResponse.value = response;
 
-          final status = response.data?.recharge?.status?.toLowerCase();
+    AppLogger.logError("✅ SUCCESS RESPONSE OBJECT");
+    AppLogger.logError("Full response: $response");
 
-          AppLogger.logError("👉 Parsed status: $status");
+    final status = response.data?.recharge?.status?.toLowerCase();
 
-          final isSuccess = status == "success";
+    AppLogger.logError("👉 Parsed status: $status");
 
-          AppLogger.logError("👉 isSuccess: $isSuccess");
+    final isSuccess = status == "success";
 
-          if (isSuccess) {
-            AppLogger.logError("🎉 Recharge SUCCESS");
+    AppLogger.logError("👉 isSuccess: $isSuccess");
 
-            // Backend message only
-            CustomToast.success(response.message ?? "Success");
+    if (isSuccess) {
+      AppLogger.logError("🎉 Recharge SUCCESS");
 
-            return true;
-          } else {
-            AppLogger.logError("⚠️ Recharge FAILED");
+      // Backend message only
+      CustomToast.success(response.message ?? "");
 
-            // Backend error message only
-            CustomToast.error(
-              response.data?.apiResponse?.data?.resText ?? "Transaction Failed",
-            );
+      return true;
+    } else {
+      AppLogger.logError("⚠️ Recharge FAILED");
 
-            return false;
-          }
-        },
-      );
+      // Backend message only
+      CustomToast.error(response.message ?? "");
+
+      return false;
+    }
+  },
+);
     } catch (e, stack) {
       AppLogger.logError("🔥 EXCEPTION OCCURRED: $e");
       AppLogger.logError("STACKTRACE: $stack");

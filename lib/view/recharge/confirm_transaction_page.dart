@@ -302,6 +302,8 @@ class _ConfirmTransactionPageState extends State<ConfirmTransactionPage> {
                         'Enter amount',
                         isHighlighted: true,
                         controller: amountController,
+                        textColor: Colors.red,
+                        hintColor: Colors.red,
                       ),
                     ],
                   ),
@@ -323,9 +325,9 @@ class _ConfirmTransactionPageState extends State<ConfirmTransactionPage> {
                     ),
                     child: Center(
                       child: Text(
-                          "Note:Transaction amount is not refundable",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
+                        "Note:Transaction amount is not refundable",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
                           fontSize: 12.sp,
                           fontWeight: FontWeight.w500,
                           color: const Color(0xffFF001F),
@@ -762,7 +764,7 @@ class _ConfirmTransactionPageState extends State<ConfirmTransactionPage> {
                                               rechargeData
                                                   .data
                                                   ?.recharge
-                                                  ?.txnId ??
+                                                  ?.transactionid ??
                                               "",
                                           dateTime:
                                               rechargeData
@@ -774,7 +776,7 @@ class _ConfirmTransactionPageState extends State<ConfirmTransactionPage> {
                                               rechargeData
                                                   .data
                                                   ?.recharge
-                                                  ?.refid ??
+                                                  ?.txnId ??
                                               "",
                                         ),
                                       );
@@ -980,6 +982,8 @@ Widget _buildTextField(
   TextInputType? keyboardType,
   bool isHighlighted = false,
   List<TextInputFormatter>? inputFormatters,
+  Color? textColor,
+  Color? hintColor,
 }) {
   final isDark = Theme.of(context).brightness == Brightness.dark;
 
@@ -999,9 +1003,13 @@ Widget _buildTextField(
       keyboardType: keyboardType ?? TextInputType.number,
       inputFormatters:
           inputFormatters ?? [FilteringTextInputFormatter.digitsOnly],
+      style: TextStyle(
+        color: textColor ?? (isDark ? Colors.white : Colors.black),
+      ),
       decoration: InputDecoration(
         prefixIcon: prefixIcon,
         hintText: hint,
+        hintStyle: hintColor != null ? TextStyle(color: hintColor) : null,
         border: InputBorder.none,
         enabledBorder: InputBorder.none,
         focusedBorder: InputBorder.none,

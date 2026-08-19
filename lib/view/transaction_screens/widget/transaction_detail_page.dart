@@ -70,14 +70,14 @@ class TransactionDetailsPage extends StatelessWidget {
                 detailRow(
                   context,
                   "Payment Status",
-                  (data.paymentStatus?.toLowerCase() == 'received')
+                  isSuccess
                       ? 'Success'
-                      : (data.paymentStatus ?? "-"),
-                  textColor:
-                      (data.paymentStatus?.toLowerCase() == 'received' ||
-                          data.paymentStatus?.toLowerCase() == 'success')
+                      : (isPending
+                            ? 'Processing'
+                            : (data.paymentStatus ?? data.status ?? "Failed")),
+                  textColor: isSuccess
                       ? Colors.green
-                      : null,
+                      : (isPending ? Colors.orange : Colors.red),
                 ),
 
                 detailRow(context, "Transaction No", data.transactionId ?? "-"),

@@ -15,8 +15,7 @@ class NoInternetScreen extends StatefulWidget {
 class _NoInternetScreenState extends State<NoInternetScreen>
     with TickerProviderStateMixin {
   bool _isChecking = false;
-
-  late final AnimationController _waveController;
+late final AnimationController _waveController;
   late final Animation<double> _waveAnimation;
 
   late final AnimationController _pulseController;

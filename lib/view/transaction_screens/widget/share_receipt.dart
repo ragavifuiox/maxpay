@@ -205,7 +205,7 @@ class ShareReceipt {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Transaction ID : ${data.transactionId ?? '-'}",
+                      "Transaction ID : ${data.transactionNo ?? '-'}",
                       style: TextStyle(
                         fontSize: 12.sp,
                         fontWeight: FontWeight.w500,
@@ -256,7 +256,7 @@ class ShareReceipt {
           _detailRow(
             context,
             "Transaction No",
-            data.transactionNo ?? data.transactionId ?? "-",
+            data.mobile ?? data.mobile ?? "-",
           ),
           _detailRow(
             context,

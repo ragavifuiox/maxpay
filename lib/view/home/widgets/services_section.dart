@@ -39,20 +39,13 @@ class MenuScreen extends StatelessWidget {
   // ============================================================
 
   final ServiceController controller = Get.put(
-    ServiceController(
-      productTypeUseCase: sl(),
-      todayTrnsactionUsecase: sl(),
-    ),
+    ServiceController(productTypeUseCase: sl(), todayTrnsactionUsecase: sl()),
   );
 
-  final HomePageController homeController =
-      Get.find<HomePageController>();
+  final HomePageController homeController = Get.find<HomePageController>();
 
   final BannerController bannerController = Get.put(
-    BannerController(
-      bannerUsecase: sl(),
-      advusecase: sl(),
-    ),
+    BannerController(bannerUsecase: sl(), advusecase: sl()),
   );
 
   final TransReportController transReportController = Get.put(
@@ -70,9 +63,7 @@ class MenuScreen extends StatelessWidget {
   // ============================================================
 
   Future<void> _refreshPage() async {
-    await Future.wait([
-      controller.fetchProductTypes(),
-    ]);
+    await Future.wait([controller.fetchProductTypes()]);
   }
 
   // ============================================================
@@ -126,13 +117,10 @@ class MenuScreen extends StatelessWidget {
           // ======================================================
 
           if (controller.isProductLoading.value) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return const Center(child: CircularProgressIndicator());
           }
 
-          final productList =
-              controller.productTypeData.value?.data ?? [];
+          final productList = controller.productTypeData.value?.data ?? [];
 
           return RefreshIndicator(
             onRefresh: _refreshPage,
@@ -143,7 +131,6 @@ class MenuScreen extends StatelessWidget {
                   // ==================================================
                   // HEADER
                   // ==================================================
-
                   const HomeHeaderSection(),
 
                   Padding(
@@ -157,16 +144,12 @@ class MenuScreen extends StatelessWidget {
                         // ==================================================
                         // WALLET
                         // ==================================================
-
                         Container(
                           width: double.infinity,
-                          padding: EdgeInsets.symmetric(
-                            vertical: 18.h,
-                          ),
+                          padding: EdgeInsets.symmetric(vertical: 18.h),
                           decoration: BoxDecoration(
                             color: AppColors.clrPrimary,
-                            borderRadius:
-                                BorderRadius.circular(14.r),
+                            borderRadius: BorderRadius.circular(14.r),
                           ),
                           child: Column(
                             children: [
@@ -180,15 +163,12 @@ class MenuScreen extends StatelessWidget {
                               ),
                               SizedBox(height: 6.h),
                               Obx(() {
-                                final balance =
-                                    Get.find<HomePageController>()
-                                        .walletBalance
-                                        .value;
+                                final balance = Get.find<HomePageController>()
+                                    .walletBalance
+                                    .value;
 
                                 return Text(
-                                  balance
-                                          ?.data
-                                          ?.balance
+                                  balance?.data?.balance
                                           ?.toString()
                                           .currencyIndian ??
                                       '0.00',
@@ -208,14 +188,9 @@ class MenuScreen extends StatelessWidget {
                         // ==================================================
                         // TOP BANNER
                         // ==================================================
-
                         Obx(() {
                           final list =
-                              bannerController
-                                      .bannerData
-                                      .value
-                                      ?.data ??
-                                  [];
+                              bannerController.bannerData.value?.data ?? [];
 
                           if (bannerController.isLoading.value) {
                             return const Center(
@@ -234,23 +209,17 @@ class MenuScreen extends StatelessWidget {
                               children: [
                                 Obx(() {
                                   final currentIndex =
-                                      bannerController
-                                          .currentIndex
-                                          .value;
+                                      bannerController.currentIndex.value;
 
                                   final currentList =
-                                      bannerController
-                                              .bannerData
-                                              .value
-                                              ?.data ??
-                                          [];
+                                      bannerController.bannerData.value?.data ??
+                                      [];
 
                                   if (currentList.isEmpty) {
                                     return const SizedBox.shrink();
                                   }
 
-                                  if (currentIndex >=
-                                      currentList.length) {
+                                  if (currentIndex >= currentList.length) {
                                     return const SizedBox.shrink();
                                   }
 
@@ -263,46 +232,33 @@ class MenuScreen extends StatelessWidget {
                                   }
 
                                   return AnimatedSwitcher(
-                                    duration: const Duration(
-                                      milliseconds: 600,
-                                    ),
+                                    duration: const Duration(milliseconds: 600),
                                     child: ClipRRect(
                                       key: ValueKey(currentIndex),
-                                      borderRadius:
-                                          BorderRadius.circular(16.r),
+                                      borderRadius: BorderRadius.circular(16.r),
                                       child: Image.network(
                                         imageUrl,
                                         fit: BoxFit.cover,
                                         width: double.infinity,
                                         height: 150.h,
                                         errorBuilder:
-                                            (
-                                              context,
-                                              error,
-                                              stackTrace,
-                                            ) {
-                                          return const SizedBox.shrink();
-                                        },
+                                            (context, error, stackTrace) {
+                                              return const SizedBox.shrink();
+                                            },
                                       ),
                                     ),
                                   );
                                 }),
 
                                 PageView.builder(
-                                  controller: bannerController
-                                      .pageController,
+                                  controller: bannerController.pageController,
                                   itemCount: list.length,
                                   onPageChanged: (index) {
-                                    bannerController
-                                        .currentIndex
-                                        .value = index;
+                                    bannerController.currentIndex.value = index;
 
                                     bannerController.startAutoSlide();
                                   },
-                                  itemBuilder: (
-                                    context,
-                                    index,
-                                  ) {
+                                  itemBuilder: (context, index) {
                                     return const SizedBox.expand();
                                   },
                                 ),
@@ -316,7 +272,6 @@ class MenuScreen extends StatelessWidget {
                         // ==================================================
                         // TRANSACTION TITLE
                         // ==================================================
-
                         Row(
                           children: [
                             Expanded(
@@ -343,10 +298,8 @@ class MenuScreen extends StatelessWidget {
                         // ==================================================
                         // TRANSACTION CARDS
                         // ==================================================
-
                         Obx(() {
-                          final transaction =
-                              controller.todaytrans.value?.data;
+                          final transaction = controller.todaytrans.value?.data;
 
                           return Row(
                             children: [
@@ -355,20 +308,15 @@ class MenuScreen extends StatelessWidget {
                                   onTap: () {
                                     Get.to(
                                       () => const TransactionScreen(
-                                        status:
-                                            TransactionStatus.success,
+                                        status: TransactionStatus.success,
                                       ),
                                     );
                                   },
                                   child: _statusCard(
-                                    image:
-                                        AssetImages.successIcon,
-                                    value:
-                                        "${transaction?.successCount ?? 0}",
-                                    bgColor:
-                                        const Color(0xffC0FFDF),
-                                    textColor:
-                                        const Color(0xff22C55E),
+                                    image: AssetImages.successIcon,
+                                    value: "${transaction?.successCount ?? 0}",
+                                    bgColor: const Color(0xffC0FFDF),
+                                    textColor: const Color(0xff22C55E),
                                   ),
                                 ),
                               ),
@@ -378,18 +326,15 @@ class MenuScreen extends StatelessWidget {
                                   onTap: () {
                                     Get.to(
                                       () => const TransactionScreen(
-                                        status:
-                                            TransactionStatus.pending,
+                                        status: TransactionStatus.pending,
                                       ),
                                     );
                                   },
                                   child: _statusCard(
-                                    image:
-                                        AssetImages.processIcon,
+                                    image: AssetImages.processIcon,
                                     value:
                                         "${transaction?.processingCount ?? 0}",
-                                    bgColor:
-                                        const Color(0xffFFE1B4),
+                                    bgColor: const Color(0xffFFE1B4),
                                     textColor: Colors.orange,
                                   ),
                                 ),
@@ -400,18 +345,14 @@ class MenuScreen extends StatelessWidget {
                                   onTap: () {
                                     Get.to(
                                       () => const TransactionScreen(
-                                        status:
-                                            TransactionStatus.failed,
+                                        status: TransactionStatus.failed,
                                       ),
                                     );
                                   },
                                   child: _statusCard(
-                                    image:
-                                        AssetImages.failedIcon,
-                                    value:
-                                        "${transaction?.failedCount ?? 0}",
-                                    bgColor:
-                                        const Color(0xffFFCCD3),
+                                    image: AssetImages.failedIcon,
+                                    value: "${transaction?.failedCount ?? 0}",
+                                    bgColor: const Color(0xffFFCCD3),
                                     textColor: Colors.red,
                                   ),
                                 ),
@@ -425,7 +366,6 @@ class MenuScreen extends StatelessWidget {
                         // ==================================================
                         // SERVICES TITLE
                         // ==================================================
-
                         Row(
                           children: [
                             Text(
@@ -451,15 +391,14 @@ class MenuScreen extends StatelessWidget {
                         // ==================================================
                         // ADVERTISEMENT + SERVICES
                         // ==================================================
-
                         Obx(() {
                           final allAds =
                               bannerController
-                                      .advdata
-                                      .value
-                                      ?.data
-                                      ?.advertisements ??
-                                  [];
+                                  .advdata
+                                  .value
+                                  ?.data
+                                  ?.advertisements ??
+                              [];
 
                           log("================================");
                           log("ADVERTISEMENT DATA");
@@ -467,12 +406,8 @@ class MenuScreen extends StatelessWidget {
 
                           for (final ad in allAds) {
                             log("--------------------------------");
-                            log(
-                              "imageScreen : ${ad.imageScreen}",
-                            );
-                            log(
-                              "displayImage : ${ad.displayImage}",
-                            );
+                            log("imageScreen : ${ad.imageScreen}");
+                            log("displayImage : ${ad.displayImage}");
                             log("adImage : ${ad.adImage}");
                           }
 
@@ -480,8 +415,7 @@ class MenuScreen extends StatelessWidget {
                           // FILTER VALID ADS
                           // ==================================================
 
-                          final validAds =
-                              allAds.where(_hasValidAd).toList();
+                          final validAds = allAds.where(_hasValidAd).toList();
 
                           // ==================================================
                           // IMPORTANT:
@@ -494,10 +428,9 @@ class MenuScreen extends StatelessWidget {
                           final List<Advertisements> downAds = [];
 
                           for (final ad in validAds) {
-                            final screen =
-                                (ad.imageScreen ?? "")
-                                    .trim()
-                                    .toLowerCase();
+                            final screen = (ad.imageScreen ?? "")
+                                .trim()
+                                .toLowerCase();
 
                             if (screen == "up") {
                               upAds.add(ad);
@@ -508,13 +441,9 @@ class MenuScreen extends StatelessWidget {
                             }
                           }
 
-                          log(
-                            "TOTAL UP ADS : ${upAds.length}",
-                          );
+                          log("TOTAL UP ADS : ${upAds.length}");
 
-                          log(
-                            "TOTAL DOWN ADS : ${downAds.length}",
-                          );
+                          log("TOTAL DOWN ADS : ${downAds.length}");
 
                           // ==================================================
                           // BUILD SERVICES
@@ -556,11 +485,7 @@ class MenuScreen extends StatelessWidget {
         // ========================================================
         // FIRST 4 SERVICES
         // ========================================================
-
-        _buildFirstFourServices(
-          context,
-          productList,
-        ),
+        _buildFirstFourServices(context, productList),
 
         SizedBox(height: 18.h),
 
@@ -570,26 +495,16 @@ class MenuScreen extends StatelessWidget {
         // SERVICE LEFT
         // AD RIGHT
         // ========================================================
-
         Row(
-          crossAxisAlignment:
-              CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Column(
               children: [
                 if (productList.length > 4)
-                  _dynamicServiceItem(
-                    context,
-                    productList[4],
-                    4,
-                  ),
+                  _dynamicServiceItem(context, productList[4], 4),
 
                 if (productList.length > 5)
-                  _dynamicServiceItem(
-                    context,
-                    productList[5],
-                    5,
-                  ),
+                  _dynamicServiceItem(context, productList[5], 5),
               ],
             ),
 
@@ -597,11 +512,7 @@ class MenuScreen extends StatelessWidget {
 
             Expanded(
               child: upAds.isNotEmpty
-                  ? _buildAdCarousel(
-                      context,
-                      upAds,
-                      "UP",
-                    )
+                  ? _buildAdCarousel(context, upAds, "UP")
                   : _buildPlaceholderCard(),
             ),
           ],
@@ -612,12 +523,7 @@ class MenuScreen extends StatelessWidget {
         // ========================================================
         // NEXT 4 SERVICES
         // ========================================================
-
-        _buildFourServicesAt(
-          context,
-          productList,
-          6,
-        ),
+        _buildFourServicesAt(context, productList, 6),
 
         SizedBox(height: 18.h),
 
@@ -630,18 +536,12 @@ class MenuScreen extends StatelessWidget {
         // IMPORTANT:
         // DON'T HIDE THE SLOT WHEN PRODUCT 10/11 IS MISSING
         // ========================================================
-
         Row(
-          crossAxisAlignment:
-              CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Expanded(
               child: downAds.isNotEmpty
-                  ? _buildAdCarousel(
-                      context,
-                      downAds,
-                      "DOWN",
-                    )
+                  ? _buildAdCarousel(context, downAds, "DOWN")
                   : _buildPlaceholderCard(),
             ),
 
@@ -650,18 +550,10 @@ class MenuScreen extends StatelessWidget {
             Column(
               children: [
                 if (productList.length > 10)
-                  _dynamicServiceItem(
-                    context,
-                    productList[10],
-                    10,
-                  ),
+                  _dynamicServiceItem(context, productList[10], 10),
 
                 if (productList.length > 11)
-                  _dynamicServiceItem(
-                    context,
-                    productList[11],
-                    11,
-                  ),
+                  _dynamicServiceItem(context, productList[11], 11),
               ],
             ),
           ],
@@ -672,12 +564,7 @@ class MenuScreen extends StatelessWidget {
         // ========================================================
         // REMAINING SERVICES
         // ========================================================
-
-        _buildRemainingServices(
-          context,
-          productList,
-          12,
-        ),
+        _buildRemainingServices(context, productList, 12),
       ],
     );
   }
@@ -712,27 +599,20 @@ class MenuScreen extends StatelessWidget {
           // ======================================================
           // PAGE VIEW
           // ======================================================
-
           PageView.builder(
             itemCount: ads.length,
 
             // ==================================================
             // HORIZONTAL SWIPE
             // ==================================================
-
             scrollDirection: Axis.horizontal,
 
-            itemBuilder: (
-              context,
-              index,
-            ) {
+            itemBuilder: (context, index) {
               final ad = ads[index];
 
-              final displayImage =
-                  (ad.displayImage ?? "").trim();
+              final displayImage = (ad.displayImage ?? "").trim();
 
-              final adImage =
-                  (ad.adImage ?? "").trim();
+              final adImage = (ad.adImage ?? "").trim();
 
               // ==================================================
               // DISPLAY IMAGE PRIORITY
@@ -741,9 +621,7 @@ class MenuScreen extends StatelessWidget {
               // if empty use adImage
               // ==================================================
 
-              final image = displayImage.isNotEmpty
-                  ? displayImage
-                  : adImage;
+              final image = displayImage.isNotEmpty ? displayImage : adImage;
 
               if (image.isEmpty) {
                 return _buildPlaceholderCard();
@@ -755,51 +633,37 @@ class MenuScreen extends StatelessWidget {
                 return _buildPlaceholderCard();
               }
 
-              log(
-                "$position AD [$index] DISPLAY : $imageUrl",
-              );
+              log("$position AD [$index] DISPLAY : $imageUrl");
 
               return InkWell(
-                borderRadius:
-                    BorderRadius.circular(8.r),
+                borderRadius: BorderRadius.circular(8.r),
 
                 // ==================================================
                 // CLICK CURRENT AD
                 // ==================================================
-
                 onTap: () {
                   // ================================================
                   // OPEN CURRENT AD'S adImage
                   // ================================================
 
                   if (adImage.isEmpty) {
-                    log(
-                      "$position AD [$index] has no adImage",
-                    );
+                    log("$position AD [$index] has no adImage");
                     return;
                   }
 
-                  final fullImageUrl =
-                      _toImageUrl(adImage);
+                  final fullImageUrl = _toImageUrl(adImage);
 
                   if (fullImageUrl.isEmpty) {
                     return;
                   }
 
-                  log(
-                    "$position AD [$index] OPEN : $fullImageUrl",
-                  );
+                  log("$position AD [$index] OPEN : $fullImageUrl");
 
-                  _showFullImage(
-                    context,
-                    [fullImageUrl],
-                    0,
-                  );
+                  _showFullImage(context, [fullImageUrl], 0);
                 },
 
                 child: ClipRRect(
-                  borderRadius:
-                      BorderRadius.circular(8.r),
+                  borderRadius: BorderRadius.circular(8.r),
                   child: Image.network(
                     imageUrl,
                     width: double.infinity,
@@ -809,15 +673,8 @@ class MenuScreen extends StatelessWidget {
                     // ==================================================
                     // IMAGE ERROR
                     // ==================================================
-
-                    errorBuilder: (
-                      context,
-                      error,
-                      stackTrace,
-                    ) {
-                      log(
-                        "$position AD [$index] ERROR : $error",
-                      );
+                    errorBuilder: (context, error, stackTrace) {
+                      log("$position AD [$index] ERROR : $error");
 
                       return _buildPlaceholderCard();
                     },
@@ -826,35 +683,29 @@ class MenuScreen extends StatelessWidget {
               );
             },
           ),
-        if (ads.length > 1)
+          if (ads.length > 1)
             Positioned(
               bottom: 8.h,
               left: 0,
               right: 0,
               child: IgnorePointer(
                 child: Row(
-                  mainAxisAlignment:
-                      MainAxisAlignment.center,
-                  children: List.generate(
-                    ads.length,
-                    (index) {
-                      return Container(
-                        width: 6.w,
-                        height: 6.w,
-                        margin: EdgeInsets.symmetric(
-                          horizontal: 3.w,
-                        ),
-                        decoration: const BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.white,
-                        ),
-                      );
-                    },
-                  ),
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(ads.length, (index) {
+                    return Container(
+                      width: 6.w,
+                      height: 6.w,
+                      margin: EdgeInsets.symmetric(horizontal: 3.w),
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.white,
+                      ),
+                    );
+                  }),
                 ),
               ),
             ),
-          ],
+        ],
       ),
     );
   }
@@ -867,21 +718,16 @@ class MenuScreen extends StatelessWidget {
     return Container(
       height: 160.h,
       width: double.infinity,
-      padding: EdgeInsets.symmetric(
-        horizontal: 16.w,
-      ),
+      padding: EdgeInsets.symmetric(horizontal: 16.w),
       decoration: BoxDecoration(
         color: AppColors.clrPrimary,
-        borderRadius:
-            BorderRadius.circular(12.r),
+        borderRadius: BorderRadius.circular(12.r),
       ),
       child: Row(
-        mainAxisAlignment:
-            MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Column(
-            crossAxisAlignment:
-                CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
@@ -895,10 +741,7 @@ class MenuScreen extends StatelessWidget {
               SizedBox(height: 4.h),
               Text(
                 "Please Contact",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 12.sp,
-                ),
+                style: TextStyle(color: Colors.white, fontSize: 12.sp),
               ),
             ],
           ),
@@ -907,10 +750,7 @@ class MenuScreen extends StatelessWidget {
             height: 22.w,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              border: Border.all(
-                color: Colors.white,
-                width: 1.5,
-              ),
+              border: Border.all(color: Colors.white, width: 1.5),
             ),
           ),
         ],
@@ -922,38 +762,18 @@ class MenuScreen extends StatelessWidget {
   // FIRST 4 SERVICES
   // ============================================================
 
-  Widget _buildFirstFourServices(
-    BuildContext context,
-    List<Data> productList,
-  ) {
+  Widget _buildFirstFourServices(BuildContext context, List<Data> productList) {
     return Row(
-      mainAxisAlignment:
-          MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         if (productList.length > 0)
-          _dynamicServiceItem(
-            context,
-            productList[0],
-            0,
-          ),
+          _dynamicServiceItem(context, productList[0], 0),
         if (productList.length > 1)
-          _dynamicServiceItem(
-            context,
-            productList[1],
-            1,
-          ),
+          _dynamicServiceItem(context, productList[1], 1),
         if (productList.length > 2)
-          _dynamicServiceItem(
-            context,
-            productList[2],
-            2,
-          ),
+          _dynamicServiceItem(context, productList[2], 2),
         if (productList.length > 3)
-          _dynamicServiceItem(
-            context,
-            productList[3],
-            3,
-          ),
+          _dynamicServiceItem(context, productList[3], 3),
       ],
     );
   }
@@ -972,20 +792,14 @@ class MenuScreen extends StatelessWidget {
     }
 
     return Row(
-      mainAxisAlignment:
-          MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         for (
           int i = startIndex;
-          i < startIndex + 4 &&
-              i < productList.length;
+          i < startIndex + 4 && i < productList.length;
           i++
         )
-          _dynamicServiceItem(
-            context,
-            productList[i],
-            i,
-          ),
+          _dynamicServiceItem(context, productList[i], i),
       ],
     );
   }
@@ -1005,23 +819,16 @@ class MenuScreen extends StatelessWidget {
 
     return GridView.builder(
       shrinkWrap: true,
-      physics:
-          const NeverScrollableScrollPhysics(),
-      itemCount:
-          productList.length - startIndex,
-      gridDelegate:
-          SliverGridDelegateWithFixedCrossAxisCount(
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: productList.length - startIndex,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 4,
         mainAxisSpacing: 16.h,
         crossAxisSpacing: 8.w,
         childAspectRatio: 0.75,
       ),
-      itemBuilder: (
-        context,
-        index,
-      ) {
-        final actualIndex =
-            startIndex + index;
+      itemBuilder: (context, index) {
+        final actualIndex = startIndex + index;
 
         return _dynamicServiceItem(
           context,
@@ -1041,10 +848,7 @@ class MenuScreen extends StatelessWidget {
     List<String> imageUrls,
     int initialIndex,
   ) {
-    final pageController =
-        PageController(
-      initialPage: initialIndex,
-    );
+    final pageController = PageController(initialPage: initialIndex);
 
     showDialog(
       context: context,
@@ -1056,14 +860,9 @@ class MenuScreen extends StatelessWidget {
             child: Stack(
               children: [
                 PageView.builder(
-                  controller:
-                      pageController,
-                  itemCount:
-                      imageUrls.length,
-                  itemBuilder: (
-                    context,
-                    index,
-                  ) {
+                  controller: pageController,
+                  itemCount: imageUrls.length,
+                  itemBuilder: (context, index) {
                     return InteractiveViewer(
                       child: Center(
                         child: Image.network(
@@ -1101,30 +900,18 @@ class MenuScreen extends StatelessWidget {
   // SERVICE ITEM
   // ============================================================
 
-  Widget _dynamicServiceItem(
-    BuildContext context,
-    Data item, [
-    int index = 0,
-  ]) {
+  Widget _dynamicServiceItem(BuildContext context, Data item, [int index = 0]) {
     return _serviceItem(
       context,
       item.name ?? "",
       _getImage(item.name ?? ""),
-      [
-        AppColors.box1,
-        AppColors.box2,
-        AppColors.box3,
-        AppColors.box4,
-      ][index % 4],
+      [AppColors.box1, AppColors.box2, AppColors.box3, AppColors.box4][index %
+          4],
       onTap: () {
         _handleNavigation(item);
       },
     );
   }
-
-  // ============================================================
-  // SERVICE UI
-  // ============================================================
 
   Widget _serviceItem(
     BuildContext context,
@@ -1133,63 +920,38 @@ class MenuScreen extends StatelessWidget {
     Color bgColor, {
     VoidCallback? onTap,
   }) {
-    final theme =
-        Theme.of(context);
+    final theme = Theme.of(context);
 
     String displayTitle = title;
 
-    if (title.toLowerCase() ==
-        "payment status") {
-      displayTitle =
-          "Payment\nStatus";
-    } else if (title.toLowerCase() ==
-        "bbps") {
+    if (title.toLowerCase() == "payment status") {
+      displayTitle = "Payment\nStatus";
+    } else if (title.toLowerCase() == "bbps") {
       displayTitle = "BBPS";
     }
 
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        borderRadius:
-            BorderRadius.circular(14.r),
+        borderRadius: BorderRadius.circular(14.r),
         onTap: onTap,
         child: Padding(
-          padding:
-              EdgeInsets.all(4.w),
+          padding: EdgeInsets.all(4.w),
           child: Column(
-            mainAxisSize:
-                MainAxisSize.min,
+            mainAxisSize: MainAxisSize.min,
             children: [
               Container(
                 width: 56.w,
                 height: 56.w,
-                padding: EdgeInsets.all(
-                  displayTitle == "BBPS"
-                      ? 12.w
-                      : 4.w,
-                ),
-                decoration:
-                    BoxDecoration(
+                padding: EdgeInsets.all(displayTitle == "BBPS" ? 12.w : 4.w),
+                decoration: BoxDecoration(
                   color: bgColor,
-                  borderRadius:
-                      BorderRadius.circular(
-                    14.r,
-                  ),
+                  borderRadius: BorderRadius.circular(14.r),
                 ),
                 child: Center(
-                  child: image
-                          .toLowerCase()
-                          .endsWith(
-                            '.svg',
-                          )
-                      ? SvgPicture.asset(
-                          image,
-                          fit: BoxFit.contain,
-                        )
-                      : Image.asset(
-                          image,
-                          fit: BoxFit.contain,
-                        ),
+                  child: image.toLowerCase().endsWith('.svg')
+                      ? SvgPicture.asset(image, fit: BoxFit.contain)
+                      : Image.asset(image, fit: BoxFit.contain),
                 ),
               ),
               SizedBox(height: 4.h),
@@ -1197,18 +959,13 @@ class MenuScreen extends StatelessWidget {
                 width: 70.w,
                 child: Text(
                   displayTitle,
-                  textAlign:
-                      TextAlign.center,
+                  textAlign: TextAlign.center,
                   maxLines: 2,
-                  overflow:
-                      TextOverflow.visible,
+                  overflow: TextOverflow.visible,
                   style: TextStyle(
                     fontSize: 11.sp,
-                    fontWeight:
-                        FontWeight.w500,
-                    color: theme
-                        .colorScheme
-                        .onSurface,
+                    fontWeight: FontWeight.w500,
+                    color: theme.colorScheme.onSurface,
                   ),
                 ),
               ),
@@ -1223,24 +980,15 @@ class MenuScreen extends StatelessWidget {
   // NORMALIZE
   // ============================================================
 
-  String _normalize(
-    String name,
-  ) {
-    return name
-        .toLowerCase()
-        .replaceAll(
-          RegExp(r'[\s\-]+'),
-          '',
-        );
+  String _normalize(String name) {
+    return name.toLowerCase().replaceAll(RegExp(r'[\s\-]+'), '');
   }
 
   // ============================================================
   // SERVICE IMAGE
   // ============================================================
 
-  String _getImage(
-    String name,
-  ) {
+  String _getImage(String name) {
     switch (_normalize(name)) {
       case 'prepaid':
         return AssetImages.prepaid;
@@ -1288,21 +1036,16 @@ class MenuScreen extends StatelessWidget {
   // NAVIGATION
   // ============================================================
 
-  void _handleNavigation(
-    Data item,
-  ) {
-    final key =
-        _normalize(item.name ?? "");
+  void _handleNavigation(Data item) {
+    final key = _normalize(item.name ?? "");
 
     switch (key) {
       case 'prepaid':
         Get.toNamed(
           AppRoutes.prepaid,
           arguments: {
-            "productId":
-                item.id.toString(),
-            "productName":
-                item.name ?? "",
+            "productId": item.id.toString(),
+            "productName": item.name ?? "",
           },
         );
         break;
@@ -1311,10 +1054,8 @@ class MenuScreen extends StatelessWidget {
         Get.toNamed(
           AppRoutes.dth,
           arguments: {
-            "productId":
-                item.id.toString(),
-            "productName":
-                item.name ?? "",
+            "productId": item.id.toString(),
+            "productName": item.name ?? "",
           },
         );
         break;
@@ -1323,73 +1064,49 @@ class MenuScreen extends StatelessWidget {
         Get.toNamed(
           AppRoutes.paymentstatus,
           arguments: {
-            "productId":
-                item.id.toString(),
-            "productName":
-                item.name ?? "",
+            "productId": item.id.toString(),
+            "productName": item.name ?? "",
           },
         );
         break;
 
       case 'fastag':
-        Get.to(
-          () =>
-              const FastagRechargePage(),
-        );
+        Get.to(() => const FastagRechargePage());
         break;
 
       case 'water':
-        Get.to(
-          () => const WatterBill(),
-        );
+        Get.to(() => const WatterBill());
         break;
 
       case 'gas':
-        Get.to(
-          () => const GasBillPage(),
-        );
+        Get.to(() => const GasBillPage());
         break;
 
       case 'electricity':
-        Get.to(
-          () =>
-              const ElectricityBillPage(),
-        );
+        Get.to(() => const ElectricityBillPage());
         break;
 
       case 'broadband':
-        Get.to(
-          () =>
-              const BroadBandPage(),
-        );
+        Get.to(() => const BroadBandPage());
         break;
 
       case 'cabletv':
-        Get.to(
-          () => const CableTvPage(),
-        );
+        Get.to(() => const CableTvPage());
         break;
 
       case 'postpaid':
-        Get.to(
-          () => const PostpaidPage(),
-        );
+        Get.to(() => const PostpaidPage());
         break;
 
       case 'bbps':
         break;
 
       case 'landline':
-        Get.to(
-          () =>
-              const LandlineBillPage(),
-        );
+        Get.to(() => const LandlineBillPage());
         break;
 
       default:
-        log(
-          "No navigation mapped for product: ${item.name}",
-        );
+        log("No navigation mapped for product: ${item.name}");
         break;
     }
   }
@@ -1406,35 +1123,21 @@ class MenuScreen extends StatelessWidget {
   }) {
     return Container(
       height: 52.h,
-      decoration:
-          BoxDecoration(
+      decoration: BoxDecoration(
         color: bgColor,
-        borderRadius:
-            BorderRadius.circular(
-          12.r,
-        ),
-        border: Border.all(
-          color:
-              AppColors.clrPrimary,
-          width: 2,
-        ),
+        borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(color: AppColors.clrPrimary, width: 2),
       ),
       child: Row(
-        mainAxisAlignment:
-            MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          SvgPicture.asset(
-            image,
-            width: 24.w,
-            height: 24.h,
-          ),
+          SvgPicture.asset(image, width: 24.w, height: 24.h),
           SizedBox(width: 8.w),
           Text(
             value,
             style: TextStyle(
               fontSize: 19.sp,
-              fontWeight:
-                  FontWeight.bold,
+              fontWeight: FontWeight.bold,
               color: textColor,
             ),
           ),

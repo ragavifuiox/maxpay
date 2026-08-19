@@ -229,11 +229,11 @@ class CustomerTransConfirmationScreen extends GetView<PrePaidController> {
                                             transactionAmount.toString())
                                         .currencyIndian,
                                 transactionId:
-                                    rechargeData.data?.recharge?.txnId ?? "",
+                                    rechargeData.data?.recharge?.transactionid ?? "",
                                 dateTime:
                                     rechargeData.data?.recharge?.requestTime ??
                                     DateTime.now().toString(),
-                                refId: rechargeData.data?.recharge?.refid ?? "",
+                                refId: rechargeData.data?.recharge?.txnId ?? "",
                               ),
                             );
                           } else {

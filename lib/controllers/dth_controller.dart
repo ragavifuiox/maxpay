@@ -241,11 +241,11 @@ class DthController extends GetxController {
 
           if (isSuccess) {
             AppLogger.logError("🎉 Recharge SUCCESS");
-            CustomToast.success(response.message ?? "Success");
+       CustomToast.success(response.message ?? "");
             return true;
           } else {
             AppLogger.logError("⚠️ Recharge FAILED");
-            CustomToast.error(response.message ?? "Transaction Failed");
+         CustomToast.error(response.message ?? "");
             return false;
           }
         },
@@ -261,6 +261,8 @@ class DthController extends GetxController {
       AppLogger.logError("👉 Loading set to false (finally block)");
     }
   }
+
+
 
   Future<void> getCustomerInfo(String productId, String customerId) async {
     if (productId.isEmpty || customerId.isEmpty) {
