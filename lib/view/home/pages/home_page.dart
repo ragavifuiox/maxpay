@@ -684,7 +684,7 @@ BlinkingZoomCard(
                   obscureText: true,
                   maxLength: 6,
                   decoration: InputDecoration(
-                    hintText: 'Enter new PIN',
+                    hintText: 'Enter Pincode',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.r),
                     ),
