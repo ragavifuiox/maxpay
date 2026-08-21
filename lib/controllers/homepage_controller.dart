@@ -6,11 +6,13 @@ import 'package:maxpay/core/constants/snackbar.dart';
 import 'package:maxpay/core/data/model/faq_model.dart';
 import 'package:maxpay/core/data/model/graph_model.dart' hide Data;
 import 'package:maxpay/core/data/model/refund_count_model.dart';
+import 'package:maxpay/core/data/model/retailer_search_model.dart' show RetailorSearch;
 import 'package:maxpay/core/data/model/today_credit_model.dart';
 import 'package:maxpay/core/domain/usecase/faq_reply_usecase.dart';
 import 'package:maxpay/core/domain/usecase/faq_usecase.dart';
 import 'package:maxpay/core/domain/usecase/graph_usecase.dart';
 import 'package:maxpay/core/domain/usecase/refund_count_usecase.dart';
+import 'package:maxpay/core/domain/usecase/retailor_search_usecase.dart';
 import 'package:maxpay/core/domain/usecase/today_credit_usecase.dart';
 import 'package:maxpay/core/utils/logg_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -38,6 +40,7 @@ class HomePageController extends GetxController {
   final GraphUsecase graphUsecase;
   final FaqUsecase faqUsecase;
   final FaqReplyUsecase faqreplyusecase;
+  final RetailorSearchUsecase retailorsearchusecase;
 
   HomePageController({
     required this.getNewsUseCase,
@@ -50,6 +53,7 @@ class HomePageController extends GetxController {
     required this.graphUsecase,
     required this.faqUsecase,
     required this.faqreplyusecase,
+    required this.retailorsearchusecase,
   });
 
   Rxn<TransactionResponse> transactionData = Rxn<TransactionResponse>();
@@ -61,6 +65,7 @@ class HomePageController extends GetxController {
   final Rx<News?> news = Rx<News?>(null);
   final Rx<Graph?> graphData = Rx<Graph?>(null);
   final Rx<Faq?> faq = Rx<Faq?>(null);
+  final Rx<RetailorSearch?> retailorsearch = Rx<RetailorSearch?>(null);
   final TextEditingController commentController = TextEditingController();
   RxBool isLoading = false.obs;
 
@@ -94,6 +99,60 @@ class HomePageController extends GetxController {
     ]);
   }
 
+
+Future<void> searchRetailor({
+  required String regmob,
+}) async {
+  try {
+    isLoading.value = true;
+
+    AppLogger.debugPrint(
+      "🚀 Retailor Search API STARTED",
+    );
+
+    final result = await retailorsearchusecase(
+      regmob: regmob,
+    );
+
+    result.fold(
+      (failure) { 
+        AppLogger.logError(
+          "❌ Retailor Search Failed: ${failure.message}",
+        );
+
+        // Don't show raw Dio/network exception
+        if (failure.message.toString().contains(
+              "No internet connection",
+            )) {
+          return;
+        }
+
+        CustomToast.error(
+          failure.message.toString(),
+        );
+      },
+      (data) {
+        AppLogger.debugPrint(
+          "✅ Retailor Search API SUCCESS",
+        );
+
+        retailorsearch.value = data;
+
+        AppLogger.debugPrint(
+          "Retailor Search Response: ${data.toJson()}",
+        );
+      },
+    );
+  } catch (e) {
+    AppLogger.logError(
+      "🔥 Retailor Search Exception: $e",
+    );
+
+    // Don't show raw exception to user
+  } finally {
+    isLoading.value = false;
+  }
+}
   Future<void> FaqReply({
     required String comment,
     required String faqid,

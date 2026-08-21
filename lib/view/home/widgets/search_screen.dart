@@ -1,11 +1,45 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
+import 'package:maxpay/controllers/homepage_controller.dart';
+import 'package:maxpay/core/data/model/retailer_search_model.dart';
 
-class SearchScreen extends StatelessWidget {
-  SearchScreen({super.key});
+class SearchScreen extends StatefulWidget {
+  const SearchScreen({super.key});
 
+  @override
+  State<SearchScreen> createState() => _SearchScreenState();
+}
+
+class _SearchScreenState extends State<SearchScreen> {
   final TextEditingController searchController = TextEditingController();
+  final HomePageController homeController = Get.find<HomePageController>();
+
+  @override
+  void initState() {
+    super.initState();
+    // Clear previous search data when screen opens
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      homeController.retailorsearch.value = null;
+    });
+  }
+
+  void _performSearch() {
+    String regmob = searchController.text.trim();
+    if (regmob.isNotEmpty) {
+      homeController.searchRetailor(regmob: regmob);
+    } else {
+      homeController.retailorsearch.value = null;
+    }
+  }
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -13,7 +47,7 @@ class SearchScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: isDark ? AppColors.darkbgBlack : Colors.white,
-      appBar: CommonAppBar(title: "Search"),
+      appBar: const CommonAppBar(title: "Search"),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 18),
         child: Column(
@@ -32,13 +66,25 @@ class SearchScreen extends StatelessWidget {
               child: TextField(
                 controller: searchController,
                 style: TextStyle(color: isDark ? Colors.white : Colors.black),
+                keyboardType: TextInputType.number,
+                maxLength: 10,
+                onChanged: (val) {
+                  if (val.trim().length == 10) {
+                    _performSearch();
+                  } else if (val.trim().isEmpty) {
+                    homeController.retailorsearch.value = null;
+                  }
+                },
+                onSubmitted: (_) => _performSearch(),
                 decoration: InputDecoration(
-                  hintText: "9876543212",
+                  counterText: "",
+                  hintText: "Enter Mobile Number",
                   hintStyle: TextStyle(
                     color: Colors.grey.shade500,
                     fontSize: 14,
                   ),
                   prefixIcon: const Icon(Icons.search, color: Colors.grey),
+
                   filled: true,
                   fillColor: isDark ? AppColors.darkbgBlack : Colors.white,
                   contentPadding: const EdgeInsets.symmetric(vertical: 15),
@@ -53,7 +99,10 @@ class SearchScreen extends StatelessWidget {
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(8),
-                    borderSide: const BorderSide(color: Colors.blue, width: 1),
+                    borderSide: const BorderSide(
+                      color: AppColors.clrPrimary,
+                      width: 1,
+                    ),
                   ),
                 ),
               ),
@@ -68,18 +117,28 @@ class SearchScreen extends StatelessWidget {
             const SizedBox(height: 8),
 
             Expanded(
-              child: ListView(
-                children: const [
-                  TransactionCard(status: "Success", statusColor: Colors.green),
-                  SizedBox(height: 15),
-                  TransactionCard(
-                    status: "Pending",
-                    statusColor: Colors.orange,
-                  ),
-                  SizedBox(height: 15),
-                  TransactionCard(status: "Failed", statusColor: Colors.red),
-                ],
-              ),
+              child: Obx(() {
+                if (homeController.isLoading.value) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                final retailorSearch = homeController.retailorsearch.value;
+                if (retailorSearch == null ||
+                    retailorSearch.data == null ||
+                    retailorSearch.data!.isEmpty) {
+                  return const Center(child: Text("No transactions found"));
+                }
+
+                return ListView.separated(
+                  itemCount: retailorSearch.data!.length,
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(height: 15),
+                  itemBuilder: (context, index) {
+                    final txn = retailorSearch.data![index];
+                    return TransactionCard(transactionData: txn);
+                  },
+                );
+              }),
             ),
           ],
         ),
@@ -89,18 +148,40 @@ class SearchScreen extends StatelessWidget {
 }
 
 class TransactionCard extends StatelessWidget {
-  final String status;
-  final Color statusColor;
+  final Data transactionData;
 
-  const TransactionCard({
-    super.key,
-    required this.status,
-    required this.statusColor,
-  });
+  const TransactionCard({super.key, required this.transactionData});
 
   @override
   Widget build(BuildContext context) {
     bool isDark = Theme.of(context).brightness == Brightness.dark;
+
+    String statusText = transactionData.status ?? "Failed";
+    Color statusColor;
+    if (statusText.toLowerCase() == 'success') {
+      statusColor = Colors.green;
+    } else if (statusText.toLowerCase() == 'pending') {
+      statusColor = Colors.orange;
+    } else {
+      statusColor = Colors.red;
+    }
+
+    String rechargeMode = transactionData.rechargeMode ?? "N/A";
+    String shortName = rechargeMode.isNotEmpty
+        ? rechargeMode[0].toUpperCase()
+        : "R";
+
+    String rawDate =
+        transactionData.createdAt ?? transactionData.requestTime ?? "N/A";
+    String formattedDate = rawDate;
+    if (rawDate != "N/A") {
+      try {
+        DateTime parsedDate = DateTime.parse(rawDate);
+        formattedDate = DateFormat("dd-MM-yyyy hh:mm:ss a").format(parsedDate);
+      } catch (e) {
+        // Fallback to raw string
+      }
+    }
 
     return Container(
       decoration: BoxDecoration(
@@ -124,7 +205,7 @@ class TransactionCard extends StatelessWidget {
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
-                    "29-11-2026 07:38:43PM",
+                    formattedDate,
                     style: TextStyle(
                       fontSize: 12,
                       color: isDark ? Colors.grey.shade400 : Colors.grey,
@@ -142,7 +223,7 @@ class TransactionCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: Text(
-                    status,
+                    statusText,
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 10,
@@ -166,12 +247,12 @@ class TransactionCard extends StatelessWidget {
               children: [
                 CircleAvatar(
                   radius: 18,
-                  backgroundColor: Colors.red,
-                  child: const Text(
-                    "Jio",
-                    style: TextStyle(
+                  backgroundColor: AppColors.clrPrimary,
+                  child: Text(
+                    shortName,
+                    style: const TextStyle(
                       color: Colors.white,
-                      fontSize: 11,
+                      fontSize: 15,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -184,7 +265,7 @@ class TransactionCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Prepaid",
+                        rechargeMode,
                         style: TextStyle(
                           fontWeight: FontWeight.w500,
                           fontSize: 15,
@@ -192,33 +273,64 @@ class TransactionCard extends StatelessWidget {
                           fontFamily: 'Poppins',
                         ),
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        "Transaction No: 9865647823",
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: isDark ? Colors.white70 : Colors.black87,
-                          fontFamily: 'Poppins',
-                        ),
+                      Row(
+                        children: [
+                          Text(
+                            "Transaction No: ",
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: isDark ? Colors.white70 : Colors.black87,
+                              fontFamily: 'Poppins',
+                            ),
+                          ),
+                          Expanded(
+                            child: Text(
+                              "${transactionData.transactionId ?? 'N/A'}",
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: isDark ? Colors.white70 : Colors.black87,
+                                fontFamily: 'Poppins',
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 2),
-                      Text(
-                        "Provider Ref ID : #9876543",
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: isDark ? Colors.white70 : Colors.black87,
-                          fontFamily: 'Poppins',
-                        ),
+                      Row(
+                        children: [
+                          Text(
+                            "Provider Ref ID : ",
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: isDark ? Colors.white70 : Colors.black87,
+                              fontFamily: 'Poppins',
+                            ),
+                          ),
+                          Expanded(
+                            child: Text(
+                              "${transactionData.txnId ?? transactionData.txnId ?? 'N/A'}",
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: isDark ? Colors.white70 : Colors.black87,
+                                fontFamily: 'Poppins',
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
                 ),
 
                 Text(
-                  "₹ 365",
+                  "₹ ${transactionData.amount ?? '0'}",
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 22,
+                    fontSize: 16,
                     color: isDark ? Colors.white : Colors.black,
                   ),
                 ),

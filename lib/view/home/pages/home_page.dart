@@ -691,6 +691,7 @@ BlinkingZoomCard(
                     counterText: '',
                   ),
                 ),
+                
                 if (isProfileLoading || isSubmitting.value) ...[
                   SizedBox(height: 12.h),
                   const Center(

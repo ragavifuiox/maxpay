@@ -27,7 +27,6 @@ class AddWalletScreen extends GetView<AddWalletController> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              /// QR IMAGE CONTAINER
               Container(
                 height: 240.h,
                 width: MediaQuery.of(context).size.width.w,

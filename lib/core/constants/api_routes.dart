@@ -83,4 +83,5 @@ class ApiRoutes {
   static const bankdetail = "/get_bank_details";
   static const activeuser = "/active_user";
   static const terms = "/get_terms_settings";
+  static const retailorsearch = "/retailer_search";
 }

@@ -15,6 +15,8 @@ import 'package:maxpay/core/data/repsoitory/customer_info_repo_iml.dart';
 import 'package:maxpay/core/data/repsoitory/dispute_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/download_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/dth_recharge_repo_impl.dart';
+import 'package:maxpay/core/data/repsoitory/retailor_search_repo_impl.dart';
+import 'package:maxpay/core/domain/repository/retailor_search_repository.dart';
 import 'package:maxpay/core/domain/repository/bank_detail_repository.dart';
 import 'package:maxpay/core/data/repsoitory/bank_detail_repoo_impl.dart';
 import 'package:maxpay/core/domain/usecase/bank_detail_usecase.dart';
@@ -201,6 +203,7 @@ import 'package:maxpay/core/domain/usecase/product_type_usecase.dart';
 import 'package:maxpay/core/domain/usecase/profile_update_usecase.dart';
 import 'package:maxpay/core/domain/usecase/refund_count_usecase.dart';
 import 'package:maxpay/core/domain/usecase/refund_usecase.dart';
+import 'package:maxpay/core/domain/usecase/retailor_search_usecase.dart';
 import 'package:maxpay/core/domain/usecase/satff_wallet_reverse_usecase.dart';
 import 'package:maxpay/core/domain/usecase/search_dth_usecase.dart';
 import 'package:maxpay/core/domain/usecase/search_earnings_usecase.dart';
@@ -272,6 +275,9 @@ Future<void> initDependencies() async {
   );
 
   sl.registerLazySingleton<DownloadRepository>(() => DownloadRepoImpl(sl()));
+  sl.registerLazySingleton<RetailorSearchRepository>(
+    () => RetailorSearchRepoImpl(sl()),
+  );
 
   sl.registerLazySingleton<GetProfileRepository>(
     () => GetProfileRepoImpl(sl()),
@@ -327,6 +333,7 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton<OfferRechargeRepository>(
     () => OfferRechargeRepoImpl(sl()),
   );
+
   sl.registerLazySingleton<PlanTabRepository>(() => PlanTabRepoImpl(sl()));
   sl.registerLazySingleton<TabDetailRepository>(() => TabdetailRepoImpl(sl()));
   sl.registerLazySingleton<KycRepository>(() => AddKycRepoImpl(sl()));
@@ -338,27 +345,38 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton<TotalTransactionRepsoitory>(
     () => TotalTransactionRepoImppl(sl()),
   );
+
   sl.registerLazySingleton<ConfirmDthRepository>(
     () => ConfirmDthRepoImpl(sl()),
   );
+
+
   sl.registerLazySingleton<DthRechargeRepository>(
     () => DthRechargeRepoImpl(sl()),
   );
+
+
   sl.registerLazySingleton<GetKycRepository>(() => GetKycRepoImpl(sl()));
   sl.registerLazySingleton<TransReportRepository>(
     () => TransReportRepoImpl(sl()),
   );
+
+
   sl.registerLazySingleton<GradeRepository>(() => GradeRepoImpl(sl()));
   sl.registerLazySingleton<DisputeRepository>(() => DisputeRepoImpl(sl()));
   sl.registerLazySingleton<PaymnetStatusRepository>(
     () => PaymentStatusRepoImpl(sl()),
   );
+
+
   sl.registerLazySingleton<RefundRepository>(() => RefundRepoImpl(sl()));
   sl.registerLazySingleton<AllPlanRepository>(() => AllPlanRepoImpl(sl()));
   sl.registerLazySingleton<UpdatePinRepository>(() => UpdatePinRepoImpl(sl()));
   sl.registerLazySingleton<WalletCreditSearchRepository>(
     () => WalletCreditSearchRepoImpl(sl()),
   );
+
+  
   sl.registerLazySingleton<WalletCreditTypeRepository>(
     () => WalletCreditTypeRepoImpl(sl()),
   );
@@ -454,6 +472,9 @@ Future<void> initDependencies() async {
     () => GetPopupMessageUseCase(sl()),
   );
   sl.registerLazySingleton<BankDetailUsecase>(() => BankDetailUsecase(sl()));
+  sl.registerLazySingleton<RetailorSearchUsecase>(
+    () => RetailorSearchUsecase(sl()),
+  );
   sl.registerLazySingleton<GetEarningsUseCase>(() => GetEarningsUseCase(sl()));
   sl.registerLazySingleton<GetCreditUseCase>(() => GetCreditUseCase(sl()));
   sl.registerLazySingleton<SearchEarningsUsecase>(

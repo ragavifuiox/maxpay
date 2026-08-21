@@ -63,9 +63,9 @@ class TransactionDetailsPage extends StatelessWidget {
                   detailRow(
                     context,
                     "Product Ref. ID",
-                    (data.refid != null && data.refid!.isNotEmpty)
-                        ? data.refid!
-                        : (data.refid ?? "-"),
+                    (data.refid != null && data.transactionId!.isNotEmpty)
+                        ? data.transactionId!
+                        : (data.transactionId ?? "-"),
                   ),
                 detailRow(
                   context,
@@ -80,7 +80,7 @@ class TransactionDetailsPage extends StatelessWidget {
                       : (isPending ? Colors.orange : Colors.red),
                 ),
 
-                detailRow(context, "Transaction No", data.transactionId ?? "-"),
+                detailRow(context, "Transaction No", data.transactionNo ?? "-"),
 
                 detailRow(
                   context,
