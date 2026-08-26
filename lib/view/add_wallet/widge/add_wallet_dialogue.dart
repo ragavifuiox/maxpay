@@ -1,20 +1,20 @@
+
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:qr_flutter/qr_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 import 'package:maxpay/controllers/add_wallet_controller.dart';
 import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/core/constants/snackbar.dart';
 import 'package:maxpay/core/extensions/currency.dart';
 import 'package:maxpay/core/utils/logg_helper.dart';
-import 'package:maxpay/view/login/widgets/cutom_elevated_button.dart';
-import 'package:qr_flutter/qr_flutter.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class AddWalletPopup extends StatelessWidget {
   final String amount;
   final String url;
-
   final String? phonepeLink;
+  final String? gpayLink;
   final String txtionId;
 
   const AddWalletPopup({
@@ -23,16 +23,14 @@ class AddWalletPopup extends StatelessWidget {
     required this.url,
     required this.txtionId,
     required this.phonepeLink,
+    this.gpayLink,
   });
-
-  static const MethodChannel _upiChannel = MethodChannel(
-    'com.paylink.retailor/upi_choose',
-  );
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    final isDark = theme.brightness == Brightness.dark;
 
     return Dialog(
       backgroundColor: Colors.transparent,
@@ -49,7 +47,7 @@ class AddWalletPopup extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               // ----------------------------------------------------------
-              // Header
+              // HEADER
               // ----------------------------------------------------------
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -67,10 +65,10 @@ class AddWalletPopup extends StatelessWidget {
 
                   InkWell(
                     onTap: () async {
-                      final controller =
-                          Get.find<AddWalletController>();
+                      final controller = Get.find<AddWalletController>();
 
                       controller.stopTimer();
+
                       controller.amountController.clear();
 
                       Get.back();
@@ -89,32 +87,53 @@ class AddWalletPopup extends StatelessWidget {
               const SizedBox(height: 18),
 
               // ----------------------------------------------------------
-              // QR Code
+              // QR CODE
               // ----------------------------------------------------------
-              Container(
-                width: 220,
-                height: 220,
-                padding: const EdgeInsets.all(4),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(
-                    color: Colors.grey.shade300,
+              GestureDetector(
+                onTap: () async {
+                  // Allow user to tap QR itself
+                  // and open the UPI payment app.
+                  await openUpiPayment(url);
+                },
+                child: Container(
+                  width: 220,
+                  height: 220,
+                  padding: const EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: Colors.grey.shade300),
+                  ),
+                  child: Center(
+                    child: QrImageView(
+                      data: url,
+                      version: QrVersions.auto,
+                      size: 210,
+                      backgroundColor: Colors.white,
+                      errorCorrectionLevel: QrErrorCorrectLevel.M,
+                    ),
                   ),
                 ),
-                child: Center(
-                  child: QrImageView(
-                    data: url,
-                    version: QrVersions.auto,
-                    size: 220,
-                  ),
+              ),
+
+              const SizedBox(height: 8),
+
+              // ----------------------------------------------------------
+              // TAP QR
+              // ----------------------------------------------------------
+              Text(
+                "Tap QR to open payment",
+                style: TextStyle(
+                  fontSize: 12,
+                  color: isDark ? Colors.grey[400] : Colors.grey[600],
+                  fontFamily: 'Poppins',
                 ),
               ),
 
               const SizedBox(height: 18),
 
               // ----------------------------------------------------------
-              // Amount
+              // AMOUNT
               // ----------------------------------------------------------
               SizedBox(
                 width: 270,
@@ -163,21 +182,18 @@ class AddWalletPopup extends StatelessWidget {
               const SizedBox(height: 14),
 
               // ----------------------------------------------------------
-              // Expiry Timer
+              // EXPIRY TIMER
               // ----------------------------------------------------------
               Obx(() {
-                final controller =
-                    Get.find<AddWalletController>();
+                final controller = Get.find<AddWalletController>();
 
-                final minutes =
-                    (controller.remainingSeconds.value ~/ 60)
-                        .toString()
-                        .padLeft(2, '0');
+                final minutes = (controller.remainingSeconds.value ~/ 60)
+                    .toString()
+                    .padLeft(2, '0');
 
-                final seconds =
-                    (controller.remainingSeconds.value % 60)
-                        .toString()
-                        .padLeft(2, '0');
+                final seconds = (controller.remainingSeconds.value % 60)
+                    .toString()
+                    .padLeft(2, '0');
 
                 return Text(
                   "Expiry: $minutes:$seconds",
@@ -192,16 +208,98 @@ class AddWalletPopup extends StatelessWidget {
               const SizedBox(height: 20),
 
               // ----------------------------------------------------------
-              // QR Code Instruction
+              // NOTE
               // ----------------------------------------------------------
               const Text(
-                "Note: Please scan this QR code and add the amount.",
+                "Scan this QR code using "
+                "PhonePe, Google Pay or any UPI app.",
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   color: Colors.red,
-                  fontSize: 15,
+                  fontSize: 14,
                   fontWeight: FontWeight.w600,
                 ),
+              ),
+
+              const SizedBox(height: 16),
+
+              // ----------------------------------------------------------
+              // UPI BUTTONS
+              // ----------------------------------------------------------
+              Row(
+                children: [
+                  // GPay
+                  if (gpayLink != null && gpayLink!.trim().isNotEmpty)
+                    Expanded(
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: Colors.black,
+                          side: BorderSide(color: Colors.grey.shade300),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                        ),
+                      onPressed: () async {
+  final controller = Get.find<AddWalletController>();
+
+  final gpayUrl = controller.buildWorkingUpiUrl(
+    paymentLink: gpayLink!,
+    amount: amount,
+  );
+
+  if (gpayUrl.isEmpty) {
+    CustomToast.error("Invalid GPay payment link");
+    return;
+  }
+
+  await controller.openSpecificUpiApp(
+    packageName: "com.google.android.apps.nbu.paisa.user",
+    url: gpayUrl,
+  );
+},
+                        child: const Text(
+                          "GPay",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+
+                  if (gpayLink != null &&
+                      gpayLink!.trim().isNotEmpty &&
+                      phonepeLink != null &&
+                      phonepeLink!.trim().isNotEmpty)
+                    const SizedBox(width: 12),
+
+                  // PhonePe
+                  if (phonepeLink != null && phonepeLink!.trim().isNotEmpty)
+                    Expanded(
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF5F259F),
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                        ),
+                        onPressed: () {
+                          Get.find<AddWalletController>().openSpecificUpiApp(
+                            packageName: "com.phonepe.app",
+                            url: phonepeLink!,
+                          );
+                        },
+                        child: const Text(
+                          "PhonePe",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
               ),
 
               const SizedBox(height: 10),
@@ -213,38 +311,91 @@ class AddWalletPopup extends StatelessWidget {
   }
 }
 
-// ----------------------------------------------------------------------
-// Open UPI Payment
-// ----------------------------------------------------------------------
+// ==========================================================================
+// OPEN UPI PAYMENT
+// ==========================================================================
+
 Future<void> openUpiPayment(String paymentUrl) async {
-  final uri = Uri.parse(paymentUrl);
-
-  AppLogger.debugPrint("UPI URL = $paymentUrl");
-
-  if (await canLaunchUrl(uri)) {
-    await launchUrl(
-      uri,
-      mode: LaunchMode.externalApplication,
-    );
-  } else {
-    CustomToast.error("No UPI app installed");
-  }
-}
-
-// ----------------------------------------------------------------------
-// Convert UPI URL
-// ----------------------------------------------------------------------
-String convertToStandardUpiUrl(String customUrl) {
   try {
-    final uri = Uri.parse(customUrl);
+    final value = paymentUrl.trim();
 
-    if (uri.hasQuery) {
-      return 'upi://pay?${uri.query}';
+    if (value.isEmpty) {
+      CustomToast.error("Payment link is empty");
+      return;
     }
 
-    return customUrl;
+    AppLogger.debugPrint("UPI payment URL = $value");
+
+    final uri = Uri.tryParse(value);
+
+    if (uri == null) {
+      CustomToast.error("Invalid payment link");
+      return;
+    }
+
+    // --------------------------------------------------------------
+    // If backend sends HTTPS URL containing UPI query parameters,
+    // convert it into standard UPI URI.
+    // --------------------------------------------------------------
+
+    Uri finalUri = uri;
+
+    if (uri.scheme == 'http' || uri.scheme == 'https') {
+      final query = uri.queryParameters;
+
+      final pa = query['pa'];
+
+      if (pa != null && pa.isNotEmpty) {
+        final params = <String, String>{};
+
+        const allowed = [
+          'pa',
+          'pn',
+          'mc',
+          'tr',
+          'tid',
+          'tn',
+          'am',
+          'cu',
+          'url',
+          'mode',
+          'purpose',
+          'orgid',
+        ];
+
+        for (final key in allowed) {
+          final value = query[key];
+
+          if (value != null && value.isNotEmpty) {
+            params[key] = value;
+          }
+        }
+
+        if (!params.containsKey('cu')) {
+          params['cu'] = 'INR';
+        }
+
+        finalUri = Uri(scheme: 'upi', host: 'pay', queryParameters: params);
+      }
+    }
+
+    AppLogger.debugPrint("FINAL UPI URL = $finalUri");
+
+    // --------------------------------------------------------------
+    // OPEN PAYMENT
+    // --------------------------------------------------------------
+
+    final canOpen = await canLaunchUrl(finalUri);
+
+    if (!canOpen) {
+      CustomToast.error("No UPI app installed");
+      return;
+    }
+
+    await launchUrl(finalUri, mode: LaunchMode.externalApplication);
   } catch (e) {
-    debugPrint("Error converting UPI URL: $e");
-    return customUrl;
+    AppLogger.debugPrint("Open UPI error: $e");
+
+    CustomToast.error("Unable to open UPI payment");
   }
 }

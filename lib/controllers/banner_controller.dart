@@ -11,9 +11,11 @@ class BannerController extends GetxController {
   final BannerUsecase bannerUsecase;
   final AdvertisementUsecase advusecase;
 
+
   BannerController({required this.bannerUsecase, required this.advusecase});
 
   RxBool isLoading = false.obs;
+  RxBool isAdvLoading = false.obs;
 
   Rx<Banner?> bannerData = Rx<Banner?>(null);
   Rx<Advertisement?> advdata = Rx<Advertisement?>(null);
@@ -42,6 +44,7 @@ class BannerController extends GetxController {
         isLoading.value = false;
         CustomToast.error(failure.message);
       },
+
       (data) {
         bannerData.value = data;
         isLoading.value = false;
@@ -51,19 +54,22 @@ class BannerController extends GetxController {
     );
   }
 
-  Future<void> fetchadv() async {
+
+Future<void> fetchadv() async {
+    isAdvLoading.value = true;
     final result = await advusecase();
 
     result.fold(
       (failure) {
+        isAdvLoading.value = false;
         Get.snackbar("Error", failure.message);
       },
       (data) {
         advdata.value = data;
+        isAdvLoading.value = false;
       },
     );
   }
-
   void startAutoSlide() {
     autoSlideTimer?.cancel();
 
@@ -74,7 +80,7 @@ class BannerController extends GetxController {
   }
 
   void nextBanner() {
-    // 1. Update AD Index
+  
     final adList = advdata.value?.data?.advertisements ?? [];
     if (adList.isNotEmpty) {
       int nextAd = currentAdvIndex.value + 1;
@@ -84,7 +90,7 @@ class BannerController extends GetxController {
       currentAdvIndex.value = nextAd;
     }
 
-    // 2. Update BANNER Index
+  
     final list = bannerData.value?.data ?? [];
     if (list.isEmpty) return;
 
@@ -95,8 +101,6 @@ class BannerController extends GetxController {
       next = 0;
     }
 
-    // Animate the invisible PageView. The fade effect in the UI will happen automatically
-    // because currentIndex will update via onPageChanged!
     pageController.animateToPage(
       next,
       duration: const Duration(milliseconds: 500),
@@ -105,7 +109,7 @@ class BannerController extends GetxController {
   }
 
   void previousBanner() {
-    // 1. Update AD Index
+
     final adList = advdata.value?.data?.advertisements ?? [];
     if (adList.isNotEmpty) {
       int prevAd = currentAdvIndex.value - 1;

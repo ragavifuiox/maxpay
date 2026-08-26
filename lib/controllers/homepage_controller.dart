@@ -6,7 +6,8 @@ import 'package:maxpay/core/constants/snackbar.dart';
 import 'package:maxpay/core/data/model/faq_model.dart';
 import 'package:maxpay/core/data/model/graph_model.dart' hide Data;
 import 'package:maxpay/core/data/model/refund_count_model.dart';
-import 'package:maxpay/core/data/model/retailer_search_model.dart' show RetailorSearch;
+import 'package:maxpay/core/data/model/retailer_search_model.dart'
+    show RetailorSearch;
 import 'package:maxpay/core/data/model/today_credit_model.dart';
 import 'package:maxpay/core/domain/usecase/faq_reply_usecase.dart';
 import 'package:maxpay/core/domain/usecase/faq_usecase.dart';
@@ -29,7 +30,7 @@ import 'package:maxpay/core/domain/usecase/popup_message_usecase.dart';
 import 'package:maxpay/core/domain/usecase/trans_suc_fail_usecase.dart';
 import 'package:maxpay/core/domain/usecase/wallet_usecase.dart';
 
-class HomePageController extends GetxController {
+class HomePageController extends GetxController with WidgetsBindingObserver {
   final GetNewsUseCase getNewsUseCase;
   final GetWalletBalanceUseCase getWalletBalanceUseCase;
   final TransSucFailUsecase transSucFailUsecase;
@@ -79,10 +80,26 @@ class HomePageController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-
+    WidgetsBinding.instance.addObserver(this);
     Future.microtask(() async {
       await refreshHomeData();
     });
+  }
+
+  @override
+  void onClose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.onClose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      AppLogger.debugPrint(
+        "📱 App Resumed/Opened - Fetching wallet balance...",
+      );
+      fetchWalletBalance();
+    }
   }
 
   Future<void> refreshHomeData() async {
@@ -99,60 +116,42 @@ class HomePageController extends GetxController {
     ]);
   }
 
+  Future<void> searchRetailor({required String regmob}) async {
+    try {
+      isLoading.value = true;
 
-Future<void> searchRetailor({
-  required String regmob,
-}) async {
-  try {
-    isLoading.value = true;
+      AppLogger.debugPrint("🚀 Retailor Search API STARTED");
 
-    AppLogger.debugPrint(
-      "🚀 Retailor Search API STARTED",
-    );
+      final result = await retailorsearchusecase(regmob: regmob);
 
-    final result = await retailorsearchusecase(
-      regmob: regmob,
-    );
+      result.fold(
+        (failure) {
+          AppLogger.logError("❌ Retailor Search Failed: ${failure.message}");
 
-    result.fold(
-      (failure) { 
-        AppLogger.logError(
-          "❌ Retailor Search Failed: ${failure.message}",
-        );
+          // Don't show raw Dio/network exception
+          if (failure.message.toString().contains("No internet connection")) {
+            return;
+          }
 
-        // Don't show raw Dio/network exception
-        if (failure.message.toString().contains(
-              "No internet connection",
-            )) {
-          return;
-        }
+          CustomToast.error(failure.message.toString());
+        },
+        (data) {
+          AppLogger.debugPrint("✅ Retailor Search API SUCCESS");
 
-        CustomToast.error(
-          failure.message.toString(),
-        );
-      },
-      (data) {
-        AppLogger.debugPrint(
-          "✅ Retailor Search API SUCCESS",
-        );
+          retailorsearch.value = data;
 
-        retailorsearch.value = data;
+          AppLogger.debugPrint("Retailor Search Response: ${data.toJson()}");
+        },
+      );
+    } catch (e) {
+      AppLogger.logError("🔥 Retailor Search Exception: $e");
 
-        AppLogger.debugPrint(
-          "Retailor Search Response: ${data.toJson()}",
-        );
-      },
-    );
-  } catch (e) {
-    AppLogger.logError(
-      "🔥 Retailor Search Exception: $e",
-    );
-
-    // Don't show raw exception to user
-  } finally {
-    isLoading.value = false;
+      // Don't show raw exception to user
+    } finally {
+      isLoading.value = false;
+    }
   }
-}
+
   Future<void> FaqReply({
     required String comment,
     required String faqid,
@@ -331,7 +330,6 @@ Future<void> searchRetailor({
             "❌ [API CALL FAILED] fetchpopupmessage: ${failure.message}",
           );
 
-         
           // Get.snackbar('Error', failure.message);
         },
         (data) async {
@@ -535,7 +533,6 @@ Future<void> searchRetailor({
           AppLogger.logError(
             "❌ [API CALL FAILED] fetchRefundCount: ${failure.message}",
           );
-         
         },
         (data) {
           AppLogger.debugPrint("✅ [API CALL SUCCESS] fetchRefundCount");
@@ -641,30 +638,34 @@ Future<void> _showFaqPopup(Data faqData) async {
 
                         const SizedBox(height: 10),
 
-                       TextField(
-  controller: commentController,
-  maxLines: 4,
-  style: const TextStyle(
-    color: Colors.black, // typing text color
-    fontSize: 16,
-  ),
-  decoration: InputDecoration(
-    hintText: "Interest",
-    hintStyle: TextStyle(
-      color: Colors.grey, // hint text color
-    ),
-    filled: true,
-    fillColor: Colors.grey.shade100,
-    border: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(10),
-      borderSide: BorderSide(color: Colors.grey.shade300),
-    ),
-    enabledBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(10),
-      borderSide: BorderSide(color: Colors.grey.shade300),
-    ),
-  ),
-),
+                        TextField(
+                          controller: commentController,
+                          maxLines: 4,
+                          style: const TextStyle(
+                            color: Colors.black, // typing text color
+                            fontSize: 16,
+                          ),
+                          decoration: InputDecoration(
+                            hintText: "Interest",
+                            hintStyle: TextStyle(
+                              color: Colors.grey, // hint text color
+                            ),
+                            filled: true,
+                            fillColor: Colors.grey.shade100,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide(
+                                color: Colors.grey.shade300,
+                              ),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: BorderSide(
+                                color: Colors.grey.shade300,
+                              ),
+                            ),
+                          ),
+                        ),
                         const SizedBox(height: 18),
 
                         Row(
@@ -754,11 +755,7 @@ Future<void> _showFaqPopup(Data faqData) async {
                   shape: BoxShape.circle,
                 ),
                 padding: const EdgeInsets.all(5),
-                child: const Icon(
-                  Icons.close,
-                  color: Colors.white,
-                  size: 22,
-                ),
+                child: const Icon(Icons.close, color: Colors.white, size: 22),
               ),
             ),
           ),

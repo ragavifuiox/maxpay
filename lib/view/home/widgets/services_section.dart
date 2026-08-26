@@ -1075,7 +1075,15 @@ class MenuScreen extends StatelessWidget {
         break;
 
       case 'water':
-        Get.to(() => const WatterBill());
+
+      
+        Get.toNamed(
+          AppRoutes.water,
+          arguments: {
+            "productId": item.id.toString(),
+            "productName": item.name ?? "",
+          },
+        );
         break;
 
       case 'gas':
