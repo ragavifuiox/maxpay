@@ -198,6 +198,7 @@ class _ScreenOtpVerificationState extends State<ScreenOtpVerification> {
                           length: 4,
                           controller: _otpController,
                           readOnly: false,
+
                           keyboardType: TextInputType.phone,
 
                           mainAxisAlignment: MainAxisAlignment.center,
