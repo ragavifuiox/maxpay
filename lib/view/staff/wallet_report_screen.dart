@@ -68,7 +68,7 @@ class _WalletReportScreenState extends State<WalletReportScreen> {
 
                       return walletCard(
                         context: context,
-                        txnId: item.id?.toString() ?? "-",
+                        txnId: item.txnId?.toString() ?? "-",
                         transferType: item.paymentType ?? "-",
                         amount: item.amount ?? "0",
                         dateTime: formatTransactionDate(item.createdAt ?? "-"),

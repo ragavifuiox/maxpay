@@ -4,7 +4,6 @@ import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
 import 'package:maxpay/view/paymentstatus/widget/search_filter_.dart';
 
-
 import 'package:get/get.dart';
 import 'package:maxpay/controllers/payment_status_controller.dart';
 
@@ -14,11 +13,8 @@ class PaymentStatusScreen extends GetView<PaymentStatusController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor:
-          Theme.of(context).scaffoldBackgroundColor,
-      appBar: CommonAppBar(
-        title: "Payment Status",
-      ),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      appBar: CommonAppBar(title: "Payment Status"),
       body: Padding(
         padding: EdgeInsets.all(16.w),
         child: Column(
@@ -30,53 +26,48 @@ class PaymentStatusScreen extends GetView<PaymentStatusController> {
             Expanded(
               child: Obx(() {
                 if (controller.isLoading.value) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
+                  return const Center(child: CircularProgressIndicator());
                 }
 
                 if (controller.paymentstatus.isEmpty) {
-                  return const Center(
-                    child: Text("No Data Found"),
-                  );
+                  return const Center(child: Text("No Data Found"));
                 }
 
                 return ListView.separated(
-                  itemCount:
-                      controller.paymentstatus.length,
-                  separatorBuilder: (_, _) =>
-                      SizedBox(height: 12.h),
+                  itemCount: controller.paymentstatus.length,
+                  separatorBuilder: (_, _) => SizedBox(height: 12.h),
                   itemBuilder: (context, index) {
-                    final item =
-                        controller.paymentstatus[index];
+                    final item = controller.paymentstatus[index];
 
-                  return PaymentCard(
-  status: _getDisplayStatus(item.paymentStatus ?? ''),
-  statusColor: _getStatusColor(item.paymentStatus ?? ''),
-  operatorName: item.productName ?? '',
-  amount: "₹ ${item.amount ?? '0'}",
-  dateTime: item.dateTime ?? '',
-  mobile: item.mobile ?? '',
-  productLogo: item.productLogo ?? '',
+                    final currentDisplayStatus = _getDisplayStatus(
+                      item.paymentStatus ?? '',
+                    );
 
-  selectedStatus: "Select",
+                    return PaymentCard(
+                      status: currentDisplayStatus,
+                      statusColor: _getStatusColor(item.paymentStatus ?? ''),
+                      operatorName: item.productName ?? '',
+                      amount: "₹ ${item.amount ?? '0'}",
+                      dateTime: item.dateTime ?? '',
+                      mobile: item.mobile ?? '',
+                      productLogo: item.productLogo ?? '',
 
- statusList: const [
-  "Select",
-  "Paid",
-  "Pending",
-],
- onChanged: (value) {
-  if (value == null || value == "Select") return;
+                      selectedStatus: "Select",
 
-  _showStatusDialog(
-    context: context,
-    controller: controller,
-    rechargeId: item.id.toString(),
-    status: value,
-  );
-},
-);
+                      statusList: currentDisplayStatus == "Paid"
+                          ? const ["Select", "Pending"]
+                          : const ["Select", "Paid"],
+                      onChanged: (value) {
+                        if (value == null || value == "Select") return;
+
+                        _showStatusDialog(
+                          context: context,
+                          controller: controller,
+                          rechargeId: item.id.toString(),
+                          status: value,
+                        );
+                      },
+                    );
                   },
                 );
               }),
@@ -86,37 +77,36 @@ class PaymentStatusScreen extends GetView<PaymentStatusController> {
       ),
     );
   }
-  
 
-String _getDisplayStatus(String status) {
-  switch (status.toLowerCase()) {
-    case "received":
-      return "Paid";
+  String _getDisplayStatus(String status) {
+    switch (status.toLowerCase()) {
+      case "received":
+        return "Paid";
 
-    case "not_received":
-      return "Pending";
+      case "not_received":
+        return "Pending";
 
-    case "pending":
-      return "Pending";
+      case "pending":
+        return "Pending";
 
-    default:
-      return status;
+      default:
+        return status;
+    }
   }
-}
 
-Color _getStatusColor(String status) {
-  switch (status.toLowerCase()) {
-    case "received":
-      return Colors.green;
+  Color _getStatusColor(String status) {
+    switch (status.toLowerCase()) {
+      case "received":
+        return Colors.green;
 
-    case "not_received":
-    case "pending":
-      return Colors.orange;
+      case "not_received":
+      case "pending":
+        return Colors.orange;
 
-    default:
-      return Colors.blue;
+      default:
+        return Colors.blue;
+    }
   }
-}
 }
 
 void _showStatusDialog({
@@ -125,8 +115,7 @@ void _showStatusDialog({
   required String rechargeId,
   required String status,
 }) {
-  final isDark =
-      Theme.of(context).brightness == Brightness.dark;
+  final isDark = Theme.of(context).brightness == Brightness.dark;
 
   Get.defaultDialog(
     title: "Payment Status",
@@ -141,8 +130,7 @@ void _showStatusDialog({
       fontSize: 12,
       color: isDark ? Colors.white70 : Colors.black87,
     ),
-    backgroundColor:
-        isDark ? const Color(0xFF2F3349) : Colors.white,
+    backgroundColor: isDark ? const Color(0xFF2F3349) : Colors.white,
     radius: 12,
 
     textCancel: "Cancel",
@@ -151,7 +139,7 @@ void _showStatusDialog({
     cancelTextColor: Colors.black,
     confirmTextColor: Colors.white,
 
-    buttonColor:AppColors.clrPrimary,
+    buttonColor: AppColors.clrPrimary,
 
     onConfirm: () async {
       Get.back();
@@ -176,6 +164,7 @@ void _showStatusDialog({
     },
   );
 }
+
 class PaymentCard extends StatelessWidget {
   final String status;
   final Color statusColor;
@@ -211,13 +200,9 @@ class PaymentCard extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(12.w),
       decoration: BoxDecoration(
-        color: isDark
-            ? const Color(0xFF2F3349)
-            : AppColors.background,
+        color: isDark ? const Color(0xFF2F3349) : AppColors.background,
         borderRadius: BorderRadius.circular(12.r),
-        border: isDark
-            ? Border.all(color: const Color(0xFF3C3F52))
-            : null,
+        border: isDark ? Border.all(color: const Color(0xFF3C3F52)) : null,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -227,10 +212,7 @@ class PaymentCard extends StatelessWidget {
             children: [
               Text(
                 "Date & Time:",
-                style: TextStyle(
-                  fontSize: 10.sp,
-                  color: Colors.grey,
-                ),
+                style: TextStyle(fontSize: 10.sp, color: Colors.grey),
               ),
               SizedBox(width: 6.w),
               Expanded(
@@ -239,17 +221,12 @@ class PaymentCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     fontSize: 10.sp,
-                    color: isDark
-                        ? Colors.white70
-                        : Colors.grey.shade700,
+                    color: isDark ? Colors.white70 : Colors.grey.shade700,
                   ),
                 ),
               ),
               Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: 8.w,
-                  vertical: 4.h,
-                ),
+                padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
                 decoration: BoxDecoration(
                   color: statusColor,
                   borderRadius: BorderRadius.circular(4.r),
@@ -305,9 +282,7 @@ class PaymentCard extends StatelessWidget {
                       "Transaction No: $mobile",
                       style: TextStyle(
                         fontSize: 11.sp,
-                        color: isDark
-                            ? Colors.white70
-                            : Colors.black87,
+                        color: isDark ? Colors.white70 : Colors.black87,
                       ),
                     ),
                   ],
@@ -316,10 +291,7 @@ class PaymentCard extends StatelessWidget {
 
               Text(
                 amount,
-                style: TextStyle(
-                  fontSize: 18.sp,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
               ),
             ],
           ),
@@ -333,10 +305,7 @@ class PaymentCard extends StatelessWidget {
 
               Text(
                 "Status",
-                style: TextStyle(
-                  fontSize: 13.sp,
-                  fontWeight: FontWeight.w500,
-                ),
+                style: TextStyle(fontSize: 13.sp, fontWeight: FontWeight.w500),
               ),
 
               SizedBox(width: 10.w),
@@ -361,10 +330,7 @@ class PaymentCard extends StatelessWidget {
                   items: statusList.map((status) {
                     return DropdownMenuItem<String>(
                       value: status,
-                      child: Text(
-                        status,
-                        style: TextStyle(fontSize: 12.sp),
-                      ),
+                      child: Text(status, style: TextStyle(fontSize: 12.sp)),
                     );
                   }).toList(),
                   onChanged: onChanged,

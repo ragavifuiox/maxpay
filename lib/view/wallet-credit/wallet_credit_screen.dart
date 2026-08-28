@@ -142,7 +142,9 @@ class _WalletCreditCard extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  "TXN ID: ${data.transactionId ?? '-'}",
+                  data.walletType == 'Online Credit'
+                      ? "UTR NO: ${data.utrNo ?? data.transactionId ?? '-'}"
+                      : "TXN ID: ${data.transactionId ?? '-'}",
                   style: TextHelper.max1.copyWith(
                     color: isDark
                         ? const Color(0xFFFFFFFF).withValues(alpha: 0.7)

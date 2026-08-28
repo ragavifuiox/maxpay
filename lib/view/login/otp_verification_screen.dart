@@ -8,7 +8,6 @@ import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/core/constants/snackbar.dart';
 import 'package:maxpay/core/utils/responsive.dart';
 import 'package:maxpay/global_widget/commom_button.dart';
-import 'package:maxpay/view/login/widgets/custom_numeric_keyboard.dart';
 import 'package:pinput/pinput.dart';
 
 class ScreenOtpVerification extends StatefulWidget {
@@ -89,36 +88,9 @@ class _ScreenOtpVerificationState extends State<ScreenOtpVerification> {
     super.dispose();
   }
 
-  /// 🔹 KEYBOARD ACTION
-  void _handleKeyPress(String key) {
-    setState(() {
-      /// 🔹 BACKSPACE
-      if (key == 'backspace') {
-        /// VERIFY BUTTON SHOWING -> HIDE BUTTON
-        if (_showVerifyButton) {
-          _showVerifyButton = false;
-        }
-
-        if (_otpController.text.isNotEmpty) {
-          _otpController.text = _otpController.text.substring(
-            0,
-            _otpController.text.length - 1,
-          );
-        }
-      }
-      /// 🔹 NUMBER PRESS
-      else {
-        if (_otpController.text.length < 4) {
-          _otpController.text += key;
-        }
-      }
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-
     final colorScheme = theme.colorScheme;
 
     final isTablet = Responsive.isTablet(context);
@@ -225,9 +197,29 @@ class _ScreenOtpVerificationState extends State<ScreenOtpVerification> {
                         Pinput(
                           length: 4,
                           controller: _otpController,
-                          readOnly: true,
+                          readOnly: false,
+                          keyboardType: TextInputType.phone,
 
                           mainAxisAlignment: MainAxisAlignment.center,
+
+                          onChanged: (value) {
+                            setState(() {
+                              _showVerifyButton = value.length == 4;
+                            });
+                          },
+
+                          onCompleted: (value) async {
+                            setState(() {
+                              _showVerifyButton = true;
+                            });
+                            if (!isOtpExpired) {
+                              await authController.verifyOtp(value.trim());
+                            } else {
+                              CustomToast.error(
+                                "OTP Expired. Please resend the OTP.",
+                              );
+                            }
+                          },
 
                           submittedPinTheme: PinTheme(
                             width: isTablet ? 70.w : 60.w,
@@ -339,75 +331,29 @@ class _ScreenOtpVerificationState extends State<ScreenOtpVerification> {
                   ),
                 ),
 
-                /// 🔹 KEYBOARD / VERIFY BUTTON
-                AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 300),
+                /// 🔹 VERIFY BUTTON
+                if (_showVerifyButton)
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(24.w, 0, 24.w, 40.h),
+                    child: CommonButton(
+                      title: "Verify",
+                      isLoading: authController.isLoading.value,
+                      onTap: () async {
+                        /// OTP EXPIRED
+                        if (isOtpExpired) {
+                          CustomToast.error(
+                            "OTP Expired. Please resend the OTP.",
+                          );
+                          return;
+                        }
 
-                  child: _showVerifyButton
-                      /// 🔹 VERIFY BUTTON
-                      ? Padding(
-                          padding: EdgeInsets.fromLTRB(24.w, 0, 24.w, 40.h),
-
-                          child: CommonButton(
-                            title: "Verify",
-                            isLoading: authController.isLoading.value,
-                            onTap: () async {
-                              /// OTP EXPIRED
-                              if (isOtpExpired) {
-                                CustomToast.error(
-                                  "OTP Expired. Please resend the OTP.",
-                                );
-                                return;
-                              }
-
-                              /// API CALL
-                              await authController.verifyOtp(
-                                _otpController.text.trim(),
-                              );
-                            },
-                          ),
-                        )
-                      /// 🔹 CUSTOM KEYBOARD
-                      : Padding(
-                          padding: EdgeInsets.only(bottom: 20.h),
-
-                          child: CustomNumericKeyboard(
-                            onKeyPressed: (key) {
-                              /// 🔹 ARROW CLICK
-                              if (key == 'submit') {
-                                /// OTP EXPIRED
-                                if (isOtpExpired) {
-                                  CustomToast.error(
-                                    "OTP Expired. Please resend the OTP.",
-                                  );
-
-                                  return;
-                                }
-                                /// EMPTY OTP
-                                else if (_otpController.text.isEmpty) {
-                                  CustomToast.error("Please enter the OTP");
-
-                                  return;
-                                }
-                                /// LESS THAN 4 DIGITS
-                                else if (_otpController.text.length < 4) {
-                                  CustomToast.error("Please enter 4 digit OTP");
-
-                                  return;
-                                }
-                                /// SHOW VERIFY BUTTON
-                                else {
-                                  setState(() {
-                                    _showVerifyButton = true;
-                                  });
-                                }
-                              } else {
-                                _handleKeyPress(key);
-                              }
-                            },
-                          ),
-                        ),
-                ),
+                        /// API CALL
+                        await authController.verifyOtp(
+                          _otpController.text.trim(),
+                        );
+                      },
+                    ),
+                  ),
               ],
             ),
           ),

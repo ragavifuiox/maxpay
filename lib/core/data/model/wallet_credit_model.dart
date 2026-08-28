@@ -64,6 +64,7 @@ class CreditData {
   String? paymentMode;
   String? createdAt;
   String? walletType;
+  String? utrNo;
 
   CreditData({
     this.transactionId,
@@ -72,6 +73,7 @@ class CreditData {
     this.paymentMode,
     this.createdAt,
     this.walletType,
+    this.utrNo,
   });
 
   CreditData.fromJson(Map<String, dynamic> json) {
@@ -81,6 +83,7 @@ class CreditData {
     paymentMode = json['payment_mode'];
     createdAt = json['created_at'];
     walletType = json['wallet_type'];
+    utrNo = json['utr_no']?.toString();
   }
 
   Map<String, dynamic> toJson() {
@@ -91,6 +94,7 @@ class CreditData {
     data['payment_mode'] = paymentMode;
     data['created_at'] = createdAt;
     data['wallet_type'] = walletType;
+    data['utr_no'] = utrNo;
     return data;
   }
 }
