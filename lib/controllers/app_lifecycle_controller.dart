@@ -30,8 +30,6 @@ class AppLifecycleController extends GetxController
       return true;
     }
 
-
-
     final datesToCheck = [
       DateTime(lastActive.year, lastActive.month, lastActive.day),
       DateTime(current.year, current.month, current.day),
@@ -76,20 +74,26 @@ class AppLifecycleController extends GetxController
       final token = storage.getString("auth_token");
       final loggedInPhone = storage.getString("logged_in_phone");
 
-
-      if (token != null && token.isNotEmpty && loggedInPhone != null && loggedInPhone.isNotEmpty) {
+      if (token != null &&
+          token.isNotEmpty &&
+          loggedInPhone != null &&
+          loggedInPhone.isNotEmpty) {
         final bool isSimValid = await SimUtil.verifySimPresent(loggedInPhone);
         if (!isSimValid) {
-          AppLogger.logError("SIM Binding Failed on Resume. Calling backend logout API and clearing data.");
-          CustomToast.error("The already logged number doesn't exist in device");
-          
+          AppLogger.logError(
+            "SIM Binding Failed on Resume. Calling backend logout API and clearing data.",
+          );
+          CustomToast.error(
+            "The already logged number doesn't exist in device",
+          );
+
           if (Get.isRegistered<AuthController>()) {
             await Get.find<AuthController>().forceLogout();
           } else {
             await storage.clear();
             Get.offAllNamed(AppRoutes.intro);
           }
-          return; 
+          return;
         }
       }
 

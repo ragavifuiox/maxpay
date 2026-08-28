@@ -17,12 +17,12 @@ class WalletTrnasferDetailController extends GetxController {
     required this.walletTransferDetailUseCase,
     required this.staffWalletReverseUsecase,
   });
-
+  
   final fromDateController = TextEditingController();
   final toDateController = TextEditingController();
 
 
-  // Date formats
+
   final String _apiFormat = 'yyyy-MM-dd';
   final String _displayFormat = 'dd.MM.yyyy';
 
@@ -30,12 +30,10 @@ class WalletTrnasferDetailController extends GetxController {
   RxString transactionType = "".obs;
   RxBool isLoading = false.obs;
   RxDouble totalAmount = 0.0.obs;
-
-  RxString search = ''.obs;
+ RxString search = ''.obs;
 
   Rxn<StaffReverse> reverseResponse = Rxn<StaffReverse>();
 
-  // Stored in API format (yyyy-MM-dd)
   String fromDate = '';
   String toDate = '';
 
@@ -49,7 +47,7 @@ class WalletTrnasferDetailController extends GetxController {
     _setDefaultDatesAndFetch();
   }
 
-  /// Sets from/to date to TODAY by default and fetches the data automatically.
+ 
   void _setDefaultDatesAndFetch() {
     final DateTime today = DateTime.now();
 

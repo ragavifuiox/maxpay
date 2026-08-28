@@ -481,7 +481,7 @@ BlinkingZoomCard(
                                     ),
                                   );
                                 }),
-
+ 
                                 Obx(() {
                                   final success = controller
                                       .transactionData
@@ -512,10 +512,11 @@ BlinkingZoomCard(
                                         arguments: TransactionStatus.success,
                                       );
                                     },
+
                                     title: 'Success',
                                     value: amount.toString().currencyIndian,
                                     imageWidget: SvgPicture.asset(
-                                      AssetImages.successIcon,
+                                    AssetImages.successIcon,
                                       height: 24.h,
                                       width: 24.w,
                                     ),
@@ -557,6 +558,8 @@ BlinkingZoomCard(
                                         arguments: TransactionStatus.pending,
                                       );
                                     },
+
+
                                     title: 'Processing',
                                     value: amount.toString().currencyIndian,
                                     needSpacingbwImage: false,
@@ -565,6 +568,8 @@ BlinkingZoomCard(
                                       height: 24.h,
                                       width: 24.w,
                                     ),
+
+
                                     valueColor: Colors.black,
                                     textColor: Colors.orange,
                                     borderColor: Colors.transparent,

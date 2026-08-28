@@ -128,7 +128,7 @@ class AuthController extends GetxController {
           AppLogger.logError("OTP : ${otp.value}");
           AppLogger.logError("PHONE : ${phoneNumber.value}");
 
-          CustomToast.success("OTP: ${otp.value}");
+          // CustomToast.success("OTP: ${otp.value}");
 
           Get.toNamed(
             AppRoutes.otpVerification,

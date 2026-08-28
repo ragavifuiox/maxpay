@@ -83,9 +83,6 @@
 //   }
 // }
 
-
-
-
 class SearchPlan {
   bool? success;
   List<PlanData>? data;
@@ -103,7 +100,7 @@ class SearchPlan {
       });
     }
     message = json['message'];
-    code = json['code'];
+    code = json['code'] != null ? int.tryParse(json['code'].toString()) : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -131,28 +128,37 @@ class PlanData {
   String? createdAt;
   String? updatedAt;
 
-  PlanData(
-      {this.id,
-      this.planId,
-      this.planType,
-      this.productId,
-      this.productName,
-      this.talkTime,
-      this.amount,
-      this.validity,
-      this.planDetails,
-      this.createdAt,
-      this.updatedAt});
+  PlanData({
+    this.id,
+    this.planId,
+    this.planType,
+    this.productId,
+    this.productName,
+    this.talkTime,
+    this.amount,
+    this.validity,
+    this.planDetails,
+    this.createdAt,
+    this.updatedAt,
+  });
 
   PlanData.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    planId = json['plan_id'];
+    id = json['id'] != null ? int.tryParse(json['id'].toString()) : null;
+    planId = json['plan_id'] != null
+        ? int.tryParse(json['plan_id'].toString())
+        : null;
     planType = json['plan_type'];
-    productId = json['product_id'];
+    productId = json['product_id'] != null
+        ? int.tryParse(json['product_id'].toString())
+        : null;
     productName = json['product_name'];
-    talkTime = json['talk_time'];
-    amount = json['amount'];
-    validity = json['validity'];
+    talkTime = json['talk_time'] != null
+        ? int.tryParse(json['talk_time'].toString())
+        : null;
+    amount = json['amount']?.toString();
+    validity = json['validity'] != null
+        ? int.tryParse(json['validity'].toString())
+        : null;
     planDetails = json['plan_details'];
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];

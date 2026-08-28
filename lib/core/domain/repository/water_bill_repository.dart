@@ -10,5 +10,4 @@ abstract class WaterBillRepository {
     required String productId,
     required String customerId,
   });
-
-  }
+}

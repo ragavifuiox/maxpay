@@ -37,33 +37,13 @@ class _ScreenOtpVerificationState extends State<ScreenOtpVerification> {
     startTimer();
 
     ever<String>(authController.otp, (otp) {
-      if (otp.isNotEmpty) {
-        Future.delayed(const Duration(seconds: 10), () {
-          if (mounted) {
-            _otpController.text = otp;
-            setState(() {
-              _showVerifyButton = true;
-            });
-          }
-        });
-      } else {
-        _otpController.text = otp;
-        setState(() {
-          _showVerifyButton = false;
-        });
-      }
-    });
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (authController.otp.value.isNotEmpty) {
-        Future.delayed(const Duration(seconds: 5), () {
-          if (mounted) {
-            setState(() {
-              _otpController.text = authController.otp.value;
-              _showVerifyButton = true;
-            });
-          }
-        });
+      if (otp.isEmpty) {
+        _otpController.text = '';
+        if (mounted) {
+          setState(() {
+            _showVerifyButton = false;
+          });
+        }
       }
     });
   }
@@ -78,10 +58,10 @@ class _ScreenOtpVerificationState extends State<ScreenOtpVerification> {
   //   _showVerifyButton = true;
 
   //   setState(() {});
-
   //   // Optional: Auto verify
   //   authController.verifyOtp(authController.otp.value);
   // }
+
   // }
 
   void startTimer() {
@@ -325,9 +305,6 @@ class _ScreenOtpVerificationState extends State<ScreenOtpVerification> {
 
                                   if (authController.otp.value.isNotEmpty) {
                                     setState(() {
-                                      _otpController.text =
-                                          authController.otp.value;
-                                      _showVerifyButton = true;
                                       secondsRemaining = 30;
                                       isOtpExpired = false;
                                     });

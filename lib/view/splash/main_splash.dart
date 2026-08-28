@@ -1,6 +1,3 @@
-
-
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -89,15 +86,15 @@ class _MainSplashScreenState extends State<MainSplashScreen>
 
     _controller.forward();
 
-   Future.delayed(const Duration(seconds: 3), () async {
-  if (!mounted) return;
+    Future.delayed(const Duration(seconds: 3), () async {
+      if (!mounted) return;
 
-  await AppUpdateService.checkForUpdate();
+      await AppUpdateService.checkForUpdate();
 
-  if (!mounted) return;
+      if (!mounted) return;
 
-  await _checkSession();
-});
+      await _checkSession();
+    });
   }
 
   Future<void> _checkSession() async {
@@ -125,21 +122,21 @@ class _MainSplashScreenState extends State<MainSplashScreen>
 
     /// Verify SIM Binding
     if (loggedInPhone != null && loggedInPhone.isNotEmpty) {
-      final bool isSimValid = await SimUtil.verifySimPresent(loggedInPhone);
-      if (!isSimValid) {
-        AppLogger.logError(
-          "SIM Binding Failed. Calling backend logout API and clearing data.",
-        );
-        CustomToast.error("The already logged number doesn't exist in device");
+      // final bool isSimValid = await SimUtil.verifySimPresent(loggedInPhone);
+      // if (!isSimValid) {
+      //   AppLogger.logError(
+      //     "SIM Binding Failed. Calling backend logout API and clearing data.",
+      //   );
+      //   CustomToast.error("The already logged number doesn't exist in device");
 
-        if (Get.isRegistered<AuthController>()) {
-          await Get.find<AuthController>().forceLogout();
-        } else {
-          await storage.clear();
-          Get.offAllNamed(AppRoutes.intro);
-        }
-        return;
-      }
+      //   if (Get.isRegistered<AuthController>()) {
+      //     await Get.find<AuthController>().forceLogout();
+      //   } else {
+      //     await storage.clear();
+      //     Get.offAllNamed(AppRoutes.intro);
+      //   }
+      //   return;
+      // }
     }
 
     /// Old User -> PIN Created
