@@ -68,15 +68,6 @@ class AuthController extends GetxController {
 
       final enteredPhone = phoneController.text.trim();
 
-      // Verify SIM presence (will automatically show toast and return false if failed)
-      final bool isSimValid = await SimUtil.verifySimPresent(
-        enteredPhone,
-        showToasts: true,
-      );
-      if (!isSimValid) {
-        return;
-      }
-
       final result = await loginUseCase(
         enteredPhone,
         countryCode.value,
@@ -307,7 +298,7 @@ class AuthController extends GetxController {
 
             AppLogger.logError("NEW OTP : ${otp.value}");
 
-            CustomToast.success("OTP Resent Successfully\nOTP: ${otp.value}");
+            CustomToast.success("OTP Resent Successfully");
           } else {
             CustomToast.error(response.message ?? "Failed");
           }

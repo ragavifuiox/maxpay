@@ -78,22 +78,23 @@ class AppLifecycleController extends GetxController
           token.isNotEmpty &&
           loggedInPhone != null &&
           loggedInPhone.isNotEmpty) {
-        final bool isSimValid = await SimUtil.verifySimPresent(loggedInPhone);
-        if (!isSimValid) {
-          AppLogger.logError(
-            "SIM Binding Failed on Resume. Calling backend logout API and clearing data.",
-          );
-          CustomToast.error(
-            "The already logged number doesn't exist in device",
-          );
+        final lastTimeStr = storage.getString("last_active_time");
+        if (lastTimeStr != null && lastTimeStr.isNotEmpty) {
+          final lastTime = DateTime.parse(lastTimeStr);
+          final diff = DateTime.now().difference(lastTime).inMinutes;
 
-          if (Get.isRegistered<AuthController>()) {
-            await Get.find<AuthController>().forceLogout();
-          } else {
-            await storage.clear();
-            Get.offAllNamed(AppRoutes.intro);
+          if (diff >= 3) {
+            AppLogger.logError(
+              "Session expired (diff: $diff min). Redirecting to verify pin...",
+            );
+            storage.remove("last_active_time");
+
+            if (storage.getInt("is_pin") == 1) {
+              Get.offAllNamed(AppRoutes.veirfypin);
+            } else {
+              Get.offAllNamed(AppRoutes.pinCodeCreation);
+            }
           }
-          return;
         }
       }
 
