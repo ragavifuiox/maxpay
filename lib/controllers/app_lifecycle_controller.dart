@@ -3,9 +3,6 @@ import 'package:get/get.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/core/services/local_storage_service.dart';
 import 'package:maxpay/core/utils/logg_helper.dart';
-import 'package:maxpay/core/utils/sim_util.dart';
-import 'package:maxpay/controllers/auth_controller.dart';
-import 'package:maxpay/core/constants/snackbar.dart';
 
 class AppLifecycleController extends GetxController
     with WidgetsBindingObserver {

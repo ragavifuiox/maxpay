@@ -9,7 +9,6 @@ import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/core/data/model/transaction_report_model.dart';
 import 'package:maxpay/core/extensions/currency.dart';
 import 'package:maxpay/core/constants/extension.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -228,7 +227,7 @@ class ShareReceipt {
                     width: 40.w,
                     height: 40.w,
                     fit: BoxFit.contain,
-                    errorBuilder: (_, __, ___) => _fallbackLogo(data),
+                    errorBuilder: (_, _, _) => _fallbackLogo(data),
                   ),
                 )
               else

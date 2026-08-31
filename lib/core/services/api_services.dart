@@ -13,17 +13,16 @@ class ApiService {
   final _storage = LocalStorageService();
 
   ApiService()
-      : _dio = Dio(
-          BaseOptions(
-            baseUrl: ApiRoutes.baseURL,
-            contentType: 'application/json',
-            headers: {
-              "Accept": "application/json",
-              "x-api-key":
-               "kijunhpouytreesedcfvgbhbhjnhjbgcdfxxdfvghbgh",
-            },
-          ),
-        ) {
+    : _dio = Dio(
+        BaseOptions(
+          baseUrl: ApiRoutes.baseURL,
+          contentType: 'application/json',
+          headers: {
+            "Accept": "application/json",
+            "x-api-key": "kijunhpouytreesedcfvgbhbhjnhjbgcdfxxdfvghbgh",
+          },
+        ),
+      ) {
     _dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) {
@@ -68,11 +67,10 @@ class ApiService {
           // SERVER / API ERROR
           // ==========================================================
 
-          final String errorMessage =
-              e.response?.data is Map
-                  ? e.response?.data['message']?.toString() ??
-                      "Something went wrong"
-                  : "Something went wrong";
+          final String errorMessage = e.response?.data is Map
+              ? e.response?.data['message']?.toString() ??
+                    "Something went wrong"
+              : "Something went wrong";
 
           log("API Error: $errorMessage");
 
@@ -107,18 +105,13 @@ class ApiService {
   // POST
   // ================================================================
 
-  Future<Map<String, dynamic>> post(
-    String endpoint, {
-    dynamic data,
-  }) async {
+  Future<Map<String, dynamic>> post(String endpoint, {dynamic data}) async {
     return _handleResponse(
       () => _dio.post(
         endpoint,
         data: data,
         options: Options(
-          contentType: data is FormData
-              ? null
-              : 'application/json',
+          contentType: data is FormData ? null : 'application/json',
         ),
       ),
     );
@@ -134,12 +127,7 @@ class ApiService {
   }) async {
     AppLogger.debugPrint(endpoint);
 
-    return _handleResponse(
-      () => _dio.get(
-        endpoint,
-        queryParameters: params,
-      ),
-    );
+    return _handleResponse(() => _dio.get(endpoint, queryParameters: params));
   }
 
   // ================================================================
@@ -155,15 +143,9 @@ class ApiService {
       () => _dio.put(
         endpoint,
         data: useFormData && data is Map
-            ? FormData.fromMap(
-                Map<String, dynamic>.from(data),
-              )
+            ? FormData.fromMap(Map<String, dynamic>.from(data))
             : data,
-        options: Options(
-          contentType: useFormData
-              ? null
-              : 'application/json',
-        ),
+        options: Options(contentType: useFormData ? null : 'application/json'),
       ),
     );
   }
@@ -176,12 +158,7 @@ class ApiService {
     String endpoint, {
     Map<String, dynamic>? data,
   }) async {
-    return _handleResponse(
-      () => _dio.delete(
-        endpoint,
-        data: data,
-      ),
-    );
+    return _handleResponse(() => _dio.delete(endpoint, data: data));
   }
 
   // ================================================================
@@ -200,9 +177,7 @@ class ApiService {
         );
       }
 
-      return {
-        "data": response.data,
-      };
+      return {"data": response.data};
     } on DioException catch (e) {
       // ==========================================================
       // CONNECTION ERROR
@@ -216,35 +191,29 @@ class ApiService {
 
         // IMPORTANT:
         // Don't throw raw Dio message to UI.
-        throw Exception(
-          "No internet connection",
-        );
+        throw Exception("No internet connection");
       }
 
       // ==========================================================
       // API ERROR
       // ==========================================================
 
-      final message =
-          e.response?.data is Map
-              ? e.response?.data['message']?.toString()
-              : null;
+      final message = e.response?.data is Map
+          ? e.response?.data['message']?.toString()
+          : null;
 
       log(
         "DioException: "
+        "${e.response?.data}"
         "${e.requestOptions.path} "
         "${message ?? e.type}",
       );
 
-      throw Exception(
-        message ?? "Something went wrong",
-      );
+      rethrow;
     } catch (e) {
       log("Unknown error: $e");
 
-      throw Exception(
-        "Something went wrong",
-      );
+      throw Exception("Something went wrong");
     }
   }
 
@@ -261,13 +230,8 @@ class ApiService {
 
     _storage.remove("auth_token");
 
-    g.Get.offAllNamed(
-      AppRoutes.welcome,
-    );
+    g.Get.offAllNamed(AppRoutes.welcome);
 
-    g.Get.snackbar(
-      "Session Expired",
-      "Please login again.",
-    );
+    g.Get.snackbar("Session Expired", "Please login again.");
   }
 }

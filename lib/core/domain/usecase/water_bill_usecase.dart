@@ -1,9 +1,7 @@
 
 
 import 'package:dartz/dartz.dart';
-import 'package:maxpay/core/data/model/wallet_trnasfer_detail.dart';
 import 'package:maxpay/core/data/model/water_bill_page.dart';
-import 'package:maxpay/core/domain/repository/wallet_trnsfer_detail_repository.dart';
 import 'package:maxpay/core/domain/repository/water_bill_repository.dart';
 import 'package:maxpay/core/error/failure.dart';
 

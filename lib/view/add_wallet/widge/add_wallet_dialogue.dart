@@ -195,13 +195,41 @@ class AddWalletPopup extends StatelessWidget {
                     .toString()
                     .padLeft(2, '0');
 
-                return Text(
-                  "Expiry: $minutes:$seconds",
-                  style: const TextStyle(
-                    color: Colors.red,
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                  ),
+                return Column(
+                  children: [
+                    Text(
+                      "Expiry: $minutes:$seconds",
+                      style: const TextStyle(
+                        color: Colors.red,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    if (controller.isCheckingStatus.value) ...[
+                      const SizedBox(height: 8),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const SizedBox(
+                            width: 12,
+                            height: 12,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            "Checking payment status...",
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: isDark ? Colors.grey[400] : Colors.grey[600],
+                              fontFamily: 'Poppins',
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ],
                 );
               }),
 

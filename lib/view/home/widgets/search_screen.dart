@@ -285,7 +285,7 @@ class TransactionCard extends StatelessWidget {
                           ),
                           Expanded(
                             child: Text(
-                              "${transactionData.transactionId ?? 'N/A'}",
+                              transactionData.transactionId ?? 'N/A',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
@@ -310,7 +310,7 @@ class TransactionCard extends StatelessWidget {
                           ),
                           Expanded(
                             child: Text(
-                              "${transactionData.txnId ?? transactionData.txnId ?? 'N/A'}",
+                              transactionData.txnId ?? transactionData.txnId ?? 'N/A',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(

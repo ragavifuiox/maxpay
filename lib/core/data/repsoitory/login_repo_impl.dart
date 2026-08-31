@@ -32,29 +32,24 @@ class LoginRepositoryImpl implements LoginRepository {
 
       final model = Login.fromJson(response);
       return Right(model);
-    }catch (e, stackTrace) { print("API EXCEPTION IN REPO: `$e\n`$stackTrace");
-  if (e is DioException) {
-    final data = e.response?.data;
+    } catch (e, stackTrace) {
+      print("API EXCEPTION IN REPO: `$e\n`$stackTrace");
+      if (e is DioException) {
+        final data = e.response?.data;
 
-    if (data is Map<String, dynamic>) {
-      return Left(
-        ServerFailure(
-          message: data['message'] ?? "Login failed",
-        ),
-      );
+        if (data is Map<String, dynamic>) {
+          return Left(
+            ServerFailure(message: data['message'] ?? "Login failed"),
+          );
+        }
+      }
+
+      return Left(ServerFailure(message: "Something went wrong"));
     }
   }
 
-  return Left(
-    ServerFailure(
-      message: "Something went wrong",
-    ),
-  );
-}
-  }
-
   @override
-  Future<Either<Failure, Map<String,dynamic>>> logout() async {
+  Future<Either<Failure, Map<String, dynamic>>> logout() async {
     try {
       final response = await apiService.post(ApiRoutes.logout);
 
@@ -63,11 +58,12 @@ class LoginRepositoryImpl implements LoginRepository {
       } else {
         return Left(AuthFailure(response['message']));
       }
-    } on DioException catch (e, stackTrace) { print("API EXCEPTION IN REPO: `$e\n`$stackTrace");
+    } on DioException catch (e, stackTrace) {
+      print("API EXCEPTION IN REPO: `$e\n`$stackTrace");
       return Left(DioErrorHandler.handle(e));
-    } catch (e, stackTrace) { print("API EXCEPTION IN REPO: `$e\n`$stackTrace");
+    } catch (e, stackTrace) {
+      print("API EXCEPTION IN REPO: `$e\n`$stackTrace");
       return Left(ServerFailure(message: e.toString()));
     }
   }
 }
-

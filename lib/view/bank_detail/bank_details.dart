@@ -1,4 +1,3 @@
-import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
@@ -116,7 +115,7 @@ class BankAccountCard extends StatelessWidget {
   void _openQrDialog(BuildContext context) {
     showDialog(
       context: context,
-      barrierColor: Colors.black.withOpacity(0.5),
+      barrierColor: Colors.black.withValues(alpha: 0.5),
       builder: (_) {
         return QrPreviewDialog(
           account: account,
@@ -224,7 +223,7 @@ class BankAccountCard extends StatelessWidget {
                       fit: BoxFit.contain,
 
                       errorBuilder:
-                          (_, __, ___) {
+                          (_, _, _) {
                         return Icon(
                           Icons.account_balance,
                           size: 42,
@@ -478,7 +477,7 @@ class BankLogoBadge
                         fit: BoxFit.contain,
 
                         errorBuilder:
-                            (_, __, ___) {
+                            (_, _, _) {
                           return _fallbackMark();
                         },
                       )
@@ -540,8 +539,8 @@ class BracketedQrBox
         boxShadow: [
           BoxShadow(
             color:
-                Colors.black.withOpacity(
-              isDark ? 0.2 : 0.06,
+                Colors.black.withValues(
+              alpha: isDark ? 0.2 : 0.06,
             ),
 
             blurRadius: 4,
