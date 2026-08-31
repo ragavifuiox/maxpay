@@ -139,7 +139,7 @@ class AppPages {
             downloadusecase: sl(),
             checkOperatorUsecase: sl(),
             offerRechargeUsecase: sl(),
-            termusecase: sl()
+            termusecase: sl(),
           ),
 
           fenix: true,
@@ -185,7 +185,8 @@ class AppPages {
             todaycreditusecase: sl(),
             graphUsecase: sl(),
             faqUsecase: sl(),
-            faqreplyusecase: sl(), retailorsearchusecase: sl(),
+            faqreplyusecase: sl(),
+            retailorsearchusecase: sl(),
           ),
 
           fenix: true,
@@ -369,7 +370,7 @@ class AppPages {
             downloadusecase: sl(),
             checkOperatorUsecase: sl(),
             offerRechargeUsecase: sl(),
-             termusecase: sl()
+            termusecase: sl(),
           ),
 
           fenix: true,
@@ -448,7 +449,7 @@ class AppPages {
             downloadusecase: sl(),
             checkOperatorUsecase: sl(),
             offerRechargeUsecase: sl(),
-             termusecase: sl()
+            termusecase: sl(),
           ),
 
           fenix: true,
@@ -472,6 +473,7 @@ class AppPages {
             searchStaffUsecase: sl(),
             walletTransferUsecase: sl(),
             walletReportUsecase: sl(),
+            deleteStaffUsecase: sl(),
           ),
 
           fenix: true,
@@ -513,6 +515,7 @@ class AppPages {
             searchStaffUsecase: sl(),
             walletTransferUsecase: sl(),
             walletReportUsecase: sl(),
+            deleteStaffUsecase: sl(),
           ),
 
           fenix: true,
@@ -641,6 +644,7 @@ class AppPages {
             searchStaffUsecase: sl(),
             walletTransferUsecase: sl(),
             walletReportUsecase: sl(),
+            deleteStaffUsecase: sl(),
           ),
 
           fenix: true,

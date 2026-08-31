@@ -15,6 +15,7 @@ class ApiRoutes {
   static const grade = "/retailer_grade";
   static const walletrequest = "/create_wallet_request";
   static const addstaff = "/add_staff";
+  static const deletestaff = "/delete_staff";
   static const stafflist = "/get_staff";
   static const popupMessage = "/get_popup_message";
   static const earning = "/total_earnings";
@@ -62,7 +63,7 @@ class ApiRoutes {
   static const walletQrHistory = "/wallet_qr_history";
   static const refundcount = "/refund_count";
   static const todaycredit = "/today_credit_amount";
-  static const todaytrnas= "/today_transaction_amount";
+  static const todaytrnas = "/today_transaction_amount";
   static const dueamount = "/due_amount";
   static const download = "/receipt_download/";
   static const checkoperator = "/check_operator";
@@ -84,4 +85,5 @@ class ApiRoutes {
   static const activeuser = "/active_user";
   static const terms = "/get_terms_settings";
   static const retailorsearch = "/retailer_search";
+  static const staffdelete = "/delete_staff";
 }

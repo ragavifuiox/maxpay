@@ -12,6 +12,7 @@ import 'package:maxpay/core/domain/usecase/search_staff_usecase.dart';
 import 'package:maxpay/core/domain/usecase/staff_list_usecase.dart';
 import 'package:maxpay/core/domain/usecase/wallet_report_usecase.dart';
 import 'package:maxpay/core/domain/usecase/wallet_transfer_usecase.dart';
+import 'package:maxpay/core/domain/usecase/delete_staff_usecase.dart';
 import 'package:maxpay/core/utils/logg_helper.dart';
 
 class AddStaffController extends GetxController {
@@ -21,6 +22,7 @@ class AddStaffController extends GetxController {
   final SearchStaffUsecase searchStaffUsecase;
   final WalletTransferUsecase walletTransferUsecase;
   final WalletReportUsecase walletReportUsecase;
+  final DeleteStaffUsecase deleteStaffUsecase;
 
   AddStaffController({
     required this.addStaffUsecase,
@@ -29,6 +31,7 @@ class AddStaffController extends GetxController {
     required this.walletTransferUsecase,
     required this.walletReportUsecase,
     required this.staffTrnsTeportListUseCase,
+    required this.deleteStaffUsecase,
   });
   @override
   void onInit() {
@@ -396,6 +399,35 @@ class AddStaffController extends GetxController {
         fromdate: fromDate,
         todate: toDate,
       );
+    }
+  }
+
+
+  Future<void> deleteStaff(String staffId) async {
+    try {
+      isLoading = true;
+      update();
+
+      final result = await deleteStaffUsecase(staffId);
+
+      result.fold(
+        (failure) {
+          CustomToast.error(failure.message);
+        },
+        (response) {
+          if (response.success == true) {
+            CustomToast.success(
+              response.message ?? "Staff Deleted Successfully",
+            );
+            stafflist();
+          } else {
+            CustomToast.error(response.message ?? "Failed to delete staff");
+          }
+        },
+      );
+    } finally {
+      isLoading = false;
+      update();
     }
   }
 }

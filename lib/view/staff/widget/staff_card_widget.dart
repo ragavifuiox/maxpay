@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:get/instance_manager.dart';
 import 'package:maxpay/controllers/transaction_report_controller.dart';
+import 'package:maxpay/controllers/add_staff_controller.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/core/di/service_locator.dart';
 import 'package:maxpay/core/extensions/currency.dart';
@@ -94,6 +95,45 @@ class StaffCardWidget extends StatelessWidget {
                 onTap: () {
                   Get.toNamed(AppRoutes.wallettrnsfer, arguments: data);
                 },
+              ),
+
+              const Spacer(),
+
+              InkWell(
+                onTap: () {
+                  Get.dialog(
+                    AlertDialog(
+                      title: const Text("Delete Staff"),
+                      content: const Text(
+                        "Are you sure you want to delete this staff?",
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Get.back();
+                          },
+                          child: const Text("No"),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            // Close popup
+                            Get.back();
+
+                            // Trigger deletion using user ID
+                            Get.find<AddStaffController>().deleteStaff(
+                              data.id.toString(),
+                            );
+                          },
+                          child: const Text(
+                            "Yes",
+                            style: TextStyle(color: Colors.red),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+                child: Icon(Icons.delete, color: Colors.red, size: 20.sp),
               ),
             ],
           ),

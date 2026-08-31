@@ -177,15 +177,13 @@ TextFormField(
                          
  CustomToast.error( "Please enter amount");
                          
-                          return;
+                            return;
                         }
-
-                        await controller.walletTransfer(
+                          await controller.walletTransfer(
                           staffid: staff.userId.toString(),
                           amount: amountController.text.trim(),
                          paymenttype: controller.selectedPaymentType.value,
                         );
-
                         amountController.clear();
                       },
                     ),
