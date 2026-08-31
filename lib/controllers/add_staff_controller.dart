@@ -205,9 +205,9 @@ class AddStaffController extends GetxController {
         },
       );
     } catch (e, stackTrace) {
-      print("EXCEPTION OCCURRED");
-      print(e);
-      print(stackTrace);
+      AppLogger.logError("EXCEPTION OCCURRED");
+      AppLogger.logError(e);
+      AppLogger.logError(stackTrace);
 
       // CustomToast.error(
       //   "Something went wrong. Please try again.",

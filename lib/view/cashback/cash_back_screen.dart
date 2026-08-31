@@ -132,7 +132,7 @@ class CashbackScreen extends GetView<CashbackController> {
 
                 return ListView.separated(
                   itemCount: cashbackList.length,
-                  separatorBuilder: (_, __) =>
+                  separatorBuilder: (_, _) =>
                       const SizedBox(height: 12),
                   itemBuilder: (context, index) {
                     final item = cashbackList[index];

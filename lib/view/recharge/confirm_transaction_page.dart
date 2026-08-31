@@ -8,7 +8,6 @@ import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/core/constants/snackbar.dart';
 import 'package:maxpay/core/extensions/currency.dart';
 import 'package:maxpay/core/utils/logg_helper.dart';
-import 'package:maxpay/global_widget/commom_button.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
 import 'package:maxpay/view/recharge/failed_recharge_page.dart';
 import 'package:maxpay/view/recharge/success_recharge_page.dart';
@@ -846,7 +845,7 @@ Widget _pillButton({
   bool isLoading = false,
 }) {
   return Material(
-    color: onTap == null ? color.withOpacity(0.6) : color,
+    color: onTap == null ? color.withValues(alpha: 0.6) : color,
     borderRadius: BorderRadius.circular(12),
     child: InkWell(
       borderRadius: BorderRadius.circular(12),

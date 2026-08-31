@@ -3,7 +3,7 @@ class CheckOperator {
   String? message;
   String? operator;
   int? operatorCode;
-  Null? circle;
+  Null circle;
   int? productId;
   String? productName;
   String? logo;
@@ -33,16 +33,16 @@ class CheckOperator {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['status'] = this.status;
-    data['message'] = this.message;
-    data['operator'] = this.operator;
-    data['operator_code'] = this.operatorCode;
-    data['circle'] = this.circle;
-    data['product_id'] = this.productId;
-    data['product_name'] = this.productName;
-    data['logo'] = this.logo;
-    data['source'] = this.source;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['status'] = status;
+    data['message'] = message;
+    data['operator'] = operator;
+    data['operator_code'] = operatorCode;
+    data['circle'] = circle;
+    data['product_id'] = productId;
+    data['product_name'] = productName;
+    data['logo'] = logo;
+    data['source'] = source;
     return data;
   }
 }

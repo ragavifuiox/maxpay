@@ -20,9 +20,6 @@ import 'package:maxpay/core/constants/extension.dart';
 
 import 'dart:io';
 import 'package:flutter/services.dart';
-import 'package:open_file/open_file.dart';
-import 'package:pdf/pdf.dart';
-import 'package:pdf/widgets.dart' as pw;
 import 'package:screenshot/screenshot.dart';
 
 class DthSuccessPage extends StatelessWidget {
@@ -384,7 +381,7 @@ class DthSuccessPage extends StatelessWidget {
                   width: 40.w,
                   height: 40.w,
                   fit: BoxFit.contain,
-                  errorBuilder: (_, __, ___) {
+                  errorBuilder: (_, _, _) {
                     return CircleAvatar(
                       radius: 20.r,
                       backgroundColor: operatorColor,

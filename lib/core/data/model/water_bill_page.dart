@@ -10,18 +10,18 @@ class WaterBill {
     success = json['success'];
     message = json['message'];
     errors =
-        json['errors'] != null ? new Errors.fromJson(json['errors']) : null;
+        json['errors'] != null ? Errors.fromJson(json['errors']) : null;
     code = json['code'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['success'] = this.success;
-    data['message'] = this.message;
-    if (this.errors != null) {
-      data['errors'] = this.errors!.toJson();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['success'] = success;
+    data['message'] = message;
+    if (errors != null) {
+      data['errors'] = errors!.toJson();
     }
-    data['code'] = this.code;
+    data['code'] = code;
     return data;
   }
 }
@@ -40,10 +40,10 @@ class Errors {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['product_id'] = this.productId;
-    data['customer_id'] = this.customerId;
-    data['last_api_error'] = this.lastApiError;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['product_id'] = productId;
+    data['customer_id'] = customerId;
+    data['last_api_error'] = lastApiError;
     return data;
   }
 }

@@ -22,31 +22,31 @@ class DthRecharge {
     message = json['message']?.toString();
     transactionId = int.tryParse(json['transaction_id']?.toString() ?? '');
     transactionDetails = json['transaction_details'] != null
-        ? new TransactionDetails.fromJson(json['transaction_details'])
+        ? TransactionDetails.fromJson(json['transaction_details'])
         : null;
     response = json['response'] != null
-        ? new Response.fromJson(json['response'])
+        ? Response.fromJson(json['response'])
         : null;
     rawResponse = json['raw_response']?.toString();
     apiLog = json['api_log'] != null
-        ? new ApiLog.fromJson(json['api_log'])
+        ? ApiLog.fromJson(json['api_log'])
         : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['status'] = this.status;
-    data['message'] = this.message;
-    data['transaction_id'] = this.transactionId;
-    if (this.transactionDetails != null) {
-      data['transaction_details'] = this.transactionDetails!.toJson();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['status'] = status;
+    data['message'] = message;
+    data['transaction_id'] = transactionId;
+    if (transactionDetails != null) {
+      data['transaction_details'] = transactionDetails!.toJson();
     }
-    if (this.response != null) {
-      data['response'] = this.response!.toJson();
+    if (response != null) {
+      data['response'] = response!.toJson();
     }
-    data['raw_response'] = this.rawResponse;
-    if (this.apiLog != null) {
-      data['api_log'] = this.apiLog!.toJson();
+    data['raw_response'] = rawResponse;
+    if (apiLog != null) {
+      data['api_log'] = apiLog!.toJson();
     }
     return data;
   }
@@ -85,15 +85,15 @@ class TransactionDetails {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['txn_id'] = this.txnId;
-    data['ref_id'] = this.referenceId;
-    data['operator_id'] = this.operatorId;
-    data['transaction_id'] = this.transactionId;
-    data['transaction_datetime'] = this.transactionDatetime;
-    data['status'] = this.status;
-    data['message'] = this.message;
-    data['ref_id'] = this.refid;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['txn_id'] = txnId;
+    data['ref_id'] = referenceId;
+    data['operator_id'] = operatorId;
+    data['transaction_id'] = transactionId;
+    data['transaction_datetime'] = transactionDatetime;
+    data['status'] = status;
+    data['message'] = message;
+    data['ref_id'] = refid;
     return data;
   }
 }
@@ -158,24 +158,24 @@ class Response {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['lapu_no'] = this.lapuNo;
-    data['balance'] = this.balance;
-    data['roffer'] = this.roffer;
-    data['status'] = this.status;
-    data['recharge_date'] = this.rechargeDate;
-    data['id'] = this.id;
-    data['lapu_id'] = this.lapuId;
-    data['user_id'] = this.userId;
-    data['company_id'] = this.companyId;
-    data['mobile_no'] = this.mobileNo;
-    data['amount'] = this.amount;
-    data['order_id'] = this.orderId;
-    data['ip_address'] = this.ipAddress;
-    data['updatedAt'] = this.updatedAt;
-    data['createdAt'] = this.createdAt;
-    data['response'] = this.response;
-    data['tnx_id'] = this.tnxId;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['lapu_no'] = lapuNo;
+    data['balance'] = balance;
+    data['roffer'] = roffer;
+    data['status'] = status;
+    data['recharge_date'] = rechargeDate;
+    data['id'] = id;
+    data['lapu_id'] = lapuId;
+    data['user_id'] = userId;
+    data['company_id'] = companyId;
+    data['mobile_no'] = mobileNo;
+    data['amount'] = amount;
+    data['order_id'] = orderId;
+    data['ip_address'] = ipAddress;
+    data['updatedAt'] = updatedAt;
+    data['createdAt'] = createdAt;
+    data['response'] = response;
+    data['tnx_id'] = tnxId;
     return data;
   }
 }
@@ -214,26 +214,26 @@ class ApiLog {
     amount = int.tryParse(json['amount']?.toString() ?? '');
     productCode = json['product_code']?.toString();
     response = json['response'] != null
-        ? new Response.fromJson(json['response'])
+        ? Response.fromJson(json['response'])
         : null;
     rawResponse = json['raw_response']?.toString();
     error = json['error']?.toString();
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['priority'] = this.priority;
-    data['api_id'] = this.apiId;
-    data['api_name'] = this.apiName;
-    data['status'] = this.status;
-    data['mobile'] = this.mobile;
-    data['amount'] = this.amount;
-    data['product_code'] = this.productCode;
-    if (this.response != null) {
-      data['response'] = this.response!.toJson();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['priority'] = priority;
+    data['api_id'] = apiId;
+    data['api_name'] = apiName;
+    data['status'] = status;
+    data['mobile'] = mobile;
+    data['amount'] = amount;
+    data['product_code'] = productCode;
+    if (response != null) {
+      data['response'] = response!.toJson();
     }
-    data['raw_response'] = this.rawResponse;
-    data['error'] = this.error;
+    data['raw_response'] = rawResponse;
+    data['error'] = error;
     return data;
   }
 }

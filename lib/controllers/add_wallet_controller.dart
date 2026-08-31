@@ -407,7 +407,6 @@
 //   }
 // }
 
-
 import 'dart:async';
 
 import 'package:android_intent_plus/android_intent.dart';
@@ -423,30 +422,24 @@ import 'package:maxpay/core/utils/logg_helper.dart';
 import 'package:maxpay/view/add_wallet/widge/add_wallet_dialogue.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class AddWalletController extends GetxController
-    with WidgetsBindingObserver {
+class AddWalletController extends GetxController with WidgetsBindingObserver {
   final WalletCreateQrUsecase createQrUsecase;
 
-  AddWalletController({
-    required this.createQrUsecase,
-  });
+  AddWalletController({required this.createQrUsecase});
 
   // --------------------------------------------------------------------------
   // Controllers / Variables
   // --------------------------------------------------------------------------
 
-  final TextEditingController amountController =
-      TextEditingController();
+  final TextEditingController amountController = TextEditingController();
 
   RxBool isLoading = false.obs;
 
   RxBool isCheckingStatus = false.obs;
 
-  Rx<WalletQrHistory> walletQrHistory =
-      WalletQrHistory().obs;
+  Rx<WalletQrHistory> walletQrHistory = WalletQrHistory().obs;
 
-  RxList<Map<String, dynamic>> upiApps =
-      <Map<String, dynamic>>[].obs;
+  RxList<Map<String, dynamic>> upiApps = <Map<String, dynamic>>[].obs;
 
   RxBool isLoadingUpiApps = false.obs;
 
@@ -475,68 +468,55 @@ class AddWalletController extends GetxController
     getWalletHistory();
   }
 
+  Future<void> openGPay(String paymentUrl) async {
+    try {
+      final value = paymentUrl.trim();
 
-Future<void> openGPay(String paymentUrl) async {
-  try {
-    final value = paymentUrl.trim();
+      debugPrint("========== OPEN GPAY ==========");
+      debugPrint("URL = $value");
 
-    debugPrint("========== OPEN GPAY ==========");
-    debugPrint("URL = $value");
+      final uri = Uri.tryParse(value);
 
-    final uri = Uri.tryParse(value);
+      if (uri == null) {
+        CustomToast.error("Invalid GPay URL");
+        return;
+      }
 
-    if (uri == null) {
-      CustomToast.error("Invalid GPay URL");
-      return;
+      debugPrint("SCHEME = ${uri.scheme}");
+      debugPrint("HOST = ${uri.host}");
+      debugPrint("QUERY = ${uri.query}");
+
+      final canOpen = await canLaunchUrl(uri);
+
+      debugPrint("CAN OPEN = $canOpen");
+
+      if (!canOpen) {
+        CustomToast.error("Google Pay cannot open this payment link");
+        return;
+      }
+
+      final result = await launchUrl(uri, mode: LaunchMode.externalApplication);
+
+      debugPrint("LAUNCH RESULT = $result");
+      debugPrint("========== END GPAY ==========");
+    } catch (e) {
+      debugPrint("GPAY ERROR = $e");
+
+      CustomToast.error("Unable to open Google Pay");
     }
-
-    debugPrint("SCHEME = ${uri.scheme}");
-    debugPrint("HOST = ${uri.host}");
-    debugPrint("QUERY = ${uri.query}");
-
-    final canOpen = await canLaunchUrl(uri);
-
-    debugPrint("CAN OPEN = $canOpen");
-
-    if (!canOpen) {
-      CustomToast.error(
-        "Google Pay cannot open this payment link",
-      );
-      return;
-    }
-
-    final result = await launchUrl(
-      uri,
-      mode: LaunchMode.externalApplication,
-    );
-
-    debugPrint("LAUNCH RESULT = $result");
-    debugPrint("========== END GPAY ==========");
-  } catch (e) {
-    debugPrint("GPAY ERROR = $e");
-
-    CustomToast.error(
-      "Unable to open Google Pay",
-    );
   }
-}
   // --------------------------------------------------------------------------
   // APP LIFECYCLE
   // --------------------------------------------------------------------------
 
   @override
-  void didChangeAppLifecycleState(
-    AppLifecycleState state,
-  ) {
+  void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      AppLogger.debugPrint(
-        "App resumed. Active Txn ID: $_activeTxnId",
-      );
+      AppLogger.debugPrint("App resumed. Active Txn ID: $_activeTxnId");
 
       getWalletHistory();
 
-      if (_activeTxnId != null &&
-          remainingSeconds.value > 0) {
+      if (_activeTxnId != null && remainingSeconds.value > 0) {
         checkPaymentStatus(_activeTxnId!);
 
         if (_timer == null || !_timer!.isActive) {
@@ -561,31 +541,26 @@ Future<void> openGPay(String paymentUrl) async {
 
     remainingSeconds.value = 300;
 
-    _timer = Timer.periodic(
-      const Duration(seconds: 1),
-      (timer) {
-        if (remainingSeconds.value > 0) {
-          remainingSeconds.value--;
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (remainingSeconds.value > 0) {
+        remainingSeconds.value--;
 
-          // Check payment every 5 seconds
-          if (remainingSeconds.value % 5 == 0) {
-            checkPaymentStatus(txnId);
-          }
-        } else {
-          stopTimer();
-
-          if (Get.isDialogOpen ?? false) {
-            Get.back();
-          }
-
-          amountController.clear();
-
-          CustomToast.error(
-            "Payment session expired",
-          );
+        // Check payment every 2 seconds
+        if (remainingSeconds.value % 2 == 0) {
+          checkPaymentStatus(txnId);
         }
-      },
-    );
+      } else {
+        stopTimer();
+
+        if (Get.isDialogOpen ?? false) {
+          Get.back();
+        }
+
+        amountController.clear();
+
+        CustomToast.error("Payment session expired");
+      }
+    });
   }
 
   void stopTimer() {
@@ -598,9 +573,7 @@ Future<void> openGPay(String paymentUrl) async {
   // CHECK PAYMENT STATUS
   // --------------------------------------------------------------------------
 
-  Future<void> checkPaymentStatus(
-    String txnId,
-  ) async {
+  Future<void> checkPaymentStatus(String txnId) async {
     if (txnId.isEmpty) {
       return;
     }
@@ -612,10 +585,7 @@ Future<void> openGPay(String paymentUrl) async {
     isCheckingStatus.value = true;
 
     try {
-      final result =
-          await createQrUsecase.checkQrStatus(
-        txnId: txnId,
-      );
+      final result = await createQrUsecase.checkQrStatus(txnId: txnId);
 
       result.fold(
         (failure) {
@@ -624,12 +594,9 @@ Future<void> openGPay(String paymentUrl) async {
           );
         },
         (status) {
-          AppLogger.debugPrint(
-            "Payment status: $status",
-          );
+          AppLogger.debugPrint("Payment status: $status");
 
-          if (status.toString().toLowerCase() ==
-              "success") {
+          if (status.toString().toLowerCase() == "success") {
             stopTimer();
 
             if (Get.isDialogOpen ?? false) {
@@ -640,14 +607,10 @@ Future<void> openGPay(String paymentUrl) async {
 
             amountController.clear();
 
-            showSuccessDialog(
-              successAmount,
-            );
+            showSuccessDialog(successAmount);
 
-            if (Get.isRegistered<
-                HomePageController>()) {
-              Get.find<HomePageController>()
-                  .fetchWalletBalance();
+            if (Get.isRegistered<HomePageController>()) {
+              Get.find<HomePageController>().fetchWalletBalance();
             }
 
             getWalletHistory();
@@ -655,9 +618,7 @@ Future<void> openGPay(String paymentUrl) async {
         },
       );
     } catch (e) {
-      AppLogger.debugPrint(
-        "Payment status error: $e",
-      );
+      AppLogger.debugPrint("Payment status error: $e");
     } finally {
       isCheckingStatus.value = false;
     }
@@ -667,25 +628,15 @@ Future<void> openGPay(String paymentUrl) async {
   // SUCCESS DIALOG
   // --------------------------------------------------------------------------
 
-  void showSuccessDialog(
-    String amount,
-  ) {
-    final isDark =
-        Get.theme.brightness == Brightness.dark;
+  void showSuccessDialog(String amount) {
+    final isDark = Get.theme.brightness == Brightness.dark;
 
     Get.dialog(
       Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        backgroundColor: isDark
-            ? const Color(0xff1E1E2E)
-            : Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        backgroundColor: isDark ? const Color(0xff1E1E2E) : Colors.white,
         child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 24,
-            vertical: 28,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 28),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -693,9 +644,7 @@ Future<void> openGPay(String paymentUrl) async {
                 width: 72,
                 height: 72,
                 decoration: BoxDecoration(
-                  color: Colors.green.withValues(
-                    alpha: 0.15,
-                  ),
+                  color: Colors.green.withValues(alpha: 0.15),
                   shape: BoxShape.circle,
                 ),
                 child: const Center(
@@ -726,9 +675,7 @@ Future<void> openGPay(String paymentUrl) async {
                 "added to your wallet.",
                 style: TextStyle(
                   fontSize: 13,
-                  color: isDark
-                      ? Colors.grey[400]
-                      : Colors.grey[600],
+                  color: isDark ? Colors.grey[400] : Colors.grey[600],
                   fontFamily: 'Poppins',
                 ),
                 textAlign: TextAlign.center,
@@ -741,11 +688,9 @@ Future<void> openGPay(String paymentUrl) async {
                 height: 48,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        const Color(0xff004B8F),
+                    backgroundColor: const Color(0xff004B8F),
                     shape: RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(8),
                     ),
                     elevation: 0,
                   ),
@@ -775,13 +720,9 @@ Future<void> openGPay(String paymentUrl) async {
   // CREATE QR
   // --------------------------------------------------------------------------
 
-  Future<void> createQr(
-    String amount,
-  ) async {
+  Future<void> createQr(String amount) async {
     if (amount.trim().isEmpty) {
-      CustomToast.error(
-        "Please Enter Amount",
-      );
+      CustomToast.error("Please Enter Amount");
       return;
     }
 
@@ -792,43 +733,29 @@ Future<void> openGPay(String paymentUrl) async {
     _lastAmount = amount.trim();
 
     try {
-      final result =
-          await createQrUsecase.createQrAmount(
+      final result = await createQrUsecase.createQrAmount(
         amount: amount.trim(),
       );
 
       result.fold(
         (failure) {
-          AppLogger.debugPrint(
-            "------------ CREATE QR FAILED ------------",
-          );
+          AppLogger.debugPrint("------------ CREATE QR FAILED ------------");
 
-          AppLogger.logError(
-            failure.message,
-          );
+          AppLogger.logError(failure.message);
 
-          CustomToast.error(
-            failure.message,
-          );
+          CustomToast.error(failure.message);
 
           amountController.clear();
         },
         (response) {
-          AppLogger.debugPrint(
-            "------------ CREATE QR SUCCESS ------------",
-          );
+          AppLogger.debugPrint("------------ CREATE QR SUCCESS ------------");
 
-          AppLogger.logError(
-            response.toJson(),
-          );
+          AppLogger.logError(response.toJson());
 
-          final txnId =
-              response.txnId ?? '';
+          final txnId = response.txnId ?? '';
 
           if (txnId.isEmpty) {
-            CustomToast.error(
-              "Transaction ID not received",
-            );
+            CustomToast.error("Transaction ID not received");
             return;
           }
 
@@ -837,48 +764,28 @@ Future<void> openGPay(String paymentUrl) async {
           // Convert backend link to standard UPI URI
           // --------------------------------------------------------------
 
-          final backendLink =
-              response.gpayLink ?? '';
+          final backendLink = response.gpayLink ?? '';
 
-          final qrUpiUrl =
-              convertToStandardUpiUrl(
-            backendLink,
-          );
+          final qrUpiUrl = convertToStandardUpiUrl(backendLink);
 
-          AppLogger.debugPrint(
-            "==========================================",
-          );
+          AppLogger.debugPrint("==========================================");
 
-          AppLogger.debugPrint(
-            "BACKEND PAYMENT URL:",
-          );
+          AppLogger.debugPrint("BACKEND PAYMENT URL:");
 
-          AppLogger.debugPrint(
-            backendLink,
-          );
+          AppLogger.debugPrint(backendLink);
 
-          AppLogger.debugPrint(
-            "QR UPI URL:",
-          );
+          AppLogger.debugPrint("QR UPI URL:");
 
-          AppLogger.debugPrint(
-            qrUpiUrl,
-          );
+          AppLogger.debugPrint(qrUpiUrl);
 
-          AppLogger.debugPrint(
-            "==========================================",
-          );
+          AppLogger.debugPrint("==========================================");
 
           // If we couldn't create a proper UPI URL,
           // don't show an invalid QR.
           if (!isValidUpiUrl(qrUpiUrl)) {
-            CustomToast.error(
-              "Invalid UPI payment link received from server",
-            );
+            CustomToast.error("Invalid UPI payment link received from server");
 
-            AppLogger.debugPrint(
-              "Invalid QR UPI URL: $qrUpiUrl",
-            );
+            AppLogger.debugPrint("Invalid QR UPI URL: $qrUpiUrl");
 
             return;
           }
@@ -903,35 +810,25 @@ Future<void> openGPay(String paymentUrl) async {
               url: qrUpiUrl,
 
               // Keep backend links for buttons
-              phonepeLink:
-                  response.phonepeLink ?? '',
+              phonepeLink: response.phonepeLink ?? '',
 
-              gpayLink:
-                  response.gpayLink ?? '',
+              gpayLink: response.gpayLink ?? '',
             ),
-          ).then(
-            (_) async {
-              stopTimer();
+          ).then((_) async {
+            stopTimer();
 
-              amountController.clear();
+            amountController.clear();
 
-              await Future.delayed(
-                const Duration(seconds: 1),
-              );
+            await Future.delayed(const Duration(seconds: 1));
 
-              await getWalletHistory();
-            },
-          );
+            await getWalletHistory();
+          });
         },
       );
     } catch (e) {
-      AppLogger.debugPrint(
-        "Create QR error: $e",
-      );
+      AppLogger.debugPrint("Create QR error: $e");
 
-      CustomToast.error(
-        "Unable to create payment QR",
-      );
+      CustomToast.error("Unable to create payment QR");
     } finally {
       isLoading.value = false;
 
@@ -943,43 +840,11 @@ Future<void> openGPay(String paymentUrl) async {
   // CONVERT BACKEND URL TO STANDARD UPI URL
   // --------------------------------------------------------------------------
 
-
-
-String buildWorkingUpiUrl({
-  required String paymentLink,
-  required String amount,
-}) {
-  final uri = Uri.tryParse(paymentLink);
-
-  if (uri == null) {
-    return '';
-  }
-
-  final params = uri.queryParameters;
-
-  final pa = params['pa'];
-  final pn = params['pn'];
-
-  if (pa == null || pa.isEmpty) {
-    return '';
-  }
-
-  final upiUri = Uri(
-    scheme: 'upi',
-    host: 'pay',
-    queryParameters: {
-      'pa': pa,
-      'pn': pn ?? 'AJ SYSTEMS & SERVICES',
-      'am': amount,
-      'cu': 'INR',
-    },
-  );
-
-  return upiUri.toString();
-}
-  String convertToStandardUpiUrl(String backendUrl) {
-  try {
-    final uri = Uri.tryParse(backendUrl);
+  String buildWorkingUpiUrl({
+    required String paymentLink,
+    required String amount,
+  }) {
+    final uri = Uri.tryParse(paymentLink);
 
     if (uri == null) {
       return '';
@@ -988,44 +853,81 @@ String buildWorkingUpiUrl({
     final params = uri.queryParameters;
 
     final pa = params['pa'];
+    final pn = params['pn'];
 
     if (pa == null || pa.isEmpty) {
-      debugPrint("UPI ID not found");
       return '';
     }
 
-    final pn =
-        params['pn'] ?? 'AJ SYSTEMS AND SERVICES';
+    final queryParams = <String, String>{
+      'pa': pa,
+      'pn': pn ?? 'AJ SYSTEMS & SERVICES',
+      'am': amount,
+      'cu': 'INR',
+    };
 
-    final amount =
-        params['am'] ?? _lastAmount;
+    if (params.containsKey('tn')) queryParams['tn'] = params['tn']!;
+    if (params.containsKey('tr')) queryParams['tr'] = params['tr']!;
 
     final upiUri = Uri(
       scheme: 'upi',
       host: 'pay',
-      queryParameters: {
+      queryParameters: queryParams,
+    );
+
+    return upiUri.toString();
+  }
+
+  String convertToStandardUpiUrl(String backendUrl) {
+    try {
+      final uri = Uri.tryParse(backendUrl);
+
+      if (uri == null) {
+        return '';
+      }
+
+      final params = uri.queryParameters;
+
+      final pa = params['pa'];
+
+      if (pa == null || pa.isEmpty) {
+        debugPrint("UPI ID not found");
+        return '';
+      }
+
+      final pn = params['pn'] ?? 'AJ SYSTEMS AND SERVICES';
+
+      final amount = params['am'] ?? _lastAmount;
+
+      final queryParams = <String, String>{
         'pa': pa,
         'pn': pn,
         'am': amount,
         'cu': 'INR',
-      },
-    );
+      };
 
-    debugPrint("QR URL = ${upiUri.toString()}");
+      if (params.containsKey('tn')) queryParams['tn'] = params['tn']!;
+      if (params.containsKey('tr')) queryParams['tr'] = params['tr']!;
 
-    return upiUri.toString();
-  } catch (e) {
-    debugPrint("UPI conversion error: $e");
-    return '';
+      final upiUri = Uri(
+        scheme: 'upi',
+        host: 'pay',
+        queryParameters: queryParams,
+      );
+
+      debugPrint("QR URL = ${upiUri.toString()}");
+
+      return upiUri.toString();
+    } catch (e) {
+      debugPrint("UPI conversion error: $e");
+      return '';
+    }
   }
-}
   // --------------------------------------------------------------------------
   // VALIDATE UPI URL
   // --------------------------------------------------------------------------
 
-  bool isValidUpiUrl(
-    String value,
-  ) {
+  bool isValidUpiUrl(String value) {
     try {
       final uri = Uri.tryParse(value);
 
@@ -1033,21 +935,17 @@ String buildWorkingUpiUrl({
         return false;
       }
 
-      if (uri.scheme.toLowerCase() !=
-          'upi') {
+      if (uri.scheme.toLowerCase() != 'upi') {
         return false;
       }
 
-      if (uri.host.toLowerCase() !=
-          'pay') {
+      if (uri.host.toLowerCase() != 'pay') {
         return false;
       }
 
-      final pa =
-          uri.queryParameters['pa'];
+      final pa = uri.queryParameters['pa'];
 
-      if (pa == null ||
-          pa.trim().isEmpty) {
+      if (pa == null || pa.trim().isEmpty) {
         return false;
       }
 
@@ -1065,34 +963,23 @@ String buildWorkingUpiUrl({
     isLoadingUpiApps.value = true;
 
     try {
-      upiApps.value =
-          await getInstalledUpiApps();
+      upiApps.value = await getInstalledUpiApps();
 
-      AppLogger.debugPrint(
-        "UPI apps found: ${upiApps.length}",
-      );
+      AppLogger.debugPrint("UPI apps found: ${upiApps.length}");
     } catch (e) {
-      AppLogger.debugPrint(
-        "UPI apps loading error: $e",
-      );
+      AppLogger.debugPrint("UPI apps loading error: $e");
     } finally {
       isLoadingUpiApps.value = false;
     }
   }
 
-  Future<List<Map<String, dynamic>>>
-      getInstalledUpiApps() async {
+  Future<List<Map<String, dynamic>>> getInstalledUpiApps() async {
     try {
-      final List<dynamic> result =
-          await _channel.invokeMethod(
+      final List<dynamic> result = await _channel.invokeMethod(
         "getInstalledUpiApps",
       );
 
-      return result
-          .map(
-            (e) => Map<String, dynamic>.from(e),
-          )
-          .toList();
+      return result.map((e) => Map<String, dynamic>.from(e)).toList();
     } on PlatformException catch (e) {
       AppLogger.debugPrint(
         "getInstalledUpiApps PlatformException: "
@@ -1101,9 +988,7 @@ String buildWorkingUpiUrl({
 
       return [];
     } catch (e) {
-      AppLogger.debugPrint(
-        "getInstalledUpiApps error: $e",
-      );
+      AppLogger.debugPrint("getInstalledUpiApps error: $e");
 
       return [];
     }
@@ -1113,31 +998,31 @@ String buildWorkingUpiUrl({
   // OPEN SPECIFIC UPI APP
   // --------------------------------------------------------------------------
 
- Future<void> openSpecificUpiApp({
-  required String packageName,
-  required String url,
-}) async {
-  try {
-    print("========== OPEN UPI ==========");
-    print("Package: $packageName");
-    print("UPI URL: $url");
+  Future<void> openSpecificUpiApp({
+    required String packageName,
+    required String url,
+  }) async {
+    try {
+      print("========== OPEN UPI ==========");
+      print("Package: $packageName");
+      print("UPI URL: $url");
 
-    final uri = Uri.parse(url);
+      final uri = Uri.parse(url);
 
-    final intent = AndroidIntent(
-      action: 'android.intent.action.VIEW',
-      data: uri.toString(),
-      package: packageName,
-    );
+      final intent = AndroidIntent(
+        action: 'android.intent.action.VIEW',
+        data: uri.toString(),
+        package: packageName,
+      );
 
-    await intent.launch();
+      await intent.launch();
 
-    print("UPI launch result: true");
-    print("========== OPEN UPI END ==========");
-  } catch (e) {
-    print("UPI launch error: $e");
+      print("UPI launch result: true");
+      print("========== OPEN UPI END ==========");
+    } catch (e) {
+      print("UPI launch error: $e");
+    }
   }
-}
   // --------------------------------------------------------------------------
   // WALLET HISTORY
   // --------------------------------------------------------------------------
@@ -1148,9 +1033,7 @@ String buildWorkingUpiUrl({
     update();
 
     try {
-      final result =
-          await createQrUsecase
-              .getWalletHistory();
+      final result = await createQrUsecase.getWalletHistory();
 
       result.fold(
         (failure) {
@@ -1158,31 +1041,22 @@ String buildWorkingUpiUrl({
             "------------ GET WALLET HISTORY FAILED ------------",
           );
 
-          AppLogger.logError(
-            failure.message,
-          );
+          AppLogger.logError(failure.message);
 
-          CustomToast.error(
-            failure.message,
-          );
+          CustomToast.error(failure.message);
         },
         (response) {
           AppLogger.debugPrint(
             "------------ GET WALLET HISTORY SUCCESS ------------",
           );
 
-          AppLogger.logError(
-            response.toJson(),
-          );
+          AppLogger.logError(response.toJson());
 
-          walletQrHistory.value =
-              response;
+          walletQrHistory.value = response;
         },
       );
     } catch (e) {
-      AppLogger.debugPrint(
-        "Wallet history error: $e",
-      );
+      AppLogger.debugPrint("Wallet history error: $e");
     } finally {
       isLoading.value = false;
 
@@ -1196,8 +1070,7 @@ String buildWorkingUpiUrl({
 
   @override
   void onClose() {
-    WidgetsBinding.instance
-        .removeObserver(this);
+    WidgetsBinding.instance.removeObserver(this);
 
     stopTimer();
 
@@ -1208,8 +1081,7 @@ String buildWorkingUpiUrl({
 
   @override
   void dispose() {
-    WidgetsBinding.instance
-        .removeObserver(this);
+    WidgetsBinding.instance.removeObserver(this);
 
     stopTimer();
 

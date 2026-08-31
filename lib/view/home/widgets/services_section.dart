@@ -26,7 +26,6 @@ import 'package:maxpay/view/home/widgets/home_header.dart';
 import 'package:maxpay/view/landline/landline_bill_page.dart';
 import 'package:maxpay/view/postpaid/postpaid_page.dart';
 import 'package:maxpay/view/transaction_screens/transaction_success_screen.dart';
-import 'package:maxpay/view/water/watter_bill.dart';
 
 import '../../../core/data/model/advertisement_model.dart' hide Data;
 import '../../../core/data/model/product_type.dart';
@@ -766,7 +765,7 @@ class MenuScreen extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        if (productList.length > 0)
+        if (productList.isNotEmpty)
           _dynamicServiceItem(context, productList[0], 0),
         if (productList.length > 1)
           _dynamicServiceItem(context, productList[1], 1),

@@ -8,19 +8,19 @@ class MobileRecharge {
 
   MobileRecharge.fromJson(Map<String, dynamic> json) {
     success = json['success'];
-    data = json['data'] != null ? new Data.fromJson(json['data']) : null;
+    data = json['data'] != null ? Data.fromJson(json['data']) : null;
     message = json['message'];
     code = json['code'] != null ? int.tryParse(json['code'].toString()) : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['success'] = this.success;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['success'] = success;
     if (this.data != null) {
       data['data'] = this.data!.toJson();
     }
-    data['message'] = this.message;
-    data['code'] = this.code;
+    data['message'] = message;
+    data['code'] = code;
     return data;
   }
 }
@@ -34,27 +34,27 @@ class Data {
 
   Data.fromJson(Map<String, dynamic> json) {
     recharge = json['recharge'] != null
-        ? new Recharge.fromJson(json['recharge'])
+        ? Recharge.fromJson(json['recharge'])
         : null;
 
     refId = json['refid']?.toString();
 
     apiResponse = json['api_response'] != null
-        ? new ApiResponse.fromJson(json['api_response'])
+        ? ApiResponse.fromJson(json['api_response'])
         : null;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
 
-    if (this.recharge != null) {
-      data['recharge'] = this.recharge!.toJson();
+    if (recharge != null) {
+      data['recharge'] = recharge!.toJson();
     }
 
-    data['refid'] = this.refId;
+    data['refid'] = refId;
 
-    if (this.apiResponse != null) {
-      data['api_response'] = this.apiResponse!.toJson();
+    if (apiResponse != null) {
+      data['api_response'] = apiResponse!.toJson();
     }
 
     return data;
@@ -136,28 +136,28 @@ class Recharge {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['user_id'] = this.userId;
-    data['user_name'] = this.userName;
-    data['product_id'] = this.productId;
-    data['api_id'] = this.apiId;
-    data['mapping_id'] = this.mappingId;
-    data['mobile'] = this.mobile;
-    data['amount'] = this.amount;
-    data['status'] = this.status;
-    data['api_response'] = this.apiResponse;
-    data['user_type'] = this.userType;
-    data['time'] = this.time;
-    data['txn_id'] = this.txnId;
-    data['txn_id'] = this.txnId;
-    data['ref_id'] = this.refid;
-    data['transaction_id'] = this.transactionid;
-    data['request_time'] = this.requestTime;
-    data['payment_status'] = this.paymentStatus;
-    data['whatsapp_no'] = this.whatsappNo;
-    data['created_at'] = this.createdAt;
-    data['updated_at'] = this.updatedAt;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['user_id'] = userId;
+    data['user_name'] = userName;
+    data['product_id'] = productId;
+    data['api_id'] = apiId;
+    data['mapping_id'] = mappingId;
+    data['mobile'] = mobile;
+    data['amount'] = amount;
+    data['status'] = status;
+    data['api_response'] = apiResponse;
+    data['user_type'] = userType;
+    data['time'] = time;
+    data['txn_id'] = txnId;
+    data['txn_id'] = txnId;
+    data['ref_id'] = refid;
+    data['transaction_id'] = transactionid;
+    data['request_time'] = requestTime;
+    data['payment_status'] = paymentStatus;
+    data['whatsapp_no'] = whatsappNo;
+    data['created_at'] = createdAt;
+    data['updated_at'] = updatedAt;
     return data;
   }
 }
@@ -169,16 +169,16 @@ class ApiResponse {
   ApiResponse({this.data, this.logo});
 
   ApiResponse.fromJson(Map<String, dynamic> json) {
-    data = json['data'] != null ? new ApiData.fromJson(json['data']) : null;
+    data = json['data'] != null ? ApiData.fromJson(json['data']) : null;
     logo = json['logo'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = <String, dynamic>{};
     if (this.data != null) {
       data['data'] = this.data!.toJson();
     }
-    data['logo'] = this.logo;
+    data['logo'] = logo;
     return data;
   }
 }
@@ -216,13 +216,13 @@ class ApiData {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['orderId'] = this.orderId;
-    data['status'] = this.status;
-    data['optid'] = this.optid;
-    data['urid'] = this.urid;
-    data['resCode'] = this.resCode;
-    data['resText'] = this.resText;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['orderId'] = orderId;
+    data['status'] = status;
+    data['optid'] = optid;
+    data['urid'] = urid;
+    data['resCode'] = resCode;
+    data['resText'] = resText;
     return data;
   }
 }

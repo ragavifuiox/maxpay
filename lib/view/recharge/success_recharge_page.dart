@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:maxpay/controllers/download_controller.dart';
 import 'package:maxpay/controllers/profile_controller.dart';
 import 'package:maxpay/controllers/homepage_controller.dart';
 import 'package:maxpay/controllers/earning_controller.dart';
@@ -18,10 +17,7 @@ import 'package:maxpay/core/constants/extension.dart';
 import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:maxpay/global_widget/commom_button.dart';
-import 'package:open_file/open_file.dart';
 import 'package:screenshot/screenshot.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:media_store_plus/media_store_plus.dart';
 
 class SuccessRechargePage extends StatelessWidget {
   final String productName;
@@ -369,7 +365,7 @@ class SuccessRechargePage extends StatelessWidget {
                   width: 40.w,
                   height: 40.w,
                   fit: BoxFit.contain,
-                  errorBuilder: (_, __, ___) {
+                  errorBuilder: (_, _, _) {
                     return CircleAvatar(
                       radius: 20.r,
                       backgroundColor: operatorColor,

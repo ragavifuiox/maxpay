@@ -155,12 +155,12 @@ late final AnimationController _waveController;
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(28),
                           border: Border.all(
-                            color: themeColor.withOpacity(0.25),
+                            color: themeColor.withValues(alpha: 0.25),
                             width: 1.4,
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: themeColor.withOpacity(0.12),
+                              color: themeColor.withValues(alpha: 0.12),
                               blurRadius: 24,
                               offset: const Offset(0, 10),
                             ),
@@ -188,7 +188,7 @@ late final AnimationController _waveController;
                                       width: 120,
                                       height: 120,
                                       decoration: BoxDecoration(
-                                        color: themeColor.withOpacity(0.15),
+                                        color: themeColor.withValues(alpha: 0.15),
                                         shape: BoxShape.circle,
                                       ),
                                     ),
@@ -200,7 +200,7 @@ late final AnimationController _waveController;
                               width: 120,
                               height: 120,
                               decoration: BoxDecoration(
-                                color: themeColor.withOpacity(0.08),
+                                color: themeColor.withValues(alpha: 0.08),
                                 shape: BoxShape.circle,
                               ),
                             ),
@@ -294,8 +294,8 @@ late final AnimationController _waveController;
                           onPressed: _isChecking ? null : _retryConnection,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: themeColor,
-                            disabledBackgroundColor: themeColor.withOpacity(
-                              0.6,
+                            disabledBackgroundColor: themeColor.withValues(
+                              alpha: 0.6,
                             ),
                             foregroundColor: Colors.white,
                             elevation: 0,
