@@ -1,5 +1,3 @@
-
-
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:maxpay/core/constants/api_routes.dart';
@@ -14,38 +12,41 @@ class WalletTrnasferDetailRepoImpl implements WalletTrnsferDetailRepository {
 
   WalletTrnasferDetailRepoImpl(this.apiService);
 
- 
+  @override
+  Future<Either<Failure, WalletTransferDetail>> walletransferdetail({
+    required String search,
+    required String startdate,
+    required String todate,
+    required String transfertype,
+  }) async {
+    try {
+      final Map<String, dynamic> requestData = {
+        "from_date": startdate,
+        "to_date": todate,
+      };
 
-@override
-Future<Either<Failure, WalletTransferDetail>> walletransferdetail({
-  required String search,
-  required String startdate,
-  required String todate,
-  required String transfertype,
-  
-}) async {
-  try {
+      if (transfertype.isNotEmpty) {
+        requestData["transaction_type"] = transfertype;
+      }
+      if (search.isNotEmpty) {
+        requestData["search"] = search;
+      }
 
-  final formData = FormData.fromMap({
-  "transaction_type": transfertype,
-  "from_date": startdate,
-  "to_date": todate,
-  "search": search,   // was: todate — this silently broke search
-});
+      final formData = FormData.fromMap(requestData);
 
-print("========= REQUEST =========");
-for (var field in formData.fields) {
-  print("${field.key} : ${field.value}");
-}
-final response = await apiService.post(
-  ApiRoutes.wallettransferdetail,
-  data: formData,
-);
-final model = WalletTransferDetail.fromJson(response);
-    return Right(model);
-
-} on DioException catch (e, stackTrace) { print("API EXCEPTION IN REPO: `$e\n`$stackTrace");
+      print("========= REQUEST =========");
+      for (var field in formData.fields) {
+        print("${field.key} : ${field.value}");
+      }
+      final response = await apiService.post(
+        ApiRoutes.wallettransferdetail,
+        data: formData,
+      );
+      final model = WalletTransferDetail.fromJson(response);
+      return Right(model);
+    } on DioException catch (e, stackTrace) {
+      print("API EXCEPTION IN REPO: `$e\n`$stackTrace");
       return Left(DioErrorHandler.handle(e));
     }
-}}
-
+  }
+}

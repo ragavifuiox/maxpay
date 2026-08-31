@@ -22,6 +22,7 @@ class _PinCodeEnterPageState extends State<PinCodeEnterPage> {
 
   final TextEditingController pinController = TextEditingController();
   bool isUpdatePin = false;
+  bool isFromWalletTransfer = false;
   final RxBool showVerifyButton = false.obs;
   @override
   void initState() {
@@ -35,12 +36,24 @@ class _PinCodeEnterPageState extends State<PinCodeEnterPage> {
               updateotpusecase: sl(),
             ),
           );
-    isUpdatePin = (Get.arguments as bool?) ?? false;
+
+    final args = Get.arguments;
+    if (args is bool) {
+      isUpdatePin = args;
+    } else if (args is Map) {
+      isUpdatePin = args['isUpdatePin'] ?? false;
+      isFromWalletTransfer = args['isFromWalletTransfer'] ?? false;
+    }
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (!isUpdatePin) {
         if (controller.isFingerPrint.value == 1) {
-          await controller.authenticateWithFingerprint();
+          final success = await controller.authenticateWithFingerprint(
+            isFromWalletTransfer: isFromWalletTransfer,
+          );
+          if (success && isFromWalletTransfer) {
+            Get.back(result: true);
+          }
         }
       }
     });
@@ -211,7 +224,13 @@ class _PinCodeEnterPageState extends State<PinCodeEnterPage> {
                       return Center(
                         child: GestureDetector(
                           onTap: () async {
-                            await controller.authenticateWithFingerprint();
+                            final success = await controller
+                                .authenticateWithFingerprint(
+                                  isFromWalletTransfer: isFromWalletTransfer,
+                                );
+                            if (success && isFromWalletTransfer) {
+                              Get.back(result: true);
+                            }
                           },
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
@@ -256,10 +275,14 @@ class _PinCodeEnterPageState extends State<PinCodeEnterPage> {
                                   onTap: () async {
                                     final success = await controller.verifyPin(
                                       pinController.text.trim(),
+                                      isFromWalletTransfer:
+                                          isFromWalletTransfer,
                                     );
 
                                     if (!success) {
                                       resetPin(); // 🔥 IMPORTANT FIX
+                                    } else if (isFromWalletTransfer) {
+                                      Get.back(result: true);
                                     }
                                   },
                                 ),

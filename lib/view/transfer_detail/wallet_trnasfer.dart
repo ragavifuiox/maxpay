@@ -23,6 +23,7 @@ class WalletTransaction {
   final double amount;
   final String status;
   final int id;
+
   const WalletTransaction({
     required this.id,
     required this.transactionId,

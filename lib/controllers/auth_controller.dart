@@ -238,7 +238,9 @@ class AuthController extends GetxController {
     }
   }
 
-  Future<void> authenticateWithFingerprint() async {
+  Future<bool> authenticateWithFingerprint({
+    bool isFromWalletTransfer = false,
+  }) async {
     try {
       final LocalAuthentication auth = LocalAuthentication();
 
@@ -253,25 +255,31 @@ class AuthController extends GetxController {
           "last_active_time",
           DateTime.now().toIso8601String(),
         );
-        final historyController = Get.put(
-          LoginHistoryController(loginHistoryUsecase: sl()),
-        );
 
-        historyController.fromDate = DateTime.now().toString().split(' ')[0];
+        if (!isFromWalletTransfer) {
+          final historyController = Get.put(
+            LoginHistoryController(loginHistoryUsecase: sl()),
+          );
 
-        historyController.toDate = DateTime.now().toString().split(' ')[0];
+          historyController.fromDate = DateTime.now().toString().split(' ')[0];
 
-        historyController.search = "";
+          historyController.toDate = DateTime.now().toString().split(' ')[0];
 
-        await historyController.LoginHistory();
+          historyController.search = "";
 
-        Get.offAllNamed(AppRoutes.main);
+          await historyController.LoginHistory();
+
+          Get.offAllNamed(AppRoutes.main);
+        }
+
+        return true;
       } else {
         CustomToast.error("Fingerprint authentication failed");
+        return false;
       }
     } on LocalAuthException catch (e) {
-      // CustomToast.error(e.toString());
       AppLogger.logError("FINGERPRINT AUTHENTICATION ERROR : ${e.toString()}");
+      return false;
     }
   }
 
@@ -370,7 +378,10 @@ class AuthController extends GetxController {
     }
   }
 
-  Future<bool> verifyPin(String pin) async {
+  Future<bool> verifyPin(
+    String pin, {
+    bool isFromWalletTransfer = false,
+  }) async {
     try {
       isLoading.value = true;
 
@@ -397,26 +408,6 @@ class AuthController extends GetxController {
           AppLogger.logError("SUCCESS: ${response.success}");
           AppLogger.logError("MESSAGE: ${response.message}");
 
-          // if (response.success == true) {
-          //   CustomToast.success(response.message ?? "PIN Verified");
-
-          //   AppLogger.logError("PIN VERIFIED SUCCESSFULLY");
-          //   await storage.saveString(
-          //     "last_active_time",
-          //     DateTime.now().toIso8601String(),
-          //   );
-
-          //   Get.offAllNamed(AppRoutes.main);
-
-          //   return true;
-          // } else {
-          //   CustomToast.error(response.message ?? "Invalid PIN");
-
-          //   AppLogger.logError("INVALID PIN ENTERED");
-
-          //   return false;
-          // }
-
           if (response.success == true) {
             CustomToast.success(response.message ?? "PIN Verified");
 
@@ -427,21 +418,25 @@ class AuthController extends GetxController {
               DateTime.now().toIso8601String(),
             );
 
-            final historyController = Get.put(
-              LoginHistoryController(loginHistoryUsecase: sl()),
-            );
+            if (!isFromWalletTransfer) {
+              final historyController = Get.put(
+                LoginHistoryController(loginHistoryUsecase: sl()),
+              );
 
-            historyController.fromDate = DateTime.now().toString().split(
-              ' ',
-            )[0];
+              historyController.fromDate = DateTime.now().toString().split(
+                ' ',
+              )[0];
 
-            historyController.toDate = DateTime.now().toString().split(' ')[0];
+              historyController.toDate = DateTime.now().toString().split(
+                ' ',
+              )[0];
 
-            historyController.search = "";
+              historyController.search = "";
 
-            await historyController.LoginHistory();
+              await historyController.LoginHistory();
 
-            Get.offAllNamed(AppRoutes.main);
+              Get.offAllNamed(AppRoutes.main);
+            }
 
             return true;
           } else {
