@@ -13,6 +13,8 @@ class AppUpdateService {
           await InAppUpdate.startFlexibleUpdate();
           await InAppUpdate.completeFlexibleUpdate();
         }
+      }else{
+        
       }
     } catch (e) {
       print("Update Error: $e");

@@ -6,6 +6,7 @@ import 'package:maxpay/core/constants/api_routes.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/core/services/local_storage_service.dart';
 import 'package:maxpay/core/services/network_service.dart';
+import 'package:maxpay/core/utils/error_parser.dart';
 import 'package:maxpay/core/utils/logg_helper.dart';
 
 class ApiService {
@@ -209,11 +210,17 @@ class ApiService {
         "${message ?? e.type}",
       );
 
-      rethrow;
+      if (message?.toLowerCase() == "unauthenticated") {
+        _handleUnauthorized();
+
+        throw AppException("Unauthenticated");
+      } else {
+        throw AppException(message ?? "Something went wrong");
+      }
     } catch (e) {
       log("Unknown error: $e");
 
-      throw Exception("Something went wrong");
+      throw AppException("Something went wrong");
     }
   }
 
