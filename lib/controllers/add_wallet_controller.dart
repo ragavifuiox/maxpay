@@ -418,6 +418,7 @@ import 'package:maxpay/controllers/homepage_controller.dart';
 import 'package:maxpay/core/constants/snackbar.dart';
 import 'package:maxpay/core/data/model/wallet_qr_history.dart';
 import 'package:maxpay/core/domain/usecase/wallet_create_qr_usecase.dart';
+import 'package:maxpay/core/extensions/currency.dart';
 import 'package:maxpay/core/utils/logg_helper.dart';
 import 'package:maxpay/view/add_wallet/widge/add_wallet_dialogue.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -625,6 +626,89 @@ class AddWalletController extends GetxController with WidgetsBindingObserver {
   }
 
   // --------------------------------------------------------------------------
+  // CHECK INDIVIDUAL PAYMENT STATUS
+  // --------------------------------------------------------------------------
+
+  Future<void> checkIndividualPaymentStatus(String txnId, String amount) async {
+    if (txnId.isEmpty) {
+      return;
+    }
+
+    final isDark = Get.theme.brightness == Brightness.dark;
+
+    Get.dialog(
+      Dialog(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        child: SizedBox(
+          height: 120,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: .center,
+            children: [
+              const CircularProgressIndicator(),
+              const SizedBox(height: 16),
+              Text(
+                "Checking payment status...",
+                style: TextStyle(
+                  color: isDark ? Colors.white : Colors.black,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+      barrierDismissible: false,
+    );
+
+    int secondsElapsed = 0;
+    bool isSuccess = false;
+
+    while (secondsElapsed < 60) {
+      // If the user closed the loading dialog via the back button, stop polling.
+      if (!(Get.isDialogOpen ?? false)) {
+        return;
+      }
+
+      await Future.delayed(const Duration(seconds: 3));
+      secondsElapsed += 3;
+
+      try {
+        final result = await createQrUsecase.checkQrStatus(txnId: txnId);
+        result.fold((failure) {}, (status) {
+          if (status.toString().toLowerCase() == "success") {
+            isSuccess = true;
+          }
+        });
+
+        if (isSuccess) break;
+      } catch (e) {
+        // ignore error during polling
+      }
+    }
+
+    // Check again before showing result dialogs in case it was closed during the last delay
+    if (!(Get.isDialogOpen ?? false)) {
+      return;
+    }
+
+    if (Get.isDialogOpen ?? false) {
+      Get.back();
+    }
+
+    if (isSuccess) {
+      showSuccessDialog(amount);
+      if (Get.isRegistered<HomePageController>()) {
+        Get.find<HomePageController>().fetchWalletBalance();
+      }
+      getWalletHistory();
+    } else {
+      showPendingDialog(amount);
+    }
+  }
+
+  // --------------------------------------------------------------------------
   // SUCCESS DIALOG
   // --------------------------------------------------------------------------
 
@@ -673,6 +757,97 @@ class AddWalletController extends GetxController with WidgetsBindingObserver {
               Text(
                 "₹$amount has been successfully "
                 "added to your wallet.",
+                style: TextStyle(
+                  fontSize: 13,
+                  color: isDark ? Colors.grey[400] : Colors.grey[600],
+                  fontFamily: 'Poppins',
+                ),
+                textAlign: TextAlign.center,
+              ),
+
+              const SizedBox(height: 24),
+
+              SizedBox(
+                width: double.infinity,
+                height: 48,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xff004B8F),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    elevation: 0,
+                  ),
+                  onPressed: () {
+                    Get.back();
+                  },
+                  child: const Text(
+                    "Done",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: 'Poppins',
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+      barrierDismissible: false,
+    );
+  }
+
+  // --------------------------------------------------------------------------
+  // PENDING DIALOG
+  // --------------------------------------------------------------------------
+
+  void showPendingDialog(String amount) {
+    final isDark = Get.theme.brightness == Brightness.dark;
+
+    Get.dialog(
+      Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        backgroundColor: isDark ? const Color(0xff1E1E2E) : Colors.white,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 28),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 72,
+                height: 72,
+                decoration: BoxDecoration(
+                  color: Colors.orange.withValues(alpha: 0.15),
+                  shape: BoxShape.circle,
+                ),
+                child: const Center(
+                  child: Icon(
+                    Icons.access_time_filled_rounded,
+                    size: 48,
+                    color: Colors.orange,
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 20),
+
+              const Text(
+                "Payment Pending",
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'Poppins',
+                ),
+                textAlign: TextAlign.center,
+              ),
+
+              const SizedBox(height: 10),
+
+              Text(
+                "If your status is pending and payment is done, kindly contact the support team with transaction proof.",
                 style: TextStyle(
                   fontSize: 13,
                   color: isDark ? Colors.grey[400] : Colors.grey[600],

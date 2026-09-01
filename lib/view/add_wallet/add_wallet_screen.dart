@@ -23,15 +23,10 @@ class AddWalletScreen extends GetView<AddWalletController> {
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
-      appBar: const CommonAppBar(
-        title: "Add Wallet",
-      ),
+      appBar: const CommonAppBar(title: "Add Wallet"),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 12,
-            vertical: 16,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -67,9 +62,7 @@ class AddWalletScreen extends GetView<AddWalletController> {
               // ----------------------------------------------------------
               Text(
                 "Amount",
-                style: TextHelper.max9(context).copyWith(
-                  fontFamily: 'Poppins',
-                ),
+                style: TextHelper.max9(context).copyWith(fontFamily: 'Poppins'),
               ),
 
               const SizedBox(height: 8),
@@ -79,9 +72,7 @@ class AddWalletScreen extends GetView<AddWalletController> {
                 keyboardType: const TextInputType.numberWithOptions(
                   decimal: true,
                 ),
-                style: TextStyle(
-                  color: colorScheme.onSurface,
-                ),
+                style: TextStyle(color: colorScheme.onSurface),
                 decoration: InputDecoration(
                   hintText: "Enter Amount",
 
@@ -90,10 +81,9 @@ class AddWalletScreen extends GetView<AddWalletController> {
                     child: Center(
                       child: Text(
                         "₹",
-                        style: TextHelper.max19(context).copyWith(
-                          fontSize: 25,
-                          fontWeight: FontWeight.w500,
-                        ),
+                        style: TextHelper.max19(
+                          context,
+                        ).copyWith(fontSize: 25, fontWeight: FontWeight.w500),
                       ),
                     ),
                   ),
@@ -134,37 +124,36 @@ class AddWalletScreen extends GetView<AddWalletController> {
 
               const SizedBox(height: 18),
 
-
               Center(
                 child: CommonButton(
                   title: "Submit",
                   onTap: () async {
-  final amount = controller.amountController.text.trim();
+                    final amount = controller.amountController.text.trim();
 
-  if (amount.isEmpty) {
-    Get.snackbar(
-      "Alert",
-      "Please Enter Amount",
-      backgroundColor: Colors.red,
-      colorText: Colors.white,
-    );
-    return;
-  }
+                    if (amount.isEmpty) {
+                      Get.snackbar(
+                        "Alert",
+                        "Please Enter Amount",
+                        backgroundColor: Colors.red,
+                        colorText: Colors.white,
+                      );
+                      return;
+                    }
 
-  final parsedAmount = double.tryParse(amount);
+                    final parsedAmount = double.tryParse(amount);
 
-  if (parsedAmount == null || parsedAmount <= 0) {
-    Get.snackbar(
-      "Alert",
-      "Please Enter a Valid Amount",
-      backgroundColor: Colors.red,
-      colorText: Colors.white,
-    );
-    return;
-  }
+                    if (parsedAmount == null || parsedAmount <= 0) {
+                      Get.snackbar(
+                        "Alert",
+                        "Please Enter a Valid Amount",
+                        backgroundColor: Colors.red,
+                        colorText: Colors.white,
+                      );
+                      return;
+                    }
 
-  await controller.createQr(amount);
-},
+                    await controller.createQr(amount);
+                  },
                 ),
               ),
 
@@ -175,60 +164,46 @@ class AddWalletScreen extends GetView<AddWalletController> {
               // ----------------------------------------------------------
               Text(
                 "Recent Transactions",
-                style: TextHelper.max10(context).copyWith(
-                  fontFamily: 'Poppins',
-                ),
+                style: TextHelper.max10(
+                  context,
+                ).copyWith(fontFamily: 'Poppins'),
               ),
 
               const SizedBox(height: 20),
 
-              Obx(
-                () {
-                  if (controller.isLoading.value) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
+              Obx(() {
+                if (controller.isLoading.value) {
+                  return const Center(child: CircularProgressIndicator());
+                }
 
-                  if (controller.walletQrHistory.value.data?.isEmpty ??
-                      true) {
-                    return const Center(
-                      child: Text("No Transactions"),
-                    );
-                  }
+                if (controller.walletQrHistory.value.data?.isEmpty ?? true) {
+                  return const Center(child: Text("No Transactions"));
+                }
 
-                  return Column(
-                    children: [
-                      ...(controller.walletQrHistory.value.data ?? [])
-                          .map(
-                        (e) {
-                          return Padding(
-                            padding: const EdgeInsets.only(
-                              bottom: 12,
-                            ),
-                            child: transactionCard(
-                              context: context,
-                              txnId: e.txnId ?? '',
-                              dateTime: DateFormat(
-                                'dd-MM-yyyy hh:mm a',
-                              ).format(
-                                e.updatedAt ?? DateTime.now(),
-                              ),
-                              status: e.status?.capitalize ?? '',
-                              statusColor: e.status == 'pending'
-                                  ? Colors.orange
-                                  : e.status == 'failed'
-                                      ? Colors.red
-                                      : Colors.green,
-                              amount: e.requestAmount ?? '',
-                            ),
-                          );
-                        },
-                      ),
-                    ],
-                  );
-                },
-              ),
+                return Column(
+                  children: [
+                    ...(controller.walletQrHistory.value.data ?? []).map((e) {
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: transactionCard(
+                          context: context,
+                          txnId: e.txnId ?? '',
+                          dateTime: DateFormat(
+                            'dd-MM-yyyy hh:mm a',
+                          ).format(e.updatedAt ?? DateTime.now()),
+                          status: e.status?.capitalize ?? '',
+                          statusColor: e.status == 'pending'
+                              ? Colors.orange
+                              : e.status == 'failed'
+                              ? Colors.red
+                              : Colors.green,
+                          amount: e.requestAmount ?? '',
+                        ),
+                      );
+                    }),
+                  ],
+                );
+              }),
             ],
           ),
         ),
@@ -275,15 +250,11 @@ class AddWalletScreen extends GetView<AddWalletController> {
 
       final result = upiUri.toString();
 
-      debugPrint(
-        "Generated working UPI URL = $result",
-      );
+      debugPrint("Generated working UPI URL = $result");
 
       return result;
     } catch (e) {
-      debugPrint(
-        "UPI URL conversion error = $e",
-      );
+      debugPrint("UPI URL conversion error = $e");
 
       return '';
     }
@@ -312,15 +283,11 @@ class UpiPaymentDialog extends StatelessWidget {
     try {
       final uri = Uri.parse(upiUrl);
 
-      debugPrint(
-        "UPI payment URL = $upiUrl",
-      );
+      debugPrint("UPI payment URL = $upiUrl");
 
       final canOpen = await canLaunchUrl(uri);
 
-      debugPrint(
-        "Can open UPI = $canOpen",
-      );
+      debugPrint("Can open UPI = $canOpen");
 
       if (!canOpen) {
         Get.snackbar(
@@ -332,14 +299,9 @@ class UpiPaymentDialog extends StatelessWidget {
         return;
       }
 
-      await launchUrl(
-        uri,
-        mode: LaunchMode.externalApplication,
-      );
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
     } catch (e) {
-      debugPrint(
-        "UPI launch error = $e",
-      );
+      debugPrint("UPI launch error = $e");
 
       Get.snackbar(
         "Payment Error",
@@ -353,16 +315,9 @@ class UpiPaymentDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       title: const Center(
-        child: Text(
-          "Pay Now",
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
+        child: Text("Pay Now", style: TextStyle(fontWeight: FontWeight.bold)),
       ),
       content: SingleChildScrollView(
         child: Column(
@@ -371,23 +326,16 @@ class UpiPaymentDialog extends StatelessWidget {
             // --------------------------------------------------------------
             // AMOUNT
             // --------------------------------------------------------------
-
             Text(
               "Amount",
-              style: TextStyle(
-                color: Colors.grey.shade600,
-                fontSize: 14,
-              ),
+              style: TextStyle(color: Colors.grey.shade600, fontSize: 14),
             ),
 
             const SizedBox(height: 4),
 
             Text(
               "₹$amount",
-              style: const TextStyle(
-                fontSize: 26,
-                fontWeight: FontWeight.bold,
-              ),
+              style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
             ),
 
             const SizedBox(height: 20),
@@ -395,15 +343,12 @@ class UpiPaymentDialog extends StatelessWidget {
             // --------------------------------------------------------------
             // QR
             // --------------------------------------------------------------
-
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: Colors.grey.shade300,
-                ),
+                border: Border.all(color: Colors.grey.shade300),
               ),
               child: QrImageView(
                 data: upiUrl,
@@ -418,10 +363,7 @@ class UpiPaymentDialog extends StatelessWidget {
             const Text(
               "Scan this QR code to pay",
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 13,
-                color: Colors.grey,
-              ),
+              style: TextStyle(fontSize: 13, color: Colors.grey),
             ),
 
             const SizedBox(height: 20),
@@ -429,7 +371,6 @@ class UpiPaymentDialog extends StatelessWidget {
             // --------------------------------------------------------------
             // GPay
             // --------------------------------------------------------------
-
             SizedBox(
               width: double.infinity,
               height: 48,
@@ -437,10 +378,7 @@ class UpiPaymentDialog extends StatelessWidget {
                 onPressed: _openUpiApp,
                 child: const Text(
                   "Pay with UPI",
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
                 ),
               ),
             ),
@@ -450,7 +388,6 @@ class UpiPaymentDialog extends StatelessWidget {
             // --------------------------------------------------------------
             // CLOSE
             // --------------------------------------------------------------
-
             SizedBox(
               width: double.infinity,
               height: 48,
@@ -458,9 +395,7 @@ class UpiPaymentDialog extends StatelessWidget {
                 onPressed: () {
                   Get.back();
                 },
-                child: const Text(
-                  "Cancel",
-                ),
+                child: const Text("Cancel"),
               ),
             ),
           ],
