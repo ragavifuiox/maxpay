@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -205,30 +204,26 @@ class AddWalletPopup extends StatelessWidget {
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    if (controller.isCheckingStatus.value) ...[
-                      const SizedBox(height: 8),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const SizedBox(
-                            width: 12,
-                            height: 12,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                            ),
+                    const SizedBox(height: 8),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const SizedBox(
+                          width: 12,
+                          height: 12,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          "Checking payment status...",
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: isDark ? Colors.grey[400] : Colors.grey[600],
+                            fontFamily: 'Poppins',
                           ),
-                          const SizedBox(width: 8),
-                          Text(
-                            "Checking payment status...",
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: isDark ? Colors.grey[400] : Colors.grey[600],
-                              fontFamily: 'Poppins',
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
+                        ),
+                      ],
+                    ),
                   ],
                 );
               }),
@@ -252,45 +247,46 @@ class AddWalletPopup extends StatelessWidget {
               const SizedBox(height: 16),
 
               // ----------------------------------------------------------
-              // UPI BUTTONS
+              // UPI BUTTONS (Currently hidden)
               // ----------------------------------------------------------
+              /*
               Row(
                 children: [
                   // GPay
                   if (gpayLink != null && gpayLink!.trim().isNotEmpty)
-                    Expanded(
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: Colors.black,
-                          side: BorderSide(color: Colors.grey.shade300),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          padding: const EdgeInsets.symmetric(vertical: 12),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: Colors.black,
+                        side: BorderSide(color: Colors.grey.shade300),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
                         ),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                      ),
                       onPressed: () async {
-  final controller = Get.find<AddWalletController>();
+                        final controller = Get.find<AddWalletController>();
 
-  final gpayUrl = controller.buildWorkingUpiUrl(
-    paymentLink: gpayLink!,
-    amount: amount,
-  );
+                        final gpayUrl = controller.buildWorkingUpiUrl(
+                          paymentLink: gpayLink!,
+                          amount: amount,
+                        );
 
-  if (gpayUrl.isEmpty) {
-    CustomToast.error("Invalid GPay payment link");
-    return;
-  }
+                        if (gpayUrl.isEmpty) {
+                          CustomToast.error("Invalid GPay payment link");
+                          return;
+                        }
 
-  await controller.openSpecificUpiApp(
-    packageName: "com.google.android.apps.nbu.paisa.user",
-    url: gpayUrl,
-  );
-},
-                        child: const Text(
-                          "GPay",
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
+                        await controller.openSpecificUpiApp(
+                          packageName: "com.google.android.apps.nbu.paisa.user",
+                          url: gpayUrl,
+                        );
+                      },
+                      child: Image.asset(
+                        'assets/images/gpay.png',
+                        height: 24,
+                        errorBuilder: (context, error, stackTrace) =>
+                            const Icon(Icons.payment, size: 24),
                       ),
                     ),
 
@@ -302,34 +298,35 @@ class AddWalletPopup extends StatelessWidget {
 
                   // PhonePe
                   if (phonepeLink != null && phonepeLink!.trim().isNotEmpty)
-                    Expanded(
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF5F259F),
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          padding: const EdgeInsets.symmetric(vertical: 12),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF5F259F),
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
                         ),
-                        onPressed: () {
-                          Get.find<AddWalletController>().openSpecificUpiApp(
-                            packageName: "com.phonepe.app",
-                            url: phonepeLink!,
-                          );
-                        },
-                        child: const Text(
-                          "PhonePe",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                      ),
+                      onPressed: () {
+                        Get.find<AddWalletController>().openSpecificUpiApp(
+                          packageName: "com.phonepe.app",
+                          url: phonepeLink!,
+                        );
+                      },
+                      child: Image.asset(
+                        'assets/images/phonepe.png',
+                        height: 24,
+                        errorBuilder: (context, error, stackTrace) =>
+                            const Icon(
+                              Icons.account_balance_wallet,
+                              size: 24,
+                              color: Colors.white,
+                            ),
                       ),
                     ),
                 ],
               ),
-
+              */
               const SizedBox(height: 10),
             ],
           ),

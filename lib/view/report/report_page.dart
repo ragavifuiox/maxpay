@@ -8,6 +8,7 @@ import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/core/di/service_locator.dart';
 import 'package:maxpay/core/utils/responsive.dart';
 import 'package:maxpay/core/utils/theme.dart';
+import 'package:maxpay/view/coming_soon.dart';
 
 class ReportPage extends StatelessWidget {
   const ReportPage({super.key});
@@ -139,7 +140,7 @@ class ReportPage extends StatelessWidget {
                       SvgPicture.asset(AssetImages.stafflist, width: 21.w),
                     ),
                   _buildMenuTile(context, 'Grade', () {
-                    Get.toNamed(AppRoutes.grade);
+                    Get.to(() => ComingSoonPage());
                   }, SvgPicture.asset(AssetImages.grade, width: 21.w)),
                 ],
               ),
