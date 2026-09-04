@@ -18,7 +18,7 @@ import 'package:maxpay/core/extensions/currency.dart';
 import 'package:maxpay/core/constants/extension.dart';
 
 import 'package:maxpay/view/broadband/broad_band_page.dart';
-import 'package:maxpay/view/cabletv/cable_tv_page.dart';
+
 import 'package:maxpay/view/electricity_bill/electricity_bill_page.dart';
 import 'package:maxpay/view/fastag_recharge/fastag_recharge_page.dart';
 import 'package:maxpay/view/gas_bill/gas_bill_page.dart';
@@ -455,8 +455,6 @@ class MenuScreen extends StatelessWidget {
                             downAds,
                           );
                         }),
-
-                        SizedBox(height: 20.h),
                       ],
                     ),
                   ),
@@ -558,7 +556,7 @@ class MenuScreen extends StatelessWidget {
           ],
         ),
 
-        SizedBox(height: 18.h),
+        if (productList.length > 12) SizedBox(height: 18.h),
 
         // ========================================================
         // REMAINING SERVICES
@@ -723,10 +721,10 @@ class MenuScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(12.r),
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
@@ -744,12 +742,14 @@ class MenuScreen extends StatelessWidget {
               ),
             ],
           ),
-          Container(
+          SizedBox(width: 14.w),
+          SizedBox(
             width: 22.w,
             height: 22.w,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(color: Colors.white, width: 1.5),
+            child: CircularProgressIndicator(
+              color: Colors.white,
+              backgroundColor: Colors.white.withValues(alpha: 0.3),
+              strokeWidth: 2,
             ),
           ),
         ],
@@ -824,7 +824,7 @@ class MenuScreen extends StatelessWidget {
         crossAxisCount: 4,
         mainAxisSpacing: 16.h,
         crossAxisSpacing: 8.w,
-        childAspectRatio: 0.75,
+        childAspectRatio: 1.0,
       ),
       itemBuilder: (context, index) {
         final actualIndex = startIndex + index;
@@ -1074,8 +1074,6 @@ class MenuScreen extends StatelessWidget {
         break;
 
       case 'water':
-
-      
         Get.toNamed(
           AppRoutes.water,
           arguments: {
@@ -1098,7 +1096,13 @@ class MenuScreen extends StatelessWidget {
         break;
 
       case 'cabletv':
-        Get.to(() => const CableTvPage());
+        Get.toNamed(
+          AppRoutes.cabletv,
+          arguments: {
+            "productId": item.id.toString(),
+            "productName": item.name ?? "",
+          },
+        );
         break;
 
       case 'postpaid':

@@ -24,7 +24,7 @@ class TransactionFilterWidget extends StatefulWidget {
 }
 
 class _TransactionFilterWidgetState extends State<TransactionFilterWidget> {
-  String? selectedStatus;
+  String? selectedStatus = "SUCCESS";
   DateTime? fromDate = DateTime.now();
   DateTime? toDate = DateTime.now();
   String? prd;
@@ -142,7 +142,10 @@ class _TransactionFilterWidgetState extends State<TransactionFilterWidget> {
                         items: productList.map((item) {
                           return DropdownMenuItem<String>(
                             value: item.id.toString(),
-                            child: Text(item.name ?? ""),
+                            child: Text(
+                              item.name ?? "",
+                              style: const TextStyle(fontSize: 12),
+                            ),
                           );
                         }).toList(),
 
@@ -157,7 +160,6 @@ class _TransactionFilterWidgetState extends State<TransactionFilterWidget> {
                 }),
               ),
 
-              /// SELECT STATUS (Dropdown)
               Expanded(
                 child: Container(
                   width: double.infinity,
@@ -193,12 +195,22 @@ class _TransactionFilterWidgetState extends State<TransactionFilterWidget> {
                       isExpanded: true,
                       items: const [
                         DropdownMenuItem(
-                          value: "success",
-                          child: Text("Success"),
+                          value: "SUCCESS",
+                          child: Text(
+                            "Success",
+                            style: TextStyle(fontSize: 12),
+                          ),
                         ),
                         DropdownMenuItem(
-                          value: "pending",
-                          child: Text("Pending"),
+                          value: "FAILED",
+                          child: Text("Failed", style: TextStyle(fontSize: 12)),
+                        ),
+                        DropdownMenuItem(
+                          value: "PROCESSING",
+                          child: Text(
+                            "Processing",
+                            style: TextStyle(fontSize: 12),
+                          ),
                         ),
                       ],
                       onChanged: (val) {

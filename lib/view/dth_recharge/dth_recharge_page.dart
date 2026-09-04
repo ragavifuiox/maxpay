@@ -32,7 +32,7 @@ class _DTHRechargePageState extends State<DTHRechargePage>
   Data? selectedOperatorObj;
   String customerHint = "Enter Number";
   int? maxCustomerIdLength;
-  bool? isPaymentReceived;
+  bool? isPaymentReceived = true;
   bool showCustomerInfo = false;
   bool isPlanListVisible = false;
 
@@ -48,7 +48,7 @@ class _DTHRechargePageState extends State<DTHRechargePage>
       downloadusecase: sl(),
       checkOperatorUsecase: sl(),
       offerRechargeUsecase: sl(),
-       termusecase: sl()
+      termusecase: sl(),
     ),
   );
 
@@ -450,7 +450,7 @@ class _DTHRechargePageState extends State<DTHRechargePage>
                     child: DropdownButton<Data>(
                       isExpanded: true,
                       value: selectedOperatorObj,
-                      hint: const Text("Select "),
+                      hint: const Text("Select Product "),
                       items: controller.plans.map((Data operator) {
                         return DropdownMenuItem<Data>(
                           value: operator,
@@ -590,7 +590,6 @@ class _DTHRechargePageState extends State<DTHRechargePage>
                         _showInactiveDialog(context, op);
                         return;
                       }
-
 
                       if (!_validateCustomerId()) return;
                       final customerId = customerIdController.text.trim();

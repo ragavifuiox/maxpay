@@ -159,19 +159,15 @@ class WalletTransferScreen extends StatelessWidget {
                         return;
                       }
 
-                      final result = await Get.toNamed(
+                      await Get.toNamed(
                         AppRoutes.enterPin,
-                        arguments: {'isFromWalletTransfer': true},
+                        arguments: {
+                          'isFromWalletTransfer': true,
+                          'staffid': staff.userId.toString(),
+                          'amount': amountController.text.trim(),
+                          'paymenttype': controller.selectedPaymentType.value,
+                        },
                       );
-
-                      if (result == true) {
-                        await controller.walletTransfer(
-                          staffid: staff.userId.toString(),
-                          amount: amountController.text.trim(),
-                          paymenttype: controller.selectedPaymentType.value,
-                        );
-                        amountController.clear();
-                      }
                     },
                   ),
                 ),

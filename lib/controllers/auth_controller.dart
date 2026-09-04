@@ -409,7 +409,9 @@ class AuthController extends GetxController {
           AppLogger.logError("MESSAGE: ${response.message}");
 
           if (response.success == true) {
-            CustomToast.success(response.message ?? "PIN Verified");
+            if (!isFromWalletTransfer) {
+              CustomToast.success(response.message ?? "PIN Verified");
+            }
 
             AppLogger.logError("PIN VERIFIED SUCCESSFULLY");
 

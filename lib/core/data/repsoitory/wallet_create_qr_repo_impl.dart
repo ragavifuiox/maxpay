@@ -1,12 +1,12 @@
 import 'package:dartz/dartz.dart';
-import 'package:maxpay/core/utils/error_parser.dart';
+
 import 'package:maxpay/core/constants/api_routes.dart';
 import 'package:maxpay/core/data/model/wallet_create_qr_model.dart';
 import 'package:maxpay/core/data/model/wallet_qr_history.dart';
 import 'package:maxpay/core/domain/repository/wallet_create_qr_repo.dart';
 import 'package:maxpay/core/error/failure.dart';
 import 'package:maxpay/core/services/api_services.dart';
-import 'package:maxpay/core/utils/error_parser.dart';
+
 import 'package:maxpay/core/utils/logg_helper.dart';
 import 'package:maxpay/core/utils/service/dio_error_handler.dart';
 

@@ -63,7 +63,7 @@ class _MobileRechargePageState extends State<MobileRechargePage>
 
   Timer? _debounce;
   bool isPlanLoaded = false;
-  bool? isPaymentReceived;
+  bool? isPaymentReceived = true;
   bool showOperatorDropdown = true;
   @override
   void initState() {
@@ -262,7 +262,7 @@ class _MobileRechargePageState extends State<MobileRechargePage>
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
 
-      appBar: CommonAppBar(title: 'Mobile Prepaid Recharge'),
+      appBar: CommonAppBar(title: 'Mobile Recharge'),
 
       body: SafeArea(
         child: SingleChildScrollView(

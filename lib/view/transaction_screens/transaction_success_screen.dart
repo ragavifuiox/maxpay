@@ -27,9 +27,7 @@ class TransactionScreen extends GetView<TransReportController> {
       );
     });
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-
-    final bool isSuccess = status == TransactionStatus.success;
+    final isDark = theme.brightness == Brightness.dark; final bool isSuccess = status == TransactionStatus.success;
     final bool isPending = status == TransactionStatus.pending;
 
     Color bgColor;

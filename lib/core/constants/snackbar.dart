@@ -4,7 +4,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 class CustomToast {
   CustomToast(String s);
 
-
   static void success(String message) {
     Fluttertoast.showToast(
       msg: message,

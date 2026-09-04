@@ -227,7 +227,7 @@ class _ElectricityBillPageState extends State<GasBillPage> {
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
-      appBar: CommonAppBar(title: "Gas Bill"),
+      appBar: CommonAppBar(title: "Gas Booking"),
       body: SafeArea(
         child: Column(
           children: [
