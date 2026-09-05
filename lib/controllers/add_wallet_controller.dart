@@ -491,11 +491,8 @@ class AddWalletController extends GetxController with WidgetsBindingObserver {
     final msg = response['msg'];
     final errorMsg = response['errorMsg'];
 
-    String debugContent = "Worldline Response:\n$response\n";
-
     if (msg == null || !msg.toString().contains('SUCCESS')) {
-      CustomToast.error(errorMsg?.toString() ?? "Payment was not successful.");
-      _showDebugDialog("Worldline Failed", debugContent);
+      CustomToast.error("Payment failed, please try again later.");
       return;
     }
 
@@ -517,14 +514,11 @@ class AddWalletController extends GetxController with WidgetsBindingObserver {
         data: formData,
       );
 
-      debugContent += "\nAPI Response:\n$verifyResponse";
-      AppLogger.debugPrint("Verify Response: $verifyResponse");
-
       if (verifyResponse['status'] == true ||
           verifyResponse['status'] == 1 ||
           verifyResponse['status'] == "true") {
             
-        if (Get.isDialogOpen ?? false) {
+        while (Get.isDialogOpen == true) {
           Get.back();
         }
         
@@ -535,18 +529,11 @@ class AddWalletController extends GetxController with WidgetsBindingObserver {
           Get.find<HomePageController>().fetchWalletBalance();
         }
       } else {
-        CustomToast.error(
-          verifyResponse['message']?.toString() ??
-              "Payment verification failed",
-        );
+        CustomToast.error("Payment failed, please try again later.");
       }
-
-      _showDebugDialog("Payment Verification", debugContent);
     } catch (e) {
-      debugContent += "\nException:\n$e";
-      _showDebugDialog("Verification Exception", debugContent);
       AppLogger.logError(e);
-      CustomToast.error("Payment verification failed");
+      CustomToast.error("Payment failed, please try again later.");
     } finally {
       isLoading.value = false;
       getWalletHistory();
@@ -555,22 +542,7 @@ class AddWalletController extends GetxController with WidgetsBindingObserver {
 
   void _worldlineErrorCallback(Map<dynamic, dynamic> response) {
     AppLogger.logError(response);
-    final errorMsg = response['errorMsg'];
-    CustomToast.error(errorMsg?.toString() ?? "Payment failed or cancelled");
-    _showDebugDialog("Worldline Error Callback", "Response:\n$response");
-  }
-
-  void _showDebugDialog(String title, String content) {
-    Get.defaultDialog(
-      title: title,
-      content: SizedBox(
-        height: 300,
-        child: SingleChildScrollView(
-          child: Text(content, style: const TextStyle(fontSize: 12)),
-        ),
-      ),
-      confirm: TextButton(onPressed: () => Get.back(), child: const Text('OK')),
-    );
+    CustomToast.error("Payment failed, please try again later.");
   }
 
   Future<void> openGPay(String paymentUrl) async {
@@ -657,13 +629,8 @@ class AddWalletController extends GetxController with WidgetsBindingObserver {
       } else {
         stopTimer();
 
-        if (Get.isDialogOpen ?? false) {
-          Get.back();
-        }
-
-        amountController.clear();
-
-        CustomToast.error("Payment session expired");
+        // Do not close any popup on failure/expiry, just show the toast
+        CustomToast.error("Payment failed, please try again later.");
       }
     });
   }
@@ -704,7 +671,7 @@ class AddWalletController extends GetxController with WidgetsBindingObserver {
           if (status.toString().toLowerCase() == "success") {
             stopTimer();
 
-            if (Get.isDialogOpen ?? false) {
+            while (Get.isDialogOpen == true) {
               Get.back();
             }
 
