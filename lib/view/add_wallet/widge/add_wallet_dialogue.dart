@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_ionicons/flutter_ionicons.dart';
 import 'package:get/get.dart';
@@ -198,51 +199,31 @@ class _AddWalletPopupState extends State<AddWalletPopup> {
               // ----------------------------------------------------------
               // EXPIRY TIMER
               // ----------------------------------------------------------
-              // Obx(() {
-              //   final controller = Get.find<AddWalletController>();
+              Obx(() {
+                final controller = Get.find<AddWalletController>();
 
-              //   final minutes = (controller.remainingSeconds.value ~/ 60)
-              //       .toString()
-              //       .padLeft(2, '0');
+                final minutes = (controller.remainingSeconds.value ~/ 60)
+                    .toString()
+                    .padLeft(2, '0');
 
-              //   final seconds = (controller.remainingSeconds.value % 60)
-              //       .toString()
-              //       .padLeft(2, '0');
+                final seconds = (controller.remainingSeconds.value % 60)
+                    .toString()
+                    .padLeft(2, '0');
 
-              //   return Column(
-              //     children: [
-              //       Text(
-              //         "Expiry: $minutes:$seconds",
-              //         style: const TextStyle(
-              //           color: Colors.red,
-              //           fontSize: 15,
-              //           fontWeight: FontWeight.w600,
-              //         ),
-              //       ),
-              //       const SizedBox(height: 8),
-              //       Row(
-              //         mainAxisAlignment: MainAxisAlignment.center,
-              //         children: [
-              //           const SizedBox(
-              //             width: 12,
-              //             height: 12,
-              //             child: CircularProgressIndicator(strokeWidth: 2),
-              //           ),
-              //           const SizedBox(width: 8),
-              //           Text(
-              //             "Checking payment status...",
-              //             style: TextStyle(
-              //               fontSize: 12,
-              //               color: isDark ? Colors.grey[400] : Colors.grey[600],
-              //               fontFamily: 'Poppins',
-              //             ),
-              //           ),
-              //         ],
-              //       ),
-              //     ],
-              //   );
-              // }),
-              // const SizedBox(height: 20),
+                return Column(
+                  children: [
+                    Text(
+                      "Expiry: $minutes:$seconds",
+                      style: const TextStyle(
+                        color: Colors.red,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                );
+              }),
+              const SizedBox(height: 20),
 
               // ----------------------------------------------------------
               // NOTE
@@ -280,11 +261,12 @@ class _AddWalletPopupState extends State<AddWalletPopup> {
                   ),
                 ),
                 iconAlignment: .end,
-                icon: Image.network(
-                  'https://images.icon-icons.com/2699/PNG/512/upi_logo_icon_170312.png',
+                icon: CachedNetworkImage(
+                  imageUrl:
+                      'https://images.icon-icons.com/2699/PNG/512/upi_logo_icon_170312.png',
                   height: 24,
-                  errorBuilder: (context, error, stackTrace) =>
-                      const Icon(Ionicons.logo_paypal, size: 24),
+                  // errorBuilder: (context, error, stackTrace) =>
+                  //     const Icon(Ionicons.logo_paypal, size: 24),
                 ),
               ),
               // ----------------------------------------------------------

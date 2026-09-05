@@ -523,6 +523,11 @@ class AddWalletController extends GetxController with WidgetsBindingObserver {
       if (verifyResponse['status'] == true ||
           verifyResponse['status'] == 1 ||
           verifyResponse['status'] == "true") {
+            
+        if (Get.isDialogOpen ?? false) {
+          Get.back();
+        }
+        
         final amount = qrResponse?.worldline?.amount ?? "0";
         showSuccessDialog(amount);
 
