@@ -28,7 +28,7 @@ class AppLogger {
 
   static void logError(dynamic value) {
     if (kDebugMode) {
-      log(_formatValue(value));
+      print(_formatValue(value));
     }
   }
 }

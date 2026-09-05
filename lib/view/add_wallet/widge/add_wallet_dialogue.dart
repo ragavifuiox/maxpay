@@ -108,11 +108,7 @@ class _AddWalletPopupState extends State<AddWalletPopup> {
               // ----------------------------------------------------------
               // QR CODE
               // ----------------------------------------------------------
-              GestureDetector(
-                onTap: () async {
-                  // Allow user to tap QR itself
-                  // and open the UPI payment app.
-                },
+              AbsorbPointer(
                 child: Container(
                   width: 220,
                   height: 220,
