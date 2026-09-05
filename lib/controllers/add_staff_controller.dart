@@ -14,6 +14,7 @@ import 'package:maxpay/core/domain/usecase/wallet_report_usecase.dart';
 import 'package:maxpay/core/domain/usecase/wallet_transfer_usecase.dart';
 import 'package:maxpay/core/domain/usecase/delete_staff_usecase.dart';
 import 'package:maxpay/core/utils/logg_helper.dart';
+import 'package:maxpay/core/constants/routes_path.dart';
 
 class AddStaffController extends GetxController {
   final AddStaffUsecase addStaffUsecase;
@@ -33,6 +34,7 @@ class AddStaffController extends GetxController {
     required this.staffTrnsTeportListUseCase,
     required this.deleteStaffUsecase,
   });
+
   @override
   void onInit() {
     stafflist();
@@ -196,6 +198,8 @@ class AddStaffController extends GetxController {
 
             print("Wallet Balance Refreshed");
 
+            Get.until((route) => route.settings.name == AppRoutes.stafflist);
+
             update();
           } else {
             print("Transfer Failed");
@@ -308,8 +312,8 @@ class AddStaffController extends GetxController {
 
       final result = await staffTrnsTeportListUseCase.call(
         prdt,
-        fromDate,
-        toDate,
+        fromdate,
+        todate,
         search,
         status,
       );
@@ -401,7 +405,6 @@ class AddStaffController extends GetxController {
       );
     }
   }
-
 
   Future<void> deleteStaff(String staffId) async {
     try {

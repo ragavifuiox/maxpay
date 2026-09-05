@@ -21,7 +21,6 @@ class WatterBill extends StatefulWidget {
 }
 
 class _WatterBillageState extends State<WatterBill> {
-  String _selectedBoard = '';
   bool _isBillFetched = false;
 
   // Payment status toggle: true = Received, false = Not Received
@@ -70,97 +69,6 @@ class _WatterBillageState extends State<WatterBill> {
     _mobileController.dispose();
     _amountController.dispose();
     super.dispose();
-  }
-
-  // ------------------------------------------------------------------
-  // BOARD SELECTOR BOTTOM DIALOG
-  // ------------------------------------------------------------------
-  void _showBoardSelector(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    showDialog(
-      context: context,
-      builder: (context) {
-        return Dialog(
-          backgroundColor: isDark ? AppColors.darkbgBlack : Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16.r),
-          ),
-          child: Container(
-            padding: EdgeInsets.all(20.r),
-            width: 300.w,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Select Board',
-                      style: TextStyle(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w700,
-                        color: isDark ? Colors.white : Colors.black,
-                      ),
-                    ),
-                    IconButton(
-                      icon: Icon(
-                        Icons.close,
-                        color: Colors.orange,
-                        size: 20.sp,
-                      ),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                  ],
-                ),
-                Divider(color: Colors.grey.withValues(alpha: 0.1)),
-                ConstrainedBox(
-                  constraints: BoxConstraints(maxHeight: 300.h),
-                  child: SingleChildScrollView(
-                    child: Obx(() {
-                      if (controller.isLoading.value) {
-                        return const Padding(
-                          padding: EdgeInsets.all(20.0),
-                          child: Center(child: CircularProgressIndicator()),
-                        );
-                      }
-                      if (controller.plans.isEmpty) {
-                        return const Padding(
-                          padding: EdgeInsets.all(20.0),
-                          child: Center(child: Text("No boards found")),
-                        );
-                      }
-                      return Column(
-                        children: controller.plans
-                            .map(
-                              (board) => ListTile(
-                                title: Text(
-                                  board.name ?? "",
-                                  style: TextStyle(
-                                    color: isDark ? Colors.white : Colors.black,
-                                    fontSize: 14.sp,
-                                  ),
-                                ),
-                                onTap: () {
-                                  setState(() {
-                                    _selectedBoard = board.name ?? "";
-                                    selectedBoardObj = board;
-                                  });
-                                  Navigator.pop(context);
-                                },
-                              ),
-                            )
-                            .toList(),
-                      );
-                    }),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
   }
 
   void _showDetailDialog(BuildContext context) {
@@ -322,38 +230,92 @@ class _WatterBillageState extends State<WatterBill> {
                     SizedBox(height: 20.h),
 
                     /// 🔹 BOARD SELECTION
-                    GestureDetector(
-                      onTap: () => _showBoardSelector(context),
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 16.w,
-                          vertical: 16.h,
-                        ),
+                    Obx(() {
+                      if (controller.isLoading.value) {
+                        return Padding(
+                          padding: EdgeInsets.only(bottom: 8.h),
+                          child: Row(
+                            children: [
+                              SizedBox(
+                                width: 18.w,
+                                height: 18.w,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: AppColors.clrPrimary,
+                                ),
+                              ),
+                              SizedBox(width: 10.w),
+                              Text(
+                                "Loading boards...",
+                                style: TextStyle(
+                                  fontSize: 13.sp,
+                                  color: isDark
+                                      ? Colors.white70
+                                      : Colors.black54,
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+
+                      return Container(
+                        padding: EdgeInsets.symmetric(horizontal: 14.w),
                         decoration: BoxDecoration(
                           color: fieldColor,
                           borderRadius: BorderRadius.circular(10.r),
                         ),
-                        child: Row(
-                          children: [
-                            Text(
-                              _selectedBoard.isNotEmpty
-                                  ? _selectedBoard
-                                  : 'Select',
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton<Data>(
+                            isExpanded: true,
+                            value: controller.selectedPlan.value,
+                            hint: Text(
+                              "Select Board",
                               style: TextStyle(
                                 fontSize: 14.sp,
                                 fontWeight: FontWeight.w500,
                                 color: isDark ? Colors.white : Colors.black,
                               ),
                             ),
-                            const Spacer(),
-                            Icon(
-                              Icons.arrow_drop_down,
-                              color: isDark ? Colors.white : Colors.black,
-                            ),
-                          ],
+                            items: controller.plans.map((Data operator) {
+                              return DropdownMenuItem<Data>(
+                                value: operator,
+                                child: Row(
+                                  children: [
+                                    if ((operator.logo ?? "").isNotEmpty)
+                                      Image.network(
+                                        operator.logo!,
+                                        width: 25.w,
+                                        height: 25.w,
+                                      ),
+                                    SizedBox(width: 10.w),
+                                    Expanded(
+                                      child: Text(
+                                        operator.name ?? "",
+                                        style: TextStyle(
+                                          fontSize: 14.sp,
+                                          fontWeight: FontWeight.w500,
+                                          color: isDark
+                                              ? Colors.white
+                                              : Colors.black,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }).toList(),
+                            onChanged: (Data? value) {
+                              if (value == null) return;
+                              setState(() {
+                                selectedBoardObj = value;
+                              });
+                              controller.selectedPlan.value = value;
+                            },
+                          ),
                         ),
-                      ),
-                    ),
+                      );
+                    }),
                     SizedBox(height: 15.h),
 
                     /// 🔹 CUSTOMER ID INPUT

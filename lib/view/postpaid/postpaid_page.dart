@@ -121,7 +121,7 @@ class _PostPaidPageState extends State<PostpaidPage>
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
-      appBar: const CommonAppBar(title: "Mobile Transaction"),
+      appBar: const CommonAppBar(title: "Mobile Bill"),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: EdgeInsets.symmetric(horizontal: 16.w),

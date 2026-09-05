@@ -19,17 +19,14 @@ class _DisputeDialogState extends State<DisputeDialog> {
   final TextEditingController descController = TextEditingController();
 
   final List<String> subjects = [
-   
-
-
-
-    "Amount not credited",
+"Amount not credited",
 "Balance mismatch ",
 "Commission not credited",
 "Please call me",
 "Transaction failed but amount debited",
 "Transaction success but amount not debited",
 "Others"
+
   ];
 
   @override

@@ -427,7 +427,7 @@ import 'package:maxpay/core/constants/snackbar.dart';
 import 'package:maxpay/core/data/model/wallet_create_qr_model.dart';
 import 'package:maxpay/core/data/model/wallet_qr_history.dart';
 import 'package:maxpay/core/domain/usecase/wallet_create_qr_usecase.dart';
-import 'package:maxpay/core/extensions/currency.dart';
+
 import 'package:maxpay/core/utils/logg_helper.dart';
 import 'package:maxpay/view/add_wallet/widge/add_wallet_dialogue.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -761,11 +761,11 @@ class AddWalletController extends GetxController with WidgetsBindingObserver {
 
         if (isSuccess) break;
       } catch (e) {
-        // ignore error during polling
+        
       }
     }
 
-    // Check again before showing result dialogs in case it was closed during the last delay
+  
     if (!(Get.isDialogOpen ?? false)) {
       return;
     }
@@ -1289,9 +1289,7 @@ class AddWalletController extends GetxController with WidgetsBindingObserver {
     }
   }
 
-  // --------------------------------------------------------------------------
-  // OPEN SPECIFIC UPI APP
-  // --------------------------------------------------------------------------
+
 
   Future<void> openSpecificUpiApp({
     required String packageName,

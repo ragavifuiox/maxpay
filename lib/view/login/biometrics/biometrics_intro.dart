@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/core/utils/theme.dart';
+import 'package:maxpay/controllers/auth_controller.dart';
 import 'package:maxpay/global_widget/commom_button.dart';
 
 class BiometricsIntroPage extends StatelessWidget {
@@ -83,13 +84,66 @@ class BiometricsIntroPage extends StatelessWidget {
         bottomNavigationBar: SafeArea(
           child: Padding(
             padding: EdgeInsets.fromLTRB(24.w, 0, 24.w, 24.h),
-            child: CommonButton(
-              title: isUpdate
-                  ? "Update Fingerprint"
-                  : "Enable Fingerprint",
-              onTap: () {
-                Get.toNamed(AppRoutes.biometricsScanning);
-              },
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CommonButton(
+                  title: isUpdate ? "Update Fingerprint" : "Enable Fingerprint",
+                  onTap: () {
+                    Get.toNamed(AppRoutes.biometricsScanning);
+                  },
+                ),
+                if (isUpdate) ...[
+                  SizedBox(height: 12.h),
+                  TextButton(
+                    onPressed: () {
+                      Get.defaultDialog(
+                        title: "Confirm Delete",
+                        titleStyle: TextStyle(
+                          fontSize: 18.sp,
+                          fontWeight: FontWeight.w700,
+                          fontFamily: 'Poppins',
+                          color: colorScheme.onSurface,
+                        ),
+                        middleText:
+                            "Are you sure you want to delete your fingerprint?",
+                        middleTextStyle: TextStyle(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w400,
+                          fontFamily: 'Poppins',
+                          color: colorScheme.onSurface,
+                        ),
+                        textCancel: "No",
+                        textConfirm: "Yes, Delete",
+                        confirmTextColor: Colors.white,
+                        cancelTextColor: Colors.grey,
+                        buttonColor: Colors.red,
+                        barrierDismissible: false,
+                        onCancel: () {
+                          Get.back();
+                        },
+                        onConfirm: () async {
+                          Get.back(); // close dialog
+                          final authController = Get.find<AuthController>();
+                          await authController.fingerprint(
+                            0,
+                          ); // 0 corresponds to disable/delete
+                          Get.back(); // exit intro screen
+                        },
+                      );
+                    },
+                    child: Text(
+                      "Delete Fingerprint",
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.red,
+                      ),
+                    ),
+                  ),
+                ],
+              ],
             ),
           ),
         ),

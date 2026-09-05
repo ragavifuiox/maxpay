@@ -18,7 +18,6 @@ import 'package:share_plus/share_plus.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
-
   @override
   Widget build(BuildContext context) {
     final themeController = Get.find<ThemeController>();
@@ -30,6 +29,7 @@ class SettingsPage extends StatelessWidget {
         updateotpusecase: sl(),
       ),
     );
+
     final webcontroller = Get.isRegistered<WebLoginController>()
         ? Get.find<WebLoginController>()
         : Get.put(
@@ -214,6 +214,31 @@ class SettingsPage extends StatelessWidget {
                       Icons.fingerprint,
                       size: 24.w,
                       color: AppColors.clrPrimary,
+                    ),
+                    trailingWidget: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          authController.isFingerPrint.value == 1
+                              ? 'Active'
+                              : 'Inactive',
+                          style: TextStyle(
+                            color: authController.isFingerPrint.value == 1
+                                ? Colors.green
+                                : Colors.red,
+                            fontSize: 12.sp,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        SizedBox(width: 8.w),
+                        Icon(
+                          Icons.chevron_right,
+                          color: Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withValues(alpha: 0.5),
+                          size: 24.sp,
+                        ),
+                      ],
                     ),
                   ),
 

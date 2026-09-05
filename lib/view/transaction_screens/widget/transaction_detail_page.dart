@@ -55,7 +55,7 @@ class TransactionDetailsPage extends StatelessWidget {
               mainAxisSize: MainAxisSize.min, // Important
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                productRow(context, "Product Name", data.productLogo),
+                productRow(context, "Product Name", data.productLogo?? data.operator),
 
                 if (!isFailed && !isPending)
                   detailRow(
@@ -78,7 +78,7 @@ class TransactionDetailsPage extends StatelessWidget {
                       : (isPending ? Colors.orange : Colors.red),
                 ),
 
-                detailRow(context, "Transaction No", data.transactionNo ?? "-"),
+                detailRow(context, "Transaction No", data.mobile ?? "-"),
 
                 detailRow(
                   context,

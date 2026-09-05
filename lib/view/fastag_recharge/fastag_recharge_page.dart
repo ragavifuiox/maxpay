@@ -231,7 +231,7 @@ class _FastagPageState extends State<FastagRechargePage> {
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
-      appBar: CommonAppBar(title: "Fastag Recharge"),
+      appBar: CommonAppBar(title: "FASTag Recharge"),
       body: SafeArea(
         child: Column(
           children: [

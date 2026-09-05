@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:maxpay/core/constants/snackbar.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_navigation/src/extension_navigation.dart';
 import 'package:maxpay/core/constants/colors.dart';
@@ -12,8 +14,13 @@ import 'package:maxpay/view/transaction_screens/widget/share_receipt.dart';
 
 class TransactionCard extends StatelessWidget {
   final TransrepData data;
+  final bool isClickable;
 
-  const TransactionCard({super.key, required this.data});
+  const TransactionCard({
+    super.key,
+    required this.data,
+    this.isClickable = true,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +59,7 @@ class TransactionCard extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  "Transaction ID: ${data.transactionNo ?? '-'}",
+                  "Transaction ID: ${data.transactionNo ?? data.transactionId ?? '-'}",
                   style: TextHelper.max1.copyWith(color: AppColors.darktextclr),
                 ),
               ),
@@ -142,154 +149,153 @@ class TransactionCard extends StatelessWidget {
           ),
 
           const SizedBox(height: 12),
+
           Row(
-            mainAxisAlignment: MainAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              // Action Buttons
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  if (isSuccess) ...[
-                    _button("Dispute", Colors.red, () {
-                      showDialog(
-                        context: context,
-                        builder: (_) =>
-                            DisputeDialog(rechargeId: data.id.toString()),
-                      );
-                    }),
-                    const SizedBox(width: 6),
-                    _button("Success", statusColor, () {
-                      Get.toNamed(
-                        AppRoutes.transactionDetails,
-                        arguments: data,
-                      );
-                    }),
+              InkWell(
+                onTap: () {
+                  final String copyData =
+                      '''
+Transaction ID: ${data.transactionNo ?? '-'}
+Date & Time: ${data.dateTime != null && data.dateTime!.isNotEmpty ? formatTransactionDate(data.dateTime!) : "-"}
+Operator: ${data.operator ?? ''}
+Number: ${data.mobile ?? ''}
+Amount: ${data.amount ?? '0'}
+Status: ${isSuccess ? 'Success' : (isPending ? 'Processing' : 'Failed')}
+'''
+                          .trim();
 
-                    const SizedBox(width: 6),
-                    _button("Share", Colors.blue, () {
-                      ShareReceipt.shareScreenshot(
-                        context: context,
-                        data: data,
-                      );
-                    }),
-                  ],
+                  Clipboard.setData(ClipboardData(text: copyData)).then((_) {
+                    CustomToast.success('Copied');
+                  });
+                },
 
-                  if (isPending)
-                    _button("Processing", Colors.orange, () {
-                      Get.toNamed(
-                        AppRoutes.transactionDetails,
-                        arguments: data,
-                      );
-                    }),
-
-                  if (isFailed) ...[
-                    _button("Failed", statusColor, () {
-                      Get.toNamed(
-                        AppRoutes.transactionDetails,
-                        arguments: data,
-                      );
-                    }),
-
-                    const SizedBox(width: 6),
-
-                    _button("Resend", Colors.green, () {
-                      final dtStr = data.dateTime;
-                      DateTime? parsedTime;
-
-                      if (dtStr != null && dtStr.isNotEmpty) {
-                        try {
-                          final normalized = dtStr.replaceAll(' ', 'T');
-                          // Assume UTC if no indicator is present so we check properly with local time gap
-                          parsedTime = DateTime.tryParse(
-                            normalized +
-                                (normalized.contains('Z') ||
-                                        normalized.contains('+')
-                                    ? ""
-                                    : "Z"),
-                          );
-                        } catch (_) {}
-
-                        if (parsedTime == null) {
-                          final formattedDate = formatTransactionDate(dtStr);
-                          if (formattedDate != '-' && formattedDate != dtStr) {
-                            try {
-                              parsedTime = DateFormat(
-                                'dd-MM-yyyy, hh:mm a',
-                              ).parseLoose(formattedDate);
-                            } catch (_) {}
-                          }
-                        }
-                      }
-
-                      bool isExpired = false;
-                      if (parsedTime != null) {
-                        // Ensure we diff local with local
-                        final diff = DateTime.now()
-                            .difference(parsedTime.toLocal())
-                            .inSeconds;
-                        // Only block it if it's > 3 hours. Ignore negatives.
-                        if (diff > 10800) {
-                          isExpired = true;
-                        }
-                      }
-
-                      if (isExpired) {
+                child: Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: const Icon(
+                    Icons.copy,
+                    size: 16,
+                    color: Colors.black54,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Wrap(
+                  alignment: WrapAlignment.end,
+                  spacing: 6,
+                  runSpacing: 6,
+                  children: [
+                    if (isSuccess) ...[
+                      _button("Dispute", Colors.red, () {
                         showDialog(
                           context: context,
-                          builder: (_) => AlertDialog(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                            title: const Text("Notice"),
-                            content: const Text(
-                              "A transaction can only be resent within 3 hours of being created.",
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed: () => Navigator.pop(context),
-                                child: const Text("Close"),
-                              ),
-                            ],
-                          ),
+                          builder: (_) =>
+                              DisputeDialog(rechargeId: data.id.toString()),
                         );
-                        return;
-                      }
-                      print("========== RESEND ==========");
-                      print("ID: ${data.id}");
-                      print("Transaction ID: ${data.transactionId}");
-                      print("Product Type: ${data.productType}");
-                      print("Mobile: ${data.mobile}");
-                      print("Amount: ${data.amount}");
-                      print("Status: ${data.status}");
-                      print("Logo: ${data.logo}");
+                      }),
+                      _button("Success", statusColor, () {
+                        if (!isClickable) return;
+                        Get.toNamed(
+                          AppRoutes.transactionDetails,
+                          arguments: data,
+                        );
+                      }),
+                      _button("Share", Colors.blue, () {
+                        ShareReceipt.shareScreenshot(
+                          context: context,
+                          data: data,
+                        );
+                      }),
+                    ],
+                    if (isPending)
+                      _button("Processing", Colors.orange, () {
+                        if (!isClickable) return;
+                        Get.toNamed(
+                          AppRoutes.transactionDetails,
+                          arguments: data,
+                        );
+                      }),
+                    if (isFailed) ...[
+                      _button("Failed", statusColor, () {
+                        if (!isClickable) return;
+                        Get.toNamed(
+                          AppRoutes.transactionDetails,
+                          arguments: data,
+                        );
+                      }),
+                      _button("Resend", Colors.green, () {
+                        final dtStr = data.dateTime;
+                        DateTime? parsedTime;
 
-                      _onResend(context);
-                    }),
+                        if (dtStr != null && dtStr.isNotEmpty) {
+                          try {
+                            final normalized = dtStr.replaceAll(' ', 'T');
+                            parsedTime = DateTime.tryParse(
+                              normalized +
+                                  (normalized.contains('Z') ||
+                                          normalized.contains('+')
+                                      ? ""
+                                      : "Z"),
+                            );
+                          } catch (_) {}
+
+                          if (parsedTime == null) {
+                            final formattedDate = formatTransactionDate(dtStr);
+                            if (formattedDate != '-' &&
+                                formattedDate != dtStr) {
+                              try {
+                                parsedTime = DateFormat(
+                                  'dd-MM-yyyy, hh:mm a',
+                                ).parseLoose(formattedDate);
+                              } catch (_) {}
+                            }
+                          }
+                        }
+
+                        bool isExpired = false;
+                        if (parsedTime != null) {
+                          final diff = DateTime.now()
+                              .difference(parsedTime.toLocal())
+                              .inSeconds;
+                          if (diff > 10800) {
+                            isExpired = true;
+                          }
+                        }
+
+                        if (isExpired) {
+                          showDialog(
+                            context: context,
+                            builder: (_) => AlertDialog(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              title: const Text("Notice"),
+                              content: const Text(
+                                "A transaction can only be resent within 3 hours of being created.",
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(context),
+                                  child: const Text("Close"),
+                                ),
+                              ],
+                            ),
+                          );
+                          return;
+                        }
+                        _onResend(context);
+                      }),
+                    ],
                   ],
-                ],
+                ),
               ),
-
-              const SizedBox(width: 8),
-
-              // Status Badge
-              // Container(
-              //   padding: const EdgeInsets.symmetric(
-              //     horizontal: 12,
-              //     vertical: 7,
-              //   ),
-              //   decoration: BoxDecoration(
-              //     color: statusColor,
-              //     borderRadius: BorderRadius.circular(5),
-              //   ),
-              //   child: Text(
-              //     status == "received" ? "Success" : (data.status ?? ""),
-              //     style: const TextStyle(
-              //       fontSize: 10,
-              //       fontWeight: FontWeight.w600,
-              //       color: Colors.white,
-              //     ),
-              //   ),
-              // ),
             ],
           ),
         ],

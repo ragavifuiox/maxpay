@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:maxpay/controllers/auth_controller.dart';
 import 'package:maxpay/controllers/update_pin_controller.dart';
+import 'package:maxpay/controllers/add_staff_controller.dart';
 import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/core/di/service_locator.dart';
 import 'package:maxpay/core/utils/responsive.dart';
@@ -52,7 +53,13 @@ class _PinCodeEnterPageState extends State<PinCodeEnterPage> {
             isFromWalletTransfer: isFromWalletTransfer,
           );
           if (success && isFromWalletTransfer) {
-            Get.back(result: true);
+            final args = Get.arguments as Map;
+            final addStaffController = Get.find<AddStaffController>();
+            await addStaffController.walletTransfer(
+              staffid: args['staffid'],
+              amount: args['amount'],
+              paymenttype: args['paymenttype'],
+            );
           }
         }
       }
@@ -229,7 +236,14 @@ class _PinCodeEnterPageState extends State<PinCodeEnterPage> {
                                   isFromWalletTransfer: isFromWalletTransfer,
                                 );
                             if (success && isFromWalletTransfer) {
-                              Get.back(result: true);
+                              final args = Get.arguments as Map;
+                              final addStaffController =
+                                  Get.find<AddStaffController>();
+                              await addStaffController.walletTransfer(
+                                staffid: args['staffid'],
+                                amount: args['amount'],
+                                paymenttype: args['paymenttype'],
+                              );
                             }
                           },
                           child: Column(
@@ -282,7 +296,14 @@ class _PinCodeEnterPageState extends State<PinCodeEnterPage> {
                                     if (!success) {
                                       resetPin(); // 🔥 IMPORTANT FIX
                                     } else if (isFromWalletTransfer) {
-                                      Get.back(result: true);
+                                      final args = Get.arguments as Map;
+                                      final addStaffController =
+                                          Get.find<AddStaffController>();
+                                      await addStaffController.walletTransfer(
+                                        staffid: args['staffid'],
+                                        amount: args['amount'],
+                                        paymenttype: args['paymenttype'],
+                                      );
                                     }
                                   },
                                 ),

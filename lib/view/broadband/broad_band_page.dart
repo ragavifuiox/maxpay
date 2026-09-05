@@ -240,7 +240,7 @@ class _BroadBankdPageState extends State<BroadBandPage> {
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
-      appBar: CommonAppBar(title: "BroadBand Bill"),
+      appBar: CommonAppBar(title: "Broadband Bill"),
       body: SafeArea(
         child: Column(
           children: [

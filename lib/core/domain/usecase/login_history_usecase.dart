@@ -1,5 +1,3 @@
-
-
 import 'package:dartz/dartz.dart';
 import 'package:maxpay/core/data/model/login_history_model.dart';
 import 'package:maxpay/core/domain/repository/login_history_repository.dart';
@@ -21,4 +19,5 @@ class LoginHistoryUsecase  {
      
     );
   }
+  
 }
