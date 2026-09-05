@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_instance/src/extension_instance.dart';
-import 'package:get/get_navigation/src/extension_navigation.dart';
-import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
+import 'package:get/get.dart';
+import 'package:maxpay/controllers/prepaid_controller.dart';
+import 'package:maxpay/core/di/service_locator.dart';
+import 'package:maxpay/core/data/model/plan_model.dart';
 import 'package:maxpay/controllers/homepage_controller.dart';
 import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
@@ -23,7 +23,6 @@ class LandlineBillPage extends StatefulWidget {
 }
 
 class _LandlineBillPageState extends State<LandlineBillPage> {
-  String? _selectedBoard;
   bool _isBillFetched = false;
 
   // Payment status toggle: true = Received, false = Not Received
@@ -37,7 +36,34 @@ class _LandlineBillPageState extends State<LandlineBillPage> {
     text: '500.00',
   );
 
-  final List<String> _boards = [];
+  final PrePaidController controller = Get.put(
+    PrePaidController(
+      planUseCase: sl(),
+      searchPlanUsecase: sl(),
+      planDetailUseCase: sl(),
+      transConfirmUseCase: sl(),
+      mobileRechargeUseCase: sl(),
+      plantabusecase: sl(),
+      tabdetailusecase: sl(),
+      downloadusecase: sl(),
+      checkOperatorUsecase: sl(),
+      offerRechargeUsecase: sl(),
+      termusecase: sl(),
+    ),
+  );
+
+  Data? selectedBoardObj;
+  String productId = "";
+
+  @override
+  void initState() {
+    super.initState();
+    final args = Get.arguments;
+    if (args != null && args['productId'] != null) {
+      productId = args['productId'];
+      controller.getPlans(productid: productId);
+    }
+  }
 
   @override
   void dispose() {
@@ -45,80 +71,6 @@ class _LandlineBillPageState extends State<LandlineBillPage> {
     _mobileController.dispose();
     _amountController.dispose();
     super.dispose();
-  }
-
-  // ------------------------------------------------------------------
-  // BOARD SELECTOR BOTTOM DIALOG
-  // ------------------------------------------------------------------
-  void _showBoardSelector(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    showDialog(
-      context: context,
-      builder: (context) {
-        return Dialog(
-          backgroundColor: isDark ? AppColors.darkbgBlack : Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16.r),
-          ),
-          child: Container(
-            padding: EdgeInsets.all(20.r),
-            width: 300.w,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Select Board',
-                      style: TextStyle(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w700,
-                        color: isDark ? Colors.white : Colors.black,
-                      ),
-                    ),
-                    IconButton(
-                      icon: Icon(
-                        Icons.close,
-                        color: Colors.orange,
-                        size: 20.sp,
-                      ),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                  ],
-                ),
-                Divider(color: Colors.grey.withValues(alpha: 0.1)),
-                ConstrainedBox(
-                  constraints: BoxConstraints(maxHeight: 300.h),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: _boards
-                          .map(
-                            (board) => ListTile(
-                              title: Text(
-                                board,
-                                style: TextStyle(
-                                  color: isDark ? Colors.white : Colors.black,
-                                  fontSize: 14.sp,
-                                ),
-                              ),
-                              onTap: () {
-                                setState(() => _selectedBoard = board);
-                                Navigator.pop(context);
-                              },
-                            ),
-                          )
-                          .toList(),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
   }
 
   void _showDetailDialog(BuildContext context) {
@@ -151,7 +103,7 @@ class _LandlineBillPageState extends State<LandlineBillPage> {
                         color: Colors.grey.withValues(alpha: 0.4),
                       ),
                     ),
-                    child: Icon(Icons.close, size: 12.sp, color: Colors.grey),
+                    child: Icon(Icons.close, size: 12.sp, color: Colors.red),
                   ),
                 ),
                 SizedBox(height: 4.h),
@@ -159,31 +111,31 @@ class _LandlineBillPageState extends State<LandlineBillPage> {
                 _detailRow(context, 'Bill Number', '#10011887'),
                 _detailRow(context, 'Bill Date', '11/12/2024'),
                 _detailRow(context, 'Bill Due Date', '11/12/2025'),
-                SizedBox(height: 16.h),
-                SizedBox(
-                  width: double.infinity,
-                  height: 42.h,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Get.to(ConfirmElectricity());
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.clrPrimary,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.r),
-                      ),
-                      elevation: 0,
-                    ),
-                    child: Text(
-                      'Next',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ),
+                // SizedBox(height: 16.h),
+                // SizedBox(
+                //   width: double.infinity,
+                //   height: 42.h,
+                //   child: ElevatedButton(
+                //     onPressed: () {
+                //       Get.to(ConfirmElectricity());
+                //     },
+                //     style: ElevatedButton.styleFrom(
+                //       backgroundColor: AppColors.clrPrimary,
+                //       shape: RoundedRectangleBorder(
+                //         borderRadius: BorderRadius.circular(8.r),
+                //       ),
+                //       elevation: 0,
+                //     ),
+                //     child: Text(
+                //       'Next',
+                //       style: TextStyle(
+                //         color: Colors.white,
+                //         fontSize: 14.sp,
+                //         fontWeight: FontWeight.w600,
+                //       ),
+                //     ),
+                //   ),
+                // ),
               ],
             ),
           ),
@@ -291,44 +243,92 @@ class _LandlineBillPageState extends State<LandlineBillPage> {
                     SizedBox(height: 20.h),
 
                     /// 🔹 BOARD SELECTION
-                    Container(
-                      padding: EdgeInsets.symmetric(horizontal: 12.w),
-                      decoration: BoxDecoration(
-                        color: fieldColor,
-                        borderRadius: BorderRadius.circular(10.r),
-                      ),
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton<String>(
-                          value: _selectedBoard,
-                          hint: Text(
-                            "Select",
-                            style: TextStyle(
-                              fontSize: 14.sp,
-                              color: isDark ? Colors.white : Colors.black,
-                            ),
-                          ),
-                          isExpanded: true,
-                          icon: const Icon(Icons.keyboard_arrow_down),
-                          items: _boards.map((board) {
-                            return DropdownMenuItem<String>(
-                              value: board,
-                              child: Text(
-                                board,
-                                style: TextStyle(
-                                  fontSize: 14.sp,
-                                  color: isDark ? Colors.white : Colors.black,
+                    Obx(() {
+                      if (controller.isLoading.value) {
+                        return Padding(
+                          padding: EdgeInsets.only(bottom: 8.h),
+                          child: Row(
+                            children: [
+                              SizedBox(
+                                width: 18.w,
+                                height: 18.w,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: AppColors.clrPrimary,
                                 ),
                               ),
-                            );
-                          }).toList(),
-                          onChanged: (value) {
-                            setState(() {
-                              _selectedBoard = value!;
-                            });
-                          },
+                              SizedBox(width: 10.w),
+                              Text(
+                                "Loading operations...",
+                                style: TextStyle(
+                                  fontSize: 13.sp,
+                                  color: isDark
+                                      ? Colors.white70
+                                      : Colors.black54,
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+
+                      return Container(
+                        padding: EdgeInsets.symmetric(horizontal: 14.w),
+                        decoration: BoxDecoration(
+                          color: fieldColor,
+                          borderRadius: BorderRadius.circular(10.r),
                         ),
-                      ),
-                    ),
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton<Data>(
+                            isExpanded: true,
+                            value: controller.selectedPlan.value,
+                            hint: Text(
+                              "Select",
+                              style: TextStyle(
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w500,
+                                color: isDark ? Colors.white : Colors.black,
+                              ),
+                            ),
+                            items: controller.plans.map((Data operator) {
+                              return DropdownMenuItem<Data>(
+                                value: operator,
+                                child: Row(
+                                  children: [
+                                    if ((operator.logo ?? "").isNotEmpty)
+                                      Image.network(
+                                        operator.logo!,
+                                        width: 25.w,
+                                        height: 25.w,
+                                      ),
+                                    SizedBox(width: 10.w),
+                                    Expanded(
+                                      child: Text(
+                                        operator.name ?? "",
+                                        style: TextStyle(
+                                          fontSize: 14.sp,
+                                          fontWeight: FontWeight.w500,
+                                          color: isDark
+                                              ? Colors.white
+                                              : Colors.black,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }).toList(),
+                            onChanged: (Data? value) {
+                              if (value == null) return;
+                              setState(() {
+                                selectedBoardObj = value;
+                              });
+                              controller.selectedPlan.value = value;
+                            },
+                          ),
+                        ),
+                      );
+                    }),
                     SizedBox(height: 15.h),
 
                     /// 🔹 CUSTOMER ID INPUT

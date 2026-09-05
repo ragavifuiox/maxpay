@@ -17,13 +17,7 @@ import 'package:maxpay/core/di/service_locator.dart';
 import 'package:maxpay/core/extensions/currency.dart';
 import 'package:maxpay/core/constants/extension.dart';
 
-import 'package:maxpay/view/broadband/broad_band_page.dart';
-
-import 'package:maxpay/view/electricity_bill/electricity_bill_page.dart';
-import 'package:maxpay/view/fastag_recharge/fastag_recharge_page.dart';
-import 'package:maxpay/view/gas_bill/gas_bill_page.dart';
 import 'package:maxpay/view/home/widgets/home_header.dart';
-import 'package:maxpay/view/landline/landline_bill_page.dart';
 import 'package:maxpay/view/postpaid/postpaid_page.dart';
 import 'package:maxpay/view/transaction_screens/transaction_success_screen.dart';
 
@@ -32,12 +26,7 @@ import '../../../core/data/model/product_type.dart';
 
 class MenuScreen extends StatelessWidget {
   MenuScreen({super.key});
-
-  // ============================================================
-  // CONTROLLERS
-  // ============================================================
-
-  final ServiceController controller = Get.put(
+   final ServiceController controller = Get.put(
     ServiceController(productTypeUseCase: sl(), todayTrnsactionUsecase: sl()),
   );
 
@@ -1070,7 +1059,13 @@ class MenuScreen extends StatelessWidget {
         break;
 
       case 'fastag':
-        Get.to(() => const FastagRechargePage());
+        Get.toNamed(
+          AppRoutes.fastag,
+          arguments: {
+            "productId": item.id.toString(),
+            "productName": item.name ?? "",
+          },
+        );
         break;
 
       case 'water':
@@ -1084,15 +1079,33 @@ class MenuScreen extends StatelessWidget {
         break;
 
       case 'gas':
-        Get.to(() => const GasBillPage());
+        Get.toNamed(
+          AppRoutes.gas,
+          arguments: {
+            "productId": item.id.toString(),
+            "productName": item.name ?? "",
+          },
+        );
         break;
 
       case 'electricity':
-        Get.to(() => const ElectricityBillPage());
+        Get.toNamed(
+          AppRoutes.electricity,
+          arguments: {
+            "productId": item.id.toString(),
+            "productName": item.name ?? "",
+          },
+        );
         break;
 
       case 'broadband':
-        Get.to(() => const BroadBandPage());
+        Get.toNamed(
+          AppRoutes.broadband,
+          arguments: {
+            "productId": item.id.toString(),
+            "productName": item.name ?? "",
+          },
+        );
         break;
 
       case 'cabletv':
@@ -1113,7 +1126,13 @@ class MenuScreen extends StatelessWidget {
         break;
 
       case 'landline':
-        Get.to(() => const LandlineBillPage());
+        Get.toNamed(
+          AppRoutes.landline,
+          arguments: {
+            "productId": item.id.toString(),
+            "productName": item.name ?? "",
+          },
+        );
         break;
 
       default:

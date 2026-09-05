@@ -1,11 +1,9 @@
-
-
 import 'package:dartz/dartz.dart';
-import 'package:maxpay/core/data/model/water_bill_page.dart';
+import 'package:maxpay/core/data/model/instant_pay_model.dart';
 import 'package:maxpay/core/error/failure.dart';
 
 abstract class WaterBillRepository {
-  Future<Either<Failure, WaterBill>> waterbill({
+  Future<Either<Failure, InstantPay>> waterbill({
     required String productId,
     required String customerId,
   });

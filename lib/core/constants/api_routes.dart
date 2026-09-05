@@ -87,4 +87,7 @@ class ApiRoutes {
   static const retailorsearch = "/retailer_search";
   static const staffdelete = "/delete_staff";
   static const cabletvbill = "/cabletv_fetch_bill";
+  static const storeVersion = "/store_version";
+  static const cabletvconfirm = "/cabletv_confirm_transaction/";
+  static const waterbill = "/get_water_bill";
 }

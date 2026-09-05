@@ -36,6 +36,17 @@ class SettingsPage extends StatelessWidget {
             WebLoginController(webloginusecase: sl(), webLogoutUsecase: sl()),
             permanent: true,
           );
+
+    final profileController = Get.isRegistered<ProfileController>()
+        ? Get.find<ProfileController>()
+        : Get.put(
+            ProfileController(
+              getProfileUseCase: sl(),
+              profileUpdateUseCase: sl(),
+              updateprofileotpusecase: sl(),
+            ),
+          );
+          
     final isTablet = Responsive.isTablet(context);
 
     Future<void> openRatingReview() async {
@@ -338,39 +349,56 @@ class SettingsPage extends StatelessWidget {
                         ),
                         SizedBox(width: 15.w),
                         Expanded(
-                          child: _buildLogoutButton(
-                            context,
-                            'Web Logout',
-                            Icons.logout_rounded,
-                            () {
-                              Get.defaultDialog(
-                                title: "Confirm Logout",
-                                titleStyle: TextStyle(
-                                  fontSize: 18.sp,
-                                  fontWeight: FontWeight.w700,
-                                  fontFamily: 'Poppins',
-                                  color: theme.colorScheme.onSurface,
-                                ),
-                                middleText: "Do you want to logout from Web?",
-                                middleTextStyle: TextStyle(
-                                  fontSize: 14.sp,
-                                  fontWeight: FontWeight.w400,
-                                  fontFamily: 'Poppins',
-                                  color: theme.colorScheme.onSurface,
-                                ),
-                                textCancel: "No",
-                                textConfirm: "Yes",
-                                confirmTextColor: Colors.white,
-                                buttonColor: AppColors.clrPrimary,
-                                cancelTextColor: Colors.grey,
-                                onConfirm: () {
-                                  Get.back();
-                                  webcontroller.WebLogout(isweb: "0");
-                                },
-                              );
-                            },
-                            true,
-                          ),
+                          child: Obx(() {
+                            final count =
+                                profileController
+                                    .profileData
+                                    .value
+                                    ?.data
+                                    ?.weblogincount ??
+                                '0';
+                            final hasCount =
+                                count.isNotEmpty &&
+                                count != '0' &&
+                                count != 'null';
+                            final label = hasCount
+                                ? 'Web Logout ($count)'
+                                : 'Web Logout';
+
+                            return _buildLogoutButton(
+                              context,
+                              label,
+                              Icons.logout_rounded,
+                              () {
+                                Get.defaultDialog(
+                                  title: "Confirm Logout",
+                                  titleStyle: TextStyle(
+                                    fontSize: 18.sp,
+                                    fontWeight: FontWeight.w700,
+                                    fontFamily: 'Poppins',
+                                    color: theme.colorScheme.onSurface,
+                                  ),
+                                  middleText: "Do you want to logout from Web?",
+                                  middleTextStyle: TextStyle(
+                                    fontSize: 14.sp,
+                                    fontWeight: FontWeight.w400,
+                                    fontFamily: 'Poppins',
+                                    color: theme.colorScheme.onSurface,
+                                  ),
+                                  textCancel: "No",
+                                  textConfirm: "Yes",
+                                  confirmTextColor: Colors.white,
+                                  buttonColor: AppColors.clrPrimary,
+                                  cancelTextColor: Colors.grey,
+                                  onConfirm: () {
+                                    Get.back();
+                                    webcontroller.WebLogout(isweb: "0");
+                                  },
+                                );
+                              },
+                              true,
+                            );
+                          }),
                         ),
                       ],
                     ),
