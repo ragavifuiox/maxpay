@@ -1,6 +1,6 @@
 class ApiRoutes {
-  static const baseURL = "https://paylinkonline.in/api";
-  // static const baseURL = "http://139.59.91.7/test_paylinkonline.in/public/api";
+  // static const baseURL = "https://paylinkonline.in/api";
+  static const baseURL = "http://139.59.91.7/test_paylinkonline.in/public/api";
   static const login = "/retailer_login_sendotp";
   static const verifyotp = "/retailer_login_verifyOtp";
   static const news = "/get_news";
@@ -61,6 +61,7 @@ class ApiRoutes {
   static const weblogout = "/web_logout";
   static const createQr = "/create_qr";
   static const checkQr = "/check_qr_status";
+  static const verifyWorldlinePayment = "/verify_worldline_payment";
   static const walletQrHistory = "/wallet_qr_history";
   static const refundcount = "/refund_count";
   static const todaycredit = "/today_credit_amount";
