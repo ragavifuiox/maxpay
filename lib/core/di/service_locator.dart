@@ -17,6 +17,7 @@ import 'package:maxpay/core/data/repsoitory/dispute_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/download_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/dth_recharge_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/retailor_search_repo_impl.dart';
+import 'package:maxpay/core/data/repsoitory/store_version_repo_impl.dart';
 import 'package:maxpay/core/domain/repository/retailor_search_repository.dart';
 import 'package:maxpay/core/domain/repository/bank_detail_repository.dart';
 import 'package:maxpay/core/data/repsoitory/bank_detail_repoo_impl.dart';
@@ -53,12 +54,22 @@ import 'package:maxpay/core/data/repsoitory/seach_dth_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/search_earning_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/search_plan_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/search_staff_repo_impl.dart';
+import 'package:maxpay/controllers/water_controller.dart';
 import 'package:maxpay/core/data/repsoitory/staff_lsit_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/staff_wallet_reverse_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/statement_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/submit_dispute_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/tabdetail_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/today_credit_repo_impl.dart';
+import 'package:maxpay/core/domain/repository/cable_tv_bill_repository.dart';
+import 'package:maxpay/core/data/repsoitory/cable_tv_bill_repo_impl.dart';
+import 'package:maxpay/core/domain/usecase/cable_tv_bill_usecase.dart';
+import 'package:maxpay/core/domain/repository/cable_tv_confirm_repository.dart';
+import 'package:maxpay/core/data/repsoitory/cable_tv_confirm_repo_impl.dart';
+import 'package:maxpay/core/domain/usecase/cable_tv_confirm_usecase.dart';
+import 'package:maxpay/core/data/repsoitory/water_bill_repo_impl.dart';
+import 'package:maxpay/core/domain/repository/water_bill_repository.dart';
+import 'package:maxpay/core/domain/usecase/water_bill_usecase.dart';
 import 'package:maxpay/core/data/repsoitory/terms_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/today_transaction_repo_imppl.dart';
 import 'package:maxpay/core/data/repsoitory/total_transaction_repo_impl.dart';
@@ -144,6 +155,7 @@ import 'package:maxpay/core/domain/repository/total_transaction_repository.dart'
 import 'package:maxpay/core/domain/repository/trans_confirm_repository.dart';
 import 'package:maxpay/core/domain/repository/trans_report_repository.dart';
 import 'package:maxpay/core/domain/repository/transaction_suc_fail_repository.dart';
+import 'package:maxpay/core/domain/repository/store_version_repository.dart';
 import 'package:maxpay/core/domain/repository/update_otp_repository.dart';
 import 'package:maxpay/core/domain/repository/update_payment_status_repository.dart';
 import 'package:maxpay/core/domain/repository/update_pin_repository.dart';
@@ -230,6 +242,7 @@ import 'package:maxpay/core/domain/usecase/update_profile_otp_usecase.dart';
 import 'package:maxpay/core/domain/usecase/update_send_otp_usecase.dart';
 import 'package:maxpay/core/domain/usecase/verify_pin_usecase.dart';
 import 'package:maxpay/core/domain/usecase/wallet_create_qr_usecase.dart';
+import 'package:maxpay/core/domain/usecase/store_version_usecase.dart';
 import 'package:maxpay/core/domain/usecase/wallet_credit_search_usecase.dart';
 import 'package:maxpay/core/domain/usecase/wallet_credit_usecase.dart';
 import 'package:maxpay/core/domain/usecase/wallet_report_usecase.dart';
@@ -246,14 +259,17 @@ import 'package:shared_preferences/shared_preferences.dart';
 final sl = GetIt.instance;
 
 Future<void> initDependencies() async {
-  /*-------------------       SHARED PREFERENCES     --------------------------*/
+  
   final prefs = await SharedPreferences.getInstance();
   await LocalStorageService().init();
   if (!sl.isRegistered<SharedPreferences>()) {
     sl.registerSingleton<SharedPreferences>(prefs);
   }
 
-  /*-------------------       CORE SERVICES   --------------------------*/
+
+  sl.registerLazySingleton(() => WaterController(sl()));
+
+ 
   if (!sl.isRegistered<ApiService>()) {
     sl.registerLazySingleton(() => ApiService());
   }
@@ -314,6 +330,7 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton<UpdateProfileOtpRepository>(
     () => UpdateProfileOtpRepoImpl(sl()),
   );
+  
   sl.registerLazySingleton<EarningsRepository>(() => EarningsRepoImpl(sl()));
   sl.registerLazySingleton<CreditRepository>(() => CreditRepoImpl(sl()));
   sl.registerLazySingleton<SearchEarningsRepository>(
@@ -369,6 +386,10 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton<DisputeRepository>(() => DisputeRepoImpl(sl()));
   sl.registerLazySingleton<PaymnetStatusRepository>(
     () => PaymentStatusRepoImpl(sl()),
+  );
+
+  sl.registerLazySingleton<StoreVersionRepository>(
+    () => StoreVersionRepoImpl(sl()),
   );
 
   sl.registerLazySingleton<RefundRepository>(() => RefundRepoImpl(sl()));
@@ -438,6 +459,16 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton<WalletCreateQrRepo>(
     () => WalletCreateQrRepoImpl(sl()),
   );
+
+  sl.registerLazySingleton<CableTvBillRepository>(
+    () => CableTvBillRepoImpl(sl()),
+  );
+
+  sl.registerLazySingleton<CableTvConfirmRepository>(
+    () => CableTvConfirmRepoImpl(sl()),
+  );
+
+  sl.registerLazySingleton<WaterBillRepository>(() => WaterBillRepoImpl(sl()));
 
   /*-------------------       USECASE    ---------------------------------*/
   sl.registerLazySingleton<ActiveUserUsecase>(() => ActiveUserUsecase(sl()));
@@ -526,6 +557,9 @@ Future<void> initDependencies() async {
   );
   sl.registerLazySingleton<RefundUsecase>(() => RefundUsecase(sl()));
   sl.registerLazySingleton<AllPlanUsecase>(() => AllPlanUsecase(sl()));
+  sl.registerLazySingleton<StoreVersionUsecase>(
+    () => StoreVersionUsecase(sl()),
+  );
   sl.registerLazySingleton<UpdatePinUsecase>(() => UpdatePinUsecase(sl()));
   sl.registerLazySingleton<OfferRechargeUsecase>(
     () => OfferRechargeUsecase(sl()),
@@ -550,7 +584,7 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton<WalletReportUsecase>(
     () => WalletReportUsecase(sl()),
   );
-  
+
   sl.registerLazySingleton<ProfileUpdateUsecase>(
     () => ProfileUpdateUsecase(sl()),
   );
@@ -576,6 +610,8 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton<UpdatePaymentStatusUsecase>(
     () => UpdatePaymentStatusUsecase(sl()),
   );
+
+  sl.registerLazySingleton<WaterBillUsecase>(() => WaterBillUsecase(sl()));
   sl.registerLazySingleton<WalletTrnasferDetailUsecase>(
     () => WalletTrnasferDetailUsecase(sl()),
   );
@@ -584,6 +620,10 @@ Future<void> initDependencies() async {
   );
   sl.registerLazySingleton<TermsUsecase>(() => TermsUsecase(sl()));
   sl.registerLazySingleton<TodayCreditUsecase>(() => TodayCreditUsecase(sl()));
+  sl.registerLazySingleton<CableTvBillUsecase>(() => CableTvBillUsecase(sl()));
+  sl.registerLazySingleton<CableTvConfirmUsecase>(
+    () => CableTvConfirmUsecase(repository: sl()),
+  );
   // sl.registerLazySingleton<GetPrivacyPolicyUseCase>(
   //   () => GetPrivacyPolicyUseCase(sl()),
   // );

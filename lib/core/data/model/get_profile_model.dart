@@ -38,22 +38,24 @@ class Data {
   String? usertype;
   String? address;
   String? whatsappnumber;
-bool? isstaff;
-  Data(
-      {this.id,
-      this.userId,
-      this.name,
-      this.phoneNumber,
-      this.email,
-      this.pincode,
-      this.state,
-      this.status,
-      this.profileimg,
-      this.usertype,
-      this.address,
-      this.whatsappnumber,
-      this.isstaff,
-      });
+  String? weblogincount;
+  bool? isstaff;
+  Data({
+    this.id,
+    this.userId,
+    this.name,
+    this.phoneNumber,
+    this.email,
+    this.pincode,
+    this.state,
+    this.status,
+    this.profileimg,
+    this.usertype,
+    this.address,
+    this.whatsappnumber,
+    this.isstaff,
+    this.weblogincount,
+  });
 
   Data.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -68,7 +70,8 @@ bool? isstaff;
     usertype = json['user_type'];
     whatsappnumber = json['whatsapp_number'];
     address = json['billing_address'];
-        isstaff = json['is_staff'];
+    isstaff = json['is_staff'];
+    weblogincount = json['web_login_count']?.toString();
   }
 
   Map<String, dynamic> toJson() {
@@ -85,7 +88,9 @@ bool? isstaff;
     data['user_type'] = usertype;
     data['billing_address'] = address;
     data['whatsapp_number'] = whatsappnumber;
-     data['is_staff'] = isstaff;
+    data['web_login_count'] = weblogincount;
+    ;
+    data['is_staff'] = isstaff;
     return data;
   }
 }

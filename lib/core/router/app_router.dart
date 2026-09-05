@@ -20,13 +20,16 @@ import 'package:maxpay/controllers/support_controller.dart';
 import 'package:maxpay/controllers/transaction_report_controller.dart';
 import 'package:maxpay/controllers/wallet_credit_controller.dart';
 import 'package:maxpay/controllers/wallet_request_controller.dart';
+import 'package:maxpay/controllers/store_version_controller.dart';
 import 'package:maxpay/controllers/web_login_controller.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/core/di/service_locator.dart';
 import 'package:maxpay/global_widget/insufficient_balance_page.dart';
 import 'package:maxpay/view/add_wallet/add_wallet_screen.dart';
 import 'package:maxpay/view/bank_detail/bank_details.dart';
+import 'package:maxpay/view/broadband/broad_band_page.dart';
 import 'package:maxpay/view/cabletv/cable_tv_page.dart';
+import 'package:maxpay/view/fastag_recharge/fastag_recharge_page.dart';
 import 'package:maxpay/view/cashback/cash_back_screen.dart';
 import 'package:maxpay/view/dispute/dispute_screen.dart';
 import 'package:maxpay/view/dth_recharge/confirm_dth_page.dart';
@@ -191,6 +194,9 @@ class AppPages {
 
           fenix: true,
         );
+        Get.put<StoreVersionController>(
+          StoreVersionController(storeVersionUsecase: sl()),
+        );
       }),
     ),
     GetPage(name: AppRoutes.home, page: () => const HomePageScreen()),
@@ -201,6 +207,8 @@ class AppPages {
     GetPage(name: AppRoutes.landline, page: () => LandlineBillPage()),
     GetPage(name: AppRoutes.dthrefresh, page: () => DthRefreshScreen()),
     GetPage(name: AppRoutes.cabletv, page: () => CableTvPage()),
+    GetPage(name: AppRoutes.fastag, page: () => const FastagRechargePage()),
+    GetPage(name: AppRoutes.broadband, page: () => const BroadBandPage()),
 
     // GetPage(name: AppRoutes.main, page: () => const NavPageScreen()),
     // GetPage(name: AppRoutes.myearning, page: () => const MyEarningsScreen()),

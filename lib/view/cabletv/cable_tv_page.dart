@@ -9,6 +9,8 @@ import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
 import 'package:maxpay/view/cabletv/cable_tv_confirm_page.dart';
 import 'package:maxpay/view/electricity_bill/confirm_electricity.dart';
+import 'package:maxpay/controllers/cable_tv_controller.dart';
+import 'package:maxpay/core/constants/snackbar.dart';
 
 class _BillColors {
   // static const fieldGrey = Color(0xFFF3F4F6);
@@ -29,12 +31,8 @@ class _CableTvPageState extends State<CableTvPage> {
   bool _isReceived = true;
 
   final TextEditingController _customerIdController = TextEditingController();
-  final TextEditingController _mobileController = TextEditingController(
-    text: '9876543213',
-  );
-  final TextEditingController _amountController = TextEditingController(
-    text: '500.00',
-  );
+  final TextEditingController _mobileController = TextEditingController();
+  final TextEditingController _amountController = TextEditingController();
 
   final PrePaidController controller = Get.put(
     PrePaidController(
@@ -50,6 +48,10 @@ class _CableTvPageState extends State<CableTvPage> {
       offerRechargeUsecase: sl(),
       termusecase: sl(),
     ),
+  );
+
+  final CableTvController cableTvController = Get.put(
+    CableTvController(cableTvBillUsecase: sl(), cableTvConfirmUsecase: sl()),
   );
 
   Data? selectedBoardObj;
@@ -75,6 +77,8 @@ class _CableTvPageState extends State<CableTvPage> {
 
   void _showDetailDialog(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    final billData = cableTvController.fetchBillResponse.value?.data?.bill;
 
     showDialog(
       context: context,
@@ -107,35 +111,55 @@ class _CableTvPageState extends State<CableTvPage> {
                   ),
                 ),
                 SizedBox(height: 4.h),
-                _detailRow(context, 'Customer Name', 'John'),
-                _detailRow(context, 'Bill Number', '#10011887'),
-                _detailRow(context, 'Bill Date', '11/12/2024'),
-                _detailRow(context, 'Bill Due Date', '11/12/2025'),
-                SizedBox(height: 16.h),
-                SizedBox(
-                  width: double.infinity,
-                  height: 42.h,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Get.to(ConfirmElectricity());
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.clrPrimary,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.r),
-                      ),
-                      elevation: 0,
-                    ),
-                    child: Text(
-                      'Next',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
+                _detailRow(
+                  context,
+                  'Customer Name',
+                  billData?.customerName ?? 'N/A',
                 ),
+                _detailRow(
+                  context,
+                  'Bill Number',
+                  billData?.billNumber ?? 'N/A',
+                ),
+                _detailRow(context, 'Bill Date', billData?.billDate ?? 'N/A'),
+                _detailRow(
+                  context,
+                  'Bill Due Date',
+                  billData?.billDueDate ?? 'N/A',
+                ),
+                // SizedBox(height: 16.h),
+                // SizedBox(
+                //   width: double.infinity,
+                //   height: 42.h,
+                //   child: ElevatedButton(
+                //     onPressed: () {
+                //       final res =
+                //           cableTvController.fetchBillResponse.value?.data;
+                //       Get.to(
+                //         CableTvConfirmPage(),
+                //         arguments: {
+                //           'bill_data': res,
+                //           'is_received': _isReceived,
+                //         },
+                //       );
+                //     },
+                //     style: ElevatedButton.styleFrom(
+                //       backgroundColor: AppColors.clrPrimary,
+                //       shape: RoundedRectangleBorder(
+                //         borderRadius: BorderRadius.circular(8.r),
+                //       ),
+                //       elevation: 0,
+                //     ),
+                //     child: Text(
+                //       'Next',
+                //       style: TextStyle(
+                //         color: Colors.white,
+                //         fontSize: 14.sp,
+                //         fontWeight: FontWeight.w600,
+                //       ),
+                //     ),
+                //   ),
+                // ),
               ],
             ),
           ),
@@ -295,7 +319,6 @@ class _CableTvPageState extends State<CableTvPage> {
                                 value: operator,
                                 child: Row(
                                   children: [
-                                    
                                     if ((operator.logo ?? "").isNotEmpty)
                                       Image.network(
                                         operator.logo!,
@@ -323,6 +346,7 @@ class _CableTvPageState extends State<CableTvPage> {
                               if (value == null) return;
                               setState(() {
                                 selectedBoardObj = value;
+                                productId = value.id?.toString() ?? "";
                               });
                               controller.selectedPlan.value = value;
                             },
@@ -341,8 +365,35 @@ class _CableTvPageState extends State<CableTvPage> {
                       child: TextField(
                         controller: _customerIdController,
                         enabled: !_isBillFetched,
-                        onChanged: (_) {
+                        onChanged: (val) async {
                           setState(() {}); // Refresh to show/hide X icon
+
+                          // Automatically fetch if length is 10
+                          if (val.trim().length == 10 && !_isBillFetched) {
+                            final pid =
+                                selectedBoardObj?.id?.toString() ?? productId;
+                            if (pid.isNotEmpty) {
+                              final success = await cableTvController.fetchBill(
+                                productid: pid,
+                                consumernumber: val.trim(),
+                              );
+                              if (success) {
+                                final billData = cableTvController
+                                    .fetchBillResponse
+                                    .value
+                                    ?.data
+                                    ?.bill;
+                                _amountController.text =
+                                    (billData?.amount ??
+                                            billData?.billAmount ??
+                                            "")
+                                        .toString();
+                                _mobileController.text =
+                                    billData?.customerNumber ?? "";
+                                setState(() => _isBillFetched = true);
+                              }
+                            }
+                          }
                         },
                         style: TextStyle(
                           fontSize: 14.sp,
@@ -368,7 +419,7 @@ class _CableTvPageState extends State<CableTvPage> {
                                   ),
                                   onPressed: () {
                                     _customerIdController.clear();
-                                    setState(() {});
+                                    setState(() => _isBillFetched = false);
                                   },
                                 )
                               : null,
@@ -467,42 +518,97 @@ class _CableTvPageState extends State<CableTvPage> {
                       Container(
                         width: double.infinity,
                         padding: EdgeInsets.symmetric(
-                          vertical: 14.h,
-                          horizontal: 16.w,
+                          horizontal: 14.w,
+                          vertical: 12.h,
                         ),
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10.r),
                           border: Border.all(
-                            color: AppColors.clrPrimary.withValues(alpha: 0.6),
+                            color: const Color(0xff19A7CE),
+                            width: 1,
                           ),
+                          borderRadius: BorderRadius.circular(10.r),
                         ),
-                        child: Column(
+                        child: Stack(
+                          clipBehavior: Clip.none,
                           children: [
-                            Text(
-                              'Customer Payment',
-                              style: TextStyle(
-                                fontSize: 13.sp,
-                                fontWeight: FontWeight.w700,
-                                color: AppColors.clrPrimary,
-                              ),
-                            ),
-                            SizedBox(height: 10.h),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            Column(
                               children: [
-                                _paymentOption(
-                                  label: 'Not Received',
-                                  color: Colors.red,
-                                  selected: !_isReceived,
-                                  onTap: () =>
-                                      setState(() => _isReceived = false),
+                                Text(
+                                  "Customer Payment",
+                                  style: TextStyle(
+                                    fontSize: 15.sp,
+                                    fontWeight: FontWeight.w700,
+                                    color: const Color(0xff19A7CE),
+                                    decoration: TextDecoration.underline,
+                                  ),
                                 ),
-                                _paymentOption(
-                                  label: 'Received',
-                                  color: Colors.green,
-                                  selected: _isReceived,
-                                  onTap: () =>
-                                      setState(() => _isReceived = true),
+
+                                SizedBox(height: 12.h),
+
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    /// Not Received
+                                    GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          _isReceived = false;
+                                        });
+                                      },
+                                      child: Row(
+                                        children: [
+                                          Checkbox(
+                                            value: _isReceived == false,
+                                            activeColor: Colors.red,
+                                            onChanged: (_) {
+                                              setState(() {
+                                                _isReceived = false;
+                                              });
+                                            },
+                                          ),
+                                          Text(
+                                            "Pending    ",
+                                            style: TextStyle(
+                                              color: Colors.red,
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 14.sp,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+
+                                    /// Received
+                                    GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          _isReceived = true;
+                                        });
+                                      },
+                                      child: Row(
+                                        children: [
+                                          Checkbox(
+                                            value: _isReceived == true,
+                                            activeColor: Colors.green,
+                                            onChanged: (_) {
+                                              setState(() {
+                                                _isReceived = true;
+                                              });
+                                            },
+                                          ),
+                                          Text(
+                                            "Paid",
+                                            style: TextStyle(
+                                              color: Colors.green,
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 14.sp,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
@@ -523,12 +629,48 @@ class _CableTvPageState extends State<CableTvPage> {
                 width: double.infinity,
                 height: 50.h,
                 child: ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
                     if (!_isBillFetched) {
-                      if (_customerIdController.text.trim().isEmpty) return;
-                      setState(() => _isBillFetched = true);
+                      if (_customerIdController.text.trim().isEmpty) {
+                        CustomToast.error("Please enter Customer ID");
+                        return;
+                      }
+
+                      final pid = selectedBoardObj?.id?.toString() ?? productId;
+                      if (pid.isEmpty) {
+                        CustomToast.error("Please select a board");
+                        return;
+                      }
+
+                      final success = await cableTvController.fetchBill(
+                        productid: pid,
+                        consumernumber: _customerIdController.text.trim(),
+                      );
+
+                      if (success) {
+                        final billData = cableTvController
+                            .fetchBillResponse
+                            .value
+                            ?.data
+                            ?.bill;
+
+                        _amountController.text =
+                            (billData?.amount ?? billData?.billAmount ?? "")
+                                .toString();
+                        _mobileController.text = billData?.customerNumber ?? "";
+
+                        setState(() => _isBillFetched = true);
+                      }
                     } else {
-                      Get.to(CableTvConfirmPage());
+                      final res =
+                          cableTvController.fetchBillResponse.value?.data;
+                      Get.to(
+                        CableTvConfirmPage(),
+                        arguments: {
+                          'bill_data': res,
+                          'is_received': _isReceived,
+                        },
+                      );
                     }
                   },
                   style: ElevatedButton.styleFrom(

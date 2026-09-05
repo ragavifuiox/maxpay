@@ -1,9 +1,7 @@
-
-
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:maxpay/core/constants/api_routes.dart';
-import 'package:maxpay/core/data/model/water_bill_page.dart';
+import 'package:maxpay/core/data/model/instant_pay_model.dart';
 import 'package:maxpay/core/domain/repository/water_bill_repository.dart';
 import 'package:maxpay/core/error/failure.dart';
 import 'package:maxpay/core/services/api_services.dart';
@@ -14,35 +12,26 @@ class WaterBillRepoImpl implements WaterBillRepository {
 
   WaterBillRepoImpl(this.apiService);
 
- 
+  @override
+  Future<Either<Failure, InstantPay>> waterbill({
+    required String productId,
+    required String customerId,
+  }) async {
+    try {
+      final formData = FormData.fromMap({
+        "product_id": productId,
+        "customer_id": customerId,
+      });
 
-@override
-Future<Either<Failure, WaterBill>> waterbill({
-  required String productId,
-  required String customerId,
-  
-}) async {
-  try {
-
-  final formData = FormData.fromMap({
-  "product_id": productId,
-  "customer_id": customerId,
-  
-});
-
-print("========= REQUEST =========");
-for (var field in formData.fields) {
-  print("${field.key} : ${field.value}");
-}
-final response = await apiService.post(
-  ApiRoutes.wallettransferdetail,
-  data: formData,
-);
-final model = WaterBill.fromJson(response);
-    return Right(model);
-
-} on DioException catch (e, stackTrace) { print("API EXCEPTION IN REPO: `$e\n`$stackTrace");
+      final response = await apiService.post(
+        ApiRoutes.waterbill,
+        data: formData,
+      );
+      final model = InstantPay.fromJson(response);
+      return Right(model);
+    } on DioException catch (e, stackTrace) {
+      print("API EXCEPTION IN REPO: `$e\n`$stackTrace");
       return Left(DioErrorHandler.handle(e));
     }
-}}
-
+  }
+}

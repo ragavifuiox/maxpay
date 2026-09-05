@@ -7,6 +7,7 @@ import 'package:maxpay/core/di/service_locator.dart';
 import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
 import 'package:maxpay/view/water/water_confirm_screen.dart';
+import 'package:maxpay/controllers/water_controller.dart';
 
 class _BillColors {
   // static const fieldGrey = Color(0xFFF3F4F6);
@@ -49,6 +50,8 @@ class _WatterBillageState extends State<WatterBill> {
       termusecase: sl(),
     ),
   );
+
+  final WaterController waterController = Get.put(WaterController(sl()));
 
   Data? selectedBoardObj;
   String productId = "";
@@ -101,7 +104,7 @@ class _WatterBillageState extends State<WatterBill> {
                         color: Colors.grey.withValues(alpha: 0.4),
                       ),
                     ),
-                    child: Icon(Icons.close, size: 12.sp, color: Colors.grey),
+                    child: Icon(Icons.close, size: 12.sp, color: Colors.red),
                   ),
                 ),
                 SizedBox(height: 4.h),
@@ -109,31 +112,31 @@ class _WatterBillageState extends State<WatterBill> {
                 _detailRow(context, 'Bill Number', '#10011887'),
                 _detailRow(context, 'Bill Date', '11/12/2024'),
                 _detailRow(context, 'Bill Due Date', '11/12/2025'),
-                SizedBox(height: 16.h),
-                SizedBox(
-                  width: double.infinity,
-                  height: 42.h,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Get.to(WaterConfirmScreen());
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.clrPrimary,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.r),
-                      ),
-                      elevation: 0,
-                    ),
-                    child: Text(
-                      'Next',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ),
+                // SizedBox(height: 16.h),
+                // SizedBox(
+                //   width: double.infinity,
+                //   height: 42.h,
+                //   child: ElevatedButton(
+                //     onPressed: () {
+                //       Get.to(WaterConfirmScreen());
+                //     },
+                //     style: ElevatedButton.styleFrom(
+                //       backgroundColor: AppColors.clrPrimary,
+                //       shape: RoundedRectangleBorder(
+                //         borderRadius: BorderRadius.circular(8.r),
+                //       ),
+                //       elevation: 0,
+                //     ),
+                //     child: Text(
+                //       'Next',
+                //       style: TextStyle(
+                //         color: Colors.white,
+                //         fontSize: 14.sp,
+                //         fontWeight: FontWeight.w600,
+                //       ),
+                //     ),
+                //   ),
+                // ),
               ],
             ),
           ),
@@ -508,40 +511,74 @@ class _WatterBillageState extends State<WatterBill> {
               child: SizedBox(
                 width: double.infinity,
                 height: 50.h,
-                child: ElevatedButton(
-                  onPressed: () {
-                    if (!_isBillFetched) {
-                      if (_customerIdController.text.trim().isEmpty) return;
-                      setState(() => _isBillFetched = true);
-                    } else {
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(
-                      //     builder: (context) => ConfirmTransactionPage(
-                      //       productName: 'Electricity Bill',
-                      //       operatorInitial: 'E',
-                      //       operatorColor: Colors.orange,
-                      //       amount: '₹${_amountController.text}',
-                      //     ),
-                      //   ),
-                      // );
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.clrPrimary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.r),
+                child: Obx(
+                  () => ElevatedButton(
+                    onPressed: waterController.isFetchBillLoading.value
+                        ? null
+                        : () async {
+                            if (!_isBillFetched) {
+                              if (_customerIdController.text.trim().isEmpty)
+                                return;
+
+                              final success = await waterController.fetchBill(
+                                productId,
+                                _customerIdController.text.trim(),
+                              );
+
+                              if (success) {
+                                final billData = waterController
+                                    .fetchBillResponse
+                                    .value
+                                    ?.data
+                                    ?.bill;
+
+                                _amountController.text =
+                                    (billData?.amount ??
+                                            billData?.billAmount ??
+                                            "")
+                                        .toString();
+                                _mobileController.text =
+                                    billData?.customerNumber ?? "";
+
+                                setState(() => _isBillFetched = true);
+                              }
+                            } else {
+                              final res =
+                                  waterController.fetchBillResponse.value?.data;
+                              Get.to(
+                                WaterConfirmScreen(),
+                                arguments: {
+                                  'bill_data': res,
+                                  'is_received': _isReceived,
+                                },
+                              );
+                            }
+                          },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.clrPrimary,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.r),
+                      ),
+                      elevation: 0,
                     ),
-                    elevation: 0,
-                  ),
-                  child: Text(
-                    'Continue',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16.sp,
-                      fontFamily: 'Lufga',
-                      fontWeight: FontWeight.w500,
-                    ),
+                    child: waterController.isFetchBillLoading.value
+                        ? SizedBox(
+                            width: 24.w,
+                            height: 24.w,
+                            child: const CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 2,
+                            ),
+                          )
+                        : Text(
+                            'Continue',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16.sp,
+                              fontFamily: 'Lufga',
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
                   ),
                 ),
               ),

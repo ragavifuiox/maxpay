@@ -31,7 +31,6 @@ class AuthController extends GetxController {
     required this.verifyPinUsecase,
   });
 
-  // Controllers
   final phoneController = TextEditingController();
   final nameController = TextEditingController();
   final pincodeController = TextEditingController();

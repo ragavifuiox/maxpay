@@ -1,16 +1,16 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:maxpay/controllers/auth_controller.dart';
 import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/core/utils/responsive.dart';
-import 'package:pinput/pinput.dart';
 import 'package:maxpay/view/login/widgets/cutom_elevated_button.dart';
-import 'package:flutter/foundation.dart';
+import 'package:maxpay/view/login/widgets/resend_timer_widget.dart';
+import 'package:pinput/pinput.dart';
+
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 
 class ScreenOtpVerification extends StatefulWidget {
   const ScreenOtpVerification({super.key});
@@ -33,13 +33,6 @@ class _ScreenOtpVerificationState extends State<ScreenOtpVerification>
       if (mounted) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           _checkClipboardForOtp();
-          if (kDebugMode) {
-            final authController = Get.find<AuthController>();
-            if (authController.otp.value.isNotEmpty) {
-              _otpController.text = authController.otp.value;
-              _verifyOtp();
-            }
-          }
         });
       }
     });
@@ -337,92 +330,6 @@ class _ScreenOtpVerificationState extends State<ScreenOtpVerification>
             ),
           ),
         ),
-      ),
-    );
-  }
-}
-
-class ResendTimerWidget extends StatefulWidget {
-  final VoidCallback onResend;
-
-  const ResendTimerWidget({super.key, required this.onResend});
-
-  @override
-  State<ResendTimerWidget> createState() => _ResendTimerWidgetState();
-}
-
-class _ResendTimerWidgetState extends State<ResendTimerWidget> {
-  Timer? _timer;
-  int _start = 30;
-  bool _canResend = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _startTimer();
-  }
-
-  void _startTimer() {
-    if (!mounted) return;
-    setState(() {
-      _start = 30;
-      _canResend = false;
-    });
-    _timer?.cancel();
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (_start == 0) {
-        if (mounted) {
-          setState(() {
-            _canResend = true;
-          });
-        }
-        timer.cancel();
-      } else {
-        if (mounted) {
-          setState(() {
-            _start--;
-          });
-        }
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final isTablet = Responsive.isTablet(context);
-
-    if (_canResend) {
-      return GestureDetector(
-        onTap: () {
-          widget.onResend();
-          _startTimer();
-        },
-        child: Text(
-          'Resend code',
-          style: TextStyle(
-            fontFamily: 'Poppins',
-            fontWeight: FontWeight.w600,
-            fontSize: isTablet ? 16.sp : 14.sp,
-            color:
-                AppColors.clrPrimary, // primary color indicating active state
-          ),
-        ),
-      );
-    }
-
-    return Text(
-      'Resend code in 00:${_start.toString().padLeft(2, '0')}',
-      style: TextStyle(
-        fontFamily: 'Poppins',
-        fontWeight: FontWeight.w500,
-        fontSize: isTablet ? 16.sp : 14.sp,
-        color: AppColors.green, // grey color indicating disabled state
       ),
     );
   }

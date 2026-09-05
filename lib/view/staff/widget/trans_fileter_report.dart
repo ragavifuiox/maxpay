@@ -160,6 +160,7 @@ class _TransactionFilterWidgetState extends State<TransactionFilterWidget> {
                 }),
               ),
 
+
               Expanded(
                 child: Container(
                   width: double.infinity,
