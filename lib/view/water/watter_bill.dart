@@ -517,8 +517,9 @@ class _WatterBillageState extends State<WatterBill> {
                         ? null
                         : () async {
                             if (!_isBillFetched) {
-                              if (_customerIdController.text.trim().isEmpty)
+                              if (_customerIdController.text.trim().isEmpty) {
                                 return;
+                              }
 
                               final success = await waterController.fetchBill(
                                 productId,

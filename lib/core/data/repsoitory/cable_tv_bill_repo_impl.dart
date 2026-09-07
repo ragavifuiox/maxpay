@@ -1,9 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:maxpay/core/constants/api_routes.dart';
-import 'package:maxpay/core/data/model/check_operator_model.dart';
 import 'package:maxpay/core/data/model/instant_pay_model.dart';
 import 'package:maxpay/core/domain/repository/cable_tv_bill_repository.dart';
-import 'package:maxpay/core/domain/repository/check_operator_repository.dart';
 import 'package:maxpay/core/error/failure.dart';
 import 'package:maxpay/core/services/api_services.dart';
 import 'package:maxpay/core/utils/logg_helper.dart';

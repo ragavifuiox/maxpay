@@ -8,7 +8,7 @@ import 'package:maxpay/global_widget/custom_app.dart';
 import 'package:maxpay/view/cabletv/cable_tv_success_page.dart';
 
 class CableTvCustomerPage extends GetView<CableTvController> {
-  CableTvCustomerPage({super.key});
+  const CableTvCustomerPage({super.key});
 
   @override
   Widget build(BuildContext context) {

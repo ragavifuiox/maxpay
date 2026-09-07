@@ -8,19 +8,19 @@ class InstantPay {
 
   InstantPay.fromJson(Map<String, dynamic> json) {
     success = json['success'];
-    data = json['data'] != null ? new Data.fromJson(json['data']) : null;
+    data = json['data'] != null ? Data.fromJson(json['data']) : null;
     message = json['message'];
     code = json['code'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['success'] = this.success;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['success'] = success;
     if (this.data != null) {
       data['data'] = this.data!.toJson();
     }
-    data['message'] = this.message;
-    data['code'] = this.code;
+    data['message'] = message;
+    data['code'] = code;
     return data;
   }
 }
@@ -46,31 +46,31 @@ class Data {
       this.debugId});
 
   Data.fromJson(Map<String, dynamic> json) {
-    bill = json['bill'] != null ? new Bill.fromJson(json['bill']) : null;
+    bill = json['bill'] != null ? Bill.fromJson(json['bill']) : null;
     source = json['source'];
     billerId = json['biller_id'];
     productCode = json['product_code'];
     apiId = json['api_id'];
     mappingId = json['mapping_id'];
     product =
-        json['product'] != null ? new Product.fromJson(json['product']) : null;
+        json['product'] != null ? Product.fromJson(json['product']) : null;
     debugId = json['debug_id'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.bill != null) {
-      data['bill'] = this.bill!.toJson();
+    final Map<String, dynamic> data = <String, dynamic>{};
+    if (bill != null) {
+      data['bill'] = bill!.toJson();
     }
-    data['source'] = this.source;
-    data['biller_id'] = this.billerId;
-    data['product_code'] = this.productCode;
-    data['api_id'] = this.apiId;
-    data['mapping_id'] = this.mappingId;
-    if (this.product != null) {
-      data['product'] = this.product!.toJson();
+    data['source'] = source;
+    data['biller_id'] = billerId;
+    data['product_code'] = productCode;
+    data['api_id'] = apiId;
+    data['mapping_id'] = mappingId;
+    if (product != null) {
+      data['product'] = product!.toJson();
     }
-    data['debug_id'] = this.debugId;
+    data['debug_id'] = debugId;
     return data;
   }
 }
@@ -122,20 +122,20 @@ class Bill {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['customer_name'] = this.customerName;
-    data['bill_number'] = this.billNumber;
-    data['bill_date'] = this.billDate;
-    data['bill_due_date'] = this.billDueDate;
-    data['amount'] = this.amount;
-    data['bill_amount'] = this.billAmount;
-    data['has_due_amount'] = this.hasDueAmount;
-    data['customer_number'] = this.customerNumber;
-    data['enquiry_reference'] = this.enquiryReference;
-    data['api_id'] = this.apiId;
-    data['mapping_id'] = this.mappingId;
-    data['biller_id'] = this.billerId;
-    data['days_left'] = this.daysLeft;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['customer_name'] = customerName;
+    data['bill_number'] = billNumber;
+    data['bill_date'] = billDate;
+    data['bill_due_date'] = billDueDate;
+    data['amount'] = amount;
+    data['bill_amount'] = billAmount;
+    data['has_due_amount'] = hasDueAmount;
+    data['customer_number'] = customerNumber;
+    data['enquiry_reference'] = enquiryReference;
+    data['api_id'] = apiId;
+    data['mapping_id'] = mappingId;
+    data['biller_id'] = billerId;
+    data['days_left'] = daysLeft;
     return data;
   }
 }
@@ -154,10 +154,10 @@ class Product {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['name'] = this.name;
-    data['logo'] = this.logo;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['name'] = name;
+    data['logo'] = logo;
     return data;
   }
   

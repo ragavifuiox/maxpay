@@ -11,7 +11,6 @@ import 'package:pinput/pinput.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
 class ScreenOtpVerification extends StatefulWidget {
   const ScreenOtpVerification({super.key});
 
@@ -204,7 +203,7 @@ class _ScreenOtpVerificationState extends State<ScreenOtpVerification>
                         Pinput(
                           length: 4,
                           autofocus: false,
-                          readOnly: true,
+                          readOnly: false,
                           controller: _otpController,
                           keyboardType: TextInputType.number,
                           onCompleted: (pin) => _verifyOtp(),

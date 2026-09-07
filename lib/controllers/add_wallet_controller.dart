@@ -408,15 +408,12 @@
 // }
 
 import 'dart:async';
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:android_intent_plus/android_intent.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:dio/dio.dart' as dio;
-import 'package:maxpay/controllers/auth_controller.dart';
 import 'package:maxpay/core/constants/api_routes.dart';
 import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/core/services/api_services.dart';
@@ -517,11 +514,10 @@ class AddWalletController extends GetxController with WidgetsBindingObserver {
       if (verifyResponse['status'] == true ||
           verifyResponse['status'] == 1 ||
           verifyResponse['status'] == "true") {
-            
         while (Get.isDialogOpen == true) {
           Get.back();
         }
-        
+
         final amount = qrResponse?.worldline?.amount ?? "0";
         showSuccessDialog(amount);
 
@@ -964,6 +960,8 @@ class AddWalletController extends GetxController with WidgetsBindingObserver {
   // --------------------------------------------------------------------------
   CreateQrResponse? qrResponse;
   Future<void> createQr(String amount) async {
+    if (isLoading.value) return; // Prevent multiple calls if already loading
+
     if (amount.trim().isEmpty) {
       CustomToast.error("Please Enter Amount");
       return;

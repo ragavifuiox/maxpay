@@ -89,7 +89,6 @@ class Data {
     data['billing_address'] = address;
     data['whatsapp_number'] = whatsappnumber;
     data['web_login_count'] = weblogincount;
-    ;
     data['is_staff'] = isstaff;
     return data;
   }

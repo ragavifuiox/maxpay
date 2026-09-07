@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_ionicons/flutter_ionicons.dart';
 import 'package:get/get.dart';
 import 'package:maxpay/core/data/model/wallet_create_qr_model.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -248,7 +247,7 @@ class _AddWalletPopupState extends State<AddWalletPopup> {
                 onPressed: () async {
                   final controller = Get.find<AddWalletController>();
                   if (bankData != null) {
-                    controller.startWorldlinePayment(bankData!);
+                    controller.startWorldlinePayment(bankData);
                   }
                 },
                 label: Text(
@@ -269,53 +268,7 @@ class _AddWalletPopupState extends State<AddWalletPopup> {
                   //     const Icon(Ionicons.logo_paypal, size: 24),
                 ),
               ),
-              // ----------------------------------------------------------
-              // UPI BUTTONS (Currently hidden)
-              // ----------------------------------------------------------
-              /*
-              Row(
-                children: [
-                  // GPay
-                  if (gpayLink != null && gpayLink!.trim().isNotEmpty)
-                    
-
-                  if (gpayLink != null &&
-                      gpayLink!.trim().isNotEmpty &&
-                      phonepeLink != null &&
-                      phonepeLink!.trim().isNotEmpty)
-                    const SizedBox(width: 12),
-
-                  // PhonePe
-                  if (phonepeLink != null && phonepeLink!.trim().isNotEmpty)
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF5F259F),
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                      ),
-                      onPressed: () {
-                        Get.find<AddWalletController>().openSpecificUpiApp(
-                          packageName: "com.phonepe.app",
-                          url: phonepeLink!,
-                        );
-                      },
-                      child: Image.asset(
-                        'assets/images/phonepe.png',
-                        height: 24,
-                        errorBuilder: (context, error, stackTrace) =>
-                            const Icon(
-                              Icons.account_balance_wallet,
-                              size: 24,
-                              color: Colors.white,
-                            ),
-                      ),
-                    ),
-                ],
-              ),
-              */
+              
               const SizedBox(height: 10),
             ],
           ),

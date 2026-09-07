@@ -8,7 +8,6 @@ import 'package:maxpay/core/di/service_locator.dart';
 import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
 import 'package:maxpay/view/cabletv/cable_tv_confirm_page.dart';
-import 'package:maxpay/view/electricity_bill/confirm_electricity.dart';
 import 'package:maxpay/controllers/cable_tv_controller.dart';
 import 'package:maxpay/core/constants/snackbar.dart';
 

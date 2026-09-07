@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:maxpay/controllers/add_wallet_controller.dart';
@@ -10,7 +11,7 @@ Widget transactionCard({
   required BuildContext context,
   required String status,
   required Color statusColor,
-
+  String mode = "Worldline",
   required String amount,
   required String txnId,
   required String dateTime,
@@ -99,10 +100,8 @@ Widget transactionCard({
                         const SizedBox(width: 8),
                         InkWell(
                           onTap: () {
-                            Get.find<AddWalletController>().checkIndividualPaymentStatus(
-                              txnId,
-                              amount,
-                            );
+                            Get.find<AddWalletController>()
+                                .checkIndividualPaymentStatus(txnId, amount);
                           },
                           child: const Icon(
                             Icons.refresh,
@@ -110,11 +109,57 @@ Widget transactionCard({
                             color: Colors.blue,
                           ),
                         ),
+                      ] else ...[
+                        const SizedBox(width: 8),
+                        RichText(
+                          text: TextSpan(
+                            text: "Paid With ",
+                            style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              color: AppColors.totalborder1,
+                              fontSize: 12,
+                              fontFamily: 'Poppins',
+                            ),
+                            children: (mode == 'Worldline')
+                                ? [
+                                    TextSpan(
+                                      text: "UPI",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w700,
+                                        color: AppColors.totalborder1,
+                                        fontSize: 12,
+                                        fontFamily: 'Poppins',
+                                      ),
+                                    ),
+                                    WidgetSpan(
+                                      child: CachedNetworkImage(
+                                        imageUrl:
+                                            'https://images.icon-icons.com/2699/PNG/512/upi_logo_icon_170312.png',
+                                        height: 18,
+                                        // errorBuilder: (context, error, stackTrace) =>
+                                        //     const Icon(Ionicons.logo_paypal, size: 24),
+                                      ),
+                                    ),
+                                  ]
+                                : [
+                                    TextSpan(
+                                      text: "QR Code",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w700,
+                                        color: AppColors.totalborder1,
+                                        fontSize: 12,
+                                        fontFamily: 'Poppins',
+                                      ),
+                                    ),
+                                  ],
+                          ),
+                        ),
                       ],
                     ],
                   ),
                 ],
               ),
+
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [

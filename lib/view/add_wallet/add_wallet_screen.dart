@@ -192,6 +192,7 @@ class AddWalletScreen extends GetView<AddWalletController> {
                             'dd-MM-yyyy hh:mm a',
                           ).format(e.updatedAt ?? DateTime.now()),
                           status: e.status?.capitalize ?? '',
+                          mode: e.paymentMode ?? 'Worldline',
                           statusColor: e.status == 'pending'
                               ? Colors.orange
                               : e.status == 'failed'
