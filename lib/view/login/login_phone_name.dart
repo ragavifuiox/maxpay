@@ -108,6 +108,7 @@ class LoginPhoneNamePage extends GetView<AuthController> {
                       title: controller.isLoading.value
                           ? "Loading..."
                           : "Submit",
+
                       // onTap: () {
                       //   if (!controller.isAccepted.value) {
                       //     CustomToast.error("Please accept Terms & Conditions");
@@ -127,27 +128,26 @@ class LoginPhoneNamePage extends GetView<AuthController> {
 
                       //   controller.login();
                       // },
-
                       onTap: () {
-  final phone = controller.phoneController.text.trim();
+                        final phone = controller.phoneController.text.trim();
 
-  if (phone.isEmpty) {
-    CustomToast.error("Please enter mobile number");
-    return;
-  }
+                        if (phone.isEmpty) {
+                          CustomToast.error("Please enter mobile number");
+                          return;
+                        }
 
-  if (phone.length != 10) {
-    CustomToast.error("Please enter valid mobile number");
-    return;
-  }
+                        if (phone.length != 10) {
+                          CustomToast.error("Please enter valid mobile number");
+                          return;
+                        }
 
-  if (!controller.isAccepted.value) {
-    CustomToast.error("Please accept Terms & Conditions");
-    return;
-  }
+                        if (!controller.isAccepted.value) {
+                          CustomToast.error("Please accept Terms & Conditions");
+                          return;
+                        }
 
-  controller.login();
-},
+                        controller.login();
+                      },
                     ),
                   ),
                 ),
