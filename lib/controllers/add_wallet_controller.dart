@@ -625,8 +625,14 @@ class AddWalletController extends GetxController with WidgetsBindingObserver {
       } else {
         stopTimer();
 
-        // Do not close any popup on failure/expiry, just show the toast
-        CustomToast.error("Payment failed, please try again later.");
+        while (Get.isDialogOpen == true) {
+          Get.back();
+        }
+
+        final pendingAmount = _lastAmount;
+        amountController.clear();
+
+        showPendingDialog(pendingAmount);
       }
     });
   }
@@ -1079,6 +1085,9 @@ class AddWalletController extends GetxController with WidgetsBindingObserver {
       deviceID = "iOSSH2";
     }
 
+    final items = (worldlineData.data?.items ?? [])
+        .map((e) => e.toJson())
+        .toList();
     var reqJson = {
       "features": {
         "enableAbortResponse": true,
@@ -1098,13 +1107,7 @@ class AddWalletController extends GetxController with WidgetsBindingObserver {
         "consumerMobileNo": worldlineData.data?.consumerMobileNo ?? "",
         "consumerEmailId": worldlineData.data?.consumerEmailId ?? "",
         "txnId": worldlineData.txnId ?? "",
-        "items": [
-          {
-            "itemId": "first",
-            "amount": worldlineData.amount ?? "0",
-            "comAmt": "0",
-          },
-        ],
+        "items": items,
         "customStyle": {
           "PRIMARY_COLOR_CODE":
               "#${AppColors.clrPrimary.toARGB32().toRadixString(16).substring(2, 8).toUpperCase()}",

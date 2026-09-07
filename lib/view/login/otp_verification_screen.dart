@@ -203,7 +203,7 @@ class _ScreenOtpVerificationState extends State<ScreenOtpVerification>
                         Pinput(
                           length: 4,
                           autofocus: false,
-                          readOnly: false,
+                          readOnly: true,
                           controller: _otpController,
                           keyboardType: TextInputType.number,
                           onCompleted: (pin) => _verifyOtp(),
