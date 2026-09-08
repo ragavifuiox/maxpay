@@ -11,10 +11,7 @@ import 'package:maxpay/view/cabletv/cable_tv_confirm_page.dart';
 import 'package:maxpay/controllers/cable_tv_controller.dart';
 import 'package:maxpay/core/constants/snackbar.dart';
 
-class _BillColors {
-  // static const fieldGrey = Color(0xFFF3F4F6);
-  static const fieldGreyDark = Color(0xFF2A2E33);
-}
+
 
 class CableTvPage extends StatefulWidget {
   const CableTvPage({super.key});
