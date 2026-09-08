@@ -24,7 +24,7 @@ class BroadBandCustomerPage extends StatelessWidget {
                   title: 'Pay Now',
                   onTap:(){
 
-                    Get.to(BroadBandSuccessPage());
+                    Get.to(()=>BroadBandSuccessPage());
                   }
                  
                 ),

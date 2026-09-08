@@ -527,7 +527,7 @@ class _BroadBankdPageState extends State<BroadBandPage> {
                       if (_customerIdController.text.trim().isEmpty) return;
                       setState(() => _isBillFetched = true);
                     } else {
-                      Get.to(BroadbandConfirmPage());
+                      Get.to(()=>BroadbandConfirmPage());
                     }
                   },
                   style: ElevatedButton.styleFrom(

@@ -66,7 +66,7 @@ class BroadbandConfirmPage extends StatelessWidget {
                     backgroundColor: AppColors.clrSecondary,
                   onTap: (){
 
-                    Get.to(BroadBandCustomerPage());
+                    Get.to(()=>BroadBandCustomerPage());
 
                   },
                   ),
@@ -77,7 +77,7 @@ class BroadbandConfirmPage extends StatelessWidget {
                 child: CommonButton(
                   title: 'Pay Now',
                   onTap:(){
-                   Get.to(BroadBandSuccessPage());
+                   Get.to(()=>BroadBandSuccessPage());
                   }
                   
                 ),

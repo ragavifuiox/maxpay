@@ -698,7 +698,7 @@ class HomePageScreen extends GetView<HomePageController> {
             borderRadius: BorderRadius.circular(15.r),
           ),
           title: Text(
-            'Confirm PIN',
+            'Confirm Pincode',
             style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.bold),
           ),
           content: Obx(() {
@@ -709,14 +709,14 @@ class HomePageScreen extends GetView<HomePageController> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Please enter your PIN code to update it.',
+                  'Please enter your Pincode to update it.',
                   style: TextStyle(fontSize: 14.sp),
                 ),
                 SizedBox(height: 12.h),
                 TextField(
                   controller: pinTextController,
                   keyboardType: TextInputType.number,
-                  obscureText: true,
+                  obscureText: false,
                   maxLength: 6,
                   decoration: InputDecoration(
                     hintText: 'Enter Pincode',

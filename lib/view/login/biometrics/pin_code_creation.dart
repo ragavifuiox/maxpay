@@ -103,7 +103,7 @@ bool isInvalidPin(String pin) {
                 SizedBox(height: isTablet ? 40.h : 20.h),
 
                 Text(
-                  'Create your M-PIN',
+                  'Create your M PIN',
 
                   style: TextStyle(
                     fontFamily: 'Poppins',

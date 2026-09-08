@@ -1,6 +1,7 @@
 import 'dart:convert';
+import 'dart:developer';
 
-import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart' as foundation;
 
 class AppLogger {
   static String _formatValue(dynamic value) {
@@ -20,14 +21,14 @@ class AppLogger {
   }
 
   static void debugPrint(dynamic value) {
-    if (kDebugMode) {
-      print(_formatValue(value));
+    if (foundation.kDebugMode) {
+      foundation.debugPrint(_formatValue(value));
     }
   }
 
   static void logError(dynamic value) {
-    if (kDebugMode) {
-      print(_formatValue(value));
+    if (foundation.kDebugMode) {
+      log(_formatValue(value));
     }
   }
 }
