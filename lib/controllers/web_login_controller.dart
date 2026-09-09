@@ -67,7 +67,7 @@ class WebLoginController extends GetxController {
             CustomToast.success(response.message ?? "Web Login Success");
 
             print("Navigating to Success Screen...");
-          Get.to(WebLoginSuccessPage());
+          Get.to(()=> WebLoginSuccessPage());
           } else {
             print("LOGIN FAILED BLOCK");
             CustomToast.error(response.message ?? "Login failed");

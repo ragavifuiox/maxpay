@@ -184,7 +184,7 @@ class SettingsPage extends StatelessWidget {
                           color: Theme.of(context).colorScheme.onSurface,
                         ),
                         middleText:
-                            "Are you sure you want to update your M-PIN?",
+                            "Are you sure you want to update your M PIN?",
                         middleTextStyle: TextStyle(
                           fontSize: 14.sp,
                           fontWeight: FontWeight.w400,

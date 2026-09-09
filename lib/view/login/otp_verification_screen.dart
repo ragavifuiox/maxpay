@@ -9,6 +9,7 @@ import 'package:maxpay/view/login/widgets/resend_timer_widget.dart';
 import 'package:pinput/pinput.dart';
 
 import 'package:flutter/services.dart';
+import 'package:maxpay/core/utils/sim_util.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ScreenOtpVerification extends StatefulWidget {
@@ -21,6 +22,7 @@ class ScreenOtpVerification extends StatefulWidget {
 class _ScreenOtpVerificationState extends State<ScreenOtpVerification>
     with WidgetsBindingObserver {
   final TextEditingController _otpController = TextEditingController();
+  final FocusNode otpFocusNode = FocusNode();
   Set<String> _pastedOtps = {};
   String? _clipboardOtp;
 
@@ -115,6 +117,37 @@ class _ScreenOtpVerificationState extends State<ScreenOtpVerification>
     }
   }
 
+  bool get _isTestNumber {
+    if (Get.isRegistered<AuthController>()) {
+      final controller = Get.find<AuthController>();
+      final phone = controller.phoneController.text.trim();
+      if (SimUtil.testNumbers.contains(phone)) {
+        return true;
+      }
+      final authPhone = controller.phoneNumber.value.trim();
+      if (SimUtil.testNumbers.contains(authPhone)) {
+        return true;
+      }
+      for (final testNum in SimUtil.testNumbers) {
+        if ((phone.isNotEmpty && phone.endsWith(testNum)) ||
+            (authPhone.isNotEmpty && authPhone.endsWith(testNum))) {
+          return true;
+        }
+      }
+    }
+    final argsPhone = Get.arguments is Map
+        ? (Get.arguments['phone']?.toString() ?? '')
+        : '';
+    if (argsPhone.isNotEmpty) {
+      for (final testNum in SimUtil.testNumbers) {
+        if (argsPhone.trim().endsWith(testNum)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
   void _verifyOtp() {
     if (_otpController.text.length == 4) {
       final controller = Get.find<AuthController>();
@@ -138,7 +171,7 @@ class _ScreenOtpVerificationState extends State<ScreenOtpVerification>
             ),
             child: Column(
               children: [
-                /// ðŸ”¹ HEADER / BACK BUTTON
+                /// 🔹 HEADER / BACK BUTTON
                 Padding(
                   padding: EdgeInsets.symmetric(
                     horizontal: 24.w,
@@ -170,7 +203,7 @@ class _ScreenOtpVerificationState extends State<ScreenOtpVerification>
                       children: [
                         SizedBox(height: isTablet ? 40.h : 20.h),
 
-                        /// ðŸ”¹ Title
+                        /// 🔹 Title
                         Text(
                           'Verification code',
                           textAlign: TextAlign.center,
@@ -184,9 +217,11 @@ class _ScreenOtpVerificationState extends State<ScreenOtpVerification>
 
                         SizedBox(height: 12.h),
 
-                        /// ðŸ”¹ Subtitle
+                        /// 🔹 Subtitle
                         Text(
-                          "Please paste the verification code\nsent to your phone number",
+                          _isTestNumber
+                              ? "Please enter the verification code\nsent to your phone number"
+                              : "Please paste the verification code\nsent to your phone number",
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontFamily: 'Poppins',
@@ -199,13 +234,16 @@ class _ScreenOtpVerificationState extends State<ScreenOtpVerification>
 
                         SizedBox(height: 40.h),
 
-                        /// ðŸ”¹ OTP FIELD (Pinput)
+                        /// 🔹 OTP FIELD (Pinput)
                         Pinput(
                           length: 4,
                           autofocus: false,
-                          readOnly: true,
+                          toolbarEnabled: true,
+                          enableInteractiveSelection: true,
+                          showCursor: true,
                           controller: _otpController,
-                          keyboardType: TextInputType.number,
+                          keyboardType: TextInputType.none,
+                          onTap: () => otpFocusNode.requestFocus(),
                           onCompleted: (pin) => _verifyOtp(),
                           mainAxisAlignment: MainAxisAlignment.center,
                           submittedPinTheme: PinTheme(
@@ -257,50 +295,6 @@ class _ScreenOtpVerificationState extends State<ScreenOtpVerification>
                         ),
 
                         SizedBox(height: 20.h),
-
-                        // Dynamic Paste OTP Button
-                        if (_clipboardOtp != null) ...[
-                          GestureDetector(
-                            onTap: _onPasteOtp,
-                            child: Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 16.w,
-                                vertical: 8.h,
-                              ),
-                              decoration: BoxDecoration(
-                                color: AppColors.clrPrimary.withValues(
-                                  alpha: 0.1,
-                                ),
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border.all(
-                                  color: AppColors.clrPrimary,
-                                  width: 1.5,
-                                ),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(
-                                    Icons.paste,
-                                    size: 16.sp,
-                                    color: AppColors.clrPrimary,
-                                  ),
-                                  SizedBox(width: 8.w),
-                                  Text(
-                                    "Paste '$_clipboardOtp'",
-                                    style: TextStyle(
-                                      color: AppColors.clrPrimary,
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 14.sp,
-                                      fontFamily: 'Poppins',
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: 20.h),
-                        ],
 
                         /// 🔹 Timer
                         ResendTimerWidget(

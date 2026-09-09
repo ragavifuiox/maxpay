@@ -210,7 +210,7 @@ class _PinCodeEnterPageState extends State<PinCodeEnterPage> {
                         vertical: 6,
                       ),
                       child: Text(
-                        'Forgot M-PIN?',
+                        'Forgot M PIN?',
                         style: TextStyle(
                           fontFamily: 'Poppins',
                           fontWeight: FontWeight.w500,

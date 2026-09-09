@@ -1290,9 +1290,9 @@ class AddWalletController extends GetxController with WidgetsBindingObserver {
     required String url,
   }) async {
     try {
-      print("========== OPEN UPI ==========");
-      print("Package: $packageName");
-      print("UPI URL: $url");
+      AppLogger.debugPrint("========== OPEN UPI ==========");
+      AppLogger.debugPrint("Package: $packageName");
+      AppLogger.debugPrint("UPI URL: $url");
 
       final uri = Uri.parse(url);
 
@@ -1304,10 +1304,10 @@ class AddWalletController extends GetxController with WidgetsBindingObserver {
 
       await intent.launch();
 
-      print("UPI launch result: true");
-      print("========== OPEN UPI END ==========");
+      AppLogger.debugPrint("UPI launch result: true");
+      AppLogger.debugPrint("========== OPEN UPI END ==========");
     } catch (e) {
-      print("UPI launch error: $e");
+      AppLogger.debugPrint("UPI launch error: $e");
     }
   }
   // --------------------------------------------------------------------------
