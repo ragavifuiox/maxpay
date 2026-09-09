@@ -13,7 +13,6 @@ import 'package:maxpay/controllers/water_controller.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
 
 class _BillColors {
- 
   static const fieldGreyDark = Color(0xFF2A2E33);
 }
 
@@ -670,30 +669,29 @@ class _WatterBillageState extends State<WatterBill> {
                               }
                               if (_customerIdController.text.trim().isEmpty)
                                 return;
-                              }
+                            }
 
-                              final success = await waterController.fetchBill(
-                                selectedBoardObj!.id.toString(),
-                                _customerIdController.text.trim(),
-                              );
+                            final success = await waterController.fetchBill(
+                              selectedBoardObj!.id.toString(),
+                              _customerIdController.text.trim(),
+                            );
 
-                              if (success) {
-                                final billData = waterController
-                                    .fetchBillResponse
-                                    .value
-                                    ?.data
-                                    ?.bill;
+                            if (success) {
+                              final billData = waterController
+                                  .fetchBillResponse
+                                  .value
+                                  ?.data
+                                  ?.bill;
 
-                                _amountController.text =
-                                    (billData?.amount ??
-                                            billData?.billAmount ??
-                                            "")
-                                        .toString();
-                                _mobileController.text =
-                                    billData?.customerNumber ?? "";
+                              _amountController.text =
+                                  (billData?.amount ??
+                                          billData?.billAmount ??
+                                          "")
+                                      .toString();
+                              _mobileController.text =
+                                  billData?.customerNumber ?? "";
 
-                                setState(() => _isBillFetched = true);
-                              }
+                              setState(() => _isBillFetched = true);
                             } else {
                               final requiredAmount =
                                   double.tryParse(_amountController.text) ??
