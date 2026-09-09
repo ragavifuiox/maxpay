@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_navigation/src/extension_navigation.dart';
+import 'package:get/get.dart';
 import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/global_widget/commom_button.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
+import 'package:maxpay/controllers/broadband_controller.dart';
+import 'package:maxpay/core/constants/snackbar.dart';
 import 'package:maxpay/view/broadband/broad_band_customer_page.dart';
 import 'package:maxpay/view/broadband/broad_band_success_page.dart';
 
-class BroadbandConfirmPage extends StatelessWidget {
+
+class BroadbandConfirmPage extends StatefulWidget {
   final String productName;
   final String operatorInitial;
   final Color operatorColor;
@@ -24,70 +26,197 @@ class BroadbandConfirmPage extends StatelessWidget {
     this.operatorInitial = 'J',
     this.operatorColor = Colors.red,
     this.transactionNo = 'TXN24321232323',
-    this.amount = '\u{20B9}365.00',
-    this.commission = '\u{20B9}40.00',
-    this.surcharge = '\u{20B9}5',
+    this.amount = '₹365.00',
+    this.commission = '₹40.00',
+    this.surcharge = '₹5',
   });
+
+  @override
+  State<BroadbandConfirmPage> createState() => _BroadbandConfirmPageState();
+}
+
+class _BroadbandConfirmPageState extends State<BroadbandConfirmPage> {
+  final TextEditingController whatsappController = TextEditingController();
+  final TextEditingController amountController = TextEditingController();
+  late final BroadbandController controller;
+
+  late Map<String, dynamic> args;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = Get.find<BroadbandController>();
+    args = Get.arguments ?? {};
+
+    final billData = args['bill_data'];
+    final pId = (billData?.product?.id)?.toString() ?? '';
+
+    if (pId.isNotEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        controller.confirmTransaction(pId);
+      });
+    }
+    
+  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
-    return Scaffold(
-      appBar: const CommonAppBar(title: "Confirm Transaction"),
+    final billData = args['bill_data'];
+    final isReceived = args['is_received'] ?? true;
+    final String paymentStatus = isReceived ? "Received" : "Pending";
+    final String finalProductName =
+        billData?.product?.name ?? widget.productName;
+    final String customerId = billData?.bill?.customerNumber ?? 'N/A';
+    final String logoUrl = billData?.product?.logo ?? '';
 
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _TransactionSummaryCard(
-                productName: productName,
-                operatorInitial: operatorInitial,
-                operatorColor: operatorColor,
-                transactionNo: transactionNo,
-                amount: amount,
-                commission: commission,
-                surcharge: surcharge,
-              ),
+    final rawAmountVal =
+        billData?.bill?.amount ?? billData?.bill?.billAmount ?? 0.0;
+    final double rawAmount = rawAmountVal is num
+        ? rawAmountVal.toDouble()
+        : double.tryParse(rawAmountVal.toString()) ?? 0.0;
 
+    return Obx(() {
+      final confirmData = controller.confirmResponse.value?.data;
 
-   SizedBox(height: 18.h),
-                 _buildInputLabel(context, 'For Transaction Detail (Optional)'),
-              _buildTextField(context, 'Enter Whatsapp no '),
-              SizedBox(height: 18.h),
-              _buildInputLabel(context, 'Re-enter Amount'),
-              _buildTextField(context, 'Enter amount'),
-              SizedBox(height: 20.h),
-               Center(
+      if (controller.isConfirmLoading.value) {
+        return Scaffold(
+          appBar: const CommonAppBar(title: "Confirm Transaction"),
+          body: const Center(child: CircularProgressIndicator()),
+        );
+      }
+
+      if (confirmData == null) {
+        return Scaffold(
+          appBar: const CommonAppBar(title: "Confirm Transaction"),
+          body: const Center(child: Text("No Data Found")),
+        );
+      }
+
+      final String availableBalanceStr = confirmData.availableBalance ?? '0';
+      final String transactionAmountStr =
+          confirmData.transactionAmount ?? rawAmount.toString();
+      final String commissionRaw = confirmData.commision ?? '0';
+      final String commissionType = confirmData.commissiontype ?? "Fixed";
+
+      final double parsedAvailable =
+          double.tryParse(
+            availableBalanceStr.replaceAll(RegExp(r'[^0-9.]'), ''),
+          ) ??
+          0.0;
+      final double parsedTransaction =
+          double.tryParse(
+            transactionAmountStr.replaceAll(RegExp(r'[^0-9.]'), ''),
+          ) ??
+          0.0;
+      final double parsedCommissionRaw = double.tryParse(commissionRaw) ?? 0.0;
+
+      double commissionAmount = 0.0;
+      String commissionStr = "0";
+
+      if (commissionType.toLowerCase() == "percentage" ||
+          commissionType.toLowerCase() == "percent") {
+        commissionAmount = (parsedTransaction * parsedCommissionRaw) / 100;
+        commissionStr = commissionAmount.toStringAsFixed(2);
+      } else {
+        commissionAmount = parsedCommissionRaw;
+        commissionStr = commissionRaw;
+      }
+
+      final String remainingBalanceStr =
+          (parsedAvailable - parsedTransaction + commissionAmount)
+              .toStringAsFixed(2);
+      final String finalAmount = '\u{20B9}$parsedTransaction';
+
+      return Scaffold(
+        appBar: const CommonAppBar(title: "Confirm Transaction"),
+        body: SafeArea(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _TransactionSummaryCard(
+                  productName: finalProductName,
+                  operatorInitial: widget.operatorInitial,
+                  operatorColor: widget.operatorColor,
+                  transactionNo: customerId,
+                  amount: finalAmount,
+                  paymentStatus: paymentStatus,
+                  paymentStatusColor: isReceived
+                      ? const Color(0xFF00B050)
+                      : Colors.red,
+                  commission: '\u{20B9}$commissionStr',
+                  surcharge: widget.surcharge,
+                  availableBalance: '\u{20B9}$parsedAvailable',
+                  remainingBalance: '\u{20B9}$remainingBalanceStr',
+                ),
+
+                SizedBox(height: 18.h),
+                _buildInputLabel(context, 'For Transaction Detail (Optional)'),
+                _buildTextField(
+                  context,
+                  'Enter Whatsapp no ',
+                  textController: whatsappController,
+                ),
+                SizedBox(height: 18.h),
+                _buildInputLabel(context, 'Re-enter Amount'),
+                _buildTextField(
+                  context,
+                  'Enter amount',
+                  textController: amountController,
+                ),
+                SizedBox(height: 20.h),
+                Center(
                   child: CommonButton(
                     title: "Customer Confirmation",
                     backgroundColor: AppColors.clrSecondary,
-                  onTap: (){
-
-                    Get.to(BroadBandCustomerPage());
-
-                  },
+                    onTap: () {
+                      if (whatsappController.text.trim().isEmpty) {
+                        CustomToast.error("Please enter WhatsApp number");
+                        return;
+                      }
+                      final reentered =
+                          double.tryParse(amountController.text.trim()) ?? 0.0;
+                      if (parsedTransaction != reentered) {
+                        CustomToast.error(
+                          "Re-entered amount does not match the transaction amount",
+                        );
+                        return;
+                      }
+                      Get.to(BroadBandCustomerPage(), arguments: args);
+                    },
                   ),
                 ),
                 const SizedBox(height: 21),
-              Center(
-                
-                child: CommonButton(
-                  title: 'Pay Now',
-                  onTap:(){
-                   Get.to(BroadBandSuccessPage());
-                  }
-                  
+                Center(
+                  child: CommonButton(
+                    title: 'Pay Now',
+                    onTap: () {
+                      if (amountController.text.trim().isEmpty) {
+                        Get.snackbar("Validation", "Please Re-enter amount");
+                        return;
+                      }
+                      final reentered =
+                          double.tryParse(amountController.text.trim()) ?? 0.0;
+                      if (parsedTransaction != reentered) {
+                        CustomToast.error(
+                          "Re-entered amount does not match the transaction amount",
+                        );
+                        return;
+                      }
+                      Get.to(BroadBandSuccessPage());
+                    },
+                  ),
                 ),
-              ),
-              SizedBox(height: 30.h),
-            ],
+              ],
+            ),
           ),
         ),
-      ),
-    );
+      );
+    });
   }
 
   Widget _buildInputLabel(BuildContext context, String label) {
@@ -108,6 +237,7 @@ class BroadbandConfirmPage extends StatelessWidget {
   Widget _buildTextField(
     BuildContext context,
     String hint, {
+    TextEditingController? textController,
     TextInputType? keyboardType,
     List<TextInputFormatter>? inputFormatters,
   }) {
@@ -115,6 +245,7 @@ class BroadbandConfirmPage extends StatelessWidget {
     final isDark = theme.brightness == Brightness.dark;
 
     return TextField(
+      controller: textController,
       keyboardType: keyboardType ?? TextInputType.number,
       inputFormatters:
           inputFormatters ?? [FilteringTextInputFormatter.digitsOnly],
@@ -153,8 +284,12 @@ class _TransactionSummaryCard extends StatelessWidget {
     required this.operatorColor,
     required this.transactionNo,
     required this.amount,
+    required this.paymentStatus,
+    required this.paymentStatusColor,
     required this.commission,
     required this.surcharge,
+    required this.availableBalance,
+    required this.remainingBalance,
   });
 
   final String productName;
@@ -162,8 +297,12 @@ class _TransactionSummaryCard extends StatelessWidget {
   final Color operatorColor;
   final String transactionNo;
   final String amount;
+  final String paymentStatus;
+  final Color paymentStatusColor;
   final String commission;
   final String surcharge;
+  final String availableBalance;
+  final String remainingBalance;
 
   @override
   Widget build(BuildContext context) {
@@ -199,8 +338,8 @@ class _TransactionSummaryCard extends StatelessWidget {
           _buildDetailRow(
             context,
             label: 'Payment Status',
-            value: 'Received',
-            valueColor: const Color(0xFF00B050),
+            value: paymentStatus,
+            valueColor: paymentStatusColor,
           ),
           SizedBox(height: 18.h),
           _buildDetailRow(
@@ -212,7 +351,7 @@ class _TransactionSummaryCard extends StatelessWidget {
           SizedBox(height: 12.h),
           _AmountBand(
             label: 'Available Balance',
-            value: '\u{20B9}76954.70',
+            value: availableBalance,
             color: const Color(0xFF315CFF),
             backgroundColor: const Color(0xFFE1E6FF),
           ),
@@ -240,7 +379,7 @@ class _TransactionSummaryCard extends StatelessWidget {
           // SizedBox(height: 10.h),
           _AmountBand(
             label: 'Remaining Balance',
-            value: '\u{20B9}76954.70',
+            value: remainingBalance,
             color: const Color(0xFF315CFF),
             backgroundColor: const Color(0xFFE1E6FF),
           ),

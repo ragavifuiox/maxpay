@@ -70,6 +70,18 @@ import 'package:maxpay/core/domain/usecase/cable_tv_confirm_usecase.dart';
 import 'package:maxpay/core/data/repsoitory/water_bill_repo_impl.dart';
 import 'package:maxpay/core/domain/repository/water_bill_repository.dart';
 import 'package:maxpay/core/domain/usecase/water_bill_usecase.dart';
+import 'package:maxpay/core/data/repsoitory/broadband_repo_impl.dart';
+import 'package:maxpay/core/domain/repository/broadband_repository.dart';
+import 'package:maxpay/core/domain/usecase/broadband_confirm_usecase.dart';
+import 'package:maxpay/core/domain/usecase/broadband_usecase.dart';
+import 'package:maxpay/controllers/broadband_controller.dart';
+import 'package:maxpay/core/domain/repository/fastag_repository.dart';
+import 'package:maxpay/core/data/repsoitory/fastag_repository_impl.dart';
+import 'package:maxpay/core/domain/usecase/fastag_fetch_bill_usecase.dart';
+import 'package:maxpay/controllers/fastag_controller.dart';
+import 'package:maxpay/core/domain/repository/fastag_confirm_repository.dart';
+import 'package:maxpay/core/data/repsoitory/fastag_confirm_repo_impl.dart';
+import 'package:maxpay/core/domain/usecase/fastag_confirm_usecase.dart';
 import 'package:maxpay/core/data/repsoitory/terms_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/today_transaction_repo_imppl.dart';
 import 'package:maxpay/core/data/repsoitory/total_transaction_repo_impl.dart';
@@ -259,17 +271,18 @@ import 'package:shared_preferences/shared_preferences.dart';
 final sl = GetIt.instance;
 
 Future<void> initDependencies() async {
-  
   final prefs = await SharedPreferences.getInstance();
   await LocalStorageService().init();
   if (!sl.isRegistered<SharedPreferences>()) {
     sl.registerSingleton<SharedPreferences>(prefs);
   }
 
-
   sl.registerLazySingleton(() => WaterController(sl()));
+  sl.registerLazySingleton(() => BroadbandController(sl()));
+  sl.registerLazySingleton(
+    () => FastagController(fetchFastagBillUseCase: sl(), confirmUsecase: sl()),
+  );
 
- 
   if (!sl.isRegistered<ApiService>()) {
     sl.registerLazySingleton(() => ApiService());
   }
@@ -330,7 +343,7 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton<UpdateProfileOtpRepository>(
     () => UpdateProfileOtpRepoImpl(sl()),
   );
-  
+
   sl.registerLazySingleton<EarningsRepository>(() => EarningsRepoImpl(sl()));
   sl.registerLazySingleton<CreditRepository>(() => CreditRepoImpl(sl()));
   sl.registerLazySingleton<SearchEarningsRepository>(
@@ -469,6 +482,10 @@ Future<void> initDependencies() async {
   );
 
   sl.registerLazySingleton<WaterBillRepository>(() => WaterBillRepoImpl(sl()));
+  sl.registerLazySingleton(() => BroadbandConfirmUsecase(sl()));
+  sl.registerLazySingleton<BroadbandBillRepository>(
+    () => BroadbandBillRepoImpl(sl()),
+  );
 
   /*-------------------       USECASE    ---------------------------------*/
   sl.registerLazySingleton<ActiveUserUsecase>(() => ActiveUserUsecase(sl()));
@@ -612,6 +629,9 @@ Future<void> initDependencies() async {
   );
 
   sl.registerLazySingleton<WaterBillUsecase>(() => WaterBillUsecase(sl()));
+  sl.registerLazySingleton<BroadbandBillUsecase>(
+    () => BroadbandBillUsecase(sl()),
+  );
   sl.registerLazySingleton<WalletTrnasferDetailUsecase>(
     () => WalletTrnasferDetailUsecase(sl()),
   );
@@ -624,6 +644,19 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton<CableTvConfirmUsecase>(
     () => CableTvConfirmUsecase(repository: sl()),
   );
+
+  sl.registerLazySingleton<FastagRepository>(() => FastagRepositoryImpl(sl()));
+  sl.registerLazySingleton<FetchFastagBillUseCase>(
+    () => FetchFastagBillUseCase(sl()),
+  );
+
+  sl.registerLazySingleton<FastagConfirmRepository>(
+    () => FastagConfirmRepoImpl(sl()),
+  );
+  sl.registerLazySingleton<FastagConfirmUsecase>(
+    () => FastagConfirmUsecase(repository: sl()),
+  );
+
   // sl.registerLazySingleton<GetPrivacyPolicyUseCase>(
   //   () => GetPrivacyPolicyUseCase(sl()),
   // );

@@ -35,15 +35,16 @@ class Data {
   Product? product;
   String? debugId;
 
-  Data(
-      {this.bill,
-      this.source,
-      this.billerId,
-      this.productCode,
-      this.apiId,
-      this.mappingId,
-      this.product,
-      this.debugId});
+  Data({
+    this.bill,
+    this.source,
+    this.billerId,
+    this.productCode,
+    this.apiId,
+    this.mappingId,
+    this.product,
+    this.debugId,
+  });
 
   Data.fromJson(Map<String, dynamic> json) {
     bill = json['bill'] != null ? new Bill.fromJson(json['bill']) : null;
@@ -52,8 +53,9 @@ class Data {
     productCode = json['product_code'];
     apiId = json['api_id'];
     mappingId = json['mapping_id'];
-    product =
-        json['product'] != null ? new Product.fromJson(json['product']) : null;
+    product = json['product'] != null
+        ? new Product.fromJson(json['product'])
+        : null;
     debugId = json['debug_id'];
   }
 
@@ -80,8 +82,8 @@ class Bill {
   String? billNumber;
   String? billDate;
   String? billDueDate;
-  int? amount;
-  int? billAmount;
+  dynamic amount;
+  dynamic billAmount;
   bool? hasDueAmount;
   String? customerNumber;
   String? enquiryReference;
@@ -90,20 +92,21 @@ class Bill {
   String? billerId;
   int? daysLeft;
 
-  Bill(
-      {this.customerName,
-      this.billNumber,
-      this.billDate,
-      this.billDueDate,
-      this.amount,
-      this.billAmount,
-      this.hasDueAmount,
-      this.customerNumber,
-      this.enquiryReference,
-      this.apiId,
-      this.mappingId,
-      this.billerId,
-      this.daysLeft});
+  Bill({
+    this.customerName,
+    this.billNumber,
+    this.billDate,
+    this.billDueDate,
+    this.amount,
+    this.billAmount,
+    this.hasDueAmount,
+    this.customerNumber,
+    this.enquiryReference,
+    this.apiId,
+    this.mappingId,
+    this.billerId,
+    this.daysLeft,
+  });
 
   Bill.fromJson(Map<String, dynamic> json) {
     customerName = json['customer_name'];
@@ -160,5 +163,4 @@ class Product {
     data['logo'] = this.logo;
     return data;
   }
-  
 }

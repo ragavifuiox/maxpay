@@ -16,7 +16,7 @@ class PinCodeCreationPage extends GetView<AuthController> {
   final TextEditingController pinController = TextEditingController();
 
   final RxBool showAddButton = false.obs;
-bool isInvalidPin(String pin) {
+  bool isInvalidPin(String pin) {
   const blockedPins = [
     '0000',
     '1111',
@@ -103,7 +103,7 @@ bool isInvalidPin(String pin) {
                 SizedBox(height: isTablet ? 40.h : 20.h),
 
                 Text(
-                  'Create your M-PIN',
+                  'Create your M PIN',
 
                   style: TextStyle(
                     fontFamily: 'Poppins',

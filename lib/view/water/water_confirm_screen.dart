@@ -52,32 +52,29 @@ class WaterConfirmScreen extends StatelessWidget {
                 surcharge: surcharge,
               ),
 
-
-   SizedBox(height: 18.h),
-                 _buildInputLabel(context, 'For Transaction Detail (Optional)'),
+              SizedBox(height: 18.h),
+              _buildInputLabel(context, 'For Transaction Detail (Optional)'),
               _buildTextField(context, 'Enter Whatsapp no '),
               SizedBox(height: 18.h),
               _buildInputLabel(context, 'Re-enter Amount'),
               _buildTextField(context, 'Enter amount'),
               SizedBox(height: 20.h),
-               Center(
-                  child: CommonButton(
-                    title: "Customer Confirmation",
-                    backgroundColor: AppColors.clrSecondary,
-                  onTap: (){
+              Center(
+                child: CommonButton(
+                  title: "Customer Confirmation",
+                  backgroundColor: AppColors.clrSecondary,
+                  onTap: () {
                     Get.to(WaterCusotmerScreen());
                   },
-                  ),
                 ),
-                const SizedBox(height: 21),
+              ),
+              const SizedBox(height: 21),
               Center(
                 child: CommonButton(
                   title: 'Pay Now',
-                  onTap:(){
+                  onTap: () {
                     Get.to(ElectricitySuccess());
-                  }
-                
-              
+                  },
                 ),
               ),
               SizedBox(height: 30.h),

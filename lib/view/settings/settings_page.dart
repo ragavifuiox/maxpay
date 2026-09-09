@@ -173,7 +173,7 @@ class SettingsPage extends StatelessWidget {
                   ),
                   _buildMenuTile(
                     context,
-                    'Update M-Pin',
+                    'Update M Pin',
                     () {
                       Get.defaultDialog(
                         title: "Confirm",
