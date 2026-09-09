@@ -7,7 +7,6 @@ import 'package:maxpay/core/data/model/plan_model.dart';
 import 'package:maxpay/controllers/homepage_controller.dart';
 import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
-import 'package:maxpay/view/gas_bill/gas_confirm_screen.dart';
 
 class GasBillPage extends StatefulWidget {
   const GasBillPage({super.key});

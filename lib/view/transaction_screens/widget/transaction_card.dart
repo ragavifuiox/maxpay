@@ -175,7 +175,7 @@ Status: ${isSuccess ? 'Success' : (isPending ? 'Processing' : 'Failed')}
                 child: Container(
                   padding: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
-                    color: Colors.grey.withOpacity(0.15),
+                    color: Colors.grey.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(6),
                   ),
                   child: const Icon(

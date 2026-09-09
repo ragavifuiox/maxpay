@@ -670,6 +670,7 @@ class _WatterBillageState extends State<WatterBill> {
                               }
                               if (_customerIdController.text.trim().isEmpty)
                                 return;
+                              }
 
                               final success = await waterController.fetchBill(
                                 selectedBoardObj!.id.toString(),

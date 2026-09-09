@@ -17,16 +17,11 @@ class AssetImages {
   static const settings = "assets/images/settings.svg";
 
   // Dashboard Stats
-  static const addWallet = "assets/images/add_wallet.svg";
-  static const walletBalance = "assets/images/wallet_bal.svg";
   static const transactions = "assets/images/trans-icon.svg";
   static const todaysCredit = "assets/images/todays_credit.svg";
   static const refunded = "assets/images/refunded.svg";
   static const complaints = "assets/images/complaints.svg";
   static const success = "assets/images/success.svg";
-  static const processing = "assets/images/processing.svg";
-  static const failedAll = "assets/images/failed_all.svg";
-  static const statement = "assets/images/statement.svg";
   static const cable = "assets/images/cable.svg";
 
   // Services
@@ -35,7 +30,6 @@ class AssetImages {
   static const gas = "assets/images/gas.svg";
   static const broadband = "assets/images/broadband.svg";
   static const landline = "assets/images/landline.svg.svg";
-  static const mobilePostpaid = "assets/images/mobile_post.svg";
   static const fastag = "assets/images/fastag.svg";
   static const water = "assets/images/water.svg";
   static const paymentStatus = "assets/images/payment_status.svg";
@@ -43,8 +37,6 @@ class AssetImages {
   static const plan = "assets/images/plan.svg";
 
   // Others
-  static const favorite = "assets/images/favorite.svg";
-  static const dthRefresh = "assets/images/dth_refresh.svg";
   static const promoFrame = "assets/images/elec.svg";
   static const bgOverlay = "assets/images/bg_overlay.webp";
   static const earnings = "assets/images/earnings.svg";
@@ -53,7 +45,6 @@ class AssetImages {
   static const history = "assets/images/history.svg";
   static const kyc = "assets/images/KYC.svg";
   static const privacyPolicy = "assets/images/privacy_policy.svg";
-  static const webLogin = "assets/images/web_login.svg";
   static const webSignup = "assets/images/web_signup.svg";
   static const wallet = "assets/images/wallet.svg";
   static const profile = "assets/images/profile.svg";
@@ -61,15 +52,11 @@ class AssetImages {
   static const updatePin = "assets/images/update_pin.svg";
   static const support = "assets/images/support.svg";
   static const websuccess = "assets/images/success_image.png";
-  static const banner1 = "assets/images/banner1.png";
-  static const banner2 = "assets/images/banner2.png";
   static const addwallet = "assets/images/add_wallet1.png";
-  static const qrCode = "assets/images/qr_code.png";
   static const profileImage = "assets/images/profile.jpg";
   static const qrcode = "assets/images/qrcode 1.png";
   static const stafflist = "assets/images/stafflist_page.svg";
   static const search = "assets/images/search.svg";
-  static const shareSvg = "assets/images/share_icon.svg";
   static const dispute = "assets/images/dispute.svg";
   static const edit = "assets/images/edit.svg";
   static const edit1 = "assets/images/edit1.svg";

@@ -11,7 +11,6 @@ import 'package:pinput/pinput.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
 class ScreenOtpVerification extends StatefulWidget {
   const ScreenOtpVerification({super.key});
 

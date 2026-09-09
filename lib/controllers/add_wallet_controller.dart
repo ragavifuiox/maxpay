@@ -408,19 +408,26 @@
 // }
 
 import 'dart:async';
+import 'dart:io';
 
 import 'package:android_intent_plus/android_intent.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:maxpay/core/constants/api_routes.dart';
+import 'package:maxpay/core/constants/colors.dart';
+import 'package:maxpay/core/services/api_services.dart';
+import 'package:weipl_checkout_flutter/weipl_checkout_flutter.dart';
 
 import 'package:maxpay/controllers/homepage_controller.dart';
 import 'package:maxpay/core/constants/snackbar.dart';
+import 'package:maxpay/core/data/model/wallet_create_qr_model.dart';
 import 'package:maxpay/core/data/model/wallet_qr_history.dart';
 import 'package:maxpay/core/domain/usecase/wallet_create_qr_usecase.dart';
 
 import 'package:maxpay/core/utils/logg_helper.dart';
 import 'package:maxpay/view/add_wallet/widge/add_wallet_dialogue.dart';
+import 'package:maxpay/core/di/service_locator.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AddWalletController extends GetxController with WidgetsBindingObserver {
@@ -456,6 +463,8 @@ class AddWalletController extends GetxController with WidgetsBindingObserver {
     "com.paylink.retailor/upi_choose",
   );
 
+  final WeiplCheckoutFlutter wlCheckout = WeiplCheckoutFlutter();
+
   // --------------------------------------------------------------------------
   // INIT
   // --------------------------------------------------------------------------
@@ -464,9 +473,72 @@ class AddWalletController extends GetxController with WidgetsBindingObserver {
   void onInit() {
     super.onInit();
 
+    AppLogger.debugPrint("AddWalletController ON INIT");
+
     WidgetsBinding.instance.addObserver(this);
 
     getWalletHistory();
+  }
+
+  Future<void> _worldlineResponseCallback(
+    Map<dynamic, dynamic> response,
+  ) async {
+    AppLogger.logError(response);
+
+    final msg = response['msg'];
+    final errorMsg = response['errorMsg'];
+
+    if (msg == null || !msg.toString().contains('SUCCESS')) {
+      CustomToast.error("Payment failed, please try again later.");
+      return;
+    }
+
+    try {
+      isLoading.value = true;
+
+      final txnId = qrResponse?.worldline?.txnId ?? '';
+      final merchantCode = qrResponse?.worldline?.data?.merchantId ?? '';
+
+      final formData = {
+        'transaction_id': txnId,
+        'msg': msg.toString(),
+        'merchant_code': merchantCode,
+      };
+
+      final apiService = sl<ApiService>();
+      final verifyResponse = await apiService.post(
+        ApiRoutes.verifyWorldlinePayment,
+        data: formData,
+      );
+
+      if (verifyResponse['status'] == true ||
+          verifyResponse['status'] == 1 ||
+          verifyResponse['status'] == "true") {
+        while (Get.isDialogOpen == true) {
+          Get.back();
+        }
+
+        final amount = qrResponse?.worldline?.amount ?? "0";
+        showSuccessDialog(amount);
+
+        if (Get.isRegistered<HomePageController>()) {
+          Get.find<HomePageController>().fetchWalletBalance();
+        }
+      } else {
+        CustomToast.error("Payment failed, please try again later.");
+      }
+    } catch (e) {
+      AppLogger.logError(e);
+      CustomToast.error("Payment failed, please try again later.");
+    } finally {
+      isLoading.value = false;
+      getWalletHistory();
+    }
+  }
+
+  void _worldlineErrorCallback(Map<dynamic, dynamic> response) {
+    AppLogger.logError(response);
+    CustomToast.error("Payment failed, please try again later.");
   }
 
   Future<void> openGPay(String paymentUrl) async {
@@ -553,13 +625,14 @@ class AddWalletController extends GetxController with WidgetsBindingObserver {
       } else {
         stopTimer();
 
-        if (Get.isDialogOpen ?? false) {
+        while (Get.isDialogOpen == true) {
           Get.back();
         }
 
+        final pendingAmount = _lastAmount;
         amountController.clear();
 
-        CustomToast.error("Payment session expired");
+        showPendingDialog(pendingAmount);
       }
     });
   }
@@ -600,7 +673,7 @@ class AddWalletController extends GetxController with WidgetsBindingObserver {
           if (status.toString().toLowerCase() == "success") {
             stopTimer();
 
-            if (Get.isDialogOpen ?? false) {
+            while (Get.isDialogOpen == true) {
               Get.back();
             }
 
@@ -683,12 +756,9 @@ class AddWalletController extends GetxController with WidgetsBindingObserver {
         });
 
         if (isSuccess) break;
-      } catch (e) {
-        
-      }
+      } catch (e) {}
     }
 
-  
     if (!(Get.isDialogOpen ?? false)) {
       return;
     }
@@ -894,8 +964,10 @@ class AddWalletController extends GetxController with WidgetsBindingObserver {
   // --------------------------------------------------------------------------
   // CREATE QR
   // --------------------------------------------------------------------------
-
+  CreateQrResponse? qrResponse;
   Future<void> createQr(String amount) async {
+    if (isLoading.value) return; // Prevent multiple calls if already loading
+
     if (amount.trim().isEmpty) {
       CustomToast.error("Please Enter Amount");
       return;
@@ -926,28 +998,29 @@ class AddWalletController extends GetxController with WidgetsBindingObserver {
           AppLogger.debugPrint("------------ CREATE QR SUCCESS ------------");
 
           AppLogger.logError(response.toJson());
+          qrResponse = response;
+          final ekqrData = qrResponse?.ekqr;
+          final wordlinkData = qrResponse?.worldline;
 
-          final txnId = response.txnId ?? '';
-
-          if (txnId.isEmpty) {
-            CustomToast.error("Transaction ID not received");
-            return;
-          }
+          // if (txnId.isEmpty) {
+          //   CustomToast.error("Transaction ID not received");
+          //   return;
+          // }
 
           // --------------------------------------------------------------
           // IMPORTANT:
           // Convert backend link to standard UPI URI
           // --------------------------------------------------------------
 
-          final backendLink = response.gpayLink ?? '';
-
-          final qrUpiUrl = convertToStandardUpiUrl(backendLink);
+          final qrUpiUrl = convertToStandardUpiUrl(
+            response.ekqr?.upiLink ?? '',
+          );
 
           AppLogger.debugPrint("==========================================");
 
           AppLogger.debugPrint("BACKEND PAYMENT URL:");
 
-          AppLogger.debugPrint(backendLink);
+          AppLogger.debugPrint(qrUpiUrl);
 
           AppLogger.debugPrint("QR UPI URL:");
 
@@ -966,7 +1039,7 @@ class AddWalletController extends GetxController with WidgetsBindingObserver {
           }
 
           // Start payment timer
-          startTimer(txnId);
+          startTimer(ekqrData?.txnId ?? wordlinkData?.txnId ?? '');
 
           // Load installed UPI apps
           loadInstalledUpiApps();
@@ -977,17 +1050,10 @@ class AddWalletController extends GetxController with WidgetsBindingObserver {
 
           Get.dialog(
             AddWalletPopup(
-              amount: amount.trim(),
-              txtionId: txnId,
-
-              // IMPORTANT:
-              // QR gets standard UPI URI
-              url: qrUpiUrl,
+              ekqrData: response.ekqr,
+              bankData: response.worldline,
 
               // Keep backend links for buttons
-              phonepeLink: response.phonepeLink ?? '',
-
-              gpayLink: response.gpayLink ?? '',
             ),
           ).then((_) async {
             stopTimer();
@@ -1009,6 +1075,56 @@ class AddWalletController extends GetxController with WidgetsBindingObserver {
 
       update();
     }
+  }
+
+  void startWorldlinePayment(Worldline worldlineData) {
+    String deviceID = "";
+    if (Platform.isAndroid) {
+      deviceID = "AndroidSH2";
+    } else if (Platform.isIOS) {
+      deviceID = "iOSSH2";
+    }
+
+    final items = (worldlineData.data?.items ?? [])
+        .map((e) => e.toJson())
+        .toList();
+    var reqJson = {
+      "features": {
+        "enableAbortResponse": true,
+        "enableExpressPay": false,
+        "enableInstrumentDeRegistration": true,
+        "enableMerTxnDetails": true,
+      },
+      "consumerData": {
+        "deviceId": deviceID,
+        "token": worldlineData.data?.token ?? "",
+        "paymentMode": "UPI",
+        "merchantLogoUrl":
+            "https://paylinkonline.in/assets/img/logopaylink.jpeg",
+        "merchantId": worldlineData.data?.merchantId ?? "",
+        "currency": "INR",
+        "consumerId": worldlineData.data?.consumerId ?? "",
+        "consumerMobileNo": worldlineData.data?.consumerMobileNo ?? "",
+        "consumerEmailId": worldlineData.data?.consumerEmailId ?? "",
+        "txnId": worldlineData.txnId ?? "",
+        "items": items,
+        "customStyle": {
+          "PRIMARY_COLOR_CODE":
+              "#${AppColors.clrPrimary.toARGB32().toRadixString(16).substring(2, 8).toUpperCase()}",
+          "SECONDARY_COLOR_CODE":
+              "#${AppColors.clrBg.toARGB32().toRadixString(16).substring(2, 8).toUpperCase()}",
+          "BUTTON_COLOR_CODE_1":
+              "#${AppColors.clrSecondary.toARGB32().toRadixString(16).substring(2, 8).toUpperCase()}",
+          "BUTTON_COLOR_CODE_2": "#FFFFFF",
+        },
+      },
+    };
+    wlCheckout.on(
+      WeiplCheckoutFlutter.wlResponse,
+      _worldlineResponseCallback,
+      _worldlineErrorCallback,
+    );
+    wlCheckout.open(reqJson);
   }
 
   // --------------------------------------------------------------------------
@@ -1169,8 +1285,6 @@ class AddWalletController extends GetxController with WidgetsBindingObserver {
     }
   }
 
-
-
   Future<void> openSpecificUpiApp({
     required String packageName,
     required String url,
@@ -1254,6 +1368,8 @@ class AddWalletController extends GetxController with WidgetsBindingObserver {
 
   @override
   void dispose() {
+    AppLogger.debugPrint("AddWalletController ON CLOSE");
+
     WidgetsBinding.instance.removeObserver(this);
 
     stopTimer();

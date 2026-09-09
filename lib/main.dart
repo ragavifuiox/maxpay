@@ -19,6 +19,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await initDependencies();
+  debugPrint('========== FLUTTER MAIN START ==========');
 
   final sharedPreferences = await SharedPreferences.getInstance();
 

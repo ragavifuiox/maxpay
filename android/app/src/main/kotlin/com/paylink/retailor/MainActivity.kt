@@ -17,12 +17,28 @@ import io.flutter.embedding.android.FlutterFragmentActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 import java.io.ByteArrayOutputStream
-
 class MainActivity : FlutterFragmentActivity() {
 
     private val CHANNEL = "com.paylink.retailor/upi_choose"
     private val SIM_CHANNEL = "sim_verification"
     private val TAG = "UPI_DEBUG"
+    private val LIFECYCLE_TAG = "WORLDLINE_LIFECYCLE"
+
+    override fun onCreate(savedInstanceState: android.os.Bundle?) {
+        super.onCreate(savedInstanceState)
+        Log.d(LIFECYCLE_TAG, "MainActivity onCreate: savedInstanceState is null? ${savedInstanceState == null}")
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        Log.d(LIFECYCLE_TAG, "MainActivity onNewIntent: intent data=${intent.data}")
+    }
+
+    override fun onDestroy() {
+        Log.d(LIFECYCLE_TAG, "MainActivity onDestroy: isFinishing=$isFinishing")
+        super.onDestroy()
+    }
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)

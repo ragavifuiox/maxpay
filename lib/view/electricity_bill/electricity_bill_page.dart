@@ -7,7 +7,6 @@ import 'package:maxpay/core/data/model/plan_model.dart';
 import 'package:maxpay/controllers/homepage_controller.dart';
 import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
-import 'package:maxpay/view/electricity_bill/confirm_electricity.dart';
 
 class _BillColors {
   // static const fieldGrey = Color(0xFFF3F4F6);
