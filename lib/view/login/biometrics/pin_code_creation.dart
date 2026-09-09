@@ -16,7 +16,7 @@ class PinCodeCreationPage extends GetView<AuthController> {
   final TextEditingController pinController = TextEditingController();
 
   final RxBool showAddButton = false.obs;
-bool isInvalidPin(String pin) {
+  bool isInvalidPin(String pin) {
   const blockedPins = [
     '0000',
     '1111',

@@ -25,7 +25,7 @@ class UpdatePinPage extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
-      appBar: const CommonAppBar(title: "Update Pin"),
+      appBar: const CommonAppBar(title: "Update M Pin"),
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, constraints) {
@@ -56,7 +56,7 @@ class UpdatePinPage extends StatelessWidget {
                       ),
 
                       Text(
-                        "New PIN",
+                        "New M PIN",
                         style: TextStyle(
                           fontFamily: 'Poppins',
                           fontWeight: FontWeight.w600,
@@ -75,7 +75,7 @@ class UpdatePinPage extends StatelessWidget {
                       SizedBox(height: 24.h),
 
                       Text(
-                        "Confirm PIN",
+                        "Confirm M PIN",
                         style: TextStyle(
                           fontFamily: 'Poppins',
                           fontWeight: FontWeight.w600,
@@ -87,7 +87,7 @@ class UpdatePinPage extends StatelessWidget {
                       SizedBox(height: 8.h),
 
                       PinTextFieldWidget(
-                        hintText: "Confirm 4-digit PIN",
+                        hintText: "Confirm 4-digit M PIN",
                         controller: confirmPinController,
                       ),
 

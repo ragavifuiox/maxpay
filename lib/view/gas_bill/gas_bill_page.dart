@@ -315,6 +315,7 @@ class _ElectricityBillPageState extends State<GasBillPage> {
                               if (value == null) return;
                               setState(() {
                                 selectedBoardObj = value;
+                                _isBillFetched = false;
                               });
                               controller.selectedPlan.value = value;
                             },
@@ -360,7 +361,9 @@ class _ElectricityBillPageState extends State<GasBillPage> {
                                   ),
                                   onPressed: () {
                                     _customerIdController.clear();
-                                    setState(() {});
+                                    setState(() {
+                                      _isBillFetched = false;
+                                    });
                                   },
                                 )
                               : null,

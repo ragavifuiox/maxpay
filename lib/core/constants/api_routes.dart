@@ -92,4 +92,8 @@ class ApiRoutes {
   static const storeVersion = "/store_version";
   static const cabletvconfirm = "/cabletv_confirm_transaction/";
   static const waterbill = "/get_water_bill";
+  static const broadbandbill = "/broadband_fetch_bill";
+  static const broadbandConfirm = "/broadband_confirm_transaction/";
+  static const fastagfetchbill = "/fastag_fetch_bill";
+  static const fastagConfirm = "/fastag_confirm_transaction/";
 }

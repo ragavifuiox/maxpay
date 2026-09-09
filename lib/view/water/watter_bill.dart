@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:maxpay/controllers/homepage_controller.dart';
 import 'package:maxpay/controllers/prepaid_controller.dart';
 import 'package:maxpay/core/data/model/plan_model.dart';
 import 'package:maxpay/core/di/service_locator.dart';
@@ -8,9 +10,10 @@ import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
 import 'package:maxpay/view/water/water_confirm_screen.dart';
 import 'package:maxpay/controllers/water_controller.dart';
+import 'package:maxpay/core/constants/routes_path.dart';
 
 class _BillColors {
-  // static const fieldGrey = Color(0xFFF3F4F6);
+ 
   static const fieldGreyDark = Color(0xFF2A2E33);
 }
 
@@ -24,7 +27,6 @@ class WatterBill extends StatefulWidget {
 class _WatterBillageState extends State<WatterBill> {
   bool _isBillFetched = false;
 
-  // Payment status toggle: true = Received, false = Not Received
   bool _isReceived = true;
 
   final TextEditingController _customerIdController = TextEditingController();
@@ -55,6 +57,7 @@ class _WatterBillageState extends State<WatterBill> {
 
   Data? selectedBoardObj;
   String productId = "";
+  Timer? _debounce;
 
   @override
   void initState() {
@@ -68,6 +71,7 @@ class _WatterBillageState extends State<WatterBill> {
 
   @override
   void dispose() {
+    _debounce?.cancel();
     _customerIdController.dispose();
     _mobileController.dispose();
     _amountController.dispose();
@@ -108,35 +112,50 @@ class _WatterBillageState extends State<WatterBill> {
                   ),
                 ),
                 SizedBox(height: 4.h),
-                _detailRow(context, 'Customer Name', 'John'),
-                _detailRow(context, 'Bill Number', '#10011887'),
-                _detailRow(context, 'Bill Date', '11/12/2024'),
-                _detailRow(context, 'Bill Due Date', '11/12/2025'),
-                // SizedBox(height: 16.h),
-                // SizedBox(
-                //   width: double.infinity,
-                //   height: 42.h,
-                //   child: ElevatedButton(
-                //     onPressed: () {
-                //       Get.to(WaterConfirmScreen());
-                //     },
-                //     style: ElevatedButton.styleFrom(
-                //       backgroundColor: AppColors.clrPrimary,
-                //       shape: RoundedRectangleBorder(
-                //         borderRadius: BorderRadius.circular(8.r),
-                //       ),
-                //       elevation: 0,
-                //     ),
-                //     child: Text(
-                //       'Next',
-                //       style: TextStyle(
-                //         color: Colors.white,
-                //         fontSize: 14.sp,
-                //         fontWeight: FontWeight.w600,
-                //       ),
-                //     ),
-                //   ),
-                // ),
+                _detailRow(
+                  context,
+                  'Customer Name',
+                  waterController
+                          .fetchBillResponse
+                          .value
+                          ?.data
+                          ?.bill
+                          ?.customerName ??
+                      'N/A',
+                ),
+                _detailRow(
+                  context,
+                  'Bill Number',
+                  waterController
+                          .fetchBillResponse
+                          .value
+                          ?.data
+                          ?.bill
+                          ?.billNumber ??
+                      'N/A',
+                ),
+                _detailRow(
+                  context,
+                  'Bill Date',
+                  waterController
+                          .fetchBillResponse
+                          .value
+                          ?.data
+                          ?.bill
+                          ?.billDate ??
+                      'N/A',
+                ),
+                _detailRow(
+                  context,
+                  'Bill Due Date',
+                  waterController
+                          .fetchBillResponse
+                          .value
+                          ?.data
+                          ?.bill
+                          ?.billDueDate ??
+                      'N/A',
+                ),
               ],
             ),
           ),
@@ -201,32 +220,43 @@ class _WatterBillageState extends State<WatterBill> {
                     /// 🔹 WALLET BALANCE CARD
                     Container(
                       width: double.infinity,
+
                       padding: EdgeInsets.symmetric(vertical: 15.h),
+
                       decoration: BoxDecoration(
                         color: AppColors.clrPrimary,
+
                         borderRadius: BorderRadius.circular(12.r),
                       ),
+
                       child: Column(
                         children: [
                           Text(
                             'Wallet Balance',
+
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 14.sp,
                               fontWeight: FontWeight.w600,
-                              fontFamily: 'Poppins',
                             ),
                           ),
+
                           SizedBox(height: 5.h),
-                          Text(
-                            '₹ 245005.23',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 22.sp,
-                              fontWeight: FontWeight.w700,
-                              fontFamily: 'Poppins',
-                            ),
-                          ),
+
+                          Obx(() {
+                            final balance = Get.find<HomePageController>()
+                                .walletBalance
+                                .value;
+
+                            return Text(
+                              "₹ ${balance?.data?.balance ?? "0.00"}",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 24.sp,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            );
+                          }),
                         ],
                       ),
                     ),
@@ -310,8 +340,10 @@ class _WatterBillageState extends State<WatterBill> {
                             }).toList(),
                             onChanged: (Data? value) {
                               if (value == null) return;
+                              _debounce?.cancel();
                               setState(() {
                                 selectedBoardObj = value;
+                                _isBillFetched = false;
                               });
                               controller.selectedPlan.value = value;
                             },
@@ -330,8 +362,65 @@ class _WatterBillageState extends State<WatterBill> {
                       child: TextField(
                         controller: _customerIdController,
                         enabled: !_isBillFetched,
-                        onChanged: (_) {
+                        textInputAction: TextInputAction.done,
+                        onSubmitted: (value) async {
+                          if (selectedBoardObj == null) {
+                            Get.snackbar('Error', 'Please select a board');
+                            return;
+                          }
+                          if (value.trim().isEmpty) return;
+
+                          final success = await waterController.fetchBill(
+                            selectedBoardObj!.id.toString(),
+                            value.trim(),
+                          );
+
+                          if (success) {
+                            final billData = waterController
+                                .fetchBillResponse
+                                .value
+                                ?.data
+                                ?.bill;
+
+                            _amountController.text =
+                                (billData?.amount ?? billData?.billAmount ?? "")
+                                    .toString();
+                            _mobileController.text =
+                                billData?.customerNumber ?? "";
+
+                            setState(() => _isBillFetched = true);
+                          }
+                        },
+                        onChanged: (value) {
                           setState(() {}); // Refresh to show/hide X icon
+                          if (_debounce?.isActive ?? false) _debounce!.cancel();
+                          _debounce = Timer(
+                            const Duration(milliseconds: 1500),
+                            () async {
+                              if (selectedBoardObj != null &&
+                                  value.trim().isNotEmpty) {
+                                final success = await waterController.fetchBill(
+                                  selectedBoardObj!.id.toString(),
+                                  value.trim(),
+                                );
+                                if (success) {
+                                  final billData = waterController
+                                      .fetchBillResponse
+                                      .value
+                                      ?.data
+                                      ?.bill;
+                                  _amountController.text =
+                                      (billData?.amount ??
+                                              billData?.billAmount ??
+                                              "")
+                                          .toString();
+                                  _mobileController.text =
+                                      billData?.customerNumber ?? "";
+                                  setState(() => _isBillFetched = true);
+                                }
+                              }
+                            },
+                          );
                         },
                         style: TextStyle(
                           fontSize: 14.sp,
@@ -356,8 +445,11 @@ class _WatterBillageState extends State<WatterBill> {
                                     size: 20.sp,
                                   ),
                                   onPressed: () {
+                                    _debounce?.cancel();
                                     _customerIdController.clear();
-                                    setState(() {});
+                                    setState(() {
+                                      _isBillFetched = false;
+                                    });
                                   },
                                 )
                               : null,
@@ -456,42 +548,97 @@ class _WatterBillageState extends State<WatterBill> {
                       Container(
                         width: double.infinity,
                         padding: EdgeInsets.symmetric(
-                          vertical: 14.h,
-                          horizontal: 16.w,
+                          horizontal: 14.w,
+                          vertical: 12.h,
                         ),
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10.r),
                           border: Border.all(
-                            color: AppColors.clrPrimary.withValues(alpha: 0.6),
+                            color: const Color(0xff19A7CE),
+                            width: 1,
                           ),
+                          borderRadius: BorderRadius.circular(10.r),
                         ),
-                        child: Column(
+                        child: Stack(
+                          clipBehavior: Clip.none,
                           children: [
-                            Text(
-                              'Customer Payment',
-                              style: TextStyle(
-                                fontSize: 13.sp,
-                                fontWeight: FontWeight.w700,
-                                color: AppColors.clrPrimary,
-                              ),
-                            ),
-                            SizedBox(height: 10.h),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            Column(
                               children: [
-                                _paymentOption(
-                                  label: 'Not Received',
-                                  color: Colors.red,
-                                  selected: !_isReceived,
-                                  onTap: () =>
-                                      setState(() => _isReceived = false),
+                                Text(
+                                  "Customer Payment",
+                                  style: TextStyle(
+                                    fontSize: 15.sp,
+                                    fontWeight: FontWeight.w700,
+                                    color: const Color(0xff19A7CE),
+                                    decoration: TextDecoration.underline,
+                                  ),
                                 ),
-                                _paymentOption(
-                                  label: 'Received',
-                                  color: Colors.green,
-                                  selected: _isReceived,
-                                  onTap: () =>
-                                      setState(() => _isReceived = true),
+
+                                SizedBox(height: 12.h),
+
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    /// Not Received
+                                    GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          _isReceived = false;
+                                        });
+                                      },
+                                      child: Row(
+                                        children: [
+                                          Checkbox(
+                                            value: _isReceived == false,
+                                            activeColor: Colors.red,
+                                            onChanged: (_) {
+                                              setState(() {
+                                                _isReceived = false;
+                                              });
+                                            },
+                                          ),
+                                          Text(
+                                            "Pending    ",
+                                            style: TextStyle(
+                                              color: Colors.red,
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 14.sp,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+
+                                    /// Received
+                                    GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          _isReceived = true;
+                                        });
+                                      },
+                                      child: Row(
+                                        children: [
+                                          Checkbox(
+                                            value: _isReceived == true,
+                                            activeColor: Colors.green,
+                                            onChanged: (_) {
+                                              setState(() {
+                                                _isReceived = true;
+                                              });
+                                            },
+                                          ),
+                                          Text(
+                                            "Paid",
+                                            style: TextStyle(
+                                              color: Colors.green,
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 14.sp,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
@@ -517,12 +664,16 @@ class _WatterBillageState extends State<WatterBill> {
                         ? null
                         : () async {
                             if (!_isBillFetched) {
-                              if (_customerIdController.text.trim().isEmpty) {
+                              if (selectedBoardObj == null) {
+                                Get.snackbar('Error', 'Please select a board');
+                                return;
+                              }
+                              if (_customerIdController.text.trim().isEmpty)
                                 return;
                               }
 
                               final success = await waterController.fetchBill(
-                                productId,
+                                selectedBoardObj!.id.toString(),
                                 _customerIdController.text.trim(),
                               );
 
@@ -544,6 +695,28 @@ class _WatterBillageState extends State<WatterBill> {
                                 setState(() => _isBillFetched = true);
                               }
                             } else {
+                              final requiredAmount =
+                                  double.tryParse(_amountController.text) ??
+                                  0.0;
+                              final currentBalance =
+                                  Get.find<HomePageController>()
+                                      .walletBalance
+                                      .value
+                                      ?.data
+                                      ?.balance ??
+                                  0.0;
+
+                              if (requiredAmount > currentBalance) {
+                                Get.toNamed(
+                                  AppRoutes.insufficientBalance,
+                                  arguments: {
+                                    'currentBalance': currentBalance,
+                                    'requiredAmount': requiredAmount,
+                                  },
+                                );
+                                return;
+                              }
+
                               final res =
                                   waterController.fetchBillResponse.value?.data;
                               Get.to(
@@ -586,47 +759,6 @@ class _WatterBillageState extends State<WatterBill> {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  // ------------------------------------------------------------------
-  // Payment option (checkbox + label)
-  // ------------------------------------------------------------------
-  Widget _paymentOption({
-    required String label,
-    required Color color,
-    required bool selected,
-    required VoidCallback onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      behavior: HitTestBehavior.opaque,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 18.w,
-            height: 18.w,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(4.r),
-              border: Border.all(color: color, width: 1.4),
-              color: selected ? color : Colors.transparent,
-            ),
-            child: selected
-                ? Icon(Icons.check, size: 13.sp, color: Colors.white)
-                : null,
-          ),
-          SizedBox(width: 6.w),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 12.sp,
-              fontWeight: FontWeight.w600,
-              color: color,
-            ),
-          ),
-        ],
       ),
     );
   }
