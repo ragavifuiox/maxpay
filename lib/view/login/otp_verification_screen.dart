@@ -22,6 +22,7 @@ class ScreenOtpVerification extends StatefulWidget {
 class _ScreenOtpVerificationState extends State<ScreenOtpVerification>
     with WidgetsBindingObserver {
   final TextEditingController _otpController = TextEditingController();
+  final FocusNode otpFocusNode = FocusNode();
   Set<String> _pastedOtps = {};
   String? _clipboardOtp;
 
@@ -237,9 +238,12 @@ class _ScreenOtpVerificationState extends State<ScreenOtpVerification>
                         Pinput(
                           length: 4,
                           autofocus: false,
-                          readOnly: !_isTestNumber,
+                          toolbarEnabled: true,
+                          enableInteractiveSelection: true,
+                          showCursor: true,
                           controller: _otpController,
-                          keyboardType: TextInputType.number,
+                          keyboardType: TextInputType.none,
+                          onTap: () => otpFocusNode.requestFocus(),
                           onCompleted: (pin) => _verifyOtp(),
                           mainAxisAlignment: MainAxisAlignment.center,
                           submittedPinTheme: PinTheme(
@@ -291,50 +295,6 @@ class _ScreenOtpVerificationState extends State<ScreenOtpVerification>
                         ),
 
                         SizedBox(height: 20.h),
-
-                        // Dynamic Paste OTP Button
-                        if (_clipboardOtp != null) ...[
-                          GestureDetector(
-                            onTap: _onPasteOtp,
-                            child: Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 16.w,
-                                vertical: 8.h,
-                              ),
-                              decoration: BoxDecoration(
-                                color: AppColors.clrPrimary.withValues(
-                                  alpha: 0.1,
-                                ),
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border.all(
-                                  color: AppColors.clrPrimary,
-                                  width: 1.5,
-                                ),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(
-                                    Icons.paste,
-                                    size: 16.sp,
-                                    color: AppColors.clrPrimary,
-                                  ),
-                                  SizedBox(width: 8.w),
-                                  Text(
-                                    "Paste '$_clipboardOtp'",
-                                    style: TextStyle(
-                                      color: AppColors.clrPrimary,
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 14.sp,
-                                      fontFamily: 'Poppins',
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: 20.h),
-                        ],
 
                         /// 🔹 Timer
                         ResendTimerWidget(
