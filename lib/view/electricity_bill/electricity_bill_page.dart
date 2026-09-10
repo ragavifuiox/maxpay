@@ -7,6 +7,9 @@ import 'package:maxpay/core/data/model/plan_model.dart';
 import 'package:maxpay/controllers/homepage_controller.dart';
 import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
+import 'package:maxpay/controllers/cable_tv_controller.dart';
+import 'package:maxpay/core/constants/snackbar.dart';
+import 'package:maxpay/view/electricity_bill/confirm_electricity.dart';
 
 class _BillColors {
   // static const fieldGrey = Color(0xFFF3F4F6);
@@ -50,6 +53,10 @@ class _ElectricityBillPageState extends State<ElectricityBillPage> {
     ),
   );
 
+  final CableTvController cableTvController = Get.put(
+    CableTvController(cableTvBillUsecase: sl(), cableTvConfirmUsecase: sl()),
+  );
+
   Data? selectedBoardObj;
   String productId = "";
 
@@ -73,6 +80,8 @@ class _ElectricityBillPageState extends State<ElectricityBillPage> {
 
   void _showDetailDialog(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    final billData = cableTvController.fetchBillResponse.value?.data?.bill;
 
     showDialog(
       context: context,
@@ -105,35 +114,22 @@ class _ElectricityBillPageState extends State<ElectricityBillPage> {
                   ),
                 ),
                 SizedBox(height: 4.h),
-                _detailRow(context, 'Customer Name', 'John'),
-                _detailRow(context, 'Bill Number', '#10011887'),
-                _detailRow(context, 'Bill Date', '11/12/2024'),
-                _detailRow(context, 'Bill Due Date', '11/12/2025'),
-                // SizedBox(height: 16.h),
-                // SizedBox(
-                //   width: double.infinity,
-                //   height: 42.h,
-                //   child: ElevatedButton(
-                //     onPressed: () {
-                //       Get.to(ConfirmElectricity());
-                //     },
-                //     style: ElevatedButton.styleFrom(
-                //       backgroundColor: AppColors.clrPrimary,
-                //       shape: RoundedRectangleBorder(
-                //         borderRadius: BorderRadius.circular(8.r),
-                //       ),
-                //       elevation: 0,
-                //     ),
-                //     child: Text(
-                //       'Next',
-                //       style: TextStyle(
-                //         color: Colors.white,
-                //         fontSize: 14.sp,
-                //         fontWeight: FontWeight.w600,
-                //       ),
-                //     ),
-                //   ),
-                // ),
+                _detailRow(
+                  context,
+                  'Customer Name',
+                  billData?.customerName ?? 'N/A',
+                ),
+                _detailRow(
+                  context,
+                  'Bill Number',
+                  billData?.billNumber ?? 'N/A',
+                ),
+                _detailRow(context, 'Bill Date', billData?.billDate ?? 'N/A'),
+                _detailRow(
+                  context,
+                  'Bill Due Date',
+                  billData?.billDueDate ?? 'N/A',
+                ),
               ],
             ),
           ),
@@ -336,8 +332,35 @@ class _ElectricityBillPageState extends State<ElectricityBillPage> {
                       child: TextField(
                         controller: _customerIdController,
                         enabled: !_isBillFetched,
-                        onChanged: (_) {
+                        onChanged: (val) async {
                           setState(() {}); // Refresh to show/hide X icon
+
+                          // Automatically fetch if length is 10
+                          if (val.trim().length >= 10 && !_isBillFetched) {
+                            final pid =
+                                selectedBoardObj?.id?.toString() ?? productId;
+                            if (pid.isNotEmpty) {
+                              final success = await cableTvController.fetchBill(
+                                productid: pid,
+                                consumernumber: val.trim(),
+                              );
+                              if (success) {
+                                final billData = cableTvController
+                                    .fetchBillResponse
+                                    .value
+                                    ?.data
+                                    ?.bill;
+                                _amountController.text =
+                                    (billData?.amount ??
+                                            billData?.billAmount ??
+                                            "")
+                                        .toString();
+                                _mobileController.text =
+                                    billData?.customerNumber ?? "";
+                                setState(() => _isBillFetched = true);
+                              }
+                            }
+                          }
                         },
                         style: TextStyle(
                           fontSize: 14.sp,
@@ -520,22 +543,40 @@ class _ElectricityBillPageState extends State<ElectricityBillPage> {
                 width: double.infinity,
                 height: 50.h,
                 child: ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
                     if (!_isBillFetched) {
-                      if (_customerIdController.text.trim().isEmpty) return;
-                      setState(() => _isBillFetched = true);
+                      if (_customerIdController.text.trim().isEmpty) {
+                        CustomToast.error("Please enter Customer ID");
+                        return;
+                      }
+
+                      final pid = selectedBoardObj?.id?.toString() ?? productId;
+                      if (pid.isEmpty) {
+                        CustomToast.error("Please select a board");
+                        return;
+                      }
+
+                      final success = await cableTvController.fetchBill(
+                        productid: pid,
+                        consumernumber: _customerIdController.text.trim(),
+                      );
+
+                      if (success) {
+                        final billData = cableTvController
+                            .fetchBillResponse
+                            .value
+                            ?.data
+                            ?.bill;
+
+                        _amountController.text =
+                            (billData?.amount ?? billData?.billAmount ?? "")
+                                .toString();
+                        _mobileController.text = billData?.customerNumber ?? "";
+
+                        setState(() => _isBillFetched = true);
+                      }
                     } else {
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(
-                      //     builder: (context) => ConfirmTransactionPage(
-                      //       productName: 'Electricity Bill',
-                      //       operatorInitial: 'E',
-                      //       operatorColor: Colors.orange,
-                      //       amount: '₹${_amountController.text}',
-                      //     ),
-                      //   ),
-                      // );
+                      Get.to(ConfirmElectricity());
                     }
                   },
                   style: ElevatedButton.styleFrom(
