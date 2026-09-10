@@ -202,7 +202,7 @@ class _ScreenOtpVerificationState extends State<ScreenOtpVerification>
                         Text(
                           _isTestNumber
                               ? "Please enter the verification code\nsent to your phone number"
-                              : "Please paste the verification code\nsent to your phone number",
+                              : "Please paste the verification code\nsent to your phone number\n(Manual entry not available)",
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontFamily: 'Poppins',
