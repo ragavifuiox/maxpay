@@ -1,5 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:get/get.dart';
 import 'package:maxpay/controllers/auth_controller.dart';
 import 'package:maxpay/core/constants/colors.dart';
@@ -8,9 +11,7 @@ import 'package:maxpay/view/login/widgets/cutom_elevated_button.dart';
 import 'package:maxpay/view/login/widgets/resend_timer_widget.dart';
 import 'package:pinput/pinput.dart';
 
-import 'package:flutter/services.dart';
 import 'package:maxpay/core/utils/sim_util.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ScreenOtpVerification extends StatefulWidget {
   const ScreenOtpVerification({super.key});
@@ -23,41 +24,36 @@ class _ScreenOtpVerificationState extends State<ScreenOtpVerification>
     with WidgetsBindingObserver {
   final TextEditingController _otpController = TextEditingController();
   final FocusNode otpFocusNode = FocusNode();
-  Set<String> _pastedOtps = {};
+
   String? _clipboardOtp;
+  Set<String> _pastedOtps = {};
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _loadPastedOtps().then((_) {
-      if (mounted) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          _checkClipboardForOtp();
-        });
-      }
-    });
+    _loadPastedOtps();
+    _checkClipboardForOtp();
   }
 
   Future<void> _loadPastedOtps() async {
     final prefs = await SharedPreferences.getInstance();
-    final String today = DateTime.now().toIso8601String().split('T').first;
-    final String storedDate = prefs.getString('pasted_otp_date') ?? '';
+    setState(() {
+      _pastedOtps = (prefs.getStringList('pasted_otps') ?? []).toSet();
+    });
+  }
 
-    if (storedDate != today) {
-      await prefs.setStringList('pasted_otps', []);
-      await prefs.setString('pasted_otp_date', today);
-      _pastedOtps = {};
-    } else {
-      final List<String> storedOtps = prefs.getStringList('pasted_otps') ?? [];
-      _pastedOtps = storedOtps.toSet();
-    }
+  Future<void> _savePastedOtp(String otp) async {
+    final prefs = await SharedPreferences.getInstance();
+    _pastedOtps.add(otp);
+    await prefs.setStringList('pasted_otps', _pastedOtps.toList());
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _otpController.dispose();
+    otpFocusNode.dispose();
     super.dispose();
   }
 
@@ -71,49 +67,34 @@ class _ScreenOtpVerificationState extends State<ScreenOtpVerification>
   Future<void> _checkClipboardForOtp() async {
     try {
       final clipboardData = await Clipboard.getData(Clipboard.kTextPlain);
-      final text = clipboardData?.text?.trim() ?? '';
+      final text = clipboardData?.text;
 
-      if (text.isNotEmpty) {
-        final match = RegExp(r'\b\d{4}\b').firstMatch(text);
+      if (text != null && text.isNotEmpty) {
+        final regExp = RegExp(r'\b\d{4}\b');
+        final match = regExp.firstMatch(text);
+
         if (match != null) {
-          final otp = match.group(0)!;
-          // Prevent showing for the same OTP repeatedly
-          if (!_pastedOtps.contains(otp) && otp != _otpController.text) {
+          final otp = match.group(0);
+          if (otp != null && !_pastedOtps.contains(otp)) {
             setState(() {
               _clipboardOtp = otp;
-            });
-          } else if (_clipboardOtp != null) {
-            setState(() {
-              _clipboardOtp = null;
             });
           }
         }
       }
     } catch (e) {
-      // Graceful degradation: do nothing if clipboard access fails
+      debugPrint("Clipboard error: $e");
     }
   }
 
-  Future<void> _onPasteOtp() async {
+  void _onPasteOtp() {
     if (_clipboardOtp != null) {
-      final otpToPaste = _clipboardOtp!;
-
-      _pastedOtps.add(otpToPaste);
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setStringList('pasted_otps', _pastedOtps.toList());
-
+      _otpController.text = _clipboardOtp!;
+      _savePastedOtp(_clipboardOtp!);
       setState(() {
         _clipboardOtp = null;
       });
-      _otpController.text = otpToPaste;
-
-      // Unfocus to prevent keyboard from popping up
-      if (mounted) {
-        FocusScope.of(context).unfocus();
-      }
-
-      // Clear the clipboard
-      await Clipboard.setData(const ClipboardData(text: ''));
+      _verifyOtp();
     }
   }
 
@@ -241,8 +222,70 @@ class _ScreenOtpVerificationState extends State<ScreenOtpVerification>
                           toolbarEnabled: true,
                           enableInteractiveSelection: true,
                           showCursor: true,
+
+                          contextMenuBuilder: (context, editableTextState) {
+                            final original =
+                                editableTextState.contextMenuAnchors;
+
+                            final anchors = TextSelectionToolbarAnchors(
+                              primaryAnchor: original.primaryAnchor.translate(
+                                0,
+                                240,
+                              ),
+                            );
+
+                            return AdaptiveTextSelectionToolbar(
+                              anchors: anchors,
+
+                              children: [
+                                TextButton(
+                                  style: TextButton.styleFrom(
+                                    backgroundColor: AppColors.clrPrimary,
+                                  ),
+                                  onPressed: () {
+                                    editableTextState.pasteText(
+                                      SelectionChangedCause.toolbar,
+                                    );
+
+                                    editableTextState.hideToolbar();
+                                  },
+                                  child: const Text(
+                                    'Paste',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+
+                                if (_otpController.text.length == 4) ...[
+                                  VerticalDivider(color: AppColors.textclr),
+                                  TextButton(
+                                    onPressed: () {
+                                      _otpController.clear();
+
+                                      editableTextState.hideToolbar();
+
+                                      // Optional: remove focus
+                                      FocusScope.of(context).unfocus();
+                                    },
+                                    child: const Text(
+                                      'Clear',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ],
+                            );
+                          },
                           controller: _otpController,
-                          keyboardType: TextInputType.none,
+                          keyboardType: _isTestNumber
+                              ? TextInputType.number
+                              : TextInputType.none,
                           onTap: () => otpFocusNode.requestFocus(),
                           onCompleted: (pin) => _verifyOtp(),
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -295,6 +338,46 @@ class _ScreenOtpVerificationState extends State<ScreenOtpVerification>
                         ),
 
                         SizedBox(height: 20.h),
+                        if (_clipboardOtp != null)
+                          GestureDetector(
+                            onTap: _onPasteOtp,
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 16.w,
+                                vertical: 8.h,
+                              ),
+                              decoration: BoxDecoration(
+                                color: colorScheme.surfaceBright,
+                                borderRadius: BorderRadius.circular(20.r),
+                                border: Border.all(
+                                  color: colorScheme.outline.withValues(
+                                    alpha: 0.3,
+                                  ),
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.paste,
+                                    size: 16.sp,
+                                    color: AppColors.clrPrimary,
+                                  ),
+                                  SizedBox(width: 8.w),
+                                  Text(
+                                    'Paste $_clipboardOtp',
+                                    style: TextStyle(
+                                      fontFamily: 'Poppins',
+                                      fontSize: 14.sp,
+                                      fontWeight: FontWeight.w500,
+                                      color: colorScheme.onSurface,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        SizedBox(height: 20.h),
 
                         /// 🔹 Timer
                         ResendTimerWidget(
@@ -303,6 +386,10 @@ class _ScreenOtpVerificationState extends State<ScreenOtpVerification>
                             controller.resendOtp();
                           },
                         ),
+
+                        SizedBox(height: 20.h),
+
+                        // 🔹 Paste Button
                       ],
                     ),
                   ),

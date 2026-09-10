@@ -19,7 +19,7 @@ plugins {
 
 android {
     namespace = "com.paylink.retailor"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 37
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
