@@ -741,15 +741,14 @@ class _BroadBankdPageState extends State<BroadBandPage> {
                                 return;
                               }
 
-                              final res = broadbandController
-                                  .fetchBillResponse
-                                  .value
-                                  ?.data;
-
                               Get.to(
                                 BroadbandConfirmPage(),
                                 arguments: {
-                                  'bill_data': res,
+                                  'product_id':
+                                      selectedBoardObj?.id?.toString() ??
+                                      productId,
+                                  'customer_id': _customerIdController.text
+                                      .trim(),
                                   'is_received': _isReceived,
                                 },
                               );

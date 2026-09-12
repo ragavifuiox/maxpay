@@ -1,6 +1,5 @@
 // ignore_for_file: unused_local_variable
 
-
 import 'package:flutter/material.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -15,24 +14,32 @@ import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/core/extensions/currency.dart';
 import 'package:maxpay/global_widget/commom_button.dart';
 
-
 class FastagSuccessScreen extends StatelessWidget {
-  
- 
+  final String productName;
+  final String operatorInitial;
+  final Color operatorColor;
+  final String transactionNo;
+  final String rechargeAmount;
+  final String transactionId;
+  final String dateTime;
+  final String refId;
+
   const FastagSuccessScreen({
     super.key,
-   
-    
+    required this.productName,
+    required this.operatorInitial,
+    required this.operatorColor,
+    required this.transactionNo,
+    required this.rechargeAmount,
+    required this.transactionId,
+    required this.dateTime,
+    required this.refId,
   });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-  
-   
-
-  
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -84,7 +91,7 @@ class FastagSuccessScreen extends StatelessWidget {
 
               SizedBox(height: 40.h),
 
-              /// SUMMARY CARD
+            
               Container(
                 padding: EdgeInsets.all(20.r),
                 decoration: BoxDecoration(
@@ -95,34 +102,28 @@ class FastagSuccessScreen extends StatelessWidget {
                 ),
                 child: Column(
                   children: [
-                    //                    _buildSummaryRow(
-                    //   'Product',
-                    //   '',
-                    //   isIcon: true,
-                    //   imageUrl: operatorLogo,
-                    //   context: context,
-                    // ),
+                 
                     _buildSummaryRow(
                       'Transaction No',
-                      "787878787878",
+                      transactionNo,
                       context: context,
                     ),
                     _buildSummaryRow(
                       'Transaction Amount',
-                      "250",
+                      rechargeAmount,
                       context: context,
                     ),
                     _buildSummaryRow(
                       'Transaction ID',
-                      "txc4567898765",
+                      transactionId,
                       context: context,
                     ),
-                    _buildSummaryRow('Date & Time', "2/06/20206", context: context),
+                    _buildSummaryRow('Date & Time', dateTime, context: context),
 
                     SizedBox(height: 10.h),
 
                     GestureDetector(
-                    onTap: () => _showTransactionDetails(context),
+                      onTap: () => _showTransactionDetails(context),
                       child: Text(
                         'View Detail',
                         style: TextStyle(
@@ -190,18 +191,15 @@ class FastagSuccessScreen extends StatelessWidget {
     );
   }
 
-  /// ---------------- DETAILS POPUP ----------------
+  
 
-void _showTransactionDetails(BuildContext context) {
+  void _showTransactionDetails(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     showDialog(
       context: context,
       builder: (context) {
-   
-
         return Dialog(
-         
           child: Dialog(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15.r),
@@ -240,7 +238,7 @@ void _showTransactionDetails(BuildContext context) {
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      "Transaction ID : txc4567890gthb",
+                      "Transaction ID : $transactionId",
                       style: TextStyle(
                         fontSize: 12.sp,
                         fontWeight: FontWeight.w500,
@@ -255,7 +253,7 @@ void _showTransactionDetails(BuildContext context) {
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      "Date & Time :02/06/2026",
+                      "Date & Time : $dateTime",
                       style: TextStyle(
                         fontSize: 12.sp,
                         fontWeight: FontWeight.w500,
@@ -276,18 +274,22 @@ void _showTransactionDetails(BuildContext context) {
                     valueColor: Colors.green,
                   ),
 
-                  _detailRow(context, "Transaction No","8989898989"),
+                  _detailRow(context, "Transaction No", transactionNo),
 
                   _detailRow(
                     context,
                     "Transaction Amount",
-                    ("234").currencyIndian,
+                    rechargeAmount.currencyIndian,
                   ),
 
-                  _detailRow(context, "Product Type", "Mobile Prepaid"),
+                  _detailRow(context, "Product Type", "Fastag"),
 
                   // _logoRow("Product", operatorLogo, context),
-                  _detailRow(context, "Product Ref Id", "34567893456"),
+                  _detailRow(
+                    context,
+                    "Product Ref Id",
+                    refId.isNotEmpty ? refId : "-",
+                  ),
 
                   SizedBox(height: 10.h),
 
@@ -300,16 +302,8 @@ void _showTransactionDetails(BuildContext context) {
                     ),
                     child: Column(
                       children: [
-                        _detailRow(
-                          context,
-                          "Retailer Name",
-                          "John Retailer",
-                        ),
-                        _detailRow(
-                          context,
-                          "Contact No",
-                       "9876543210"
-                        ),
+                        _detailRow(context, "Retailer Name", "John Retailer"),
+                        _detailRow(context, "Contact No", "9876543210"),
                       ],
                     ),
                   ),
@@ -329,9 +323,7 @@ void _showTransactionDetails(BuildContext context) {
                         child: SizedBox(
                           height: 42.h,
                           child: ElevatedButton(
-                            onPressed: () {
-   
-  },
+                            onPressed: () {},
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.red,
                               elevation: 0,
