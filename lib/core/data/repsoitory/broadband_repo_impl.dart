@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:maxpay/core/constants/api_routes.dart';
 import 'package:maxpay/core/data/model/broadband_confirm_model.dart';
 import 'package:maxpay/core/data/model/instant_pay_model.dart';
+import 'package:maxpay/core/data/model/instant_pay_bill_model.dart';
 import 'package:maxpay/core/domain/repository/broadband_repository.dart';
 import 'package:maxpay/core/error/failure.dart';
 import 'package:maxpay/core/services/api_services.dart';
@@ -50,6 +51,40 @@ class BroadbandBillRepoImpl implements BroadbandBillRepository {
       return Right(model);
     } on DioException catch (e, stackTrace) {
       print("API EXCEPTION IN REPO CONFIRM: `$e\n`$stackTrace");
+      return Left(DioErrorHandler.handle(e));
+    }
+  }
+
+  @override
+  Future<Either<Failure, InstantPayBill>> payTransaction({
+    required String productId,
+    required String consumerNumber,
+    required String amount,
+    required String reEnterAmount,
+    required String enquiryReference,
+    required String customerMobile,
+    required String whatsappNumber,
+  }) async {
+    try {
+      final formData = FormData.fromMap({
+        'product_id': productId,
+        'consumer_number': consumerNumber,
+        'amount': amount,
+        're_enter_amount': reEnterAmount,
+        'enquiry_reference': enquiryReference,
+        'customer_mobile': customerMobile,
+        'whatsapp_number': whatsappNumber,
+      });
+
+      final response = await apiService.post(
+        ApiRoutes.broadbandPay,
+        data: formData,
+      );
+      print("BROADBAND PAY API RESPONSE: $response");
+      final model = InstantPayBill.fromJson(response);
+      return Right(model);
+    } on DioException catch (e, stackTrace) {
+      print("API EXCEPTION IN REPO PAY: `$e\n`$stackTrace");
       return Left(DioErrorHandler.handle(e));
     }
   }

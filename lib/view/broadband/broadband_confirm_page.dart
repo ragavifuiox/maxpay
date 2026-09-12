@@ -10,7 +10,6 @@ import 'package:maxpay/core/constants/snackbar.dart';
 import 'package:maxpay/view/broadband/broad_band_customer_page.dart';
 import 'package:maxpay/view/broadband/broad_band_success_page.dart';
 
-
 class BroadbandConfirmPage extends StatefulWidget {
   final String productName;
   final String operatorInitial;
@@ -48,15 +47,14 @@ class _BroadbandConfirmPageState extends State<BroadbandConfirmPage> {
     controller = Get.find<BroadbandController>();
     args = Get.arguments ?? {};
 
-    final billData = args['bill_data'];
-    final pId = (billData?.product?.id)?.toString() ?? '';
+    final pId =
+        args['product_id']?.toString() ?? args['productId']?.toString() ?? '';
 
     if (pId.isNotEmpty) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         controller.confirmTransaction(pId);
       });
     }
-    
   }
 
   @override
@@ -64,19 +62,8 @@ class _BroadbandConfirmPageState extends State<BroadbandConfirmPage> {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
-    final billData = args['bill_data'];
     final isReceived = args['is_received'] ?? true;
     final String paymentStatus = isReceived ? "Received" : "Pending";
-    final String finalProductName =
-        billData?.product?.name ?? widget.productName;
-    final String customerId = billData?.bill?.customerNumber ?? 'N/A';
-    final String logoUrl = billData?.product?.logo ?? '';
-
-    final rawAmountVal =
-        billData?.bill?.amount ?? billData?.bill?.billAmount ?? 0.0;
-    final double rawAmount = rawAmountVal is num
-        ? rawAmountVal.toDouble()
-        : double.tryParse(rawAmountVal.toString()) ?? 0.0;
 
     return Obx(() {
       final confirmData = controller.confirmResponse.value?.data;
@@ -95,9 +82,15 @@ class _BroadbandConfirmPageState extends State<BroadbandConfirmPage> {
         );
       }
 
+      final String finalProductName =
+          confirmData.productName ?? widget.productName;
+      final String logoUrl = confirmData.logo ?? '';
+      final String customerId =
+          args['customer_id']?.toString() ?? confirmData.transactionNo ?? 'N/A';
+
       final String availableBalanceStr = confirmData.availableBalance ?? '0';
       final String transactionAmountStr =
-          confirmData.transactionAmount ?? rawAmount.toString();
+          confirmData.transactionAmount ?? confirmData.amount ?? '0';
       final String commissionRaw = confirmData.commision ?? '0';
       final String commissionType = confirmData.commissiontype ?? "Fixed";
 
@@ -142,6 +135,7 @@ class _BroadbandConfirmPageState extends State<BroadbandConfirmPage> {
                   productName: finalProductName,
                   operatorInitial: widget.operatorInitial,
                   operatorColor: widget.operatorColor,
+                  logoUrl: logoUrl,
                   transactionNo: customerId,
                   amount: finalAmount,
                   paymentStatus: paymentStatus,
@@ -194,20 +188,45 @@ class _BroadbandConfirmPageState extends State<BroadbandConfirmPage> {
                 Center(
                   child: CommonButton(
                     title: 'Pay Now',
-                    onTap: () {
+                    onTap: () async {
                       if (amountController.text.trim().isEmpty) {
                         Get.snackbar("Validation", "Please Re-enter amount");
                         return;
                       }
-                      final reentered =
-                          double.tryParse(amountController.text.trim()) ?? 0.0;
-                      if (parsedTransaction != reentered) {
-                        CustomToast.error(
-                          "Re-entered amount does not match the transaction amount",
-                        );
-                        return;
-                      }
-                      Get.to(BroadBandSuccessPage());
+                      
+                      controller
+                          .payTransaction(
+                            productId:
+                                args['product_id']?.toString() ??
+                                args['productId']?.toString() ??
+                                '',
+                            consumerNumber:
+                                args['customer_id']?.toString() ??
+                                confirmData?.transactionNo ??
+                                '',
+                            amount: amountController.text.trim(),
+                            reEnterAmount: amountController.text.trim(),
+                            enquiryReference:
+                                '', // Update if there is an enquiry reference available
+                            customerMobile:
+                                args['customer_mobile']?.toString() ?? '',
+                            whatsappNumber: whatsappController.text.trim(),
+                          )
+                          .then((res) {
+                            if (res != null && res.success == true) {
+                              if (res.data?.status == "Success") {
+                                Get.off(
+                                  () => BroadBandSuccessPage(),
+                                  arguments: {'transaction': res.data},
+                                );
+                              } else if (res.data?.status == "Pending") {
+                                Get.snackbar(
+                                  'Pending',
+                                  'Transaction is pending',
+                                ); // Use actual pending route if exists
+                              }
+                            }
+                          });
                     },
                   ),
                 ),
@@ -282,6 +301,7 @@ class _TransactionSummaryCard extends StatelessWidget {
     required this.productName,
     required this.operatorInitial,
     required this.operatorColor,
+    this.logoUrl,
     required this.transactionNo,
     required this.amount,
     required this.paymentStatus,
@@ -295,6 +315,7 @@ class _TransactionSummaryCard extends StatelessWidget {
   final String productName;
   final String operatorInitial;
   final Color operatorColor;
+  final String? logoUrl;
   final String transactionNo;
   final String amount;
   final String paymentStatus;
@@ -329,10 +350,26 @@ class _TransactionSummaryCard extends StatelessWidget {
             context,
             label: 'Product Name',
             value: productName,
-            trailing: _OperatorBadge(
-              label: productName.isNotEmpty ? productName : operatorInitial,
-              color: operatorColor,
-            ),
+            trailing: (logoUrl != null && logoUrl!.isNotEmpty)
+                ? Image.network(
+                    logoUrl!,
+                    width: 32.w,
+                    height: 32.h,
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) =>
+                        _OperatorBadge(
+                          label: productName.isNotEmpty
+                              ? productName
+                              : operatorInitial,
+                          color: operatorColor,
+                        ),
+                  )
+                : _OperatorBadge(
+                    label: productName.isNotEmpty
+                        ? productName
+                        : operatorInitial,
+                    color: operatorColor,
+                  ),
           ),
           SizedBox(height: 18.h),
           _buildDetailRow(

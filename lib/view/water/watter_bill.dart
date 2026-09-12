@@ -693,7 +693,7 @@ class _WatterBillageState extends State<WatterBill> {
                                     billData?.customerNumber ?? "";
 
                                 setState(() => _isBillFetched = true);
-                              }
+                              
                             } else {
                               final requiredAmount =
                                   double.tryParse(_amountController.text) ??

@@ -94,6 +94,14 @@ class ApiRoutes {
   static const waterbill = "/get_water_bill";
   static const broadbandbill = "/broadband_fetch_bill";
   static const broadbandConfirm = "/broadband_confirm_transaction/";
+  static const broadbandPay = "/broadband_pay";
   static const fastagfetchbill = "/fastag_fetch_bill";
   static const fastagConfirm = "/fastag_confirm_transaction/";
+  static const fastagPay = "/fastag_pay";
+  static const electricitybill = "/electricity_fetch_bill";
+  static const electricityConfirm = "/electricity_confirm_transaction/";
+  static const electricityPay = "/electricity_pay";
+  static const landlinebill = "/landline_fetch_bill";
+  static const landlineConfirm = "/landline_confirm_transaction/";
+  static const landlinePay = "/landline_pay";
 }

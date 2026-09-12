@@ -4,6 +4,9 @@ import 'package:maxpay/core/data/model/instant_pay_model.dart';
 import 'package:maxpay/core/di/service_locator.dart';
 import 'package:maxpay/core/domain/usecase/broadband_confirm_usecase.dart';
 import 'package:maxpay/core/domain/usecase/broadband_usecase.dart';
+import 'package:maxpay/core/domain/usecase/broadband_pay_usecase.dart';
+import 'package:maxpay/core/data/model/instant_pay_bill_model.dart';
+import 'package:maxpay/core/constants/routes_path.dart';
 
 class BroadbandController extends GetxController {
   final BroadbandBillUsecase broadbandBillUsecase;
@@ -73,5 +76,51 @@ class BroadbandController extends GetxController {
         }
       },
     );
+  }
+
+  var isPayLoading = false.obs;
+
+  Future<InstantPayBill?> payTransaction({
+    required String productId,
+    required String consumerNumber,
+    required String amount,
+    required String reEnterAmount,
+    required String enquiryReference,
+    required String customerMobile,
+    required String whatsappNumber,
+  }) async {
+    isPayLoading.value = true;
+    final result = await sl<BroadbandPayUsecase>().call(
+      productId: productId,
+      consumerNumber: consumerNumber,
+      amount: amount,
+      reEnterAmount: reEnterAmount,
+      enquiryReference: enquiryReference,
+      customerMobile: customerMobile,
+      whatsappNumber: whatsappNumber,
+    );
+
+    isPayLoading.value = false;
+    InstantPayBill? payResult;
+
+    result.fold(
+      (failure) {
+        print("BROADBAND PAY FAILED: ${failure.message}");
+        Get.snackbar('Error', 'Payment failed: ${failure.message}');
+      },
+      (data) {
+        payResult = data;
+        if (data.success == true) {
+          Get.snackbar('Success', data.message ?? "Payment successful");
+        } else {
+          if (data.message?.toLowerCase().contains('insufficient') ?? false) {
+            Get.toNamed(AppRoutes.walletrequest);
+          } else {
+            Get.snackbar('Payment Failed', data.message ?? 'Unknown error');
+          }
+        }
+      },
+    );
+    return payResult;
   }
 }
