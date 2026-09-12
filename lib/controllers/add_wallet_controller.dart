@@ -1030,13 +1030,6 @@ class AddWalletController extends GetxController with WidgetsBindingObserver {
 
           // If we couldn't create a proper UPI URL,
           // don't show an invalid QR.
-          if (!isValidUpiUrl(qrUpiUrl)) {
-            CustomToast.error("Invalid UPI payment link received from server");
-
-            AppLogger.debugPrint("Invalid QR UPI URL: $qrUpiUrl");
-
-            return;
-          }
 
           // Start payment timer
           startTimer(ekqrData?.txnId ?? wordlinkData?.txnId ?? '');

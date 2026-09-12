@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -119,13 +121,56 @@ class _AddWalletPopupState extends State<AddWalletPopup> {
                     border: Border.all(color: Colors.grey.shade300),
                   ),
                   child: Center(
-                    child: QrImageView(
-                      data: ekqrData?.upiLink ?? '',
-                      version: QrVersions.auto,
-                      size: 210,
-                      backgroundColor: Colors.white,
-                      errorCorrectionLevel: QrErrorCorrectLevel.M,
-                    ),
+                    child:
+                        (ekqrData == null ||
+                            ekqrData.upiLink == null ||
+                            ekqrData.upiLink!.isEmpty)
+                        ? Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              ImageFiltered(
+                                imageFilter: ImageFilter.blur(
+                                  sigmaX: 4.0,
+                                  sigmaY: 4.0,
+                                ),
+                                child: QrImageView(
+                                  data: "QR_NOT_AVAILABLE",
+                                  version: QrVersions.auto,
+                                  size: 210,
+                                  backgroundColor: Colors.white,
+                                  errorCorrectionLevel: QrErrorCorrectLevel.M,
+                                ),
+                              ),
+
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 8,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withOpacity(0.8),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: const Text(
+                                  "QR is not available\nat the moment",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: Colors.blue,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    fontFamily: 'Poppins',
+                                  ),
+                                ),
+                              ),
+                            ],
+                          )
+                        : QrImageView(
+                            data: ekqrData.upiLink!,
+                            version: QrVersions.auto,
+                            size: 210,
+                            backgroundColor: Colors.white,
+                            errorCorrectionLevel: QrErrorCorrectLevel.M,
+                          ),
                   ),
                 ),
               ),
@@ -135,14 +180,17 @@ class _AddWalletPopupState extends State<AddWalletPopup> {
               // ----------------------------------------------------------
               // TAP QR
               // ----------------------------------------------------------
-              Text(
-                "Tap QR to open payment",
-                style: TextStyle(
-                  fontSize: 12,
-                  color: isDark ? Colors.grey[400] : Colors.grey[600],
-                  fontFamily: 'Poppins',
+              if (ekqrData != null &&
+                  ekqrData.upiLink != null &&
+                  ekqrData.upiLink!.isNotEmpty)
+                Text(
+                  "Tap QR to open payment",
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: isDark ? Colors.grey[400] : Colors.grey[600],
+                    fontFamily: 'Poppins',
+                  ),
                 ),
-              ),
 
               const SizedBox(height: 18),
 
@@ -268,7 +316,7 @@ class _AddWalletPopupState extends State<AddWalletPopup> {
                   //     const Icon(Ionicons.logo_paypal, size: 24),
                 ),
               ),
-              
+
               const SizedBox(height: 10),
             ],
           ),

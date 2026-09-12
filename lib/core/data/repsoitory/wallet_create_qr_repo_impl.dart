@@ -28,7 +28,9 @@ class WalletCreateQrRepoImpl implements WalletCreateQrRepo {
 
       final responseData = CreateQrResponse.fromJson(response);
 
-      if (responseData.status == true) {
+      if (responseData.status == true ||
+          responseData.worldline != null ||
+          responseData.ekqr != null) {
         return Right(responseData);
       } else {
         return Left(ServerFailure(message: responseData.status.toString()));
