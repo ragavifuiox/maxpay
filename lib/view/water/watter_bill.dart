@@ -13,7 +13,6 @@ import 'package:maxpay/controllers/water_controller.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
 
 class _BillColors {
- 
   static const fieldGreyDark = Color(0xFF2A2E33);
 }
 
@@ -670,12 +669,12 @@ class _WatterBillageState extends State<WatterBill> {
                               }
                               if (_customerIdController.text.trim().isEmpty)
                                 return;
-                              }
+                            }
 
-                              final success = await waterController.fetchBill(
-                                selectedBoardObj!.id.toString(),
-                                _customerIdController.text.trim(),
-                              );
+                            final success = await waterController.fetchBill(
+                              selectedBoardObj!.id.toString(),
+                              _customerIdController.text.trim(),
+                            );
 
                               if (success) {
                                 final billData = waterController
