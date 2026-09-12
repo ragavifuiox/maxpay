@@ -1,15 +1,17 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:maxpay/controllers/prepaid_controller.dart';
+import 'package:maxpay/controllers/electricity_controller.dart';
 import 'package:maxpay/core/di/service_locator.dart';
 import 'package:maxpay/core/data/model/plan_model.dart';
 import 'package:maxpay/controllers/homepage_controller.dart';
 import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
+import 'package:maxpay/view/electricity_bill/confirm_electricity.dart';
 
 class _BillColors {
-  // static const fieldGrey = Color(0xFFF3F4F6);
   static const fieldGreyDark = Color(0xFF2A2E33);
 }
 
@@ -21,17 +23,22 @@ class ElectricityBillPage extends StatefulWidget {
 }
 
 class _ElectricityBillPageState extends State<ElectricityBillPage> {
+  Timer? _debounce;
   bool _isBillFetched = false;
 
   // Payment status toggle: true = Received, false = Not Received
   bool _isReceived = true;
 
   final TextEditingController _customerIdController = TextEditingController();
-  final TextEditingController _mobileController = TextEditingController(
-    text: '9876543213',
-  );
-  final TextEditingController _amountController = TextEditingController(
-    text: '500.00',
+  final TextEditingController _mobileController = TextEditingController();
+  final TextEditingController _amountController = TextEditingController();
+
+  final ElectricityController electricityController = Get.put(
+    ElectricityController(
+      electricityBillUseCase: sl(),
+      electricityConfirmUsecase: sl(),
+      electricityPayUseCase: sl(),
+    ),
   );
 
   final PrePaidController controller = Get.put(
@@ -65,6 +72,7 @@ class _ElectricityBillPageState extends State<ElectricityBillPage> {
 
   @override
   void dispose() {
+    _debounce?.cancel();
     _customerIdController.dispose();
     _mobileController.dispose();
     _amountController.dispose();
@@ -336,8 +344,54 @@ class _ElectricityBillPageState extends State<ElectricityBillPage> {
                       child: TextField(
                         controller: _customerIdController,
                         enabled: !_isBillFetched,
-                        onChanged: (_) {
+                        onChanged: (val) {
                           setState(() {}); // Refresh to show/hide X icon
+
+                          if (_debounce?.isActive ?? false) _debounce!.cancel();
+
+                          if (val.trim().length >= 10 &&
+                              selectedBoardObj != null &&
+                              !_isBillFetched) {
+                            _debounce = Timer(
+                              const Duration(milliseconds: 700),
+                              () async {
+                                // We use 700ms because it waits for user to stop typing slightly before fetching
+                                FocusScope.of(context).unfocus();
+
+                                final pid =
+                                    selectedBoardObj?.id?.toString() ??
+                                    productId;
+                                bool isSuccess = await electricityController
+                                    .fetchBill(
+                                      productid: pid,
+                                      consumernumber: val.trim(),
+                                    );
+
+                                if (isSuccess) {
+                                  final fetchResponse = electricityController
+                                      .fetchBillResponse
+                                      .value;
+                                  if (fetchResponse != null &&
+                                      fetchResponse.data != null &&
+                                      fetchResponse.data?.bill != null) {
+                                    _mobileController.text =
+                                        fetchResponse
+                                            .data
+                                            ?.bill
+                                            ?.customerNumber ??
+                                        "";
+                                    _amountController.text =
+                                        fetchResponse.data?.bill?.billAmount
+                                            ?.toString() ??
+                                        "";
+                                    setState(() {
+                                      _isBillFetched = true;
+                                    });
+                                  }
+                                }
+                              },
+                            );
+                          }
                         },
                         style: TextStyle(
                           fontSize: 14.sp,
@@ -464,42 +518,95 @@ class _ElectricityBillPageState extends State<ElectricityBillPage> {
                       Container(
                         width: double.infinity,
                         padding: EdgeInsets.symmetric(
-                          vertical: 14.h,
-                          horizontal: 16.w,
+                          horizontal: 14.w,
+                          vertical: 12.h,
                         ),
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10.r),
                           border: Border.all(
-                            color: AppColors.clrPrimary.withValues(alpha: 0.6),
+                            color: const Color(0xff19A7CE),
+                            width: 1,
                           ),
+                          borderRadius: BorderRadius.circular(10.r),
                         ),
-                        child: Column(
+                        child: Stack(
+                          clipBehavior: Clip.none,
                           children: [
-                            Text(
-                              'Customer Payment',
-                              style: TextStyle(
-                                fontSize: 13.sp,
-                                fontWeight: FontWeight.w700,
-                                color: AppColors.clrPrimary,
-                              ),
-                            ),
-                            SizedBox(height: 10.h),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            Column(
                               children: [
-                                _paymentOption(
-                                  label: 'Not Received',
-                                  color: Colors.red,
-                                  selected: !_isReceived,
-                                  onTap: () =>
-                                      setState(() => _isReceived = false),
+                                Text(
+                                  "Customer Payment",
+                                  style: TextStyle(
+                                    fontSize: 15.sp,
+                                    fontWeight: FontWeight.w700,
+                                    color: const Color(0xff19A7CE),
+                                    decoration: TextDecoration.underline,
+                                  ),
                                 ),
-                                _paymentOption(
-                                  label: 'Received',
-                                  color: Colors.green,
-                                  selected: _isReceived,
-                                  onTap: () =>
-                                      setState(() => _isReceived = true),
+                                SizedBox(height: 12.h),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    /// Not Received
+                                    GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          _isReceived = false;
+                                        });
+                                      },
+                                      child: Row(
+                                        children: [
+                                          Checkbox(
+                                            value: _isReceived == false,
+                                            activeColor: Colors.red,
+                                            onChanged: (_) {
+                                              setState(() {
+                                                _isReceived = false;
+                                              });
+                                            },
+                                          ),
+                                          Text(
+                                            "Pending    ",
+                                            style: TextStyle(
+                                              color: Colors.red,
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 14.sp,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+
+                                    /// Received
+                                    GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          _isReceived = true;
+                                        });
+                                      },
+                                      child: Row(
+                                        children: [
+                                          Checkbox(
+                                            value: _isReceived == true,
+                                            activeColor: Colors.green,
+                                            onChanged: (_) {
+                                              setState(() {
+                                                _isReceived = true;
+                                              });
+                                            },
+                                          ),
+                                          Text(
+                                            "Paid",
+                                            style: TextStyle(
+                                              color: Colors.green,
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 14.sp,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
@@ -520,22 +627,47 @@ class _ElectricityBillPageState extends State<ElectricityBillPage> {
                 width: double.infinity,
                 height: 50.h,
                 child: ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
                     if (!_isBillFetched) {
-                      if (_customerIdController.text.trim().isEmpty) return;
-                      setState(() => _isBillFetched = true);
+                      if (_customerIdController.text.trim().isEmpty) {
+                        return;
+                      }
+
+                      final pid = selectedBoardObj?.id?.toString() ?? productId;
+                      if (pid.isEmpty) return;
+
+                      bool isSuccess = await electricityController.fetchBill(
+                        productid: pid,
+                        consumernumber: _customerIdController.text.trim(),
+                      );
+
+                      if (isSuccess) {
+                        final fetchResponse =
+                            electricityController.fetchBillResponse.value;
+                        if (fetchResponse != null &&
+                            fetchResponse.data != null &&
+                            fetchResponse.data?.bill != null) {
+                          _mobileController.text =
+                              fetchResponse.data?.bill?.customerNumber ?? "";
+                          _amountController.text =
+                              fetchResponse.data?.bill?.billAmount
+                                  ?.toString() ??
+                              "";
+                          setState(() => _isBillFetched = true);
+                        }
+                      }
                     } else {
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(
-                      //     builder: (context) => ConfirmTransactionPage(
-                      //       productName: 'Electricity Bill',
-                      //       operatorInitial: 'E',
-                      //       operatorColor: Colors.orange,
-                      //       amount: '₹${_amountController.text}',
-                      //     ),
-                      //   ),
-                      // );
+                      final pid = selectedBoardObj?.id?.toString() ?? productId;
+                      Get.to(
+                        () => const ConfirmElectricity(),
+                        arguments: {
+                          'product_id': pid,
+                          'customer_id': _customerIdController.text.trim(),
+                          'product_name': selectedBoardObj?.name ?? "",
+                          'logo': selectedBoardObj?.logo ?? "",
+                          'transaction_amount': _amountController.text.trim(),
+                        },
+                      );
                     }
                   },
                   style: ElevatedButton.styleFrom(
@@ -545,61 +677,31 @@ class _ElectricityBillPageState extends State<ElectricityBillPage> {
                     ),
                     elevation: 0,
                   ),
-                  child: Text(
-                    'Continue',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16.sp,
-                      fontFamily: 'Lufga',
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
+                  child: Obx(() {
+                    return electricityController.isLoading.value
+                        ? SizedBox(
+                            height: 24.h,
+                            width: 24.h,
+                            child: const CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 2.5,
+                            ),
+                          )
+                        : Text(
+                            'Continue',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16.sp,
+                              fontFamily: 'Lufga',
+                              fontWeight: FontWeight.w500,
+                            ),
+                          );
+                  }),
                 ),
               ),
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  // ------------------------------------------------------------------
-  // Payment option (checkbox + label)
-  // ------------------------------------------------------------------
-  Widget _paymentOption({
-    required String label,
-    required Color color,
-    required bool selected,
-    required VoidCallback onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      behavior: HitTestBehavior.opaque,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(
-            width: 18.w,
-            height: 18.w,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(4.r),
-              border: Border.all(color: color, width: 1.4),
-              color: selected ? color : Colors.transparent,
-            ),
-            child: selected
-                ? Icon(Icons.check, size: 13.sp, color: Colors.white)
-                : null,
-          ),
-          SizedBox(width: 6.w),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 12.sp,
-              fontWeight: FontWeight.w600,
-              color: color,
-            ),
-          ),
-        ],
       ),
     );
   }

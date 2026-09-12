@@ -1,5 +1,23 @@
 import 'package:get_it/get_it.dart';
 import 'package:maxpay/core/data/repsoitory/delete_staff_repo_impl.dart';
+import 'package:maxpay/core/domain/repository/landline_bill_repository.dart';
+import 'package:maxpay/core/data/repsoitory/landline_bill_repo_impl.dart';
+import 'package:maxpay/core/domain/usecase/landline_bill_usecase.dart';
+import 'package:maxpay/core/domain/repository/landline_confirm_repository.dart';
+import 'package:maxpay/core/data/repsoitory/landline_confirm_repo_impl.dart';
+import 'package:maxpay/core/domain/usecase/landline_confirm_usecase.dart';
+import 'package:maxpay/core/domain/repository/landline_pay_repository.dart';
+import 'package:maxpay/core/data/repsoitory/landline_pay_repo_impl.dart';
+import 'package:maxpay/core/domain/usecase/landline_pay_usecase.dart';
+import 'package:maxpay/core/domain/repository/electricity_bill_repository.dart';
+import 'package:maxpay/core/data/repsoitory/electricity_bill_repo_impl.dart';
+import 'package:maxpay/core/domain/usecase/electricity_bill_usecase.dart';
+import 'package:maxpay/core/domain/repository/electricity_confirm_repository.dart';
+import 'package:maxpay/core/data/repsoitory/electricity_confirm_repo_impl.dart';
+import 'package:maxpay/core/domain/usecase/electricity_confirm_usecase.dart';
+import 'package:maxpay/core/domain/repository/electricity_pay_repository.dart';
+import 'package:maxpay/core/data/repsoitory/electricity_pay_repo_impl.dart';
+import 'package:maxpay/core/domain/usecase/electricity_pay_usecase.dart';
 import 'package:maxpay/core/data/repsoitory/active_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/add_kyc_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/add_staff_repo_impl.dart';
@@ -54,6 +72,10 @@ import 'package:maxpay/core/data/repsoitory/seach_dth_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/search_earning_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/search_plan_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/search_staff_repo_impl.dart';
+import 'package:maxpay/core/domain/repository/fastag_pay_repository.dart';
+import 'package:maxpay/core/data/repsoitory/fastag_pay_repo_impl.dart';
+import 'package:maxpay/core/domain/usecase/fastag_pay_usecase.dart';
+import 'package:maxpay/controllers/electricity_controller.dart';
 import 'package:maxpay/controllers/water_controller.dart';
 import 'package:maxpay/core/data/repsoitory/staff_lsit_repo_impl.dart';
 import 'package:maxpay/core/data/repsoitory/staff_wallet_reverse_repo_impl.dart';
@@ -74,6 +96,7 @@ import 'package:maxpay/core/data/repsoitory/broadband_repo_impl.dart';
 import 'package:maxpay/core/domain/repository/broadband_repository.dart';
 import 'package:maxpay/core/domain/usecase/broadband_confirm_usecase.dart';
 import 'package:maxpay/core/domain/usecase/broadband_usecase.dart';
+import 'package:maxpay/core/domain/usecase/broadband_pay_usecase.dart';
 import 'package:maxpay/controllers/broadband_controller.dart';
 import 'package:maxpay/core/domain/repository/fastag_repository.dart';
 import 'package:maxpay/core/data/repsoitory/fastag_repository_impl.dart';
@@ -279,9 +302,6 @@ Future<void> initDependencies() async {
 
   sl.registerLazySingleton(() => WaterController(sl()));
   sl.registerLazySingleton(() => BroadbandController(sl()));
-  sl.registerLazySingleton(
-    () => FastagController(fetchFastagBillUseCase: sl(), confirmUsecase: sl()),
-  );
 
   if (!sl.isRegistered<ApiService>()) {
     sl.registerLazySingleton(() => ApiService());
@@ -632,6 +652,7 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton<BroadbandBillUsecase>(
     () => BroadbandBillUsecase(sl()),
   );
+  sl.registerLazySingleton(() => BroadbandPayUsecase(sl()));
   sl.registerLazySingleton<WalletTrnasferDetailUsecase>(
     () => WalletTrnasferDetailUsecase(sl()),
   );
@@ -649,13 +670,64 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton<FetchFastagBillUseCase>(
     () => FetchFastagBillUseCase(sl()),
   );
-
+  // Fastag Confirm
   sl.registerLazySingleton<FastagConfirmRepository>(
     () => FastagConfirmRepoImpl(sl()),
   );
-  sl.registerLazySingleton<FastagConfirmUsecase>(
-    () => FastagConfirmUsecase(repository: sl()),
+
+  // Fastag Pay
+  sl.registerLazySingleton<FastagPayRepository>(() => FastagPayRepoImpl(sl()));
+
+  sl.registerLazySingleton(() => FastagConfirmUsecase(repository: sl()));
+  sl.registerLazySingleton(() => FastagPayUsecase(sl()));
+
+  sl.registerFactory(
+    () => FastagController(
+      fetchFastagBillUseCase: sl(),
+      confirmUsecase: sl(),
+      payUsecase: sl(),
+    ),
   );
+
+  sl.registerLazySingleton<ElectricityBillRepository>(
+    () => ElectricityBillRepoImpl(sl()),
+  );
+  sl.registerLazySingleton<ElectricityBillUseCase>(
+    () => ElectricityBillUseCase(sl()),
+  );
+
+  sl.registerLazySingleton<ElectricityConfirmRepository>(
+    () => ElectricityConfirmRepoImpl(sl()),
+  );
+  sl.registerLazySingleton<ElectricityConfirmUsecase>(
+    () => ElectricityConfirmUsecase(sl()),
+  );
+
+  sl.registerLazySingleton<ElectricityPayRepository>(
+    () => ElectricityPayRepoImpl(sl()),
+  );
+  sl.registerLazySingleton<ElectricityPayUsecase>(
+    () => ElectricityPayUsecase(sl()),
+  );
+
+  sl.registerLazySingleton<LandlineBillRepository>(
+    () => LandlineBillRepoImpl(sl()),
+  );
+  sl.registerLazySingleton<LandlineBillUseCase>(
+    () => LandlineBillUseCase(sl()),
+  );
+
+  sl.registerLazySingleton<LandlineConfirmRepository>(
+    () => LandlineConfirmRepoImpl(sl()),
+  );
+  sl.registerLazySingleton<LandlineConfirmUsecase>(
+    () => LandlineConfirmUsecase(sl()),
+  );
+
+  sl.registerLazySingleton<LandlinePayRepository>(
+    () => LandlinePayRepoImpl(sl()),
+  );
+  sl.registerLazySingleton<LandlinePayUsecase>(() => LandlinePayUsecase(sl()));
 
   // sl.registerLazySingleton<GetPrivacyPolicyUseCase>(
   //   () => GetPrivacyPolicyUseCase(sl()),

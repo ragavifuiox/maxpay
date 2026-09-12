@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:in_app_review/in_app_review.dart';
+// import 'package:in_app_review/in_app_review.dart';
 import 'package:maxpay/controllers/auth_controller.dart';
 import 'package:maxpay/controllers/profile_controller.dart';
 import 'package:maxpay/controllers/update_pin_controller.dart';
@@ -49,14 +49,14 @@ class SettingsPage extends StatelessWidget {
           
     final isTablet = Responsive.isTablet(context);
 
-    Future<void> openRatingReview() async {
-      final InAppReview inAppReview = InAppReview.instance;
-      try {
-        await inAppReview.openStoreListing(appStoreId: 'com.paylink.retailor');
-      } catch (e) {
-        debugPrint("Could not open store listing: $e");
-      }
-    }
+    // Future<void> openRatingReview() async {
+    //   final InAppReview inAppReview = InAppReview.instance;
+    //   try {
+    //     await inAppReview.openStoreListing(appStoreId: 'com.paylink.retailor');
+    //   } catch (e) {
+    //     debugPrint("Could not open store listing: $e");
+    //   }
+    // }
 
     return Obx(() {
       final isDark = themeController.isDarkMode;
@@ -266,7 +266,7 @@ class SettingsPage extends StatelessWidget {
                     context,
                     'Rating Review',
                     () {
-                      openRatingReview();
+                      // openRatingReview();
                     },
                     SvgPicture.asset(AssetImages.review, width: 24.w),
                   ),

@@ -8,7 +8,12 @@ import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/core/constants/snackbar.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
 import 'package:maxpay/controllers/fastag_controller.dart';
+import 'package:maxpay/controllers/fastag_controller.dart';
 import 'package:maxpay/view/fastag_recharge/fastag_customer.dart';
+import 'package:maxpay/controllers/profile_controller.dart';
+import 'package:maxpay/view/fastag_recharge/fastag_success_screen.dart';
+import 'package:maxpay/view/recharge/failed_recharge_page.dart';
+import 'package:maxpay/view/recharge/pending_screen.dart';
 
 class ConfirmFastagPage extends StatefulWidget {
   final String productName;
@@ -47,8 +52,8 @@ class _ConfirmFastagPageState extends State<ConfirmFastagPage> {
     controller = Get.find<FastagController>();
     args = Get.arguments ?? {};
 
-    final billData = args['bill_data'];
-    final pId = (billData?.product?.id)?.toString() ?? '';
+    final pId =
+        args['product_id']?.toString() ?? args['productId']?.toString() ?? '';
 
     if (pId.isNotEmpty) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -114,17 +119,6 @@ class _ConfirmFastagPageState extends State<ConfirmFastagPage> {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
-    final billData = args['bill_data'];
-    final String finalProductName =
-        billData?.product?.name ?? widget.productName;
-    final rawAmountVal =
-        billData?.bill?.amount ?? billData?.bill?.billAmount ?? 0.0;
-    final double rawAmount = rawAmountVal is num
-        ? rawAmountVal.toDouble()
-        : double.tryParse(rawAmountVal.toString()) ?? 0.0;
-    final String logoUrl = billData?.product?.logo ?? '';
-    final String customerId = billData?.bill?.customerNumber ?? 'N/A';
-
     return Obx(() {
       final confirmData = controller.confirmResponse.value?.data;
 
@@ -142,9 +136,24 @@ class _ConfirmFastagPageState extends State<ConfirmFastagPage> {
         );
       }
 
+      final String finalProductName =
+          confirmData.productName ?? widget.productName;
+      final String logoUrl = confirmData.logo ?? '';
+      final String customerId =
+          args['customer_id']?.toString() ?? confirmData.transactionNo ?? 'N/A';
+
       final String availableBalanceStr = confirmData.availableBalance ?? '0';
-      final String transactionAmountStr =
-          confirmData.transactionAmount ?? rawAmount.toString();
+
+      final Object? amtArg = args['transaction_amount'];
+      final String fallbackAmount =
+          amtArg != null && amtArg.toString().isNotEmpty
+          ? amtArg.toString()
+          : '0.00';
+
+      // Force the transaction amount to ALWAYS use the user input fallbackAmount
+      // instead of confirmData, because the API confirm method returns '0' for this field.
+      final String transactionAmountStr = fallbackAmount;
+
       final String commissionRaw = confirmData.commision ?? '0';
       final String commissionType = confirmData.commissiontype ?? "Fixed";
 
@@ -413,28 +422,150 @@ class _ConfirmFastagPageState extends State<ConfirmFastagPage> {
                       ),
                       SizedBox(width: 12.w),
                       Expanded(
-                        child: _pillButton(
-                          title: "Pay Now",
-                          color: const Color(0xFF1CACC2),
-                          onTap: () {
-                            if (amountController.text.trim().isEmpty) {
-                              Get.snackbar(
-                                "Validation",
-                                "Please Re-enter amount",
-                              );
-                              return;
-                            }
-                            final reentered =
-                                double.tryParse(amountController.text.trim()) ??
-                                0.0;
-                            if (parsedTransaction != reentered) {
-                              CustomToast.error(
-                                "Re-entered amount does not match the transaction amount",
-                              );
-                              return;
-                            }
-                            // Navigate to Success
-                          },
+                        child: Obx(
+                          () => _pillButton(
+                            title: "Pay Now",
+                            color: const Color(0xFF1CACC2),
+                            isLoading: controller.isPayLoading.value,
+                            onTap: controller.isPayLoading.value
+                                ? null
+                                : () async {
+                                    if (amountController.text.trim().isEmpty) {
+                                      Get.snackbar(
+                                        "Validation",
+                                        "Please Re-enter amount",
+                                      );
+                                      return;
+                                    }
+                                    final reentered =
+                                        double.tryParse(
+                                          amountController.text.trim(),
+                                        ) ??
+                                        0.0;
+                                    if (parsedTransaction != reentered) {
+                                      CustomToast.error(
+                                        "Re-entered amount does not match the transaction amount",
+                                      );
+                                      return;
+                                    }
+
+                                    final profile =
+                                        Get.find<ProfileController>()
+                                            .profileData
+                                            .value
+                                            ?.data;
+                                    final String mobile =
+                                        profile?.phoneNumber ?? '';
+
+                                    final result = await controller.payTransaction(
+                                      productId:
+                                          args['product_id']?.toString() ?? '',
+                                      consumerNumber:
+                                          args['customer_id']?.toString() ?? '',
+                                      amount: transactionAmountStr.replaceAll(
+                                        '₹',
+                                        '',
+                                      ),
+                                      reEnterAmount: amountController.text
+                                          .trim(),
+                                      enquiryReference:
+                                          '', // typically empty or from confirmData
+                                      customerMobile: mobile,
+                                      whatsappNumber: whatsappController.text
+                                          .trim(),
+                                    );
+
+                                    if (result != null) {
+                                      final status =
+                                          result.data?.status
+                                              ?.toString()
+                                              .toLowerCase() ??
+                                          '';
+
+                                      final resolvedProductName =
+                                          args['product_name']?.toString() ??
+                                          confirmData.productName ??
+                                          'Fastag';
+                                      final String initial =
+                                          resolvedProductName.isNotEmpty
+                                          ? resolvedProductName[0]
+                                          : 'F';
+                                      final Color badgeColor = Colors.red;
+
+                                      final fallbackLogo =
+                                          "https://example.com/fastag.png"; // or similar placeholder
+                                      final resolvedLogo =
+                                          args['logo']?.toString() ??
+                                          confirmData.logo ??
+                                          fallbackLogo;
+
+                                      final resolvedTxn =
+                                          confirmData.transactionNo ??
+                                          args['customer_id']?.toString() ??
+                                          'N/A';
+
+                                      if (status == 'success') {
+                                        Get.off(
+                                          () => FastagSuccessScreen(
+                                            productName: resolvedProductName,
+                                            operatorInitial: initial,
+                                            operatorColor: badgeColor,
+                                            transactionNo: resolvedTxn,
+                                            rechargeAmount:
+                                                transactionAmountStr,
+                                            transactionId:
+                                                result.data?.transactionid ?? '',
+                                            dateTime:
+                                                result.data?.dateTime ?? '',
+                                            refId:
+                                                result.data?.referenceId ?? '',
+                                          ),
+                                        );
+                                      } else if (status == 'pending' ||
+                                          status == 'processing') {
+                                        Get.off(
+                                          () => PendingScreen(
+                                            productName: resolvedProductName,
+                                            operatorInitial: initial,
+                                            operatorColor: badgeColor,
+                                            transactionNo: resolvedTxn,
+                                            rechargeAmount:
+                                                transactionAmountStr,
+                                            transactionId:
+                                                result.data?.transactionid ?? '',
+                                            dateTime:
+                                                result.data?.dateTime ?? '',
+                                            operatorLogo: resolvedLogo,
+                                            rechargeId:
+                                                result.data?.rechargeId
+                                                    ?.toString() ??
+                                                '',
+                                          ),
+                                        );
+                                      } else {
+                                        Get.off(
+                                          () => FailedRechargePage(
+                                            productName: resolvedProductName,
+                                            operatorInitial: initial,
+                                            operatorColor: badgeColor,
+                                            transactionNo: resolvedTxn,
+                                            rechargeAmount:
+                                                transactionAmountStr,
+                                            transactionId:
+                                                result.data?.transactionid ?? '',
+                                            dateTime:
+                                                result.data?.dateTime ?? '',
+                                            operatorLogo: resolvedLogo,
+                                            rechargeId:
+                                                result.data?.rechargeId
+                                                    ?.toString() ??
+                                                '',
+                                          ),
+                                        );
+                                      }
+                                    }
+                                  },
+                          ),
                         ),
                       ),
                     ],

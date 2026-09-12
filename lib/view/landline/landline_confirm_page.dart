@@ -1,104 +1,254 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_navigation/src/extension_navigation.dart';
+import 'package:get/get.dart';
 import 'package:maxpay/core/constants/colors.dart';
 import 'package:maxpay/global_widget/commom_button.dart';
 import 'package:maxpay/global_widget/custom_app.dart';
-import 'package:maxpay/view/landline/landline_customer_page.dart';
-import 'package:maxpay/view/landline/landline_success_page.dart';
+import 'package:maxpay/view/recharge/success_recharge_page.dart';
+import 'package:maxpay/view/recharge/pending_screen.dart';
+import 'package:maxpay/view/recharge/failed_recharge_page.dart';
+import 'package:maxpay/controllers/landline_controller.dart';
+import 'package:maxpay/core/constants/snackbar.dart';
+import 'package:maxpay/controllers/homepage_controller.dart';
 
-class LandlineConfirmPage extends StatelessWidget {
-  final String productName;
-  final String operatorInitial;
-  final Color operatorColor;
-  final String transactionNo;
-  final String amount;
-  final String commission;
-  final String surcharge;
+class LandlineConfirmPage extends StatefulWidget {
+  const LandlineConfirmPage({super.key});
 
-  const LandlineConfirmPage({
-    super.key,
-    this.productName = 'Jio',
-    this.operatorInitial = 'J',
-    this.operatorColor = Colors.red,
-    this.transactionNo = 'TXN24321232323',
-    this.amount = '\u{20B9}365.00',
-    this.commission = '\u{20B9}40.00',
-    this.surcharge = '\u{20B9}5',
-  });
+  @override
+  State<LandlineConfirmPage> createState() => _LandlineConfirmPageState();
+}
+
+class _LandlineConfirmPageState extends State<LandlineConfirmPage> {
+  final TextEditingController whatsappController = TextEditingController();
+  final TextEditingController amountController = TextEditingController();
+  late final LandlineController controller;
+  late Map<String, dynamic> args;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = Get.find<LandlineController>();
+    args = Get.arguments ?? {};
+
+    final pId = args['product_id']?.toString() ?? '';
+
+    if (pId.isNotEmpty) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        controller.confirmTransaction(productid: pId);
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
-    return Scaffold(
-      appBar: const CommonAppBar(title: "Confirm Transaction"),
+    final homeController = Get.isRegistered<HomePageController>()
+        ? Get.find<HomePageController>()
+        : null;
+    final walletBal =
+        homeController?.walletBalance.value?.data?.balance?.toString() ?? '';
 
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _TransactionSummaryCard(
-                productName: productName,
-                operatorInitial: operatorInitial,
-                operatorColor: operatorColor,
-                transactionNo: transactionNo,
-                amount: amount,
-                commission: commission,
-                surcharge: surcharge,
-              ),
+    return Obx(() {
+      if (controller.isConfirmLoading.value) {
+        return Scaffold(
+          appBar: const CommonAppBar(title: "Confirm Transaction"),
+          body: const Center(child: CircularProgressIndicator()),
+        );
+      }
 
+      final confirmData = controller.confirmResponse.value?.data;
 
-   SizedBox(height: 18.h),
-                 _buildInputLabel(context, 'For Transaction Detail (Optional)'),
-              _buildTextField(context, 'Enter Whatsapp no '),
-              SizedBox(height: 18.h),
-              _buildInputLabel(context, 'Re-enter Amount'),
-              _buildTextField(context, 'Enter amount'),
-              SizedBox(height: 20.h),
-               Center(
-                  child: CommonButton(
-                    title: "Customer Confirmation",
-                    backgroundColor: AppColors.clrSecondary,
-                  onTap: (){
-                    Get.to(LandlineCustomerPage());
-                  },
-                  ),
+      if (confirmData == null) {
+        return Scaffold(
+          appBar: const CommonAppBar(title: "Confirm Transaction"),
+          body: const Center(child: Text("No Data Found")),
+        );
+      }
+
+      final String finalProductName =
+          confirmData.productName ??
+          args['actual_product_name']?.toString() ??
+          '';
+      final String logoUrl =
+          confirmData.logo ?? args['actual_product_logo']?.toString() ?? '';
+      final String customerId =
+          args['customer_id']?.toString() ?? confirmData.transactionNo ?? 'N/A';
+
+      final String availableBalanceStr =
+          confirmData.availableBalance ?? walletBal;
+      final String transactionAmountStr =
+          confirmData.transactionAmount ?? confirmData.amount ?? '0';
+      final String commissionRaw = confirmData.commision ?? '0';
+      final String commissionType = confirmData.commissiontype ?? "Fixed";
+
+      final String isReceivedParam = args['is_received'] == false
+          ? "Pending"
+          : "Received";
+
+      return Scaffold(
+        appBar: const CommonAppBar(title: "Confirm Transaction"),
+        body: SafeArea(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _TransactionSummaryCard(
+                  productName: finalProductName,
+                  logoUrl: logoUrl,
+                  operatorInitial: finalProductName.isNotEmpty
+                      ? finalProductName[0]
+                      : 'L',
+                  operatorColor: Colors.deepPurple,
+                  transactionNo: customerId,
+                  amount: transactionAmountStr.isNotEmpty
+                      ? '\u{20B9}$transactionAmountStr'
+                      : '',
+                  paymentStatus: isReceivedParam,
+                  paymentStatusColor: isReceivedParam == "Received"
+                      ? const Color(0xFF00B050)
+                      : Colors.red,
+                  commission: commissionRaw.isNotEmpty
+                      ? (commissionType.toLowerCase() == "percentage"
+                            ? '$commissionRaw%'
+                            : '\u{20B9}$commissionRaw')
+                      : '',
+                  surcharge: '',
+                  availableBalance: availableBalanceStr.isNotEmpty
+                      ? '\u{20B9}$availableBalanceStr'
+                      : '',
+                  remainingBalance:
+                      (confirmData.remainingBalance ?? '').isNotEmpty
+                      ? '\u{20B9}${confirmData.remainingBalance}'
+                      : '',
                 ),
-                const SizedBox(height: 21),
-              Center(
-                child: CommonButton(
-                  title: 'Pay Now',
-                  onTap:(){
-                    LandlineSuccessPage();
-                  }
-                  // onTap: (){},
-
-                  // onTap: () {
-                  //   Navigator.push(
-                  //     // context,
-                  //     // MaterialPageRoute(
-                  //     //   builder: (context) => SuccessRechargePage(
-                  //     //     productName: productName,
-                  //     //     operatorInitial: operatorInitial,
-                  //     //     operatorColor: operatorColor,
-                  //     //     rechargeAmount: amount,
-                  //     //   ),
-                  //     // ),
-                  //   );
-                  // },
+                SizedBox(height: 18.h),
+                _buildInputLabel(context, 'For Transaction Detail (Optional)'),
+                _buildTextField(
+                  context,
+                  'Enter Whatsapp no',
+                  controller: whatsappController,
                 ),
-              ),
-              SizedBox(height: 30.h),
-            ],
+                SizedBox(height: 18.h),
+                _buildInputLabel(context, 'Re-enter Amount'),
+                _buildTextField(
+                  context,
+                  'Enter amount',
+                  controller: amountController,
+                ),
+                SizedBox(height: 20.h),
+                Center(
+                  child: Obx(() {
+                    return CommonButton(
+                      title: 'Pay Now',
+                      isLoading: controller.isPayLoading.value,
+                      onTap: () async {
+                        final reentered =
+                            double.tryParse(amountController.text.trim()) ??
+                            0.0;
+                        final originalAmount =
+                            double.tryParse(transactionAmountStr) ?? 0.0;
+
+                        if (originalAmount != reentered) {
+                          CustomToast.error(
+                            "Re-entered amount does not match the transaction amount",
+                          );
+                          return;
+                        }
+
+                        bool isSuccess = await controller.payBill(
+                          productId: args['product_id']?.toString() ?? '',
+                          consumerNumber: customerId,
+                          amount: transactionAmountStr,
+                          reEnterAmount: amountController.text.trim(),
+                          enquiryReference: '',
+                          customerMobile: whatsappController.text.trim(),
+                          whatsappNumber: whatsappController.text.trim(),
+                        );
+
+                        if (isSuccess) {
+                          final payData =
+                              controller.payBillResponse.value?.data;
+                          final String status = payData?.status ?? '';
+                          final String trTime =
+                              payData?.dateTime ?? DateTime.now().toString();
+                          final String txId = payData?.txnid ?? '';
+                          final String pName =
+                              payData?.product?.name ?? finalProductName;
+                          final String logo = payData?.product?.logo ?? logoUrl;
+                          final String rAmount =
+                              payData?.transactionAmount ??
+                              transactionAmountStr;
+                          final String rId =
+                              payData?.rechargeId?.toString() ?? '';
+                          final String refId = payData?.referenceId ?? '';
+
+                          if (status.toLowerCase() == 'success') {
+                            Get.off(
+                              () => SuccessRechargePage(
+                                productName: pName,
+                                operatorInitial: pName.isNotEmpty
+                                    ? pName[0]
+                                    : 'L',
+                                operatorColor: Colors.deepPurple,
+                                transactionNo: customerId,
+                                rechargeAmount: rAmount,
+                                transactionId: txId,
+                                dateTime: trTime,
+                                operatorLogo: logo,
+                                rechargeId: rId,
+                                refId: refId,
+                              ),
+                            );
+                          } else if (status.toLowerCase() == 'pending' ||
+                              status.toLowerCase() == 'processing') {
+                            Get.off(
+                              () => PendingScreen(
+                                productName: pName,
+                                operatorInitial: pName.isNotEmpty
+                                    ? pName[0]
+                                    : 'L',
+                                operatorColor: Colors.deepPurple,
+                                transactionNo: customerId,
+                                rechargeAmount: rAmount,
+                                transactionId: txId,
+                                dateTime: trTime,
+                                operatorLogo: logo,
+                                rechargeId: rId,
+                              ),
+                            );
+                          } else {
+                            Get.off(
+                              () => FailedRechargePage(
+                                productName: pName,
+                                operatorInitial: pName.isNotEmpty
+                                    ? pName[0]
+                                    : 'L',
+                                operatorColor: Colors.deepPurple,
+                                transactionNo: customerId,
+                                rechargeAmount: rAmount,
+                                transactionId: txId,
+                                dateTime: trTime,
+                                operatorLogo: logo,
+                                rechargeId: rId,
+                              ),
+                            );
+                          }
+                        }
+                      },
+                    );
+                  }),
+                ),
+                SizedBox(height: 30.h),
+              ],
+            ),
           ),
         ),
-      ),
-    );
+      );
+    });
   }
 
   Widget _buildInputLabel(BuildContext context, String label) {
@@ -119,6 +269,7 @@ class LandlineConfirmPage extends StatelessWidget {
   Widget _buildTextField(
     BuildContext context,
     String hint, {
+    required TextEditingController controller,
     TextInputType? keyboardType,
     List<TextInputFormatter>? inputFormatters,
   }) {
@@ -126,6 +277,7 @@ class LandlineConfirmPage extends StatelessWidget {
     final isDark = theme.brightness == Brightness.dark;
 
     return TextField(
+      controller: controller,
       keyboardType: keyboardType ?? TextInputType.number,
       inputFormatters:
           inputFormatters ?? [FilteringTextInputFormatter.digitsOnly],
@@ -162,19 +314,29 @@ class _TransactionSummaryCard extends StatelessWidget {
     required this.productName,
     required this.operatorInitial,
     required this.operatorColor,
+    this.logoUrl,
     required this.transactionNo,
     required this.amount,
+    required this.paymentStatus,
+    required this.paymentStatusColor,
     required this.commission,
     required this.surcharge,
+    this.availableBalance = '',
+    this.remainingBalance = '',
   });
 
   final String productName;
   final String operatorInitial;
   final Color operatorColor;
+  final String? logoUrl;
   final String transactionNo;
   final String amount;
+  final String paymentStatus;
+  final Color paymentStatusColor;
   final String commission;
   final String surcharge;
+  final String availableBalance;
+  final String remainingBalance;
 
   @override
   Widget build(BuildContext context) {
@@ -201,60 +363,88 @@ class _TransactionSummaryCard extends StatelessWidget {
             context,
             label: 'Product Name',
             value: productName,
-            trailing: _OperatorBadge(
-              label: productName.isNotEmpty ? productName : operatorInitial,
-              color: operatorColor,
-            ),
+            trailing: (logoUrl != null && logoUrl!.isNotEmpty)
+                ? Image.network(
+                    logoUrl!,
+                    width: 32.w,
+                    height: 32.h,
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) =>
+                        _OperatorBadge(
+                          label: productName.isNotEmpty
+                              ? productName
+                              : operatorInitial,
+                          color: operatorColor,
+                        ),
+                  )
+                : _OperatorBadge(
+                    label: productName.isNotEmpty
+                        ? productName
+                        : operatorInitial,
+                    color: operatorColor,
+                  ),
           ),
           SizedBox(height: 18.h),
           _buildDetailRow(
             context,
             label: 'Payment Status',
-            value: 'Received',
-            valueColor: const Color(0xFF00B050),
+            value: paymentStatus,
+            valueColor: paymentStatusColor,
           ),
-          SizedBox(height: 18.h),
-          _buildDetailRow(
-            context,
-            label: 'Transaction No',
-            value: transactionNo,
-            compactValue: true,
-          ),
-          SizedBox(height: 12.h),
-          _AmountBand(
-            label: 'Available Balance',
-            value: '\u{20B9}76954.70',
-            color: const Color(0xFF315CFF),
-            backgroundColor: const Color(0xFFE1E6FF),
-          ),
-          SizedBox(height: 10.h),
-          _AmountBand(
-            label: 'Transaction Amount',
-            value: amount,
-            color: const Color(0xFFFF003D),
-            backgroundColor: const Color(0xFFFFDFE2),
-          ),
-          SizedBox(height: 10.h),
-          _AmountBand(
-            label: 'Commission',
-            value: commission,
-            color: const Color(0xFF00B050),
-            backgroundColor: const Color(0xFFDFF8E9),
-          ),
-          SizedBox(height: 10.h),
-          // _AmountBand(
-          //   label: 'Surcharge',
-          //   value: surcharge,
-          //   color: const Color(0xFFFF4F6D),
-          //   backgroundColor: const Color(0xFFFFE2E7),
-          // ),
-          // SizedBox(height: 10.h),
-          _AmountBand(
-            label: 'Remaining Balance',
-            value: '\u{20B9}76954.70',
-            color: const Color(0xFF315CFF),
-            backgroundColor: const Color(0xFFE1E6FF),
-          ),
+          if (transactionNo.isNotEmpty) ...[
+            SizedBox(height: 18.h),
+            _buildDetailRow(
+              context,
+              label: 'Transaction No',
+              value: transactionNo,
+              compactValue: true,
+            ),
+          ],
+          if (availableBalance.isNotEmpty) ...[
+            SizedBox(height: 12.h),
+            _AmountBand(
+              label: 'Available Balance',
+              value: availableBalance,
+              color: const Color(0xFF315CFF),
+              backgroundColor: const Color(0xFFE1E6FF),
+            ),
+          ],
+          if (amount.isNotEmpty) ...[
+            SizedBox(height: 10.h),
+            _AmountBand(
+              label: 'Transaction Amount',
+              value: amount,
+              color: const Color(0xFFFF003D),
+              backgroundColor: const Color(0xFFFFDFE2),
+            ),
+          ],
+          if (commission.isNotEmpty) ...[
+            SizedBox(height: 10.h),
+            _AmountBand(
+              label: 'Commission',
+              value: commission,
+              color: const Color(0xFF00B050),
+              backgroundColor: const Color(0xFFDFF8E9),
+            ),
+          ],
+          if (surcharge.isNotEmpty) ...[
+            SizedBox(height: 10.h),
+            _AmountBand(
+              label: 'Surcharge',
+              value: surcharge,
+              color: const Color(0xFFFF4F6D),
+              backgroundColor: const Color(0xFFFFE2E7),
+            ),
+          ],
+          if (remainingBalance.isNotEmpty) ...[
+            SizedBox(height: 10.h),
+            _AmountBand(
+              label: 'Remaining Balance',
+              value: remainingBalance,
+              color: const Color(0xFF315CFF),
+              backgroundColor: const Color(0xFFE1E6FF),
+            ),
+          ],
         ],
       ),
     );

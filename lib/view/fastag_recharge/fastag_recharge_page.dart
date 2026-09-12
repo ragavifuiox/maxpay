@@ -53,7 +53,11 @@ class _FastagPageState extends State<FastagRechargePage> {
   );
 
   final FastagController fastagController = Get.put(
-    FastagController(fetchFastagBillUseCase: sl(), confirmUsecase: sl()),
+    FastagController(
+      fetchFastagBillUseCase: sl(),
+      confirmUsecase: sl(),
+      payUsecase: sl(),
+    ),
   );
 
   Data? selectedBoardObj;
@@ -743,14 +747,18 @@ class _FastagPageState extends State<FastagRechargePage> {
                                 return;
                               }
 
-                              final res = fastagController
-                                  .fetchBillResponse
-                                  .value
-                                  ?.data;
                               Get.to(
                                 ConfirmFastagPage(),
                                 arguments: {
-                                  'bill_data': res,
+                                  'product_id':
+                                      selectedBoardObj?.id?.toString() ??
+                                      productId,
+                                  'customer_id': _customerIdController.text
+                                      .trim(),
+                                  'transaction_amount': _amountController.text
+                                      .trim(),
+                                  'product_name': selectedBoardObj?.name ?? "",
+                                  'logo': selectedBoardObj?.logo ?? "",
                                   'is_received': _isReceived,
                                 },
                               );
