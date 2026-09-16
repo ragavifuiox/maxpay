@@ -87,7 +87,7 @@ class AppLifecycleController extends GetxController
             storage.remove("last_active_time");
 
             if (storage.getInt("is_pin") == 1) {
-              Get.offAllNamed(AppRoutes.veirfypin);
+              Get.offAllNamed(AppRoutes.enterPin);
             } else {
               Get.offAllNamed(AppRoutes.pinCodeCreation);
             }
@@ -96,7 +96,6 @@ class AppLifecycleController extends GetxController
       }
 
       final isPin = storage.getInt("is_pin") ?? 0;
-      final isFingerPrint = storage.getInt("is_fingerprint") ?? 0;
 
       if (token != null && token.isNotEmpty && isPin == 1) {
         final lastActiveStr = storage.getString(_keyLastActive);
@@ -127,11 +126,7 @@ class AppLifecycleController extends GetxController
                 AppLogger.logError(
                   "Logout boundary crossed. Navigating to PIN/Biometric verification screen.",
                 );
-                if (isFingerPrint == 1) {
-                  Get.offAllNamed(AppRoutes.veirfypin);
-                } else {
-                  Get.offAllNamed(AppRoutes.enterPin);
-                }
+                Get.offAllNamed(AppRoutes.enterPin);
               }
             }
           }

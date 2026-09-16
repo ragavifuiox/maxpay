@@ -57,7 +57,6 @@ class TransactionScreen extends GetView<TransReportController> {
 
         child: Column(
           children: [
-            /// FILTER CONTAINER
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
@@ -69,16 +68,15 @@ class TransactionScreen extends GetView<TransReportController> {
                     ? Border.all(color: const Color(0xFFB5D4F4))
                     : null,
               ),
+
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 8),
 
-                  /// SELECT CREDIT TYPE
+                  const SizedBox(height: 8),
                   Obx(() {
                     final productList =
                         controller.producttype.value?.data ?? [];
-
                     return Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12),
                       decoration: BoxDecoration(

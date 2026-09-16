@@ -155,11 +155,7 @@ class _MainSplashScreenState extends State<MainSplashScreen>
         }
       }
 
-      if (isFingerPrint == 1) {
-        Get.offAllNamed(AppRoutes.veirfypin);
-      } else {
-        Get.offAllNamed(AppRoutes.enterPin);
-      }
+      Get.offAllNamed(AppRoutes.enterPin);
       return;
     }
 

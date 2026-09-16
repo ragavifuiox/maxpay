@@ -208,50 +208,51 @@ class SettingsPage extends StatelessWidget {
                     },
                     SvgPicture.asset(AssetImages.updatePin, width: 24.w),
                   ),
-                  _buildMenuTile(
-                    context,
-                    authController.isFingerPrint.value == 1
-                        ? 'Update Fingerprint'
-                        : 'Add Fingerprint',
-                    () {
-                      Get.toNamed(
-                        AppRoutes.biometricsIntro,
-                        arguments: {
-                          'is_update': authController.isFingerPrint.value == 1,
-                        },
-                      );
-                    },
-                    Icon(
-                      Icons.fingerprint,
-                      size: 24.w,
-                      color: AppColors.clrPrimary,
-                    ),
-                    trailingWidget: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          authController.isFingerPrint.value == 1
-                              ? 'Active'
-                              : 'Inactive',
-                          style: TextStyle(
-                            color: authController.isFingerPrint.value == 1
-                                ? Colors.green
-                                : Colors.red,
-                            fontSize: 12.sp,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        SizedBox(width: 8.w),
-                        Icon(
-                          Icons.chevron_right,
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.onSurface.withValues(alpha: 0.5),
-                          size: 24.sp,
-                        ),
-                      ],
-                    ),
-                  ),
+
+                  // _buildMenuTile(
+                  //   context,
+                  //   authController.isFingerPrint.value == 1
+                  //       ? 'Update Fingerprint'
+                  //       : 'Add Fingerprint',
+                  //   () {
+                  //     Get.toNamed(
+                  //       AppRoutes.biometricsIntro,
+                  //       arguments: {
+                  //         'is_update': authController.isFingerPrint.value == 1,
+                  //       },
+                  //     );
+                  //   },
+                  //   Icon(
+                  //     Icons.fingerprint,
+                  //     size: 24.w,
+                  //     color: AppColors.clrPrimary,
+                  //   ),
+                  //   trailingWidget: Row(
+                  //     mainAxisSize: MainAxisSize.min,
+                  //     children: [
+                  //       Text(
+                  //         authController.isFingerPrint.value == 1
+                  //             ? 'Active'
+                  //             : 'Inactive',
+                  //         style: TextStyle(
+                  //           color: authController.isFingerPrint.value == 1
+                  //               ? Colors.green
+                  //               : Colors.red,
+                  //           fontSize: 12.sp,
+                  //           fontWeight: FontWeight.w600,
+                  //         ),
+                  //       ),
+                  //       SizedBox(width: 8.w),
+                  //       Icon(
+                  //         Icons.chevron_right,
+                  //         color: Theme.of(
+                  //           context,
+                  //         ).colorScheme.onSurface.withValues(alpha: 0.5),
+                  //         size: 24.sp,
+                  //       ),
+                  //     ],
+                  //   ),
+                  // ),
 
                   _buildMenuTile(
                     context,

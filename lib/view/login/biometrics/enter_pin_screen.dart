@@ -47,22 +47,7 @@ class _PinCodeEnterPageState extends State<PinCodeEnterPage> {
     }
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if (!isUpdatePin) {
-        if (controller.isFingerPrint.value == 1) {
-          final success = await controller.authenticateWithFingerprint(
-            isFromWalletTransfer: isFromWalletTransfer,
-          );
-          if (success && isFromWalletTransfer) {
-            final args = Get.arguments as Map;
-            final addStaffController = Get.find<AddStaffController>();
-            await addStaffController.walletTransfer(
-              staffid: args['staffid'],
-              amount: args['amount'],
-              paymenttype: args['paymenttype'],
-            );
-          }
-        }
-      }
+      // Fingerprint condition removed
     });
   }
 
@@ -224,54 +209,7 @@ class _PinCodeEnterPageState extends State<PinCodeEnterPage> {
 
                 SizedBox(height: isTablet ? 24.h : 16.h),
 
-                /// Fingerprint Icon
-                if (!isUpdatePin)
-                  Obx(() {
-                    if (controller.isFingerPrint.value == 1) {
-                      return Center(
-                        child: GestureDetector(
-                          onTap: () async {
-                            final success = await controller
-                                .authenticateWithFingerprint(
-                                  isFromWalletTransfer: isFromWalletTransfer,
-                                );
-                            if (success && isFromWalletTransfer) {
-                              final args = Get.arguments as Map;
-                              final addStaffController =
-                                  Get.find<AddStaffController>();
-                              await addStaffController.walletTransfer(
-                                staffid: args['staffid'],
-                                amount: args['amount'],
-                                paymenttype: args['paymenttype'],
-                              );
-                            }
-                          },
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                Icons.fingerprint_rounded,
-                                size: isTablet ? 72.sp : 56.sp,
-                                color: AppColors.clrPrimary,
-                              ),
-                              SizedBox(height: 8.h),
-                              Text(
-                                'Use Fingerprint',
-                                style: TextStyle(
-                                  fontFamily: 'Poppins',
-                                  fontSize: isTablet ? 16.sp : 12.sp,
-                                  fontWeight: FontWeight.w500,
-                                  color: AppColors.clrPrimary,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    }
-                    return const SizedBox();
-                  }),
-
+                // Fingerprint Icon removed
                 const Spacer(),
 
                 Obx(

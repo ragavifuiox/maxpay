@@ -287,6 +287,7 @@ class _ElectricityBillPageState extends State<GasBillPage> {
                       ),
                     ),
                     const SizedBox(height: 12),
+                    
                     Obx(() {
                       if (controller.isLoading.value) {
                         return Padding(
