@@ -118,6 +118,14 @@ class NetworkService extends GetxService {
       return !_isOffline;
     }
 
+    // Do not run the internet check if the app is in the background or device is locked.
+    // The OS typically restricts network access in these states, which leads to false positives.
+    final state = WidgetsBinding.instance.lifecycleState;
+    if (state == AppLifecycleState.paused || state == AppLifecycleState.hidden) {
+      debugPrint("⏸ App is in background, skipping internet check");
+      return !_isOffline;
+    }
+
     _isChecking = true;
 
     try {
