@@ -235,7 +235,58 @@ class _ElectricityBillPageState extends State<GasBillPage> {
                     ),
                     SizedBox(height: 20.h),
 
-                    /// 🔹 BOARD SELECTION
+                    /// 🔹 CUSTOMER ID INPUT
+                    
+                    SizedBox(height: 15.h),
+
+                    Container(
+                      decoration: BoxDecoration(
+                        color: fieldColor,
+                        borderRadius: BorderRadius.circular(10.r),
+                      ),
+                      child: TextField(
+                        controller: _customerIdController,
+                        enabled: !_isBillFetched,
+                        onChanged: (_) {
+                          setState(() {}); // Refresh to show/hide X icon
+                        },
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          color: isDark ? Colors.white : Colors.black,
+                        ),
+                        decoration: InputDecoration(
+                          hintText:
+                              (selectedBoardObj?.msgToNumber ?? '').isNotEmpty
+                              ? selectedBoardObj!.msgToNumber
+                              : 'Customer Id',
+                          hintStyle: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 14.sp,
+                          ),
+                          border: InputBorder.none,
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: 16.w,
+                            vertical: 15.h,
+                          ),
+                          suffixIcon: _customerIdController.text.isNotEmpty
+                              ? IconButton(
+                                  icon: Icon(
+                                    Icons.cancel,
+                                    color: Colors.red,
+                                    size: 20.sp,
+                                  ),
+                                  onPressed: () {
+                                    _customerIdController.clear();
+                                    setState(() {
+                                      _isBillFetched = false;
+                                    });
+                                  },
+                                )
+                              : null,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
                     Obx(() {
                       if (controller.isLoading.value) {
                         return Padding(
@@ -323,53 +374,6 @@ class _ElectricityBillPageState extends State<GasBillPage> {
                         ),
                       );
                     }),
-                    SizedBox(height: 15.h),
-
-                    /// 🔹 CUSTOMER ID INPUT
-                    Container(
-                      decoration: BoxDecoration(
-                        color: fieldColor,
-                        borderRadius: BorderRadius.circular(10.r),
-                      ),
-                      child: TextField(
-                        controller: _customerIdController,
-                        enabled: !_isBillFetched,
-                        onChanged: (_) {
-                          setState(() {}); // Refresh to show/hide X icon
-                        },
-                        style: TextStyle(
-                          fontSize: 14.sp,
-                          color: isDark ? Colors.white : Colors.black,
-                        ),
-                        decoration: InputDecoration(
-                          hintText: 'Customer Id',
-                          hintStyle: TextStyle(
-                            color: Colors.grey,
-                            fontSize: 14.sp,
-                          ),
-                          border: InputBorder.none,
-                          contentPadding: EdgeInsets.symmetric(
-                            horizontal: 16.w,
-                            vertical: 15.h,
-                          ),
-                          suffixIcon: _customerIdController.text.isNotEmpty
-                              ? IconButton(
-                                  icon: Icon(
-                                    Icons.cancel,
-                                    color: Colors.red,
-                                    size: 20.sp,
-                                  ),
-                                  onPressed: () {
-                                    _customerIdController.clear();
-                                    setState(() {
-                                      _isBillFetched = false;
-                                    });
-                                  },
-                                )
-                              : null,
-                        ),
-                      ),
-                    ),
 
                     if (_isBillFetched) ...[
                       SizedBox(height: 12.h),

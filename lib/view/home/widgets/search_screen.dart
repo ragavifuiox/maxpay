@@ -78,7 +78,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 onSubmitted: (_) => _performSearch(),
                 decoration: InputDecoration(
                   counterText: "",
-                  hintText: "Enter Mobile Number",
+                  hintText: "Enter Transaction Number",
                   hintStyle: TextStyle(
                     color: Colors.grey.shade500,
                     fontSize: 14,
@@ -245,17 +245,37 @@ class TransactionCard extends StatelessWidget {
             padding: const EdgeInsets.all(14),
             child: Row(
               children: [
-                CircleAvatar(
-                  radius: 18,
-                  backgroundColor: AppColors.clrPrimary,
-                  child: Text(
-                    shortName,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                    ),
+                Container(
+                  width: 44,
+                  height: 44,
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
                   ),
+                  clipBehavior: Clip.antiAlias,
+                  child:
+                      (transactionData.logo != null &&
+                          transactionData.logo!.isNotEmpty)
+                      ? Padding(
+                          padding: const EdgeInsets.all(4.0),
+                          child: Image.network(
+                            transactionData.logo!,
+                            fit: BoxFit.contain,
+                          ),
+                        )
+                      : Container(
+                          color: AppColors.clrPrimary,
+                          child: Center(
+                            child: Text(
+                              shortName,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
                 ),
 
                 const SizedBox(width: 12),
@@ -298,30 +318,7 @@ class TransactionCard extends StatelessWidget {
                         ],
                       ),
                       const SizedBox(height: 2),
-                      Row(
-                        children: [
-                          Text(
-                            "Provider Ref ID : ",
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: isDark ? Colors.white70 : Colors.black87,
-                              fontFamily: 'Poppins',
-                            ),
-                          ),
-                          Expanded(
-                            child: Text(
-                              transactionData.txnId ?? transactionData.txnId ?? 'N/A',
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: isDark ? Colors.white70 : Colors.black87,
-                                fontFamily: 'Poppins',
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                      
                     ],
                   ),
                 ),

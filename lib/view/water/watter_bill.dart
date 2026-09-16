@@ -13,7 +13,6 @@ import 'package:maxpay/controllers/water_controller.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
 
 class _BillColors {
- 
   static const fieldGreyDark = Color(0xFF2A2E33);
 }
 
@@ -262,6 +261,10 @@ class _WatterBillageState extends State<WatterBill> {
                     ),
                     SizedBox(height: 20.h),
 
+                    /// 🔹 CUSTOMER ID INPUT
+                  
+                    SizedBox(height: 15.h),
+
                     /// 🔹 BOARD SELECTION
                     Obx(() {
                       if (controller.isLoading.value) {
@@ -351,9 +354,7 @@ class _WatterBillageState extends State<WatterBill> {
                         ),
                       );
                     }),
-                    SizedBox(height: 15.h),
-
-                    /// 🔹 CUSTOMER ID INPUT
+ const SizedBox(height: 12,),
                     Container(
                       decoration: BoxDecoration(
                         color: fieldColor,
@@ -427,7 +428,10 @@ class _WatterBillageState extends State<WatterBill> {
                           color: isDark ? Colors.white : Colors.black,
                         ),
                         decoration: InputDecoration(
-                          hintText: 'Customer Id',
+                          hintText:
+                              (selectedBoardObj?.msgToNumber ?? '').isNotEmpty
+                              ? selectedBoardObj!.msgToNumber
+                              : 'Customer Id',
                           hintStyle: TextStyle(
                             color: Colors.grey,
                             fontSize: 14.sp,
@@ -670,30 +674,29 @@ class _WatterBillageState extends State<WatterBill> {
                               }
                               if (_customerIdController.text.trim().isEmpty)
                                 return;
-                              }
+                            }
 
-                              final success = await waterController.fetchBill(
-                                selectedBoardObj!.id.toString(),
-                                _customerIdController.text.trim(),
-                              );
+                            final success = await waterController.fetchBill(
+                              selectedBoardObj!.id.toString(),
+                              _customerIdController.text.trim(),
+                            );
 
-                              if (success) {
-                                final billData = waterController
-                                    .fetchBillResponse
-                                    .value
-                                    ?.data
-                                    ?.bill;
+                            if (success) {
+                              final billData = waterController
+                                  .fetchBillResponse
+                                  .value
+                                  ?.data
+                                  ?.bill;
 
-                                _amountController.text =
-                                    (billData?.amount ??
-                                            billData?.billAmount ??
-                                            "")
-                                        .toString();
-                                _mobileController.text =
-                                    billData?.customerNumber ?? "";
+                              _amountController.text =
+                                  (billData?.amount ??
+                                          billData?.billAmount ??
+                                          "")
+                                      .toString();
+                              _mobileController.text =
+                                  billData?.customerNumber ?? "";
 
-                                setState(() => _isBillFetched = true);
-                              
+                              setState(() => _isBillFetched = true);
                             } else {
                               final requiredAmount =
                                   double.tryParse(_amountController.text) ??

@@ -117,7 +117,7 @@ class TransactionCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      data.operator ?? "",
+                      data.productType ?? "",
                       style: const TextStyle(
                         fontWeight: FontWeight.w600,
                         color: Colors.black,

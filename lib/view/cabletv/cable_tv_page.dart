@@ -259,9 +259,7 @@ class _CableTvPageState extends State<CableTvPage> {
                       ),
                     ),
                     SizedBox(height: 20.h),
-
-                    /// 🔹 BOARD SELECTION
-                    Obx(() {
+ Obx(() {
                       if (controller.isLoading.value) {
                         return Padding(
                           padding: EdgeInsets.only(bottom: 8.h),
@@ -348,8 +346,7 @@ class _CableTvPageState extends State<CableTvPage> {
                         ),
                       );
                     }),
-                    SizedBox(height: 15.h),
-
+                    const  SizedBox(height: 12),
                     /// 🔹 CUSTOMER ID INPUT
                     Container(
                       decoration: BoxDecoration(
@@ -363,7 +360,7 @@ class _CableTvPageState extends State<CableTvPage> {
                           setState(() {}); // Refresh to show/hide X icon
 
                           // Automatically fetch if length is 10
-                          if (val.trim().length == 10 && !_isBillFetched) {
+                          if (val.trim().length >= 10 && !_isBillFetched) {
                             final pid =
                                 selectedBoardObj?.id?.toString() ?? productId;
                             if (pid.isNotEmpty) {
@@ -394,7 +391,10 @@ class _CableTvPageState extends State<CableTvPage> {
                           color: isDark ? Colors.white : Colors.black,
                         ),
                         decoration: InputDecoration(
-                          hintText: 'Customer Id',
+                          hintText:
+                              (selectedBoardObj?.msgToNumber ?? '').isNotEmpty
+                              ? selectedBoardObj!.msgToNumber
+                              : 'Customer Id',
                           hintStyle: TextStyle(
                             color: Colors.grey,
                             fontSize: 14.sp,
@@ -420,6 +420,10 @@ class _CableTvPageState extends State<CableTvPage> {
                         ),
                       ),
                     ),
+                    SizedBox(height: 15.h),
+
+                    /// 🔹 BOARD SELECTION
+                   
 
                     if (_isBillFetched) ...[
                       SizedBox(height: 12.h),

@@ -246,9 +246,7 @@ class _LandlineBillPageState extends State<LandlineBillPage> {
                       ),
                     ),
                     SizedBox(height: 20.h),
-
-                    /// 🔹 BOARD SELECTION
-                    Obx(() {
+Obx(() {
                       if (controller.isLoading.value) {
                         return Padding(
                           padding: EdgeInsets.only(bottom: 8.h),
@@ -334,8 +332,7 @@ class _LandlineBillPageState extends State<LandlineBillPage> {
                         ),
                       );
                     }),
-                    SizedBox(height: 15.h),
-
+                    const SizedBox(height: 12),
                     /// 🔹 CUSTOMER ID INPUT
                     Container(
                       decoration: BoxDecoration(
@@ -398,7 +395,10 @@ class _LandlineBillPageState extends State<LandlineBillPage> {
                           color: isDark ? Colors.white : Colors.black,
                         ),
                         decoration: InputDecoration(
-                          hintText: 'Customer Id',
+                          hintText:
+                              (selectedBoardObj?.msgToNumber ?? '').isNotEmpty
+                              ? selectedBoardObj!.msgToNumber
+                              : 'Customer Id',
                           hintStyle: TextStyle(
                             color: Colors.grey,
                             fontSize: 14.sp,
@@ -424,6 +424,10 @@ class _LandlineBillPageState extends State<LandlineBillPage> {
                         ),
                       ),
                     ),
+                    SizedBox(height: 15.h),
+
+                    /// 🔹 BOARD SELECTION
+                    
                     if (_isBillFetched) ...[
                       SizedBox(height: 12.h),
 

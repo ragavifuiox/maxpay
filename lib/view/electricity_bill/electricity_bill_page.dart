@@ -245,8 +245,7 @@ class _ElectricityBillPageState extends State<ElectricityBillPage> {
                     ),
                     SizedBox(height: 20.h),
 
-                    /// 🔹 BOARD SELECTION
-                    Obx(() {
+                     Obx(() {
                       if (controller.isLoading.value) {
                         return Padding(
                           padding: EdgeInsets.only(bottom: 8.h),
@@ -333,8 +332,7 @@ class _ElectricityBillPageState extends State<ElectricityBillPage> {
                         ),
                       );
                     }),
-                    SizedBox(height: 15.h),
-
+                  const SizedBox(height: 13,),
                     /// 🔹 CUSTOMER ID INPUT
                     Container(
                       decoration: BoxDecoration(
@@ -398,7 +396,10 @@ class _ElectricityBillPageState extends State<ElectricityBillPage> {
                           color: isDark ? Colors.white : Colors.black,
                         ),
                         decoration: InputDecoration(
-                          hintText: 'Customer Id',
+                          hintText:
+                              (selectedBoardObj?.msgToNumber ?? '').isNotEmpty
+                              ? selectedBoardObj!.msgToNumber
+                              : 'Customer Id',
                           hintStyle: TextStyle(
                             color: Colors.grey,
                             fontSize: 14.sp,
@@ -426,6 +427,10 @@ class _ElectricityBillPageState extends State<ElectricityBillPage> {
                         ),
                       ),
                     ),
+                    SizedBox(height: 15.h),
+
+                    /// 🔹 BOARD SELECTION
+                   
 
                     if (_isBillFetched) ...[
                       SizedBox(height: 12.h),

@@ -11,7 +11,7 @@ class RetailorSearch {
     if (json['data'] != null) {
       data = <Data>[];
       json['data'].forEach((v) {
-        data!.add(Data.fromJson(v));
+        data!.add(new Data.fromJson(v));
       });
     }
     message = json['message'];
@@ -19,13 +19,13 @@ class RetailorSearch {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['success'] = success;
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['success'] = this.success;
     if (this.data != null) {
       data['data'] = this.data!.map((v) => v.toJson()).toList();
     }
-    data['message'] = message;
-    data['code'] = code;
+    data['message'] = this.message;
+    data['code'] = this.code;
     return data;
   }
 }
@@ -48,10 +48,12 @@ class Data {
   String? transactionId;
   String? requestTime;
   String? paymentStatus;
-  Null whatsappNo;
+  Null? whatsappNo;
   String? rechargeMode;
   String? createdAt;
   String? updatedAt;
+  String? logo;
+  String? productType;
 
   Data(
       {this.id,
@@ -74,7 +76,9 @@ class Data {
       this.whatsappNo,
       this.rechargeMode,
       this.createdAt,
-      this.updatedAt});
+      this.updatedAt,
+      this.logo,
+      this.productType});
 
   Data.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -98,31 +102,35 @@ class Data {
     rechargeMode = json['recharge_mode'];
     createdAt = json['created_at'];
     updatedAt = json['updated_at'];
+    logo = json['logo'];
+    productType = json['product_type'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['id'] = id;
-    data['user_id'] = userId;
-    data['user_name'] = userName;
-    data['product_id'] = productId;
-    data['api_id'] = apiId;
-    data['mapping_id'] = mappingId;
-    data['mobile'] = mobile;
-    data['amount'] = amount;
-    data['status'] = status;
-    data['api_response'] = apiResponse;
-    data['user_type'] = userType;
-    data['time'] = time;
-    data['txn_id'] = txnId;
-    data['ref_id'] = refId;
-    data['transaction_id'] = transactionId;
-    data['request_time'] = requestTime;
-    data['payment_status'] = paymentStatus;
-    data['whatsapp_no'] = whatsappNo;
-    data['recharge_mode'] = rechargeMode;
-    data['created_at'] = createdAt;
-    data['updated_at'] = updatedAt;
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['user_id'] = this.userId;
+    data['user_name'] = this.userName;
+    data['product_id'] = this.productId;
+    data['api_id'] = this.apiId;
+    data['mapping_id'] = this.mappingId;
+    data['mobile'] = this.mobile;
+    data['amount'] = this.amount;
+    data['status'] = this.status;
+    data['api_response'] = this.apiResponse;
+    data['user_type'] = this.userType;
+    data['time'] = this.time;
+    data['txn_id'] = this.txnId;
+    data['ref_id'] = this.refId;
+    data['transaction_id'] = this.transactionId;
+    data['request_time'] = this.requestTime;
+    data['payment_status'] = this.paymentStatus;
+    data['whatsapp_no'] = this.whatsappNo;
+    data['recharge_mode'] = this.rechargeMode;
+    data['created_at'] = this.createdAt;
+    data['updated_at'] = this.updatedAt;
+    data['logo'] = this.logo;
+    data['product_type'] = this.productType;
     return data;
   }
 }

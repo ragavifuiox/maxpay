@@ -247,6 +247,8 @@ class _FastagPageState extends State<FastagRechargePage> {
                   children: [
                     SizedBox(height: 10.h),
 
+                    
+
                     /// 🔹 WALLET BALANCE CARD
                     Container(
                       width: double.infinity,
@@ -291,6 +293,12 @@ class _FastagPageState extends State<FastagRechargePage> {
                       ),
                     ),
                     SizedBox(height: 20.h),
+
+                    
+
+                    /// 🔹 CUSTOMER ID INPUT
+                   
+                    SizedBox(height: 15.h),
 
                     /// 🔹 BOARD SELECTION
                     Obx(() {
@@ -381,10 +389,9 @@ class _FastagPageState extends State<FastagRechargePage> {
                         ),
                       );
                     }),
-                    SizedBox(height: 15.h),
 
-                    /// 🔹 CUSTOMER ID INPUT
-                    Container(
+                    const SizedBox(height: 12,),
+ Container(
                       decoration: BoxDecoration(
                         color: fieldColor,
                         borderRadius: BorderRadius.circular(10.r),
@@ -456,7 +463,10 @@ class _FastagPageState extends State<FastagRechargePage> {
                           color: isDark ? Colors.white : Colors.black,
                         ),
                         decoration: InputDecoration(
-                          hintText: 'Customer Id',
+                          hintText:
+                              (selectedBoardObj?.msgToNumber ?? '').isNotEmpty
+                              ? selectedBoardObj!.msgToNumber
+                              : 'Customer Id',
                           hintStyle: TextStyle(
                             color: Colors.grey,
                             fontSize: 14.sp,
@@ -485,7 +495,6 @@ class _FastagPageState extends State<FastagRechargePage> {
                         ),
                       ),
                     ),
-
                     if (_isBillFetched) ...[
                       SizedBox(height: 12.h),
 

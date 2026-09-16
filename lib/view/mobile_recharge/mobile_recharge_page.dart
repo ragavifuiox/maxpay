@@ -549,14 +549,14 @@ class _MobileRechargePageState extends State<MobileRechargePage>
                               value: operator,
                               child: Row(
                                 children: [
+                                  Expanded(child: Text(operator.name ?? "")),
+                                  const SizedBox(width: 10),
                                   if ((operator.logo ?? "").isNotEmpty)
                                     Image.network(
                                       operator.logo!,
                                       width: 40,
                                       height: 40,
                                     ),
-                                  const SizedBox(width: 10),
-                                  Expanded(child: Text(operator.name ?? "")),
                                 ],
                               ),
                             );

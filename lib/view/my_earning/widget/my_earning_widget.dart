@@ -6,7 +6,10 @@ import 'package:maxpay/core/data/model/my_earnings_model.dart';
 class EarningsCard extends StatelessWidget {
   final EarningItem item;
 
-  const EarningsCard({super.key, required this.item});
+  const EarningsCard({
+    super.key,
+    required this.item,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +29,7 @@ class EarningsCard extends StatelessWidget {
       ),
       child: Column(
         children: [
+          // Date & Time
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -60,20 +64,22 @@ class EarningsCard extends StatelessWidget {
 
           const SizedBox(height: 8),
 
+          // Details Row
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              // Logo
               CircleAvatar(
                 radius: 18,
                 backgroundColor: AppColors.background,
                 child: ClipOval(
-                  child:
-                      (item.productLogo != null && item.productLogo!.isNotEmpty)
+                  child: (item.productLogo != null &&
+                          item.productLogo!.isNotEmpty)
                       ? Image.network(
                           item.productLogo!,
                           width: 36,
                           height: 36,
-                          fit: BoxFit.contain, // shows full logo
+                          fit: BoxFit.contain,
                           errorBuilder: (context, error, stackTrace) {
                             return const Icon(
                               Icons.image,
@@ -82,17 +88,25 @@ class EarningsCard extends StatelessWidget {
                             );
                           },
                         )
-                      : const Icon(Icons.image, size: 20, color: Colors.grey),
+                      : const Icon(
+                          Icons.image,
+                          size: 20,
+                          color: Colors.grey,
+                        ),
                 ),
               ),
-              const SizedBox(width: 10),
 
+              const SizedBox(width: 14),
+
+              // Details
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       item.productType ?? "",
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontSize: 14,
                         fontFamily: 'Poppins',
@@ -104,8 +118,11 @@ class EarningsCard extends StatelessWidget {
                     const SizedBox(height: 4),
 
                     Text(
-                      " Amount : ₹${item.amount ?? "0"}",
+                      "Amount : ₹${item.amount ?? "0"}",
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
+                        fontSize: 14,
                         fontWeight: FontWeight.w500,
                         color: theme.colorScheme.onSurface,
                       ),
@@ -115,6 +132,8 @@ class EarningsCard extends StatelessWidget {
 
                     Text(
                       item.mobile ?? "",
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontSize: 12,
                         color: theme.colorScheme.onSurface,
@@ -124,28 +143,16 @@ class EarningsCard extends StatelessWidget {
                 ),
               ),
 
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  // Text(
-                   
-                  //   style: TextStyle(
-                  //     fontSize: 11,
-                  //     color: theme.colorScheme.onSurface,
-                  //   ),
-                  // ),
+              const SizedBox(width: 8),
 
-                  const SizedBox(height: 4),
-
-                  Text(
-                    "₹ ${item.commissionAmount ?? "0"}",
-                    style: const TextStyle(
-                      color: Colors.green,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
-                  ),
-                ],
+              // Commission
+              Text(
+                "₹ ${item.commissionAmount ?? "0"}",
+                style: const TextStyle(
+                  color: Colors.green,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
               ),
             ],
           ),

@@ -293,6 +293,11 @@ class _DTHRechargePageState extends State<DTHRechargePage>
   }
 
   Future<void> _onProceed() async {
+    if (selectedOperatorObj == null) {
+      CustomToast.error("Please Select a Product");
+      return;
+    }
+
     Data? op;
     for (final e in controller.plans) {
       if (e.id.toString() == productId) {
@@ -450,7 +455,10 @@ class _DTHRechargePageState extends State<DTHRechargePage>
                     child: DropdownButton<Data>(
                       isExpanded: true,
                       value: selectedOperatorObj,
-                      hint: const Text("Select Product "),
+                      hint: Text(
+                        "Select Product ",
+                        style: TextStyle(fontSize: 13.sp),
+                      ),
                       items: controller.plans.map((Data operator) {
                         return DropdownMenuItem<Data>(
                           value: operator,
@@ -464,8 +472,8 @@ class _DTHRechargePageState extends State<DTHRechargePage>
                               ),
                               if ((operator.logo ?? "").isNotEmpty)
                                 Container(
-                                  width: 45.w,
-                                  height: 45.w,
+                                  width: 57.w,
+                                  height: 57.w,
                                   padding: EdgeInsets.all(5.w),
                                   child: Image.network(
                                     operator.logo!,
@@ -549,6 +557,7 @@ class _DTHRechargePageState extends State<DTHRechargePage>
                         ],
                         decoration: InputDecoration(
                           hintText: customerHint,
+                          hintStyle: TextStyle(fontSize: 13.sp),
                           border: InputBorder.none,
                           contentPadding: EdgeInsets.symmetric(
                             horizontal: 16.w,
