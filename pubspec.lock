@@ -217,14 +217,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.9"
-  cupertino_ui:
-    dependency: transitive
-    description:
-      name: cupertino_ui
-      sha256: e9dfe7fac704028f8928cbe4028a0be5e8a709498e8daf8247de99e99a32aef3
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.2"
   dartz:
     dependency: "direct main"
     description:
@@ -430,11 +422,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.0.0"
-  flutter_localizations:
-    dependency: transitive
-    description: flutter
-    source: sdk
-    version: "0.0.0"
   flutter_plugin_android_lifecycle:
     dependency: transitive
     description:
@@ -869,14 +856,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.13.0"
-  material_ui:
-    dependency: "direct main"
-    description:
-      name: material_ui
-      sha256: fbfb53cab6c4629438feeade5f3d305f72944bc9d9f25786b19106d32b80ec45
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.2.0"
   media_store_plus:
     dependency: "direct main"
     description:
@@ -1333,14 +1312,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.0"
-  sim_card_code:
-    dependency: "direct main"
-    description:
-      name: sim_card_code
-      sha256: "3409113140cc9fbb6d3a662bb44e216a81dcfe9513e84a837855474dfaf61854"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.2.0"
   sky_engine:
     dependency: transitive
     description: flutter
