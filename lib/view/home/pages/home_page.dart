@@ -185,6 +185,8 @@ class _BorderDotPainter extends CustomPainter {
   bool shouldRepaint(_BorderDotPainter old) => old.progress != progress;
 }
 
+
+
 class HomePageScreen extends GetView<HomePageController> {
   const HomePageScreen({super.key});
 
@@ -375,9 +377,21 @@ class HomePageScreen extends GetView<HomePageController> {
                                                   BorderRadius.circular(15.r),
                                             ),
                                             child: StatCard(
-                                              onTap: () =>
+                                              onTap: () {
+                                                final authController =
+                                                    Get.find<AuthController>();
+                                                if (authController
+                                                        .isPin
+                                                        .value ==
+                                                    1) {
                                                   Get.find<NavbarController>()
-                                                      .openMenu(),
+                                                      .openMenu();
+                                                } else {
+                                                  Get.toNamed(
+                                                    AppRoutes.pinCodeCreation,
+                                                  );
+                                                }
+                                              },
                                               title: 'Transactions',
                                               bgColor: AppColors.clrPrimary,
                                               textColor: Colors.white,

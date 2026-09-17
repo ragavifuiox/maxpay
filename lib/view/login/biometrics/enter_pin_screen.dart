@@ -180,32 +180,9 @@ class _PinCodeEnterPageState extends State<PinCodeEnterPage> {
                   ),
                 ),
 
-                SizedBox(height: 8.h),
+             
 
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: InkWell(
-                    onTap: () {
-                      updatePinController.sendUpdatePinOtp(isForgotFlow: true);
-                    },
-                    borderRadius: BorderRadius.circular(4),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 4,
-                        vertical: 6,
-                      ),
-                      child: Text(
-                        'Forgot M PIN?',
-                        style: TextStyle(
-                          fontFamily: 'Poppins',
-                          fontWeight: FontWeight.w500,
-                          fontSize: isTablet ? 16.sp : 13.sp,
-                          color: AppColors.clrPrimary,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
+              
 
                 SizedBox(height: isTablet ? 24.h : 16.h),
 

@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:get/get.dart';
 import 'package:maxpay/controllers/auth_controller.dart';
 import 'package:maxpay/core/constants/colors.dart';
@@ -11,8 +10,6 @@ import 'package:maxpay/view/login/widgets/cutom_elevated_button.dart';
 import 'package:maxpay/view/login/widgets/resend_timer_widget.dart';
 import 'package:pinput/pinput.dart';
 
-import 'package:maxpay/core/utils/sim_util.dart';
-
 class ScreenOtpVerification extends StatefulWidget {
   const ScreenOtpVerification({super.key});
 
@@ -20,118 +17,28 @@ class ScreenOtpVerification extends StatefulWidget {
   State<ScreenOtpVerification> createState() => _ScreenOtpVerificationState();
 }
 
-class _ScreenOtpVerificationState extends State<ScreenOtpVerification>
-    with WidgetsBindingObserver {
+class _ScreenOtpVerificationState extends State<ScreenOtpVerification> {
   final TextEditingController _otpController = TextEditingController();
   final FocusNode otpFocusNode = FocusNode();
 
-  String? _clipboardOtp;
-  Set<String> _pastedOtps = {};
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addObserver(this);
-    _loadPastedOtps();
-    _checkClipboardForOtp();
-  }
-
-  Future<void> _loadPastedOtps() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _pastedOtps = (prefs.getStringList('pasted_otps') ?? []).toSet();
-    });
-  }
-
-  Future<void> _savePastedOtp(String otp) async {
-    final prefs = await SharedPreferences.getInstance();
-    _pastedOtps.add(otp);
-    await prefs.setStringList('pasted_otps', _pastedOtps.toList());
-  }
-
-  @override
   void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
     _otpController.dispose();
     otpFocusNode.dispose();
     super.dispose();
   }
 
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
-      _checkClipboardForOtp();
-    }
-  }
-
-  Future<void> _checkClipboardForOtp() async {
-    try {
-      final clipboardData = await Clipboard.getData(Clipboard.kTextPlain);
-      final text = clipboardData?.text;
-
-      if (text != null && text.isNotEmpty) {
-        final regExp = RegExp(r'\b\d{4}\b');
-        final match = regExp.firstMatch(text);
-
-        if (match != null) {
-          final otp = match.group(0);
-          if (otp != null && !_pastedOtps.contains(otp)) {
-            setState(() {
-              _clipboardOtp = otp;
-            });
-          }
-        }
-      }
-    } catch (e) {
-      debugPrint("Clipboard error: $e");
-    }
-  }
-
-  void _onPasteOtp() {
-    if (_clipboardOtp != null) {
-      _otpController.text = _clipboardOtp!;
-      _savePastedOtp(_clipboardOtp!);
-      setState(() {
-        _clipboardOtp = null;
-      });
-      _verifyOtp();
-    }
-  }
-
-  bool get _isTestNumber {
-    if (Get.isRegistered<AuthController>()) {
-      final controller = Get.find<AuthController>();
-      final phone = controller.phoneController.text.trim();
-      if (SimUtil.testNumbers.contains(phone)) {
-        return true;
-      }
-      final authPhone = controller.phoneNumber.value.trim();
-      if (SimUtil.testNumbers.contains(authPhone)) {
-        return true;
-      }
-      for (final testNum in SimUtil.testNumbers) {
-        if ((phone.isNotEmpty && phone.endsWith(testNum)) ||
-            (authPhone.isNotEmpty && authPhone.endsWith(testNum))) {
-          return true;
-        }
-      }
-    }
-    final argsPhone = Get.arguments is Map
-        ? (Get.arguments['phone']?.toString() ?? '')
-        : '';
-    if (argsPhone.isNotEmpty) {
-      for (final testNum in SimUtil.testNumbers) {
-        if (argsPhone.trim().endsWith(testNum)) {
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-
   void _verifyOtp() {
+    print('=== OTP VERIFY TRIGGERED ===');
+    final controller = Get.find<AuthController>();
+
+    // Prevent double subm
+    //ission if API is already being called
+    if (controller.isLoading.value) {
+      print('=== ALREADY LOADING, SKIPPING API CALL ===');
+      return;
+    }
+
     if (_otpController.text.length == 4) {
-      final controller = Get.find<AuthController>();
       controller.verifyOtp(_otpController.text);
     }
   }
@@ -200,9 +107,7 @@ class _ScreenOtpVerificationState extends State<ScreenOtpVerification>
 
                         /// 🔹 Subtitle
                         Text(
-                          _isTestNumber
-                              ? "Please enter the verification code\nsent to your phone number"
-                              : "Please paste the verification code\nsent to your phone number\n(Manual entry not available)",
+                          "Please enter the verification code\nsent to your phone number",
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontFamily: 'Poppins',
@@ -283,9 +188,7 @@ class _ScreenOtpVerificationState extends State<ScreenOtpVerification>
                             );
                           },
                           controller: _otpController,
-                          keyboardType: _isTestNumber
-                              ? TextInputType.number
-                              : TextInputType.none,
+                          keyboardType: TextInputType.number,
                           onTap: () => otpFocusNode.requestFocus(),
                           onCompleted: (pin) => _verifyOtp(),
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -337,46 +240,6 @@ class _ScreenOtpVerificationState extends State<ScreenOtpVerification>
                           ),
                         ),
 
-                        SizedBox(height: 20.h),
-                        if (_clipboardOtp != null)
-                          GestureDetector(
-                            onTap: _onPasteOtp,
-                            child: Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 16.w,
-                                vertical: 8.h,
-                              ),
-                              decoration: BoxDecoration(
-                                color: colorScheme.surfaceBright,
-                                borderRadius: BorderRadius.circular(20.r),
-                                border: Border.all(
-                                  color: colorScheme.outline.withValues(
-                                    alpha: 0.3,
-                                  ),
-                                ),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(
-                                    Icons.paste,
-                                    size: 16.sp,
-                                    color: AppColors.clrPrimary,
-                                  ),
-                                  SizedBox(width: 8.w),
-                                  Text(
-                                    'Paste $_clipboardOtp',
-                                    style: TextStyle(
-                                      fontFamily: 'Poppins',
-                                      fontSize: 14.sp,
-                                      fontWeight: FontWeight.w500,
-                                      color: colorScheme.onSurface,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
                         SizedBox(height: 20.h),
 
                         /// 🔹 Timer

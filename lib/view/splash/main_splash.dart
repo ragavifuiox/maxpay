@@ -3,7 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
-import 'package:maxpay/controllers/app_lifecycle_controller.dart';
 import 'package:maxpay/core/constants/asset_images.dart';
 import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/core/services/local_storage_service.dart';
@@ -99,13 +98,9 @@ class _MainSplashScreenState extends State<MainSplashScreen>
     await storage.init();
 
     final token = storage.getString("auth_token");
-    final isPin = storage.getInt("is_pin") ?? 0;
-    final isFingerPrint = storage.getInt("is_fingerprint") ?? 0;
     final loggedInPhone = storage.getString("logged_in_phone");
 
     AppLogger.logError("TOKEN : $token");
-    AppLogger.logError("IS PIN : $isPin");
-    AppLogger.logError("IS FINGERPRINT : $isFingerPrint");
 
     await Future.delayed(const Duration(seconds: 2));
 
@@ -136,31 +131,7 @@ class _MainSplashScreenState extends State<MainSplashScreen>
       // }
     }
 
-    /// Old User -> PIN Created
-    if (isPin == 1) {
-      final lastActiveStr = storage.getString("last_active_time");
-      if (lastActiveStr != null) {
-        final lastActive = DateTime.tryParse(lastActiveStr);
-        if (lastActive != null) {
-          if (!AppLifecycleController.hasCrossedLogoutTime(
-            lastActive,
-            DateTime.now(),
-          )) {
-            AppLogger.logError(
-              "Cold start: did not cross logout boundaries. Navigating straight to home.",
-            );
-            Get.offAllNamed(AppRoutes.main);
-            return;
-          }
-        }
-      }
-
-      Get.offAllNamed(AppRoutes.enterPin);
-      return;
-    }
-
-    /// User Logged In But No PIN
-    Get.offAllNamed(AppRoutes.pinCodeCreation);
+    Get.offAllNamed(AppRoutes.main);
   }
 
   @override

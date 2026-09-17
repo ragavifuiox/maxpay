@@ -228,7 +228,7 @@ import 'package:maxpay/core/domain/usecase/due_amount_usecase.dart';
 import 'package:maxpay/core/domain/usecase/earning_usecase.dart';
 import 'package:maxpay/core/domain/usecase/faq_reply_usecase.dart';
 import 'package:maxpay/core/domain/usecase/faq_usecase.dart';
-import 'package:maxpay/core/domain/usecase/finger_print_usecase.dart';
+
 import 'package:maxpay/core/domain/usecase/get_bank_usecase.dart';
 import 'package:maxpay/core/domain/usecase/get_kyc_usecase.dart';
 import 'package:maxpay/core/domain/usecase/get_profile_usecase.dart';
@@ -524,7 +524,7 @@ Future<void> initDependencies() async {
   sl.registerLazySingleton<TransSucFailUsecase>(
     () => TransSucFailUsecase(sl()),
   );
-  sl.registerLazySingleton<FingerPrintUsecase>(() => FingerPrintUsecase(sl()));
+  // sl.registerLazySingleton<FingerPrintUsecase>(() => FingerPrintUsecase(sl()));
   sl.registerLazySingleton<ProductTypeUseCase>(() => ProductTypeUseCase(sl()));
   sl.registerLazySingleton<PlanUseCase>(() => PlanUseCase(sl()));
   sl.registerLazySingleton<ComplaintsUseCase>(() => ComplaintsUseCase(sl()));

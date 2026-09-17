@@ -6,7 +6,6 @@ import 'package:maxpay/core/constants/routes_path.dart';
 import 'package:maxpay/core/constants/snackbar.dart';
 import 'package:maxpay/core/di/service_locator.dart';
 import 'package:maxpay/core/domain/usecase/create_pin_usecase.dart';
-import 'package:maxpay/core/domain/usecase/finger_print_usecase.dart';
 import 'package:maxpay/core/domain/usecase/login_usecase.dart';
 import 'package:maxpay/core/domain/usecase/otp_usecase.dart';
 import 'package:maxpay/core/domain/usecase/verify_pin_usecase.dart';
@@ -20,14 +19,12 @@ class AuthController extends GetxController {
   final LoginUseCase loginUseCase;
   final OtpUsecase otpUsecase;
   final CreatePinUsecase createPinUsecase;
-  final FingerPrintUsecase fingerPrintUsecase;
   final VerifyPinUsecase verifyPinUsecase;
 
   AuthController({
     required this.loginUseCase,
     required this.otpUsecase,
     required this.createPinUsecase,
-    required this.fingerPrintUsecase,
     required this.verifyPinUsecase,
   });
 
@@ -219,12 +216,21 @@ class AuthController extends GetxController {
               "IS_FINGERPRINT => ${storage.getInt("is_fingerprint")}",
             );
 
-            if (pin == 1) {
-              Get.offAllNamed(AppRoutes.veirfypin);
-            } else {
-              isNewUserFlow.value = true;
-              Get.offAllNamed(AppRoutes.pinCodeCreation);
-            }
+            final historyController = Get.put(
+              LoginHistoryController(loginHistoryUsecase: sl()),
+            );
+
+            historyController.fromDate = DateTime.now().toString().split(
+              ' ',
+            )[0];
+
+            historyController.toDate = DateTime.now().toString().split(' ')[0];
+
+            historyController.search = "";
+
+            await historyController.LoginHistory();
+
+            Get.offAllNamed(AppRoutes.main);
           } else {
             CustomToast.error(response.message ?? "OTP Failed");
           }
@@ -358,13 +364,7 @@ class AuthController extends GetxController {
 
             AppLogger.logError("IS_PIN SAVED => ${storage.getInt("is_pin")}");
 
-            Get.offAllNamed(
-              AppRoutes.successScreen,
-              arguments: {
-                "title": "Pin Created Successfully",
-                "message": "Your 6 digit pin has been created successfully",
-              },
-            );
+            Get.offAllNamed(AppRoutes.main);
           } else {
             AppLogger.logError("PIN CREATION FAILED => ${response.message}");
 
@@ -458,54 +458,6 @@ class AuthController extends GetxController {
     } finally {
       isLoading.value = false;
       AppLogger.logError("VERIFY PIN LOADING STOPPED");
-    }
-  }
-
-  Future<void> fingerprint(int fingerprint) async {
-    try {
-      isLoading.value = true;
-
-      final result = await fingerPrintUsecase(fingerprint);
-
-      result.fold(
-        (failure) {
-          AppLogger.logError("FINGERPRINT FAILURE : ${failure.message}");
-
-          CustomToast.error(failure.message);
-        },
-
-        (response) async {
-          AppLogger.logError("=========== FINGERPRINT RESPONSE ===========");
-
-          AppLogger.logError("👍SUCCESS : ${response.success}");
-
-          AppLogger.logError("MESSAGE : ${response.message}");
-
-          AppLogger.logError("===========================================");
-
-          if (response.success == true) {
-            await storage.saveInt(
-              "is_fingerprint",
-              response.data?.isFingerPrint ?? 0,
-            );
-
-            isFingerPrint.value = response.data?.isFingerPrint ?? 0;
-            CustomToast.success(
-              response.message ?? "Fingerprint Updated Successfully",
-            );
-
-            // Get.offAllNamed(AppRoutes.successScreen);
-          } else {
-            CustomToast.error(response.message ?? "Fingerprint Update Failed");
-          }
-        },
-      );
-    } catch (e) {
-      AppLogger.logError("FINGERPRINT EXCEPTION : $e");
-
-      CustomToast.error(e.toString());
-    } finally {
-      isLoading.value = false;
     }
   }
 

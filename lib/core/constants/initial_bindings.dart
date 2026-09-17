@@ -12,7 +12,6 @@ class InitialBinding extends Bindings {
         loginUseCase: sl(),
         otpUsecase: sl(),
         createPinUsecase: sl(),
-        fingerPrintUsecase: sl(),
         verifyPinUsecase: sl(),
       ),
       permanent: true,

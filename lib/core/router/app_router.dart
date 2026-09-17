@@ -43,8 +43,8 @@ import 'package:maxpay/view/home/pages/home_page.dart';
 import 'package:maxpay/view/home/widgets/services_section.dart';
 import 'package:maxpay/view/kyc/kyc_screen.dart';
 import 'package:maxpay/view/landline/landline_bill_page.dart';
-import 'package:maxpay/view/login/biometrics/biometrics_intro.dart';
-import 'package:maxpay/view/login/biometrics/biometrics_scanning.dart';
+// import 'package:maxpay/view/login/biometrics/biometrics_intro.dart';
+// import 'package:maxpay/view/login/biometrics/biometrics_scanning.dart';
 import 'package:maxpay/view/login/biometrics/enter_pin_screen.dart';
 import 'package:maxpay/view/login/biometrics/pin_code_creation.dart';
 import 'package:maxpay/view/login/biometrics/success_screen.dart';
@@ -158,14 +158,14 @@ class AppPages {
       name: AppRoutes.otpVerification,
       page: () => const ScreenOtpVerification(),
     ),
-    GetPage(
-      name: AppRoutes.biometricsIntro,
-      page: () => const BiometricsIntroPage(),
-    ),
-    GetPage(
-      name: AppRoutes.biometricsScanning,
-      page: () => const BiometricsScanningPage(),
-    ),
+    // GetPage(
+    //   name: AppRoutes.biometricsIntro,
+    //   page: () => const BiometricsIntroPage(),
+    // ),
+    // GetPage(
+    //   name: AppRoutes.biometricsScanning,
+    //   page: () => const BiometricsScanningPage(),
+    // ),
 
     GetPage(name: AppRoutes.successScreen, page: () => const SuccessScreen()),
 
