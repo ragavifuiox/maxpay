@@ -177,6 +177,11 @@ class AuthController extends GetxController {
             await storage.saveString("auth_token", response.data?.token ?? "");
             await storage.saveString("logged_in_phone", phoneNumber.value);
 
+            await storage.saveString(
+              "last_transaction_verify_time",
+              DateTime.now().toIso8601String(),
+            );
+
             await storage.saveInt("user_id", response.data?.userId ?? 0);
 
             final newUser = response.data?.isNewUser ?? 0;
@@ -258,6 +263,11 @@ class AuthController extends GetxController {
       if (authenticated) {
         await storage.saveString(
           "last_active_time",
+          DateTime.now().toIso8601String(),
+        );
+
+        await storage.saveString(
+          "last_transaction_verify_time",
           DateTime.now().toIso8601String(),
         );
 
@@ -362,6 +372,11 @@ class AuthController extends GetxController {
               DateTime.now().toIso8601String(),
             );
 
+            await storage.saveString(
+              "last_transaction_verify_time",
+              DateTime.now().toIso8601String(),
+            );
+
             AppLogger.logError("IS_PIN SAVED => ${storage.getInt("is_pin")}");
 
             Get.offAllNamed(AppRoutes.main);
@@ -380,6 +395,7 @@ class AuthController extends GetxController {
   Future<bool> verifyPin(
     String pin, {
     bool isFromWalletTransfer = false,
+    bool isFromTransaction = false,
   }) async {
     try {
       isLoading.value = true;
@@ -419,7 +435,12 @@ class AuthController extends GetxController {
               DateTime.now().toIso8601String(),
             );
 
-            if (!isFromWalletTransfer) {
+            await storage.saveString(
+              "last_transaction_verify_time",
+              DateTime.now().toIso8601String(),
+            );
+
+            if (!isFromWalletTransfer && !isFromTransaction) {
               final historyController = Get.put(
                 LoginHistoryController(loginHistoryUsecase: sl()),
               );

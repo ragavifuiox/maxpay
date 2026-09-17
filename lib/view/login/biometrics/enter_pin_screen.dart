@@ -9,6 +9,7 @@ import 'package:maxpay/core/di/service_locator.dart';
 import 'package:maxpay/core/utils/responsive.dart';
 import 'package:maxpay/global_widget/commom_button.dart';
 import 'package:maxpay/view/login/widgets/custom_numeric_keyboard.dart';
+import 'package:maxpay/view/nav_page/navbar_provider.dart';
 import 'package:pinput/pinput.dart';
 
 class PinCodeEnterPage extends StatefulWidget {
@@ -24,6 +25,7 @@ class _PinCodeEnterPageState extends State<PinCodeEnterPage> {
   final TextEditingController pinController = TextEditingController();
   bool isUpdatePin = false;
   bool isFromWalletTransfer = false;
+  bool isFromTransaction = false;
   final RxBool showVerifyButton = false.obs;
   @override
   void initState() {
@@ -44,6 +46,7 @@ class _PinCodeEnterPageState extends State<PinCodeEnterPage> {
     } else if (args is Map) {
       isUpdatePin = args['isUpdatePin'] ?? false;
       isFromWalletTransfer = args['isFromWalletTransfer'] ?? false;
+      isFromTransaction = args['isFromTransaction'] ?? false;
     }
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -206,6 +209,7 @@ class _PinCodeEnterPageState extends State<PinCodeEnterPage> {
                                       pinController.text.trim(),
                                       isFromWalletTransfer:
                                           isFromWalletTransfer,
+                                      isFromTransaction: isFromTransaction,
                                     );
 
                                     if (!success) {
@@ -219,6 +223,9 @@ class _PinCodeEnterPageState extends State<PinCodeEnterPage> {
                                         amount: args['amount'],
                                         paymenttype: args['paymenttype'],
                                       );
+                                    } else if (isFromTransaction) {
+                                      Get.back();
+                                      Get.find<NavbarController>().openMenu();
                                     }
                                   },
                                 ),

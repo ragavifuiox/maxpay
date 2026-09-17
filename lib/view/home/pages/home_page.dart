@@ -10,6 +10,7 @@ import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:get/get_state_manager/src/simple/get_view.dart';
 import 'package:maxpay/controllers/auth_controller.dart';
 import 'package:maxpay/controllers/homepage_controller.dart';
+import 'package:maxpay/controllers/app_lifecycle_controller.dart';
 import 'package:maxpay/controllers/profile_controller.dart';
 import 'package:maxpay/controllers/transaction_report_controller.dart';
 import 'package:maxpay/core/constants/asset_images.dart';
@@ -184,8 +185,6 @@ class _BorderDotPainter extends CustomPainter {
   @override
   bool shouldRepaint(_BorderDotPainter old) => old.progress != progress;
 }
-
-
 
 class HomePageScreen extends GetView<HomePageController> {
   const HomePageScreen({super.key});
@@ -384,8 +383,53 @@ class HomePageScreen extends GetView<HomePageController> {
                                                         .isPin
                                                         .value ==
                                                     1) {
-                                                  Get.find<NavbarController>()
-                                                      .openMenu();
+                                                  final storage =
+                                                      authController.storage;
+                                                  final lastTxTime = storage
+                                                      .getString(
+                                                        "last_transaction_verify_time",
+                                                      );
+                                                  final lastActiveTime = storage
+                                                      .getString(
+                                                        "last_active_time",
+                                                      );
+                                                  final timeToUse =
+                                                      (lastTxTime != null &&
+                                                          lastTxTime.isNotEmpty)
+                                                      ? lastTxTime
+                                                      : lastActiveTime;
+                                                  bool needsPin = false;
+
+                                                  if (timeToUse != null &&
+                                                      timeToUse.isNotEmpty) {
+                                                    final lastTime =
+                                                        DateTime.parse(
+                                                          timeToUse,
+                                                        );
+                                                    final crossed =
+                                                        AppLifecycleController.hasCrossedLogoutTime(
+                                                          lastTime,
+                                                          DateTime.now(),
+                                                        );
+                                                    if (crossed) {
+                                                      needsPin = true;
+                                                    }
+                                                  } else {
+                                                    needsPin = true;
+                                                  }
+
+                                                  if (needsPin) {
+                                                    Get.toNamed(
+                                                      AppRoutes.enterPin,
+                                                      arguments: {
+                                                        'isFromTransaction':
+                                                            true,
+                                                      },
+                                                    );
+                                                  } else {
+                                                    Get.find<NavbarController>()
+                                                        .openMenu();
+                                                  }
                                                 } else {
                                                   Get.toNamed(
                                                     AppRoutes.pinCodeCreation,
