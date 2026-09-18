@@ -15,34 +15,29 @@ class UpdatePinRepoImpl implements UpdatePinRepository {
   Future<Either<Failure, UpdatePin>> updatepin({
     required String newpin,
     required String confirmpin,
+    required String oldpin,
   }) async {
     try {
-    final response = await apiService.post(
-  ApiRoutes.updatepin,
-  data: {
-    "new_pin": newpin,
-    "confirm_pin": confirmpin,
-  },
-);
+      final response = await apiService.post(
+        ApiRoutes.updatepin,
+        data: {"new_pin": newpin, "confirm_pin": confirmpin, "old_pin": oldpin},
+      );
 
-  
+      AppLogger.logError("=========== 👍REQUEST BODY ===========");
+      AppLogger.logError({
+        "old_pin": oldpin,
+        "new_pin": newpin,
+        "confirm_pin": confirmpin,
+      });
 
-AppLogger.logError("=========== 👍REQUEST BODY ===========");
-AppLogger.logError({
- "new_pin": newpin,
- "confirm_pin": confirmpin,
-});
-
-AppLogger.logError("=========== 👍RAW RESPONSE ===========");
-AppLogger.logError(response);
-AppLogger.logError("====================================");
+      AppLogger.logError("=========== 👍RAW RESPONSE ===========");
+      AppLogger.logError(response);
+      AppLogger.logError("====================================");
       final model = UpdatePin.fromJson(response);
       return Right(model);
-    } catch (e, stackTrace) { print("API EXCEPTION IN REPO: `$e\n`$stackTrace");
+    } catch (e, stackTrace) {
+      print("API EXCEPTION IN REPO: `$e\n`$stackTrace");
       return Left(ServerFailure(message: e.toString()));
     }
   }
 }
-
-
-    

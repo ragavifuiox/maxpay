@@ -338,7 +338,11 @@ class AuthController extends GetxController {
     }
   }
 
-  Future<void> createPin(String pin) async {
+  Future<void> createPin(
+    String pin,
+    String confirmPin, {
+    bool isFromTransaction = false,
+  }) async {
     try {
       isLoading.value = true;
 
@@ -348,7 +352,7 @@ class AuthController extends GetxController {
       AppLogger.logError("IS_PIN BEFORE API => ${storage.getInt("is_pin")}");
       AppLogger.logError("=========================================");
 
-      final result = await createPinUsecase(pin);
+      final result = await createPinUsecase(pin, confirmPin);
 
       result.fold(
         (failure) {
@@ -366,6 +370,7 @@ class AuthController extends GetxController {
           AppLogger.logError("===========================================");
 
           if (response.success == true) {
+            isPin.value = 1;
             await storage.saveInt("is_pin", 1);
             await storage.saveString(
               "last_active_time",
@@ -379,7 +384,11 @@ class AuthController extends GetxController {
 
             AppLogger.logError("IS_PIN SAVED => ${storage.getInt("is_pin")}");
 
-            Get.offAllNamed(AppRoutes.main);
+            if (isFromTransaction) {
+              Get.back(); // Returns to main page
+            } else {
+              Get.offAllNamed(AppRoutes.main);
+            }
           } else {
             AppLogger.logError("PIN CREATION FAILED => ${response.message}");
 

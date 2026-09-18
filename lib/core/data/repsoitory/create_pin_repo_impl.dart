@@ -13,12 +13,14 @@ class CreatePinRepoImpl implements CreatePinRepository {
   @override
   Future<Either<Failure, CreatePin>> createPin({
     required String pin,
+    required String confirmPin
   }) async {
     try {
       final response = await apiService.post(
         ApiRoutes.createpin,
         data: {
           "pin": pin,
+          "confirm_pin": confirmPin,
         },
       );
 

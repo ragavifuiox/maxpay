@@ -7,6 +7,7 @@ abstract class UpdatePinRepository {
   Future<Either<Failure, UpdatePin>> updatepin({
   required String newpin,
   required String confirmpin,
+  required String oldpin,
 });
 
   }

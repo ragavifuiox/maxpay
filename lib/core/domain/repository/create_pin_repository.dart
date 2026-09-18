@@ -6,6 +6,7 @@ import 'package:maxpay/core/error/failure.dart';
 abstract class CreatePinRepository {
   Future<Either<Failure, CreatePin>> createPin({
     required String pin,
+    required String confirmPin,
     });
 
   }

@@ -10,11 +10,13 @@ class CreatePinUsecase {
   CreatePinUsecase(this.repository);
   Future<Either<Failure, CreatePin>> call(
     String pin ,
+    String confirmPin ,
   
   
     ) {
     return repository.createPin(
       pin: pin,
+      confirmPin: confirmPin,
     );
   }
 }

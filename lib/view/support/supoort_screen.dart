@@ -17,12 +17,16 @@ class SupportScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final showBack =
+        Get.arguments != null &&
+        Get.arguments is Map &&
+        Get.arguments['showBack'] == true;
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        automaticallyImplyLeading: false,
-        titleSpacing: 19,
+        automaticallyImplyLeading: showBack,
+        titleSpacing: showBack ? 0 : 19,
         title: const Text("Support"),
       ),
       body: Obx(() {

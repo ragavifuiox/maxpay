@@ -431,17 +431,88 @@ class HomePageScreen extends GetView<HomePageController> {
                                                         .openMenu();
                                                   }
                                                 } else {
-                                                  Get.toNamed(
-                                                    AppRoutes.pinCodeCreation,
+                                                  showDialog(
+                                                    context: context,
+                                                    builder: (BuildContext context) {
+                                                      return AlertDialog(
+                                                        shape: RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                15.r,
+                                                              ),
+                                                        ),
+                                                        title: Text(
+                                                          'M Pin Not Created',
+                                                          style: TextStyle(
+                                                            fontSize: 18.sp,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                          ),
+                                                        ),
+                                                        content: Text(
+                                                          'Please set a M Pin to continue to transactions.',
+                                                          style: TextStyle(
+                                                            fontSize: 14.sp,
+                                                          ),
+                                                        ),
+                                                        actions: [
+                                                          TextButton(
+                                                            onPressed: () {
+                                                              Get.back();
+                                                            },
+                                                            child: Text(
+                                                              'Cancel',
+                                                              style: TextStyle(
+                                                                color:
+                                                                    Colors.grey,
+                                                                fontSize: 16.sp,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          ElevatedButton(
+                                                            style: ElevatedButton.styleFrom(
+                                                              backgroundColor:
+                                                                  AppColors
+                                                                      .clrPrimary,
+                                                              shape: RoundedRectangleBorder(
+                                                                borderRadius:
+                                                                    BorderRadius.circular(
+                                                                      8.r,
+                                                                    ),
+                                                              ),
+                                                            ),
+                                                            onPressed: () {
+                                                              Get.back();
+                                                              Get.toNamed(
+                                                                AppRoutes
+                                                                    .pinCodeCreation,
+                                                                arguments: {
+                                                                  'isFromTransaction':
+                                                                      true,
+                                                                },
+                                                              );
+                                                            },
+                                                            child: Text(
+                                                              'Set M Pin',
+                                                              style: TextStyle(
+                                                                color: Colors
+                                                                    .white,
+                                                                fontSize: 16.sp,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      );
+                                                    },
                                                   );
                                                 }
                                               },
+
                                               title: 'Transactions',
                                               bgColor: AppColors.clrPrimary,
                                               textColor: Colors.white,
                                               valueColor: Colors.white,
-                                              borderColor: Colors
-                                                  .transparent, // Hide StatCard border
+                                              borderColor: Colors.transparent,
                                               imageWidget: SvgPicture.asset(
                                                 AssetImages.transactions,
                                                 height: 32.h,

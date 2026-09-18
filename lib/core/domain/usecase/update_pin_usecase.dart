@@ -10,11 +10,13 @@ class UpdatePinUsecase {
   UpdatePinUsecase(this.repository);
   Future<Either<Failure, UpdatePin>> call(
     String newpin ,
-    String confirmpin
+    String confirmpin,
+    String oldpin,
   ) {
     return repository.updatepin(
      newpin: newpin,
-     confirmpin: confirmpin
+     confirmpin: confirmpin,
+     oldpin: oldpin
     );
   }
 }

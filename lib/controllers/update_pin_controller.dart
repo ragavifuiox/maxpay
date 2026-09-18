@@ -51,9 +51,7 @@ class UpdatePinController extends GetxController {
         },
       );
     } finally {
-
       isLoading.value = false;
-      
     }
   }
 
@@ -85,12 +83,17 @@ class UpdatePinController extends GetxController {
     }
   }
 
-  Future<void> updatePin({required int newPin, required int confirmPin}) async {
+  Future<void> updatePin({
+    required int newPin,
+    required int confirmPin,
+    required int oldpin,
+  }) async {
     isLoading.value = true;
 
     final result = await updatepinusecase(
       newPin.toString(),
       confirmPin.toString(),
+      oldpin.toString(),
     );
 
     isLoading.value = false;
@@ -104,7 +107,7 @@ class UpdatePinController extends GetxController {
           if (isForgotPinFlow) {
             Get.offAllNamed(AppRoutes.enterPin);
           } else {
-            Get.offAllNamed(AppRoutes.loginPhoneName);
+            Get.offAllNamed(AppRoutes.main);
           }
           CustomToast.success(response.message ?? "Pin Updated Successfully");
         } else {

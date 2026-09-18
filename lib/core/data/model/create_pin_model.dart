@@ -11,6 +11,31 @@ class CreatePin {
     data = json['data'] != null ? Data.fromJson(json['data']) : null;
     message = json['message'];
     code = json['code'];
+
+    try {
+      if (json['errors'] != null) {
+        if (json['errors'] is Map) {
+          final Map<String, dynamic> errors = Map<String, dynamic>.from(
+            json['errors'],
+          );
+          if (errors.isNotEmpty) {
+            final firstVal = errors.values.first;
+            if (firstVal is List && firstVal.isNotEmpty) {
+              message = firstVal.first.toString();
+            } else {
+              message = firstVal.toString();
+            }
+          }
+        } else if (json['errors'] is List) {
+          final List errorsList = List.from(json['errors']);
+          if (errorsList.isNotEmpty) {
+            message = errorsList.first.toString();
+          }
+        }
+      }
+    } catch (e) {
+      print("Error parsing nested errors: $e");
+    }
   }
 
   Map<String, dynamic> toJson() {

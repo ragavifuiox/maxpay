@@ -57,9 +57,7 @@ class AddWalletScreen extends GetView<AddWalletController> {
 
               const SizedBox(height: 20),
 
-              // ----------------------------------------------------------
-              // AMOUNT TITLE
-              // ----------------------------------------------------------
+
               Text(
                 "Amount",
                 style: TextHelper.max9(context).copyWith(fontFamily: 'Poppins'),
